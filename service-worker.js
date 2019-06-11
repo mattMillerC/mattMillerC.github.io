@@ -1,6 +1,6 @@
 var CACHE_NAME = "my-site-cache-v1";
 var urlsToCache = [
-    "/5etools.html",
+    "/index.html",
     "/backgrounds.html",
     "/bestiary.html",
     "/classes.html",

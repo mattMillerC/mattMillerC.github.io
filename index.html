@@ -5,16 +5,14 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-
 	<!--
 	XML data was compiled by a reddit community for use with the "Fight Club 5" app.
 	Google "5e xml files" for more info.
 
 	Feel free to use, edit, and redistribute this as you wish.
 	I don't own any of the XML data anyway.
--->
-
-	<title>Races - 5e Tools</title>
+	-->
+	<title>5e Tools</title>
 
 	<link rel="stylesheet" href="css/reset.css">
 	<link rel="stylesheet" href="css/material-components-web.min.css">
@@ -24,7 +22,7 @@
 	<link rel="shortcut icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
 	<link rel="shortcut icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
 	<link rel="manifest" href="manifest.json">
-	<meta name="theme-color" content="#ffffff">
+	<meta name="theme-color" content="#03dac6">
 </head>
 
 <body>
@@ -33,8 +31,8 @@
 		<div class="mdc-top-app-bar__row">
 			<div class="breadcrumbs mdc-theme--on-primary">
 				<div class="container breadcrumbs__list">
-					<div class="breadcrumbs__crumb"><a href="./index.html">Player Options</a></div>
-					<div class="breadcrumbs__crumb breadcrumbs__no_caret"><a href="javascript:blankHash()">Races</a></div>
+					<div class="breadcrumbs__crumb">Color</div>
+					<div class="breadcrumbs__crumb">Dark theme</div>
 					<div class="breadcrumbs__crumb breadcrumbs__last"></div>
 				</div>
 			</div>
@@ -149,69 +147,31 @@
 	</aside>
 
 	<div class="mdc-drawer-scrim"></div>
-
 	<div class="main mdc-top-app-bar--fixed-adjust mdc-typography--body1 mdc-theme--background mdc-theme--text-primary-on-background">
 		<div class="container">
-			<h1 class="page-title mdc-typography--headline2 margin-bottom_med margin-top_large">Races</h1>
-
-			<button class="mdc-icon-button close-item material-icons">close</button>
-
-			<div class="stats-wrapper  margin-bottom_large">
-				<div class="source margin-bottom_small"></div>
-				<div class="size margin-bottom_small"></div>
-				<div class="ability margin-bottom_small"></div>
-				<div class="speed margin-bottom_small"></div>
-				<div class="stats"></div>
-			</div>
-
-			<div id="listcontainer">
-				<div id="filter-search-input-group" class="filter-group">
-					<div class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-  						<i class="material-icons mdc-text-field__icon mdc-theme--primary">search</i>
-						<input type="search" id="search-field" class="mdc-text-field__input search" >
-						<div class="mdc-notched-outline">
-							<div class="mdc-notched-outline__leading"></div>
-							<div class="mdc-notched-outline__notch">
-								<label for="search-field" class="mdc-floating-label">Search</label>
-							</div>
-							<div class="mdc-notched-outline__trailing"></div>
-						</div>
-					</div>
-					<div class="filter-group--buttons">
-						<button class="mdc-button mdc-button--raised" id="reset">
-							<span class="mdc-button__label">Reset</span>
-						</button>
-					</div>
-				</div>
-
-				<div class="table-wrap mdc-elevation--z6 margin-bottom_large">
-					<div class="table--scroll">
-						<table class="table list races">
-							<thead>
-								<tr class="table-row table-row--header">
-									<th class="sort" data-sort="name"><div class="table-cell">Name</div></th>
-									<th class="sort" data-sort="ability"><div class="table-cell" style="width: 116px;">Ability</div></th>
-									<th class="sort" data-sort="size"><div class="table-cell">Size</div></th>
-									<th class="sort" data-sort="source"><div class="table-cell" style="width: 108px">Source</div></th>
-								</tr>
-							</thead>
-						</table>
-					</div>
-				</div>
-			</div>
+			<h1 class="mdc-typography--headline2 margin-bottom_large margin-top_large">Dark theme</h1>
+			Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 		</div>
 	</div>
 
+	<script type="text/javascript">
+		if ("serviceWorker" in navigator) {
+		window.addEventListener("load", function() {
+			navigator.serviceWorker.register("/service-worker.js").then(
+				function(registration) {
+					// Registration was successful
+					console.log("ServiceWorker registration successful with scope: ", registration.scope);
+				},
+				function(err) {
+					// registration failed :(
+					console.log("ServiceWorker registration failed: ", err);
+				}
+			);
+		});
+	}
+	</script>
 	<script type="text/javascript" src="lib/material-components-web.min.js"></script>
-	<script type="text/javascript" src="js/nav.js"></script>
-
-	<script type="text/javascript" src="js/utils.js"></script>
-	<script type="text/javascript" src="js/filter.js"></script>
-	<script type="text/javascript" src="js/history.js"></script>
-	<script type="text/javascript" src="js/entryrender.js"></script>
-	<script type="text/javascript" src="js/races.js"></script>
-	<script type="text/javascript" src="lib/list.js"></script>
 	<script type="text/javascript" src="lib/jquery.js"></script>
+	<script type="text/javascript" src="js/nav.js"></script>
 </body>
-
 </html>
