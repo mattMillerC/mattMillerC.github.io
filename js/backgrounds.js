@@ -69,7 +69,6 @@ function onJsonLoad(data) {
 }
 
 function loadhash (id) {
-	window.scrollTo(0,0,);
 	$(".stats-wrapper").html(tabledefault);
 	const curbg = bgList[id];
 	const source = curbg.source;

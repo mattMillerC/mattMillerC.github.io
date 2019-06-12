@@ -46,7 +46,7 @@
 		</div>
 	</header>
 
-	<aside class="mdc-drawer mdc-drawer--modal mdc-theme--surface">
+	<aside class="mdc-drawer mdc-drawer--modal mdc-drawer--open mdc-theme--surface">
 		<div class="mdc-drawer__content">
 			<nav class="mdc-list">
 				<div class="mdc-drawer__header hidden-desktop-up">
@@ -66,35 +66,77 @@
 					</div>
 				</a>
 
+				<hr class="mdc-list-divider">
 				<a class="mdc-list-item mdc-theme--on-surface" href="rules.html" tabindex="0">
 					<i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">library_books</i>
 					<span class="mdc-list-item__text">Rules</span>
 				</a>
 
 				
-				<ul class="mdc-list rules undefined" style='display: none;'></ul>
+				<ul class="rules undefined" style='display: none;'></ul>
 
-				<div class="mdc-list-item rule-title mdc-theme--on-surface">Character Creation</div>
-				<ul class="mdc-list rules charactercreation"></ul>
+				<div class='collapse'>
+					<div class='collapse-toggle mdc-list-item rule-title mdc-theme--on-surface'>
+						Character Creation
+					</div>
+					<div class='collapse-wrapper'>
+						<ul class='collapse-list rules charactercreation'>
+						</ul>
+					</div>
+				</div>
 				
-				<div class="mdc-list-item rule-title mdc-theme--on-surface">Equipment</div>
-				<ul class="mdc-list rules equipment"></ul>
-				
-				<div class="mdc-list-item rule-title mdc-theme--on-surface">Playing the Game</div>
-				<ul class="mdc-list rules playingthegame"></ul>
-				
-				<div class="mdc-list-item rule-title mdc-theme--on-surface">Running the Game</div>
-				<ul class="mdc-list rules runningthegame"></ul>
+				<div class='collapse'>
+					<div class='collapse-toggle mdc-list-item rule-title mdc-theme--on-surface'>
+						Equipment
+					</div>
+					<div class='collapse-wrapper'>
+						<ul class='collapse-list rules equipment'>
+						</ul>
+					</div>
+				</div>
 
-				<div class="mdc-list-item rule-title mdc-theme--on-surface">Setting</div>
-				<ul class="mdc-list rules setting"></ul>
+				<div class='collapse'>
+					<div class='collapse-toggle mdc-list-item rule-title mdc-theme--on-surface'>
+						Playing the Game
+					</div>
+					<div class='collapse-wrapper'>
+						<ul class='collapse-list rules playingthegame'>
+						</ul>
+					</div>
+				</div>
 
-				<div class="mdc-list-item rule-title mdc-theme--on-surface">Unearthed Arcana</div>
-				<ul class="mdc-list rules unearthedarcana"></ul>
+				<div class='collapse'>
+					<div class='collapse-toggle mdc-list-item rule-title mdc-theme--on-surface'>
+						Running the Game
+					</div>
+					<div class='collapse-wrapper'>
+						<ul class='collapse-list rules runningthegame'>
+						</ul>
+					</div>
+				</div>
+
+				<div class='collapse'>
+					<div class='collapse-toggle mdc-list-item rule-title mdc-theme--on-surface'>
+						Setting
+					</div>
+					<div class='collapse-wrapper'>
+						<ul class='collapse-list rules setting'>
+						</ul>
+					</div>
+				</div>
+
+				<div class='collapse'>
+					<div class='collapse-toggle mdc-list-item rule-title mdc-theme--on-surface'>
+						Unearthed Arcana
+					</div>
+					<div class='collapse-wrapper'>
+						<ul class='collapse-list rules unearthedarcana'>
+						</ul>
+					</div>
+				</div>
 
 
-				<a class="mdc-list-item mdc-theme--on-surface" href="variantrules.html">
-					<i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">description</i>
+				<a class="rules-page-variant mdc-list-item mdc-theme--on-surface" href="variantrules.html">
 					<span class="mdc-list-item__text">Variant Rules</span>
 				</a>
 

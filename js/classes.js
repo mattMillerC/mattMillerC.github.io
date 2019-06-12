@@ -37,7 +37,7 @@ window.onload = function load() {
 };
 
 function getClassHash(aClass) {
-	return `#${encodeForHash(aClass.name)}${HASH_LIST_SEP}${encodeForHash(aClass.source)}`;
+	return `${encodeForHash(aClass.name)}${HASH_LIST_SEP}${encodeForHash(aClass.source)}`;
 }
 
 function getEncodedSubclass(name, source) {
@@ -65,19 +65,11 @@ function onJsonLoad(data) {
 	for (let i = 0; i < classes.length; i++) {
 		const curClass = classes[i];
 		tempString +=
-			`<li>
-				<a id='${i}' href='${getClassHash(curClass)}' title='${curClass.name}'>
-					<span class='name col-xs-8'>${curClass.name}</span>
-					<span class='source col-xs-4 text-align-center source${Parser.sourceJsonToAbv(curClass.source)}' title='${Parser.sourceJsonToFull(curClass.source)}'>${Parser.sourceJsonToAbv(curClass.source)}</span>
-				</a>
-			</li>`;
+			`<div id='${i}' class='class-item mdc-list-item mdc-theme--on-surface history-link' data-link='${getClassHash(curClass)}' data-title='${curClass.name}'>
+				${curClass.name}
+			</div>`;
 	}
 	classTable.append(tempString);
-
-	const list = search({
-		valueNames: ['name', 'source'],
-		listClass: "classes"
-	});
 
 	initHistory()
 }
@@ -86,6 +78,7 @@ function loadhash (id) {
 	$("#stats").html(tableDefault);
 	$("#statsprof").html(statsProfDefault);
 	$("#classtable").html(classTableDefault);
+	$(".classtableclone").remove();
 	const curClass = classes[id];
 
 	const isUaClass = isNonstandardSource(curClass.source);
@@ -154,6 +147,17 @@ function loadhash (id) {
 				tr.append(`<td class="centred-col" ${subclassData}>${stack.join("")}</td>`)
 			}
 		}
+		if (tGroup.colLabels.length > 5) {
+			let mobileClone = $('<div class="mobile-clone-spells"></div>')
+				.append($('#classtable').clone());
+
+			mobileClone.find("#groupHeaders th:not(.colGroupTitle)").remove();
+			mobileClone.find("#groupHeaders .colGroupTitle").attr('colspan', '12');
+			mobileClone.find("#colHeaders th:nth-child(4)").html('<span title="Cantrips Known">C</span>');
+			mobileClone.find("#colHeaders th:nth-child(5)").html('<span title="Spells Known">S</span>');
+			$("#classtable").addClass('mobile-clone-features');
+			$('#classtable').after(mobileClone);
+		}
 	}
 
 	// FEATURE DESCRIPTIONS ============================================================================================
@@ -172,9 +176,11 @@ function loadhash (id) {
 			const featureId = HASH_FEATURE+encodeForHash(feature.name)+"_"+i;
 
 			const featureLinkPart = HASH_FEATURE+encodeForHash(feature.name)+i;
-			const featureLink = $(`<a href="${getClassHash(curClass)}${HASH_PART_SEP}${featureLinkPart}" class="${CLSS_FEATURE_LINK}" ${ATB_DATA_FEATURE_LINK}="${featureLinkPart}" ${ATB_DATA_FEATURE_ID}="${featureId}">${feature.name}</a>`);
-			featureLink.click(function() {
-				document.getElementById(featureId).scrollIntoView();
+			const featureLink = $(`<a href="#${getClassHash(curClass)}${HASH_PART_SEP}${featureLinkPart}" class="${CLSS_FEATURE_LINK}" ${ATB_DATA_FEATURE_LINK}="${featureLinkPart}" ${ATB_DATA_FEATURE_ID}="${featureId}">${feature.name}</a>`);
+			featureLink.click(function(e) {
+				e.preventDefault();
+				document.getElementById(featureId).scrollIntoView(true);
+				window.scrollBy(0, -64);
 			});
 			featureNames.push(featureLink);
 

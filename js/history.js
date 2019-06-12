@@ -6,6 +6,7 @@ function hashchange(e) {
 		const $el = _getListElem(link);
 		if ($el && $el.attr("id")) {
 			loadhash($el.attr("id"));
+			window.scrollTo(0, 0);
 			$('.history-link.selected').removeClass('selected');
 			$el.addClass('selected');
 			if (!window.originalTitle) {

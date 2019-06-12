@@ -85,8 +85,12 @@
         // Nav Button
         const button = Material.ripple.MDCRipple.attachTo(document.querySelector('.mdc-top-app-bar__navigation-icon'));
         const drawer = Material.drawer.MDCDrawer.attachTo(document.querySelector('.mdc-drawer'));
+        window.drawer = drawer;
         document.querySelector('.mdc-top-app-bar__navigation-icon').addEventListener('click', (e) => {
             drawer.open = !drawer.open;
+        });
+        $(document).on("click", ".rules .mdc-list-item, .classes .mdc-list-item", () => {
+            drawer.open = false;
         });
 
         // List Items
@@ -95,7 +99,15 @@
         });
 
         $(document).on('click', '.collapse .collapse-toggle', (e) => {
-            $(e.target).closest('.collapse').toggleClass('open');
+            let collapse = $(e.target).closest('.collapse'),
+                list = collapse.find('.collapse-list');
+
+            if (collapse.hasClass('open')) {
+                list.css("margin-top", "-" + list.height() + "px");
+            } else {
+                list.css("margin-top", "0px");
+            }
+            collapse.toggleClass('open');
         });
     });
 })(mdc);

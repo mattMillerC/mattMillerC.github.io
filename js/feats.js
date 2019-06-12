@@ -95,7 +95,6 @@ function onJsonLoad(data) {
 }
 
 function loadhash(id) {
-	window.scrollTo(0,0,);
 	$('.stats-wrapper').html(tabledefault);
 	const feat = featlist[id];
 

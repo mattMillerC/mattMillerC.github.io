@@ -110,7 +110,6 @@ function onJsonLoad (data) {
 
 const renderer = new EntryRenderer();
 function loadhash (id) {
-	window.scrollTo(0,0,);
 	$(".stats-wrapper").html(tableDefault);
 	const race = raceList[id];
 
