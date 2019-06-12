@@ -40,7 +40,7 @@ function onJsonLoad(data) {
 		tempString += `
 			<tr class="table-row history-link" data-link="${encodeURIComponent(reward.name).toLowerCase().replace("'","%27")}" data-title="${reward.name}" ${FLTR_ID}="${i}" id='${i}'>
 				<td class='${CLS_COL_1}'>${reward.name}</td>
-				<td class='${CLS_COL_2}' title="${Parser.sourceJsonToFull(reward.source)}">${Parser.sourceJsonToAbv(reward.source)}</td>
+				<td class='${CLS_COL_2}' style='width: 73px;' title="${Parser.sourceJsonToFull(reward.source)}">${Parser.sourceJsonToAbv(reward.source)}</td>
 			</tr>`;
 
 		// populate filters

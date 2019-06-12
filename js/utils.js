@@ -421,9 +421,9 @@ function utils_getAbilityData(abObj) {
 					let amount = item.amount === undefined ? 1 : item.amount;
 					amount = (amount < 0 ? "" : "+") + amount;
 					if (allAbilities) {
-						outStack += "any ";
+						outStack += "Any ";
 					} else if (allAbilitiesWithParent) {
-						outStack += "any other ";
+						outStack += "Any other ";
 					}
 					if (item.count !== undefined && item.count > 1) {
 						outStack += getNumberString(item.count) + " ";
@@ -450,7 +450,7 @@ function utils_getAbilityData(abObj) {
 						}
 					}
 				}
-				abs.push("Choose " + outStack);
+				abs.push(outStack);
 				shortAbs.push(outStack.uppercaseFirst());
 			}
 		}

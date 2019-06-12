@@ -40,10 +40,10 @@ const JSON_ITEM_MODE_CONCENTRATION_UNIT = "unit";
 
 const CLS_PSIONICS = "psionics";
 const CLS_ROW = "row";
-const CLS_COL1 = "table-cell";
-const CLS_COL2 = "table-cell";
+const CLS_COL1 = "table-cell table-cell--border";
+const CLS_COL2 = "table-cell hidden-mobile-down";
 const CLS_COL3 = "table-cell";
-const CLS_COL4 = "table-cell";
+const CLS_COL4 = "table-cell hidden-mobile-down";
 const CLS_LI_NONE = "list-entry-none";
 
 const LIST_NAME = "name";

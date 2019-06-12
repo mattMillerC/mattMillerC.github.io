@@ -45,8 +45,8 @@ function onJsonLoad(data) {
 
 		tempString += `
 			<tr class="table-row history-link" data-link="${encodeForHash(curRule.name)}_${encodeForHash(curRule.source)}" data-title="${curRule.name}" ${FLTR_ID}="${i}" id='${i}'>
-				<td class='table-cell name'>${curRule.name}</td>
-				<td class='table-cell source source${Parser.sourceJsonToAbv(curRule.source)}' title='${Parser.sourceJsonToFull(curRule.source)}'>${Parser.sourceJsonToAbv(curRule.source)}</td>
+				<td class='table-cell table-cell--border name'>${curRule.name}</td>
+				<td class='table-cell source source${Parser.sourceJsonToAbv(curRule.source)}' style='width: 72px;' title='${Parser.sourceJsonToFull(curRule.source)}'>${Parser.sourceJsonToAbv(curRule.source)}</td>
 				<td class='search' style='display:none;'>${searchStack.join(",")}</span>
 			</tr>`;
 

@@ -35,8 +35,8 @@ function onJsonLoad (data) {
 
 		const CLS_COL_1 = "table-cell table-cell--border name ";
 		const CLS_COL_2 = "table-cell ability " + (ability.asText === STR_NONE ? "list-entry-none " : "");
-		const CLS_COL_3 = "table-cell size";
-		const CLS_COL_4 = `table-cell source source${race.source}`;
+		const CLS_COL_3 = "table-cell hidden-mobile-down size";
+		const CLS_COL_4 = `table-cell hidden-mobile-down source source${race.source}`;
 
 		tempString += `
 			<tr class="table-row history-link" data-link="${encodeURI(race.name).toLowerCase()}" data-title="${race.name}" ${FLTR_ID}="${i}" id='${i}'>

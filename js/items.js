@@ -227,8 +227,8 @@ function populateTablesAndFilters() {
 
 		const CLS_COL_1 = "table-cell table-cell--border name";
 		const CLS_COL_2 = "table-cell type";
-		const CLS_COL_3 = `table-cell source source${sourceAbv}`;
-		const CLS_COL_4 = "table-cell rarity";
+		const CLS_COL_3 = `table-cell hidden-mobile-down source source${sourceAbv}`;
+		const CLS_COL_4 = "table-cell hidden-mobile-down rarity";
 
 		liList[rarity === "None" || rarity === "Unknown" || category === "Basic" ? "mundane" : "magic"] += `
 			<tr class="table-row history-link" data-link="${encodeForHash(name)}_${encodeForHash(source)}" data-title="${name}" ${FLTR_ID}="${i}" id='${i}'>

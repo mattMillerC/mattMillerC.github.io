@@ -69,7 +69,7 @@ function _getHashParts() {
 }
 
 function _getListElem(link) {
-	const listWrapper = $(`#listcontainer [data-link='${link.toLowerCase()}']`);
+	const listWrapper = $(`.history-link[data-link='${link.toLowerCase()}']`);
 	if (listWrapper[0]) {
 		return listWrapper;
 	}

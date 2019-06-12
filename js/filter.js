@@ -61,7 +61,7 @@ class FilterBox {
 		}
 
 		function getMiniView() {
-			return $(`<div class="mini-view btn-group"/>`);
+			return $(`<div class="mini-view btn-group hidden-mobile-down"/>`);
 		}
 
 		function makeDropdownRow(i, self, filter, $miniView) {

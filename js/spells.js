@@ -318,12 +318,12 @@ function onJsonLoad(data) {
 
 
 		const CLS_COL_1 = "table-cell table-cell--border name ";
-		const CLS_COL_2 = `table-cell source source${spell.source}`;
+		const CLS_COL_2 = `table-cell hidden-mobile-down  source source${spell.source}`;
 		const CLS_COL_3 = "table-cell level";
-		const CLS_COL_4 = "table-cell time";
-		const CLS_COL_5 = `table-cell school school_${spell.school}`;
-		const CLS_COL_6 = "table-cell range";
-		const CLS_COL_7 = "table-cell classes";
+		const CLS_COL_4 = "table-cell hidden-mobile-down  time";
+		const CLS_COL_5 = `table-cell hidden-mobile-down  school school_${spell.school}`;
+		const CLS_COL_6 = "table-cell hidden-mobile-down  range";
+		const CLS_COL_7 = "table-cell hidden-mobile-down classes";
 
 		tempString += `
 			<tr class="table-row history-link" data-link="${encodeForHash([spell.name, spell.source])}" data-title="${spell.name}" ${FLTR_ID}="${i}" id='${i}'>

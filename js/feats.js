@@ -43,7 +43,7 @@ function onJsonLoad(data) {
 		const CLS_COL_1 = "table-cell table-cell--border name ";
 		const CLS_COL_2 = `table-cell source source${curfeat.source}`;
 		const CLS_COL_3 = "table-cell ability " + (ability.asText === STR_NONE ? "list-entry-none " : "");
-		const CLS_COL_4 = "table-cell prerequisite " + (prereqText === STR_NONE ? "list-entry-none " : "");
+		const CLS_COL_4 = "table-cell prerequisite hidden-mobile-down " + (prereqText === STR_NONE ? "list-entry-none " : "");
 
 		tempString += `
 			<tr class="table-row history-link" data-link="${encodeForHash(name)+HASH_LIST_SEP+encodeForHash(curfeat.source)}" data-title="${name}" ${FLTR_ID}="${i}" id='${i}'>
