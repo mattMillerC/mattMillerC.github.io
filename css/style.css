@@ -71,10 +71,6 @@ header h1 {
 		max-height: none;
 		height: auto;
 	}
-
-	ul.list {
-		max-height: 40em;
-	}
 }
 
 .view-col {
@@ -144,50 +140,6 @@ form#filtertools small:hover {
 }
 
 .sortlabel {
-	display: block;
-}
-
-ul.list {
-	position: relative;
-	list-style-type: none;
-	padding-left: 0;
-	height: 100%;
-	overflow-y: auto;
-	overflow-x: hidden;
-	padding-top: 1em;
-	clear: both;
-	font-size: 0.8em;
-}
-
-ul.list li {
-	padding: 1px;
-	cursor: pointer;
-	display: block;
-	border-bottom: 1px solid #ddd;
-	max-height: 3em;
-	overflow-y: hidden;
-}
-
-ul.list li:hover {
-	max-height: 100%;
-}
-
-ul.list li:active {
-	color: white;
-}
-
-ul.list li span.name {
-	font-weight: bold;
-}
-
-ul.list li span.level,
-ul.list li span.classes,
-ul.list li span.school {
-	display: inline-block;
-	text-transform: capitalize;
-}
-
-ul.list li:hover span {
 	display: block;
 }
 
@@ -659,11 +611,6 @@ aside#listcontainer {
 	margin-right: 1em;
 }
 
-ul.list.rules {
-	overflow-y: auto !important;
-	padding-top: 0;
-}
-
 #rulescontent caption {
 	font-weight: bold;
 	font-size: 1.2em;
@@ -706,10 +653,6 @@ ul.list.rules {
 td.features {
 	max-width: 100%;
 	white-space: pre-wrap;
-}
-
-ul.list.classes {
-	overflow-y: initial;
 }
 
 #classtable .centred-col {
@@ -759,19 +702,6 @@ div#subclasses span.os-active {
 
 #classtable .colGroupTitle {
 	text-align: center;
-}
-
-#classtable .colGroupTitle::after {
-	display: block;
-	content: "";
-	position: relative;
-	left: 0;
-	bottom: 0;
-	height: 1px;
-	width: 96%;
-	border-bottom: 1px solid black;
-	margin: 0 auto;
-	padding: 0;
 }
 
 .featurebuffer {

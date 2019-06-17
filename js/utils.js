@@ -221,7 +221,7 @@ function utils_makeLink(linkObj) {
 	} else if (linkObj.href.type === "external") {
 		href = linkObj.href.url;
 	}
-	return `<a href='${href}' target='_blank'>${linkObj.text}</a>`;
+	return `<a href='${href}'>${linkObj.text}</a>`;
 }
 function utils_makeOldList(listObj) { //to handle islist === "YES"
 	let outStack = "<ul>";

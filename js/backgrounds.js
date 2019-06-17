@@ -111,4 +111,8 @@ function loadhash (id) {
 		}
 	}
 
+	window.setTimeout(() => {
+		let list = $(".stats-wrapper .table-container .collapse-list");
+		list.css("margin-top", "-" + list.height() + "px");
+	}, 0);
 }

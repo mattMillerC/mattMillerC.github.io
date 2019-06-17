@@ -191,14 +191,14 @@ class FilterBox {
 				}
 
 				for (const item of filter.items) {
-					const $pill = $(`<div class="filter-pill mdc-fab mdc-fab--extended"/>`);
-					const $miniPill = $(`<div class="mini-pill  mdc-fab mdc-fab--extended group${i}"/>`);
+					const $pill = $(`<div class="filter-pill mdc-chip"/>`);
+					const $miniPill = $(`<div class="mini-pill  mdc-chip group${i}"/>`);
 
 					const display = filter.displayFn ? filter.displayFn(item) : item;
 
 					$pill.val(item);
-					$pill.append($(`<span class="mdc-fab__label">${display}</span>`));
-					$miniPill.append($(`<span class="mdc-fab__label">${display}</span>`));
+					$pill.append($(`<span class="mdc-chip__text">${display}</span>`));
+					$miniPill.append($(`<span class="mdc-chip__text">${display}</span>`));
 
 					$pill.attr("state", FilterBox._PILL_STATES[0]);
 					$miniPill.attr("state", FilterBox._PILL_STATES[0]);

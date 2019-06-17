@@ -56,8 +56,6 @@ function onJsonLoad(data) {
 		c.subclasses = c.subclasses.sort((a, b) => ascSort(a.name, b.name));
 	}
 
-	tableDefault = $("#stats").html();
-	statsProfDefault = $("#statsprof").html();
 	classTableDefault = $("#classtable").html();
 
 	const classTable = $("ul.classes");
@@ -70,35 +68,30 @@ function onJsonLoad(data) {
 			</div>`;
 	}
 	classTable.append(tempString);
+	$(".class-list-container").append(tempString);
 
 	initHistory()
 }
 
 function loadhash (id) {
-	$("#stats").html(tableDefault);
-	$("#statsprof").html(statsProfDefault);
 	$("#classtable").html(classTableDefault);
-	$(".classtableclone").remove();
+	$(".mobile-clone-spells").remove();
 	const curClass = classes[id];
 
 	const isUaClass = isNonstandardSource(curClass.source);
 
-	// name
-	$("th#nameTable").html(curClass.name);
-	$("th#nameSummary").html(curClass.name);
-
 	// SUMMARY SIDEBAR =================================================================================================
 	// hit dice and HP
-	$("td#hp div#hitdice span").html(EntryRenderer.getEntryDice(curClass.hd));
-	$("td#hp div#hp1stlevel span").html(curClass.hd.faces+" + your Constitution modifier");
-	$("td#hp div#hphigherlevels span").html(`${EntryRenderer.getEntryDice(curClass.hd)} (or ${(curClass.hd.faces/2+1)}) + your Constitution modifier per ${curClass.name} level after 1st`);
+	$("#hp div#hitdice span").html(EntryRenderer.getEntryDice(curClass.hd));
+	$("#hp div#hp1stlevel span").html(curClass.hd.faces+" + your Constitution modifier");
+	$("#hp div#hphigherlevels span").html(`${EntryRenderer.getEntryDice(curClass.hd)} (or ${(curClass.hd.faces/2+1)}) + your Constitution modifier per ${curClass.name} level after 1st`);
 
 	// save proficiency
-	$("td#prof div#saves span").html(curClass.proficiency.map(p => Parser.attAbvToFull(p)).join(", "));
+	$("#prof div#saves span").html(curClass.proficiency.map(p => Parser.attAbvToFull(p)).join(", "));
 
 	// starting proficiencies
 	const sProfs = curClass.startingProficiencies;
-	const profSel = $("td#prof");
+	const profSel = $("#prof");
 	profSel.find("div#armor span").html(sProfs.armor === undefined ? STR_PROF_NONE : sProfs.armor.map(a => a === "light" || a === "medium" || a === "heavy" ? a+" armor": a).join(", "));
 	profSel.find("div#weapons span").html(sProfs.weapons === undefined ? STR_PROF_NONE : sProfs.weapons.map(w => w === "simple" || w === "martial" ? w+" weapons" : w).join(", "));
 	profSel.find("div#tools span").html(sProfs.tools === undefined ? STR_PROF_NONE : sProfs.tools.join(", "));
@@ -121,6 +114,7 @@ function loadhash (id) {
 	const groupHeaders = $("#groupHeaders");
 	const colHeaders = $("#colHeaders");
 	const levelTrs = [];
+	let spellsFlag = false;
 	for (let i = 0; i < tData.length; i++) {
 		const tGroup = tData[i];
 
@@ -129,11 +123,11 @@ function loadhash (id) {
 		if (tGroup.subclasses !== undefined) {
 			subclassData = `${ATB_DATA_SC_LIST}="${tGroup.subclasses.map(s => getTableDataScData(s.name, s.source)).join(ATB_DATA_LIST_SEP)}"`;
 		}
-		groupHeaders.append(`<th ${hasTitle ? `class="colGroupTitle"` : ""} colspan="${tGroup.colLabels.length}" ${subclassData}>${hasTitle ? tGroup.title : ""}</th>`);
+		groupHeaders.append(`<th ${hasTitle ? `class="colGroupTitle table-cell"` : ""} colspan="${tGroup.colLabels.length}" ${subclassData}>${hasTitle ? tGroup.title : ""}</th>`);
 
 		for (let j = 0; j < tGroup.colLabels.length; j++) {
 			const lbl = tGroup.colLabels[j];
-			colHeaders.append(`<th class="centred-col" ${subclassData}>${lbl}</th>`)
+			colHeaders.append(`<th class="centred-col table-cell" ${subclassData}>${lbl}</th>`);
 		}
 
 		for (let j = 0; j < 20; j++) {
@@ -147,18 +141,32 @@ function loadhash (id) {
 				tr.append(`<td class="centred-col" ${subclassData}>${stack.join("")}</td>`)
 			}
 		}
-		if (tGroup.colLabels.length > 5) {
-			let mobileClone = $('<div class="mobile-clone-spells"></div>')
-				.append($('#classtable').clone());
-
-			mobileClone.find("#groupHeaders th:not(.colGroupTitle)").remove();
-			mobileClone.find("#groupHeaders .colGroupTitle").attr('colspan', '12');
-			mobileClone.find("#colHeaders th:nth-child(4)").html('<span title="Cantrips Known">C</span>');
-			mobileClone.find("#colHeaders th:nth-child(5)").html('<span title="Spells Known">S</span>');
-			$("#classtable").addClass('mobile-clone-features');
-			$('#classtable').after(mobileClone);
-		}
+		if (!spellsFlag && (tGroup.colLabels.indexOf("Spells Known") > -1 || tGroup.colLabels.indexOf('Cantrips Known') > -1 || tGroup.colLabels.indexOf('1st') > -1 || tGroup.colLabels.indexOf('Ki Points') > -1 || tGroup.colLabels.indexOf('Rages') > -1 || tGroup.colLabels.indexOf('Talents Known') > -1)) {
+			spellsFlag = true
+        }
 	}
+
+	$("#classtable").removeClass("mobile-clone-features");
+	if (spellsFlag) {
+        $("#classtable").addClass("mobile-clone-features");
+        let mobileClone = $('<div class="mobile-clone-spells"></div>').append($("#classtable").clone());
+
+		mobileClone.find("#classtable").removeClass("mobile-clone-features");
+        mobileClone.find("#groupHeaders th:not(.colGroupTitle)").remove();
+        mobileClone.find("#groupHeaders .colGroupTitle").attr("colspan", "12");
+        mobileClone.find("#colHeaders th").each((i, e) => {
+			if (e.textContent.toLowerCase().indexOf("sneak attack") > -1) {
+                $(e).html('<span title="Sneak Attack">Snk Atk</span>');
+            } else if (e.textContent.toLowerCase().indexOf("sorcery points") > -1) {
+                $(e).html('<span title="Sorcery Points">SP</span>');
+            } else if (e.textContent.toLowerCase().indexOf("spells known") > -1) {
+                $(e).html('<span title="Spells Known">S</span>');
+            } else if (e.textContent.toLowerCase().indexOf("cantrips known") > -1) {
+                $(e).html('<span title="Cantrips Known">C</span>');
+            }
+		});
+        $("#classtable").after(mobileClone);
+    }
 
 	// FEATURE DESCRIPTIONS ============================================================================================
 	const renderStack = [];

@@ -109,5 +109,17 @@
             }
             collapse.toggleClass('open');
         });
+
+        // swipe
+        registerSwipe($('body')[0], 'left', (e) => {
+            if (drawer.open) {
+                drawer.open = false;
+            }
+        });
+        registerSwipe($('body')[0], 'right', (e) => {
+            if (!drawer.open) {
+                drawer.open = true;
+            }
+        });
     });
 })(mdc);

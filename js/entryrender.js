@@ -270,7 +270,7 @@ function EntryRenderer() {
 			} else if (entry.href.type === "external") {
 				href = entry.href.url;
 			}
-			textStack.push(`<a href='${href}' target='_blank'>${entry.text}</a>`);
+			textStack.push(`<a href='${href}'>${entry.text}</a>`);
 		}
 
 		function renderString(self) {

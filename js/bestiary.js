@@ -225,7 +225,7 @@ function loadhash (id) {
 	$("th#name").html(
 		`<span class="stats-name">${name}</span>
 		<span class="stats-source source${source}" title="${Parser.sourceJsonToFull(source)}">${Parser.sourceJsonToAbv(source)}</span>
-		<a href="img/${source}/${name}.png" target='_blank'>
+		<a href="img/${source}/${name}.png">
 			<img src="img/${source}/${name}.png" class='token' onerror='imgError(this)'>
 		</a>`
 	);
@@ -362,7 +362,7 @@ function loadhash (id) {
 			if (spellslist[0] === "*") return;
 			spellslist = spellslist.split(": ")[1].split(/\, (?!\+|\dd|appears|inside gems)/g);
 			for (let i = 0; i < spellslist.length; i++) {
-				spellslist[i] = "<a href='spells.html#" + encodeURIComponent((spellslist[i].replace(/(\*)| \(([^\)]+)\)/g, ""))).toLowerCase().replace("'", "%27") + "_" + "phb' target='_blank'>" + spellslist[i] + "</a>";
+				spellslist[i] = "<a href='spells.html#" + encodeURIComponent((spellslist[i].replace(/(\*)| \(([^\)]+)\)/g, ""))).toLowerCase().replace("'", "%27") + "_" + "phb'>" + spellslist[i] + "</a>";
 				if (i !== spellslist.length - 1) spellslist[i] = spellslist[i] + ", ";
 			}
 

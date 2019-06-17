@@ -25,7 +25,7 @@ function onJsonLoad(data) {
         const toAdd = rulesList[i].parentlist;
         if ($.inArray(toAdd, listNames) === -1) listNames.push(toAdd);
     }
-    const lists = [];
+    // const lists = [];
     // listNames.forEach(ln => {
     //     lists.push(
     //         search({
@@ -49,6 +49,9 @@ function onJsonLoad(data) {
             })
             .appendTo(this);
     });
+
+    let rulesCloned = $(".rules-wrapper").clone();
+    $("#rulescontent").before(rulesCloned);
 
     initHistory();
 };
