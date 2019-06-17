@@ -39,7 +39,6 @@
                 root.style.setProperty('--mdc-theme-on-surface', '#000');
                 root.style.setProperty('--mdc-theme-on-error', '#fff');
                 root.style.setProperty('--mdc-theme-text-primary-on-background', 'rgba(0, 0, 0, 0.87)');
-                root.style.setProperty('--mdc-theme-text-primary-on-background', 'rgba(0, 0, 0, 0.87)');
                 root.style.setProperty('--mdc-theme-text-secondary-on-background', 'rgba(0, 0, 0, 0.54)');
                 root.style.setProperty('--mdc-theme-text-hint-on-background', 'rgba(0, 0, 0, 0.38)');
                 root.style.setProperty('--mdc-theme-text-disabled-on-background', 'rgba(0, 0, 0, 0.38)');

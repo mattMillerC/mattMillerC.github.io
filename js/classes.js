@@ -6,8 +6,8 @@ const HASH_ALL_SOURCES = "allsrc:";
 const HASH_SUB_LIST_SEP = "~";
 
 const CLSS_FEATURE_LINK = "feature-link";
-const CLSS_ACTIVE = "active";
-const CLSS_SUBCLASS_PILL = "sc-pill";
+const CLSS_ACTIVE = "mdc-chip--selected";
+const CLSS_SUBCLASS_PILL = "mdc-chip";
 const CLSS_CLASS_FEATURES_ACTIVE = "cf-active";
 const CLSS_OTHER_SOURCES_ACTIVE = "os-active";
 const CLSS_SUBCLASS_PREFIX = "subclass-prefix";
@@ -77,6 +77,7 @@ function loadhash (id) {
 	$("#classtable").html(classTableDefault);
 	$(".mobile-clone-spells").remove();
 	const curClass = classes[id];
+	window.className = curClass.name;
 
 	const isUaClass = isNonstandardSource(curClass.source);
 
@@ -170,7 +171,6 @@ function loadhash (id) {
 
 	// FEATURE DESCRIPTIONS ============================================================================================
 	const renderStack = [];
-	const topBorder = $("#ftTopBorder");
 	let subclassIndex = 0; // the subclass array is not 20 elements
 	for (let i = 0; i < 20; i++) {
 		// track class table feature names
@@ -195,7 +195,7 @@ function loadhash (id) {
 			const styleClasses = [CLSS_CLASS_FEATURE];
 			if (feature.gainSubclassFeature) styleClasses.push(CLSS_GAIN_SUBCLASS_FEATURE);
 
-			renderer.recursiveEntryRender(feature, renderStack, 0, `<tr id="${featureId}" class="${styleClasses.join(" ")}"><td colspan="6">`, `</td></tr>`, true);
+			renderer.recursiveEntryRender(feature, renderStack, 0, `<div id="${featureId}" class="${styleClasses.join(" ")}">`, `</div>`, true);
 
 			// add subclass features to render stack if appropriate
 			if (feature.gainSubclassFeature) {
@@ -218,7 +218,7 @@ function loadhash (id) {
 						const styleClasses = [CLSS_SUBCLASS_FEATURE];
 						const hideSource = isNonstandardSource(subClass.source) || hasBeenReprinted(subClass.shortName, subClass.source);
 						if (hideSource) styleClasses.push(CLSS_NON_STANDARD_SOURCE);
-						renderer.recursiveEntryRender(subFeature, renderStack, 0, `<tr class="${styleClasses.join(" ")}" ${ATB_DATA_SC}="${subClass.name}" ${ATB_DATA_SRC}="${subClass.source}"><td colspan="6">`, `</td></tr>`, true);
+						renderer.recursiveEntryRender(subFeature, renderStack, 0, `<div class="${styleClasses.join(" ")}" ${ATB_DATA_SC}="${subClass.name}" ${ATB_DATA_SRC}="${subClass.source}">`, `</div>`, true);
 					}
 				}
 				subclassIndex++;
@@ -234,7 +234,7 @@ function loadhash (id) {
 			}
 		}
 	}
-	topBorder.after(renderStack.join(""));
+	$("#stats").html(renderStack.join(""));
 
 	// hide UA/other sources by default
 	$(`.${CLSS_NON_STANDARD_SOURCE}`).not(`.${CLSS_SUBCLASS_PILL}`).hide();
@@ -242,16 +242,13 @@ function loadhash (id) {
 	// CLASS FEATURE/UA/SUBCLASS PILL BUTTONS ==========================================================================
 	const subclassPillWrapper = $("div#subclasses");
 	// remove any from previous class
-	subclassPillWrapper.find("span").remove();
+	subclassPillWrapper.empty();
 
 	// show/hide class features pill
 	makeGenericTogglePill("Class Features", CLSS_CLASS_FEATURES_ACTIVE, ID_CLASS_FEATURES_TOGGLE, HASH_HIDE_FEATURES, true);
 
 	// show/hide UA/other sources
 	const allSourcesToggle = makeGenericTogglePill("All Sources", CLSS_OTHER_SOURCES_ACTIVE, ID_OTHER_SOURCES_TOGGLE, HASH_ALL_SOURCES, false);
-
-	// spacer before the subclass pills
-	subclassPillWrapper.append($(`<span class="divider">`));
 
 	// subclass pills
 	const subClasses = curClass.subclasses
@@ -262,7 +259,7 @@ function loadhash (id) {
 		const styleClasses = [CLSS_ACTIVE, CLSS_SUBCLASS_PILL];
 		if (nonStandardSource) styleClasses.push(CLSS_NON_STANDARD_SOURCE);
 		const pillText = hasBeenReprinted(subClasses[i].shortName, subClasses[i].source) ? `${subClasses[i].shortName} (${Parser.sourceJsonToAbv(subClasses[i].source)})` : subClasses[i].shortName;
-		const pill = $(`<span class="${styleClasses.join(" ")}" ${ATB_DATA_SC}="${subClasses[i].name}" ${ATB_DATA_SRC}="${subClasses[i].source}" title="Source: ${Parser.sourceJsonToFull(subClasses[i].source)}"><span>${pillText}</span></span>`);
+		const pill = $(`<div class="${styleClasses.join(" ")}" ${ATB_DATA_SC}="${subClasses[i].name}" ${ATB_DATA_SRC}="${subClasses[i].source}" title="Source: ${Parser.sourceJsonToFull(subClasses[i].source)}"><span class='mdc-chip__text'>${pillText}</span></div>`);
 		pill.click(function() {
 			handleSubclassClick($(this).hasClass(CLSS_ACTIVE), subClasses[i].name, subClasses[i].source);
 		});
@@ -275,7 +272,7 @@ function loadhash (id) {
 
 	// helper functions
 	function makeGenericTogglePill(pillText, pillActiveClass, pillId, hashKey, defaultActive) {
-		const pill = $(`<span id="${pillId}"><span>${pillText}</span></span>`);
+		const pill = $(`<div id="${pillId}" class="mdc-chip"><span class="mdc-chip__text">${pillText}</span></div>`);
 		if (defaultActive) pill.addClass(pillActiveClass);
 		subclassPillWrapper.append(pill);
 		pill.click(function() {
@@ -354,6 +351,14 @@ function loadhash (id) {
 let prevFeature = null;
 function loadsub(sub) {
 	const curHash = window.location.hash;
+
+	let newTitle = window.className;
+	$(".main").addClass("item-opened");
+	$('.breadcrumbs__no_caret').removeClass('breadcrumbs__no_caret').addClass('breadcrumbs__caret-removed');
+	$('.breadcrumbs__last').text(newTitle);
+	$('.main .page-title').first().text(newTitle);
+	$('.main').addClass('item-opened');
+	document.title = newTitle + " - 5E Tools";
 
 	let subclasses = null;
 	let feature = null;

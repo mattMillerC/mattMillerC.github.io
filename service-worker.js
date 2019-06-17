@@ -1,15 +1,25 @@
-var CACHE_NAME = "my-site-cache-v4";
+var CACHE_NAME = "my-site-cache-v5";
 var urlsToCache = [
     "/index.html",
     "/backgrounds.html",
     "/bestiary.html",
     "/classes.html",
     "/conditions.html",
-    "/css/material-components-web.min.css",
-    "/css/my-styles.css",
-    "/css/reset.css",
-    "/css/style.css",
     "/cults.html",
+    "/favicon.ico",
+    "/feats.html",
+    "/items.html",
+    "/psionics.html",
+    "/races.html",
+    "/rewards.html",
+    "/rules.html",
+    "/spells.html",
+    "/variantrules.html",
+
+    "/css/material-components-web.min.css",
+    "/css/styles.css",
+    "/css/reset.css",
+
     "/data/backgrounds.json",
     "/data/basicitems.json",
     "/data/bestiary-tob.json",
@@ -31,12 +41,11 @@ var urlsToCache = [
     "/data/spells-roll20.json",
     "/data/spells.json",
     "/data/variantrules.json",
-    "/editor.html",
-    "/favicon.ico",
-    "/feats.html",
+
     "/fonts/MaterialIcons-Regular.ttf",
     "/fonts/MaterialIcons-Regular.woff",
     "/fonts/MaterialIcons-Regular.woff2",
+
     "/img/android-chrome-192x192.png",
     "/img/android-chrome-512x512.png",
     "/img/apple-touch-icon.png",
@@ -44,7 +53,7 @@ var urlsToCache = [
     "/img/favicon-32x32.png",
     "/img/favicon.ico",
     "/img/logo-white-192x192.png",
-    "/items.html",
+
     "/js/backgrounds.js",
     "/js/bestiary.js",
     "/js/classes.js",
@@ -63,16 +72,11 @@ var urlsToCache = [
     "/js/spells.js",
     "/js/utils.js",
     "/js/variantrules.js",
+
     "/lib/droll.js",
     "/lib/jquery.js",
     "/lib/list.js",
-    "/lib/material-components-web.min.js",
-    "/psionics.html",
-    "/races.html",
-    "/rewards.html",
-    "/rules.html",
-    "/spells.html",
-    "/variantrules.html"
+    "/lib/material-components-web.min.js"
 ];
 
 self.addEventListener("install", function(event) {
