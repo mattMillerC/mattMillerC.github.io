@@ -21,14 +21,20 @@ function onJsonLoad(data) {
 	let tempString = "";
 	for (let i = 0; i < bgList.length; i++) {
 		const bg = bgList[i];
+		const proficiencies = bg.trait.filter((i) => {
+			return i.name === "Skill Proficiencies";
+		});
+		const prof = proficiencies.length > 0 ? proficiencies[0].text[0] : '--';
 
 		const CLS_COL_1 = "table-cell table-cell--border name ";
-		const CLS_COL_2 = `table-cell source source${bg.source}`;
+		const CLS_COL_2 = `table-cell hidden-mobile-down source source${bg.source}`;
+		const CLS_COL_3 = "table-cell proficiencies ";
 
 		tempString += `
 			<tr class="table-row history-link" data-link="${encodeURI(bg.name).toLowerCase()}" data-title="${bg.name}" ${FLTR_ID}="${i}" id='${i}'>
 				<td class='${CLS_COL_1}'>${bg.name.replace("Variant ","")}</span>
 				<td class='${CLS_COL_2}' title="${Parser.sourceJsonToFull(bg.source)}">${Parser.sourceJsonToAbv(bg.source)}</span>
+				<td class='${CLS_COL_3}'>${prof}</span>
 			</tr>`;
 
 		// populate filters
@@ -37,7 +43,7 @@ function onJsonLoad(data) {
 	bgTable.append(tempString);
 
 	const list = search({
-		valueNames: ['name', 'source'],
+		valueNames: ['name', 'source', 'proficiencies'],
 		listClass: "backgrounds"
 	});
 

@@ -34,6 +34,27 @@ const renderer = new EntryRenderer();
 
 window.onload = function load() {
 	loadJSON(jsonURL, onJsonLoad);
+
+	$('.back-to-top').on('click', () => {
+		$("html, body").animate({ scrollTop: 0 }, "slow");
+	});
+	$(window).on(
+        "scroll",
+        window.throttle(() => {
+            if ($(window).scrollTop() > 850) {
+                $(".back-to-top").removeClass("hidden");
+            } else {
+                $(".back-to-top").addClass("hidden");
+            }
+			if ($("#subclassHeight").offset().top - $(window).scrollTop() < 40) {
+                $("#subclasses").addClass("fixed");
+				$("#subclassHeight").css("height", $("#subclasses").height() + 35 + 'px');
+            } else {
+                $("#subclasses").removeClass("fixed");
+				$("#subclassHeight").css("height", '0');
+            }
+        }, 100)
+    );
 };
 
 function getClassHash(aClass) {
@@ -60,15 +81,31 @@ function onJsonLoad(data) {
 
 	const classTable = $("ul.classes");
 	let tempString = "";
+	let gridString = "";
 	for (let i = 0; i < classes.length; i++) {
 		const curClass = classes[i];
 		tempString +=
 			`<div id='${i}' class='class-item mdc-list-item mdc-theme--on-surface history-link' data-link='${getClassHash(curClass)}' data-title='${curClass.name}'>
 				${curClass.name}
 			</div>`;
+
+		let svg = curClass.name.replace(/(\s|\(|\))/g, "");
+		if (curClass.name.indexOf("Mystic") > -1) {
+            svg = "Wizard";
+        } else if (curClass.name.indexOf("Artificer") > -1) {
+            svg = "Sorcerer";
+        } else if (curClass.name.indexOf("Ranger") > -1) {
+            svg = "Ranger";
+        }
+		gridString += 
+			`<div class='class-grid-item history-link class-grid-item__${curClass.name.replace(/(\s|\(|\))/g,'')}'
+				data-link='${getClassHash(curClass)}' data-title='${curClass.name}'>
+				${curClass.name}
+				<svg class='class-grid-item--image'><use xlink:href='img/classes.svg#${svg}'></use></svg>
+			</div>`
 	}
 	classTable.append(tempString);
-	$(".class-list-container").append(tempString);
+	$(".class-list-container").append(gridString);
 
 	initHistory()
 }

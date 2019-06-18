@@ -145,6 +145,7 @@
 			<h1 class="page-title mdc-typography--headline2">Classes</h1>
 
 			<button class="mdc-icon-button close-item material-icons">close</button>
+			<button class="mdc-icon-button mdc-button--raised back-to-top material-icons hidden">arrow_upward</button>
 
 			<div class="class-list-container">
 				
@@ -266,7 +267,7 @@
 
 				<div id="statsprof" class="stats">
 					<div id="hp" colspan="6">
-						<h5 class="mdc-typography--headline6">Hit Points</h5>
+						<h5>Hit Points</h5>
 						<div id="hitdice">
 							<strong>Hit Dice:</strong>
 							<span> </span>
@@ -281,7 +282,7 @@
 						</div>
 					</div>
 					<div id="prof" colspan="6">
-						<h5 class="mdc-typography--headline6">Proficiencies</h5>
+						<h5>Proficiencies</h5>
 						<span>You are proficient with the following items, in addition to any proficiencies provided by your race or background.</span>
 						<div id="armor">
 							<strong>Armor:</strong>
@@ -304,12 +305,13 @@
 							<span> </span>
 						</div>
 						<div id="equipment" colspan="6">
-							<h5 class="mdc-typography--headline6">Starting Equipment</h5>
+							<h5>Starting Equipment</h5>
 							<div></div>
 						</div>
 					</div>
 				</div>
 
+				<div id="subclassHeight"></div>
 				<div id="subclasses"></div>
 				<div id="stats" class="stats">
 					<!-- populate with JS -->
@@ -320,6 +322,7 @@
 
 	<script type="text/javascript" src="lib/material-components-web.min.js"></script>
 	<script type="text/javascript" src="lib/swipe.js"></script>
+	<script type="text/javascript" src="lib/throttle.js"></script>
  
     <script type="text/javascript" src="js/nav.js"></script>
 
