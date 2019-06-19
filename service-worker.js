@@ -1,4 +1,4 @@
-var CACHE_NAME = "my-site-cache-v7";
+var CACHE_NAME = "my-site-cache-v8";
 var urlsToCache = [
     "/index.html",
     "/backgrounds.html",
@@ -53,7 +53,6 @@ var urlsToCache = [
     "/img/favicon-32x32.png",
     "/img/favicon.ico",
     "/img/logo-white-192x192.png",
-    "/img/classes.svg",
 
     "/js/backgrounds.js",
     "/js/bestiary.js",

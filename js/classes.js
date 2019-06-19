@@ -90,18 +90,12 @@ function onJsonLoad(data) {
 			</div>`;
 
 		let svg = curClass.name.replace(/(\s|\(|\))/g, "");
-		if (curClass.name.indexOf("Mystic") > -1) {
-            svg = "Wizard";
-        } else if (curClass.name.indexOf("Artificer") > -1) {
-            svg = "Sorcerer";
-        } else if (curClass.name.indexOf("Ranger") > -1) {
-            svg = "Ranger";
-        }
+
 		gridString += 
 			`<div class='class-grid-item history-link class-grid-item__${curClass.name.replace(/(\s|\(|\))/g,'')}'
 				data-link='${getClassHash(curClass)}' data-title='${curClass.name}'>
-				${curClass.name}
-				<svg class='class-grid-item--image'><use xlink:href='img/classes.svg#${svg}'></use></svg>
+				<span class='class-grid-item--text'>${curClass.name}</span>
+				<svg class='class-grid-item--image class-grid-item__${svg}'><use xlink:href='#${svg}'></use></svg>
 			</div>`
 	}
 	classTable.append(tempString);
