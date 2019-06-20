@@ -51,10 +51,14 @@ window.onload = function load() {
 				$("#subclassHeight").css("height", $("#subclasses").height() + 35 + 'px');
             } else {
                 $("#subclasses").removeClass("fixed");
+                $("#subclasses").removeClass("closed");
 				$("#subclassHeight").css("height", '0');
             }
         }, 100)
     );
+	$('#subclasses').on('click', '.tab', (e) => {
+		$('#subclasses').toggleClass('closed');
+	});
 };
 
 function getClassHash(aClass) {
@@ -106,6 +110,7 @@ function onJsonLoad(data) {
 
 function loadhash (id) {
 	$("#classtable").html(classTableDefault);
+	$('#subclasses').removeClass('fixed closed');
 	$(".mobile-clone-spells").remove();
 	const curClass = classes[id];
 	window.className = curClass.name;
@@ -297,6 +302,7 @@ function loadhash (id) {
 		if (nonStandardSource) pill.hide();
 		subclassPillWrapper.append(pill);
 	}
+	subclassPillWrapper.append(`<div class='tab material-icons'>expand_less</div>`);
 
 	// if this is a UA class, toggle the "All Sources" button
 	if (isUaClass) allSourcesToggle.click();

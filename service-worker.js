@@ -1,4 +1,4 @@
-var CACHE_NAME = "my-site-cache-v8";
+var CACHE_NAME = "my-site-cache-v9";
 var urlsToCache = [
     "/index.html",
     "/backgrounds.html",
@@ -72,6 +72,7 @@ var urlsToCache = [
     "/js/spells.js",
     "/js/utils.js",
     "/js/variantrules.js",
+    "/js/darkmode.js",
 
     "/lib/droll.js",
     "/lib/jquery.js",

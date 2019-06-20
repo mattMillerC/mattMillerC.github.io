@@ -76,10 +76,14 @@ body.dark header .mdc-theme--on-primary {
     max-width: 392px;
 }
 .page-title {
+    display: none;
     font-size: 2rem;
     padding-right: 44px;
     line-height: 1.4;
     margin: 24px 0 24px;
+}
+.main.item-opened .page-title {
+    display: block;
 }
 
 .darkmode-label {
@@ -123,6 +127,10 @@ body.dark header .mdc-theme--on-primary {
 .rules-page-variant {
     padding-left: 48px !important;
 }
+.version {
+    float: right;
+    padding: 0 16px 8px 0;
+}
 
 /* Tables */
 .table-wrap {
@@ -150,7 +158,7 @@ body.dark header .mdc-theme--on-primary {
     background-color: var(--mdc-theme-surface);
 }
 .table--scroll {
-    max-height: calc(100vh - 335px);
+    max-height: calc(100vh - 256px);
     overflow-x: scroll;
     overflow-y: scroll;
     padding-top: 44px;
@@ -291,6 +299,7 @@ body.dark header .mdc-theme--on-primary {
 .filter-group {
     display: flex;
     flex-wrap: wrap;
+    padding-top: 16px;
 }
 .filter-group > * {
     margin-right: 8px;
@@ -847,17 +856,40 @@ body.dark header .mdc-theme--on-primary {
     margin-right: 8px;
     margin-bottom: 8px;
 }
+#subclasses .tab {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 20px;
+    width: 100vw;
+    text-align: center;
+    padding-bottom: 0;
+    cursor: pointer;
+    background-color: var(--mdc-theme-background);
+    padding-bottom: 4px;
+}
 #subclasses.fixed {
     background: var(--mdc-theme-background);
     border-bottom: 1px solid var(--mdc-theme-text-divider-on-background);
     position: fixed;
     top: 40px;
     left: 0;
-    padding-left: 32px;
-    padding-right: 32px;
-    padding-top: 16px;
-    padding-bottom: 8px;
+    overflow: hidden;
+    padding: 16px;
 }
+#subclasses.fixed .tab {
+    display: block;
+}
+#subclasses.fixed.closed {
+    height: 0px;
+}
+#subclasses.fixed.closed .tab {
+    transform: rotateZ(180deg);
+}
+#subclasses.fixed:after:hover {
+    cursor: pointer;
+} 
 .mdc-chip:not(.mdc-chip--selected):not(.cf-active):not(.os-active):hover {
     color:  #000;
     background-color: #c8c8c8;
@@ -976,10 +1008,14 @@ body.dark header .mdc-theme--on-primary {
         display: none !important;
     }
     .page-title {
+        display: block;
         margin-right: 0 !important;
         font-size: 3.75rem;
         line-height: 3.75rem;
         margin: 48px 0 24px;
+    }
+    .filter-group {
+        padding-top: 0;
     }
     .filter-group .mdc-text-field {
         width: unset !important;
