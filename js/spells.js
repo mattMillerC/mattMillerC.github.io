@@ -318,7 +318,7 @@ function onJsonLoad(data) {
 
 
 		const CLS_COL_1 = "table-cell table-cell--border name ";
-		const CLS_COL_2 = `table-cell hidden-mobile-down  source source${spell.source}`;
+		const CLS_COL_2 = `table-cell source source${spell.source}`;
 		const CLS_COL_3 = "table-cell level";
 		const CLS_COL_4 = "table-cell hidden-mobile-down  time";
 		const CLS_COL_5 = `table-cell hidden-mobile-down  school school_${spell.school}`;
@@ -361,7 +361,7 @@ function onJsonLoad(data) {
 	}
 
 	const list = search({
-		valueNames: ["name", "source", "level", "time", "school", "range", "classes"],
+		valueNames: ["name"],
 		listClass: "spells"
 	});
 

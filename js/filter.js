@@ -56,12 +56,14 @@ class FilterBox {
 						<i class="material-icons mdc-button__icon" aria-hidden="true">filter_list</i>
 						<span class="mdc-button__label">Filter</span>
 					</button>
-					<div class="mdc-menu mdc-menu-surface"></div>
+					<div class="mdc-menu mdc-menu-surface">
+						<button class="mdc-icon-button close-menu material-icons">close</button>
+					</div>
 				</div>`);
 		}
 
 		function getMiniView() {
-			return $(`<div class="mini-view btn-group hidden-mobile-down"/>`);
+			return $(`<div class="mini-view btn-group hidden-mobile-down mdc-chip-set"/>`);
 		}
 
 		function makeDropdownRow(i, self, filter, $miniView) {
@@ -85,13 +87,11 @@ class FilterBox {
 					</div>`);
 
 				const $quickBtns = $(`<div class="filter-menu-row__heading-buttons"/>`);
-				const $all = $(`<button class="mdc-button">All</button>`);
+				const $all = $(`<div class="mdc-button">All</div>`);
 				$quickBtns.append($all);
-				const $clear = $(`<button class="mdc-button">Clear</button>`);
+				const $clear = $(`<div class="mdc-button">Clear</div>`);
 				$quickBtns.append($clear);
-				const $none = $(`<button class="mdc-button">None</button>`);
-				$quickBtns.append($none);
-				const $default = $(`<button class="mdc-button">Default</button>`);
+				const $default = $(`<div class="mdc-button">Default</div>`);
 				$quickBtns.append($default);
 				$line.append($quickBtns);
 
@@ -104,53 +104,6 @@ class FilterBox {
 				$summary.append($summaryExclude);
 				$summary.hide();
 				$line.append($summary);
-
-				const $showHide = $(`<button class="mdc-button">Hide</button>`);
-				$line.append($showHide);
-
-				$showHide.on(EVNT_CLICK, function(e) {
-					e.preventDefault();
-					e.stopPropagation();
-					if ($grid.is(":hidden")) {
-						$showHide.text("Hide");
-						$grid.show();
-						$quickBtns.show();
-						$summary.hide();
-					} else {
-						$showHide.text("Show");
-						$grid.hide();
-						$quickBtns.hide();
-						const counts = $grid.data("getCounts")();
-						if (counts.yes > 0 || counts.no > 0) {
-							if (counts.yes > 0) {
-								$summaryInclude.prop("title", `${counts.yes} hidden 'required' tag${counts.yes > 1 ? "s" : ""}`);
-								$summaryInclude.text(counts.yes);
-								$summaryInclude.show();
-							} else {
-								$summaryInclude.hide();
-							}
-							if (counts.yes > 0 && counts.no > 0) {
-								$summarySpacer.show();
-							} else {
-								$summarySpacer.hide();
-							}
-							if (counts.no > 0) {
-								$summaryExclude.prop("title", `${counts.no} hidden 'excluded' tag${counts.no > 1 ? "s" : ""}`);
-								$summaryExclude.text(counts.no);
-								$summaryExclude.show();
-							} else {
-								$summaryExclude.hide();
-							}
-							$summary.show();
-						}
-					}
-				});
-
-				$none.on(EVNT_CLICK, function() {
-					$grid.find(".filter-pill").each(function() {
-						$(this).data("setter")(FilterBox._PILL_STATES[2]);
-					});
-				});
 
 				$all.on(EVNT_CLICK, function() {
 					$grid.find(".filter-pill").each(function() {
@@ -173,7 +126,7 @@ class FilterBox {
 
 			function makePillGrid() {
 				const $pills = [];
-				const $grid = $(`<div class="filter-menu-grid"/>`);
+				const $grid = $(`<div class="filter-menu-grid mdc-chip-set"></div>`);
 
 				function cycleState($pill, $miniPill, forward) {
 					const curIndex = FilterBox._PILL_STATES.indexOf($pill.attr("state"));
@@ -304,12 +257,12 @@ class FilterBox {
 	addDropdownHandlers(filterWrap, materialMenu) {
 		const observer = new MutationObserver((mutations) => {
 			mutations.forEach(() => {
-				if (!filterWrap.hasClass('open')) {
+				if (!filterWrap.hasClass('mdc-menu-surface--open')) {
 					this._fireValChangeEvent();
 				}
 			});
 		});
-		observer.observe(filterWrap[0], {attributes : true, attributeFilter: ["class"]});
+		observer.observe(filterWrap.find('.mdc-menu-surface')[0], {attributes : true, attributeFilter: ["class"]});
 
 		$('.mdc-button', filterWrap).on('click', () => {
 			materialMenu.open = !materialMenu.open;
@@ -317,6 +270,10 @@ class FilterBox {
 
 		$('.mdc-menu', filterWrap).on('open', (e) => {
 			e.stopPropagation();
+		});
+
+		$('.close-menu', filterWrap).on('click', (e) => {
+			materialMenu.open = false;
 		});
 	}
 
@@ -393,7 +350,7 @@ FilterBox.CLS_INPUT_GROUP_BUTTON = "input-group-btn";
 FilterBox.CLS_DROPDOWN_MENU = "dropdown-menu";
 FilterBox.CLS_DROPDOWN_MENU_FILTER = "dropdown-menu-filter";
 FilterBox.EVNT_VALCHANGE = "valchange";
-FilterBox._PILL_STATES = ["ignore", "yes", "no"];
+FilterBox._PILL_STATES = ["ignore", "yes"];
 
 class Filter {
 	/**
@@ -461,10 +418,6 @@ class Filter {
 				// if any are 1 (green) include if they match
 				if (map[item] === 1) {
 					display = true;
-				}
-				// if any are -1 (red) exclude if they match
-				if (map[item] === -1) {
-					hide = true;
 				}
 			}
 
