@@ -3,6 +3,14 @@ const BESTIARY_JSON_URL = "data/bestiary.json";
 const BESTIARY_TOB_JSON_URL = "data/bestiary-tob.json";
 let tableDefault = "";
 
+mdc.textField.MDCTextField.attachTo(document.querySelector(".mdc-text-field"));
+mdc.notchedOutline.MDCNotchedOutline.attachTo(document.querySelector(".mdc-notched-outline"));
+
+function imgError(x) {
+	$(x).closest("div").css("padding-right", "0.2em");
+	$(x).remove();
+}
+
 function ascSortCr(a, b) {
 	// always put unknown values last
 	if (a === "Unknown" || a === undefined) a = "999";
@@ -78,25 +86,24 @@ function populate(tobData, mainData) {
 		miscFilter
 	);
 
-	const table = $("ul.monsters");
+	const table = $("table.monsters");
 	let textStack = "";
 	// build the table
 	for (let i = 0; i < monsters.length; i++) {
 		const mon = monsters[i];
 		mon._pTypes = Parser.monTypeToFullObj(mon.type); // store the parsed type
 		mon.cr = mon.cr === undefined ? "Unknown" : mon.cr;
+		let adjCR = mon.cr === "Unknown" ? "--" : mon.cr;
 
 		const abvSource = Parser.sourceJsonToAbv(mon.source);
 
 		textStack +=
-			`<li ${FLTR_ID}='${i}'>
-				<a id=${i} href='#${encodeForHash(mon.name)}_${encodeForHash(mon.source)}' title="${mon.name}">
-					<span class='name col-xs-4 col-xs-4-2'>${mon.name}</span>
-					<span title="${Parser.sourceJsonToFull(mon.source)}" class='col-xs-1 col-xs-1-8 source source${abvSource}'>${abvSource}</span>
-					<span class='type col-xs-4 col-xs-4-3'>${mon._pTypes.asText.uppercaseFirst()}</span>
-					<span class='col-xs-1 col-xs-1-7 text-align-center cr'>${mon.cr}</span>
-				</a>
-			</li>`;
+			`<tr class='table-row history-link' id=${i} data-link='${encodeForHash(mon.name)}_${encodeForHash(mon.source)}' data-title="${mon.name}" ${FLTR_ID}='${i}'>
+				<td class='table-cell table-cell--border name'>${mon.name}</td>
+				<td class='table-cell source source${abvSource}' title="${Parser.sourceJsonToFull(mon.source)}">${abvSource}</td>
+				<td class='table-cell type hidden-mobile-down'>${mon._pTypes.asText.uppercaseFirst()}</td>
+				<td class='table-cell cr'>${adjCR}</td>
+			</tr>`;
 
 		// populate filters
 		sourceFilter.addIfAbsent(mon.source);
@@ -128,14 +135,22 @@ function populate(tobData, mainData) {
 	function handleFilterChange() {
 		list.filter(function(item) {
 			const f = filterBox.getValues();
-			const m = monsters[$(item.elm).attr(FLTR_ID)];
+			let filterId = $(item.elm).attr(FLTR_ID);
 
-			return sourceFilter.toDisplay(f, m.source) &&
-			crFilter.toDisplay(f, m.cr) &&
-			sizeFilter.toDisplay(f, m.size) &&
-			typeFilter.toDisplay(f, m._pTypes.type) &&
-			tagFilter.toDisplay(f, m._pTypes.tags) &&
-			miscFilter.toDisplay(f, m._fMisc);
+			if (filterId) {
+				const m = monsters[filterId];
+
+				return (
+					sourceFilter.toDisplay(f, m.source) &&
+					crFilter.toDisplay(f, m.cr) &&
+					sizeFilter.toDisplay(f, m.size) &&
+					typeFilter.toDisplay(f, m._pTypes.type) &&
+					tagFilter.toDisplay(f, m._pTypes.tags) &&
+					miscFilter.toDisplay(f, m._fMisc)
+				);
+			} else {
+				return true;
+			}
 		});
 	}
 
@@ -148,33 +163,6 @@ function populate(tobData, mainData) {
 		$this.data("sortby", $this.data("sortby") === "asc" ? "desc" : "asc");
 		list.sort($this.data("sort"), { order: $this.data("sortby"), sortFunction: sortMonsters });
 	});
-
-	// collapse/expand search button
-	$("button#expandcollapse").click(function() {
-		$(`#listcontainer`).toggle();
-	});
-
-	// proficiency bonus/dice toggle
-	const profBonusDiceBtn = $("button#profbonusdice");
-	profBonusDiceBtn.useDice = false;
-	profBonusDiceBtn.click(function() {
-		if (this.useDice) {
-			this.innerHTML = "Use Proficiency Dice";
-			$("#stats").find(`span.roller[${ATB_PROF_MODE}], span.dc-roller[${ATB_PROF_MODE}]`).each(function() {
-				const $this = $(this);
-				$this.attr(ATB_PROF_MODE, PROF_MODE_BONUS);
-				$this.html($this.attr(ATB_PROF_BONUS_STR));
-			})
-		} else {
-			this.innerHTML = "Use Proficiency Bonus";
-			$("#stats").find(`span.roller[${ATB_PROF_MODE}], span.dc-roller[${ATB_PROF_MODE}]`).each(function() {
-				const $this = $(this);
-				$this.attr(ATB_PROF_MODE, PROF_MODE_DICE);
-				$this.html($this.attr(ATB_PROF_DICE_STR));
-			})
-		}
-		this.useDice = !this.useDice;
-	})
 }
 
 // sorting for form filtering
@@ -209,169 +197,169 @@ const renderer = new EntryRenderer();
 // load selected monster stat block
 function loadhash (id) {
 	$("#stats").html(tableDefault);
+	$("#output").empty();
 	let renderStack = [];
 	let entryList = {};
 	var mon = monsters[id];
 	var name = mon.name;
+	window.monsterName = name;
 	var source = mon.source;
 	var type = mon._pTypes.asText;
 	source = Parser.sourceJsonToAbv(source);
 
-	imgError = function (x) {
-		$(x).closest("th").css("padding-right", "0.2em");
-		$(x).remove();
-	};
-
-	$("th#name").html(
-		`<span class="stats-name">${name}</span>
-		<span class="stats-source source${source}" title="${Parser.sourceJsonToFull(source)}">${Parser.sourceJsonToAbv(source)}</span>
+	$("#name").html(
+		`<span class="stats-source source${source}" title="${Parser.sourceJsonToFull(source)}">${Parser.sourceJsonToAbv(source)}</span>
 		<a href="img/${source}/${name}.png">
 			<img src="img/${source}/${name}.png" class='token' onerror='imgError(this)'>
 		</a>`
 	);
 
-	$("td span#size").html(Parser.sizeAbvToFull(mon.size));
+	$("span#size").html(Parser.sizeAbvToFull(mon.size));
 
-	$("td span#type").html(type);
+	$("span#type").html(type);
 
-	$("td span#alignment").html(mon.alignment);
+	$("span#alignment").html(mon.alignment);
 
-	$("td span#ac").html(mon.ac);
+	$("span#ac").html(mon.ac);
 
-	$("td span#hp").html(mon.hp);
+	$("span#hp").html(mon.hp);
 
-	$("td span#speed").html(mon.speed);
+	$("span#speed").html(mon.speed);
 
-	$("td#str span.score").html(mon.str);
-	$("td#str span.mod").html(Parser.getAbilityModifier(mon.str));
+	$("#str span.score").html(mon.str);
+	$("#str span.mod").html(Parser.getAbilityModifier(mon.str));
 
-	$("td#dex span.score").html(mon.dex);
-	$("td#dex span.mod").html(Parser.getAbilityModifier(mon.dex));
+	$("#dex span.score").html(mon.dex);
+	$("#dex span.mod").html(Parser.getAbilityModifier(mon.dex));
 
-	$("td#con span.score").html(mon.con);
-	$("td#con span.mod").html(Parser.getAbilityModifier(mon.con));
+	$("#con span.score").html(mon.con);
+	$("#con span.mod").html(Parser.getAbilityModifier(mon.con));
 
-	$("td#int span.score").html(mon.int);
-	$("td#int span.mod").html(Parser.getAbilityModifier(mon.int));
+	$("#int span.score").html(mon.int);
+	$("#int span.mod").html(Parser.getAbilityModifier(mon.int));
 
-	$("td#wis span.score").html(mon.wis);
-	$("td#wis span.mod").html(Parser.getAbilityModifier(mon.wis));
+	$("#wis span.score").html(mon.wis);
+	$("#wis span.mod").html(Parser.getAbilityModifier(mon.wis));
 
-	$("td#cha span.score").html(mon.cha);
-	$("td#cha span.mod").html(Parser.getAbilityModifier(mon.cha));
+	$("#cha span.score").html(mon.cha);
+	$("#cha span.mod").html(Parser.getAbilityModifier(mon.cha));
 
 	var saves = mon.save;
 	if (saves) {
-		$("td span#saves").parent().show();
-		$("td span#saves").html(saves);
+		$("span#saves").parent().show();
+		$("span#saves").html(saves);
 	} else {
-		$("td span#saves").parent().hide();
+		$("span#saves").parent().hide();
 	}
 
 	var skills = mon.skill;
 	let perception = 0;
 	if (skills) {
-		$("td span#skills").parent().show();
-		$("td span#skills").html(objToTitleCaseStringWithCommas(skills));
+		$("span#skills").parent().show();
+		$("span#skills").html(objToTitleCaseStringWithCommas(skills));
 		if (skills.perception) perception = parseInt(skills.perception);
 	} else {
-		$("td span#skills").parent().hide();
+		$("span#skills").parent().hide();
 	}
 
 	var dmgvuln = mon.vulnerable;
 	if (dmgvuln) {
-		$("td span#dmgvuln").parent().show();
-		$("td span#dmgvuln").html(dmgvuln);
+		$("span#dmgvuln").parent().show();
+		$("span#dmgvuln").html(dmgvuln);
 	} else {
-		$("td span#dmgvuln").parent().hide();
+		$("span#dmgvuln").parent().hide();
 	}
 
 	var dmgres = mon.resist;
 	if (dmgres) {
-		$("td span#dmgres").parent().show();
-		$("td span#dmgres").html(dmgres);
+		$("span#dmgres").parent().show();
+		$("span#dmgres").html(dmgres);
 	} else {
-		$("td span#dmgres").parent().hide();
+		$("span#dmgres").parent().hide();
 	}
 
 	var dmgimm = mon.immune;
 	if (dmgimm) {
-		$("td span#dmgimm").parent().show();
-		$("td span#dmgimm").html(dmgimm);
+		$("span#dmgimm").parent().show();
+		$("span#dmgimm").html(dmgimm);
 	} else {
-		$("td span#dmgimm").parent().hide();
+		$("span#dmgimm").parent().hide();
 	}
 
 	var conimm = mon.conditionImmune;
 	if (conimm) {
-		$("td span#conimm").parent().show();
-		$("td span#conimm").html(conimm);
+		$("span#conimm").parent().show();
+		$("span#conimm").html(conimm);
 	} else {
-		$("td span#conimm").parent().hide();
+		$("span#conimm").parent().hide();
 	}
 
 	var senses = mon.senses;
 	if (senses) {
-		$("td span#senses").html(senses + ", ");
+		$("span#senses").html(senses + ", ");
 	} else {
-		$("td span#senses").html("");
+		$("span#senses").html("");
 	}
 
 	var passive = mon.passive || (10 + perception).toString;
-	$("td span#pp").html(passive)
+	$("span#pp").html(passive)
 
 	var languages = mon.languages;
 	if (languages) {
-		$("td span#languages").html(languages);
+		$("span#languages").html(languages);
 	} else {
-		$("td span#languages").html("\u2014");
+		$("span#languages").html("\u2014");
 	}
 
 	var cr = mon.cr === undefined ? "Unknown" : mon.cr;
-	$("td span#cr").html(cr);
-	$("td span#xp").html(Parser.crToXp(cr));
+	$("span#cr").html(cr);
+	$("span#xp").html(Parser.crToXp(cr));
 
 	var traits = mon.trait;
-	$("tr.trait").remove();
+	$(".trait").remove();
+	$("#traits").hide();
 
-	if (traits) for (var i = traits.length - 1; i >= 0; i--) {
-		var traitname = traits[i].name;
-		var traittext = traits[i].text;
-		var traittexthtml = "";
-		var renderedcount = 0;
-		for (var n = 0; n < traittext.length; n++) {
-			if (!traittext[n]) continue;
+	if (traits && traits.length > 0) {
+		$("#traits").show();
+		for (var i = traits.length - 1; i >= 0; i--) {
+			var traitname = traits[i].name;
+			var traittext = traits[i].text;
+			var traittexthtml = "";
+			var renderedcount = 0;
+			for (var n = 0; n < traittext.length; n++) {
+				if (!traittext[n]) continue;
 
-			renderedcount++;
-			var firstsecond = "";
-			if (renderedcount === 1) firstsecond = "first ";
-			if (renderedcount === 2) firstsecond = "second ";
+				renderedcount++;
+				var firstsecond = "";
+				if (renderedcount === 1) firstsecond = "first ";
+				if (renderedcount === 2) firstsecond = "second ";
 
-			var spells = "";
-			if (traitname.indexOf("Spellcasting") !== -1 && traittext[n].indexOf(": ") !== -1) spells = "spells";
-			if (traitname.indexOf("Variant") !== -1 && traitname.indexOf("Coven") !== -1 && traittext[n].indexOf(": ") !== -1) spells = "spells";
+				var spells = "";
+				if (traitname.indexOf("Spellcasting") !== -1 && traittext[n].indexOf(": ") !== -1) spells = "spells";
+				if (traitname.indexOf("Variant") !== -1 && traitname.indexOf("Coven") !== -1 && traittext[n].indexOf(": ") !== -1) spells = "spells";
 
-			traittexthtml = traittexthtml + "<p class='" + firstsecond + spells + "'>" + traittext[n].replace(/\u2022\s?(?=C|\d|At\swill)/g, "")+"</p>";
-		}
-
-		$("tr#traits").after("<tr class='trait'><td colspan='6' class='trait" + i + "'><span class='name'>" + traitname + ".</span> " + traittexthtml + "</td></tr>");
-
-		// parse spells, make hyperlinks
-		$("tr.trait").children("td").children("p.spells").each(function () {
-			let spellslist = $(this).html();
-			if (spellslist[0] === "*") return;
-			spellslist = spellslist.split(": ")[1].split(/\, (?!\+|\dd|appears|inside gems)/g);
-			for (let i = 0; i < spellslist.length; i++) {
-				spellslist[i] = "<a href='spells.html#" + encodeURIComponent((spellslist[i].replace(/(\*)| \(([^\)]+)\)/g, ""))).toLowerCase().replace("'", "%27") + "_" + "phb'>" + spellslist[i] + "</a>";
-				if (i !== spellslist.length - 1) spellslist[i] = spellslist[i] + ", ";
+				traittexthtml = traittexthtml + "<p class='" + firstsecond + spells + "'>" + traittext[n].replace(/\u2022\s?(?=C|\d|At\swill)/g, "")+"</p>";
 			}
 
-			$(this).html($(this).html().split(": ")[0] + ": " + spellslist.join(""))
-		});
+			$("#traits").after("<div class='trait'><div class='trait" + i + "'><span class='name'>" + traitname + ".</span> " + traittexthtml + "</div></div>");
+
+			// parse spells, make hyperlinks
+			$(".trait").children("div").children("p.spells").each(function () {
+				let spellslist = $(this).html();
+				if (spellslist[0] === "*") return;
+				spellslist = spellslist.split(": ")[1].split(/\, (?!\+|\dd|appears|inside gems)/g);
+				for (let i = 0; i < spellslist.length; i++) {
+					spellslist[i] = "<a href='spells.html#" + encodeURIComponent((spellslist[i].replace(/(\*)| \(([^\)]+)\)/g, ""))).toLowerCase().replace("'", "%27") + "_" + "phb'>" + spellslist[i] + "</a>";
+					if (i !== spellslist.length - 1) spellslist[i] = spellslist[i] + ", ";
+				}
+
+				$(this).html($(this).html().split(": ")[0] + ": " + spellslist.join(""))
+			});
+		}
 	}
 
 	const actions = mon.action;
-	$("tr.action").remove();
+	$(".action").remove();
 
 	if (actions && actions.length) for (let i = actions.length - 1; i >= 0; i--) {
 		const actionname = actions[i].name;
@@ -389,16 +377,16 @@ function loadhash (id) {
 			actiontexthtml = actiontexthtml + "<p class='"+firstsecond+"'>"+actiontext[n]+"</p>";
 		}
 
-		$("tr#actions").after("<tr class='action'><td colspan='6' class='action"+i+"'><span class='name'>"+actionname+".</span> "+actiontexthtml+"</td></tr>");
+		$("#actions").after("<div class='action'><div class='action"+i+"'><span class='name'>"+actionname+".</span> "+actiontexthtml+"</div></div>");
 	}
 
 	const reactions = mon.reaction;
-	$("tr#reactions").hide();
-	$("tr.reaction").remove();
+	$("#reactions").hide();
+	$(".reaction").remove();
 
 	if (reactions && (reactions.text || reactions.length)) {
 
-		$("tr#reactions").show();
+		$("#reactions").show();
 
 		if (!reactions.length) {
 			const reactionname = reactions.name;
@@ -416,7 +404,7 @@ function loadhash (id) {
 				reactiontexthtml = reactiontexthtml + "<p class='" + firstsecond + "'>" + reactiontext[n] + "</p>";
 			}
 
-			$("tr#reactions").after("<tr class='reaction'><td colspan='6' class='reaction0'><span class='name'>" + reactionname + ".</span> " + reactiontexthtml + "</td></tr>");
+			$("#reactions").after("<div class='reaction'><div class='reaction0'><span class='name'>" + reactionname + ".</span> " + reactiontexthtml + "</div></div>");
 		}
 
 		if (reactions.length) for (let i = reactions.length - 1; i >= 0; i--) {
@@ -429,15 +417,15 @@ function loadhash (id) {
 				reactiontexthtml = reactiontexthtml + "<p>" + reactiontext[n] + "</p>";
 			}
 
-			$("tr#reactions").after("<tr class='reaction'><td colspan='6' class='reaction" + i + "'><span class='name'>" + reactionname + ".</span> " + reactiontexthtml + "</td></tr>");
+			$("#reactions").after("<div class='reaction'><div class='reaction" + i + "'><span class='name'>" + reactionname + ".</span> " + reactiontexthtml + "</div></div>");
 		}
 	}
 
 	const legendaries = mon.legendary;
-	$("tr.legendary").remove();
-	$("tr#legendaries").hide();
+	$(".legendary").remove();
+	$("#legendaries").hide();
 	if (legendaries) {
-		$("tr#legendaries").show();
+		$("#legendaries").show();
 		for (let i = legendaries.length - 1; i >= 0; i--) {
 			const legendaryname = legendaries[i].name ? legendaries[i].name + "." : "";
 			const legendarytext = legendaries[i].text;
@@ -451,20 +439,20 @@ function loadhash (id) {
 				if (renderedcount === 2) firstsecond = "second ";
 				legendarytexthtml += `<p class='${firstsecond}'>${legendarytext[n]}</p>`;
 			}
-			$("tr#legendaries").after(`<tr class='legendary'><td colspan='6' class='legendary'><span class='name'>${legendaryname}</span> ${legendarytexthtml}</td></tr>`);
+			$("#legendaries").after(`<div class='legendary'><div class='legendary'><span class='name'>${legendaryname}</span> ${legendarytexthtml}</div></div>`);
 		}
-		if ($("tr.legendary").length && !$("tr.legendary span.name:empty").length && !$("tr.legendary span.name:contains(Legendary Actions)").length) {
+		if ($(".legendary").length && !$(".legendary span.name:empty").length && !$(".legendary span.name:contains(Legendary Actions)").length) {
 			const legendaryActions = mon.legendaryActions || 3;
 			const legendaryName = name.split(",");
-			$("tr#legendaries").after(`<tr class='legendary'><td colspan='6' class='legendary'><span class='name'></span> <span>${legendaryName[0]} can take ${legendaryActions} legendary action${legendaryActions > 1 ? "s" : ""}, choosing from the options below. Only one legendary action can be used at a time and only at the end of another creature's turn. ${legendaryName[0]} regains spent legendary actions at the start of its turn.</span></td></tr>`);
+			$("#legendaries").after(`<div class='legendary'><div class='legendary'><span class='name'></span> <span>${legendaryName[0]} can take ${legendaryActions} legendary action${legendaryActions > 1 ? "s" : ""}, choosing from the options below. Only one legendary action can be used at a time and only at the end of another creature's turn. ${legendaryName[0]} regains spent legendary actions at the start of its turn.</span></div></div>`);
 		}
 	}
 
 	const legendaryGroup = mon.legendaryGroup;
-	$("tr.lairaction").remove();
-	$("tr#lairactions").hide();
-	$("tr.regionaleffect").remove();
-	$("tr#regionaleffects").hide();
+	$(".lairaction").remove();
+	$("#lairactions").hide();
+	$(".regionaleffect").remove();
+	$("#regionaleffects").hide();
 	if (legendaryGroup) {
 		const thisGroup = legendaryGroupList[legendaryGroup];
 		if (thisGroup.lairActions) renderSection("lairaction", thisGroup.lairActions);
@@ -472,19 +460,13 @@ function loadhash (id) {
 	}
 
 	function renderSection(sectionClass, sectionEntries) {
-		$(`tr#${sectionClass}s`).show();
+		$(`#${sectionClass}s`).show();
 		entryList = {type: "entries", entries: sectionEntries};
 		renderStack = [];
 		renderer.recursiveEntryRender(entryList, renderStack);
-		$(`tr#${sectionClass}s`).after(`<tr class='${sectionClass}'><td colspan='6' class='legendary'>${utils_makeRoller(renderStack.join(""))}</td></tr>`);
+		$(`#${sectionClass}s`).after(`<div class='${sectionClass}'><div class='legendary'>${utils_makeRoller(renderStack.join(""))}</div></div>`);
 	}
 
-	// add click links for rollables
-	$("#stats #abilityscores td").each(function () {
-		$(this).wrapInner("<span class='roller' data-roll='1d20" + $(this).children(".mod").html() + "'></span>");
-	});
-
-	const isProfDiceMode = $("button#profbonusdice")[0].useDice;
 	if (mon.skill) {
 		$("#skills").each(makeSkillRoller);
 	}
@@ -549,8 +531,8 @@ function loadhash (id) {
 		$this.html(out.join(", "));
 	}
 	function renderSkillOrSaveRoller(itemName, profBonusString, profDiceString, isSave) {
-		const mode = isProfDiceMode ? PROF_MODE_DICE : PROF_MODE_BONUS;
-		return `<span class='roller' title="${itemName} ${isSave ? " save" : ""}" data-roll-alt="1d20;${profDiceString}" data-roll='1d20${profBonusString}' ${ATB_PROF_MODE}='${mode}' ${ATB_PROF_DICE_STR}="+${profDiceString}" ${ATB_PROF_BONUS_STR}="${profBonusString}">${isProfDiceMode ? profDiceString : profBonusString}</span>`;
+		const mode = PROF_MODE_BONUS;
+		return `<span class='roller' title="${itemName} ${isSave ? " save" : ""}" data-roll-alt="1d20;${profDiceString}" data-roll='1d20${profBonusString}' ${ATB_PROF_MODE}='${mode}' ${ATB_PROF_DICE_STR}="+${profDiceString}" ${ATB_PROF_BONUS_STR}="${profBonusString}">${profBonusString}</span>`;
 	}
 
 	// inline rollers
@@ -562,7 +544,7 @@ function loadhash (id) {
 		// fixing it would probably involve machine learning though; we need an AI to figure it out on-the-fly
 		// (Siri integration forthcoming)
 		const titleMaybe = attemptToGetTitle(this);
-		const mode = isProfDiceMode ? PROF_MODE_DICE : PROF_MODE_BONUS;
+		const mode = PROF_MODE_BONUS;
 
 		$(this).html($(this).html().replace(/(\-|\+)?\d+(?= to hit)/g, function(match) {
 			const bonus = Number(match);
@@ -573,7 +555,7 @@ function loadhash (id) {
 			if (expectedPB > 0) {
 				const profDiceString = `1d${expectedPB*2}${withoutPB >= 0 ? "+" : ""}${withoutPB}`;
 
-				return `<span class='roller' ${titleMaybe ? `title="${titleMaybe}"` : ""} data-roll-alt='1d20;${profDiceString}' data-roll='1d20${match}' ${ATB_PROF_MODE}='${mode}' ${ATB_PROF_DICE_STR}="+${profDiceString}" ${ATB_PROF_BONUS_STR}="${match}">${isProfDiceMode ? profDiceString : match}</span>`
+				return `<span class='roller' ${titleMaybe ? `title="${titleMaybe}"` : ""} data-roll-alt='1d20;${profDiceString}' data-roll='1d20${match}' ${ATB_PROF_MODE}='${mode}' ${ATB_PROF_DICE_STR}="+${profDiceString}" ${ATB_PROF_BONUS_STR}="${match}">${match}</span>`
 			} else {
 				return `<span class='roller' data-roll='1d20${match}'>${match}</span>`; // if there was no proficiency bonus to work with, fall back on this
 			}
@@ -588,7 +570,7 @@ function loadhash (id) {
 				const withoutPB = dc - expectedPB;
 				const profDiceString = `1d${(expectedPB*2)}${withoutPB >= 0 ? "+" : ""}${withoutPB}`;
 
-				return `DC <span class="dc-roller" ${titleMaybe ? `title="${titleMaybe}"` : ""} ${ATB_PROF_MODE}="${mode}" data-roll-alt="${profDiceString}" data-bonus="${capture}" ${ATB_PROF_DICE_STR}="+${profDiceString}" ${ATB_PROF_BONUS_STR}="${capture}">${isProfDiceMode ? profDiceString : capture}</span>`;
+				return `DC <span class="dc-roller" ${titleMaybe ? `title="${titleMaybe}"` : ""} ${ATB_PROF_MODE}="${mode}" data-roll-alt="${profDiceString}" data-bonus="${capture}" ${ATB_PROF_DICE_STR}="+${profDiceString}" ${ATB_PROF_BONUS_STR}="${capture}">${capture}</span>`;
 			} else {
 				return match; // if there was no proficiency bonus to work with, fall back on this
 			}
@@ -647,9 +629,12 @@ function loadhash (id) {
 	});
 
 	function outputRollResult($ele, roll, rollResult) {
-		const name = $("#name .stats-name").text();
+		const name = window.monsterName;
 		$("div#output").prepend(`<span>${name}: <em>${roll}</em> rolled ${$ele.attr("title") ? `${$ele.attr("title")} ` : "" }for <strong>${rollResult.total}</strong> (<em>${rollResult.rolls.join(", ")}</em>)<br></span>`).show();
 		$("div#output span:eq(5)").remove();
+		// $('html, body').animate({
+        // 	scrollTop: $('div#output').offset().top - 84
+		// }, 'fast');
 	}
 }
 

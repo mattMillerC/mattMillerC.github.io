@@ -774,6 +774,7 @@ body.dark header .mdc-theme--on-primary {
     bottom: 24px;
     right: 24px;
     border-radius: 32px;
+    z-index: 2;
 }
 
 .mobile-clone-features .centred-col {
@@ -883,6 +884,11 @@ body.dark header .mdc-theme--on-primary {
     padding-top: 24px;
     border-top: 1px solid var(--mdc-theme-text-divider-on-background, rgba(0, 0, 0, 0.12));
 }
+#subclasses .title {
+    text-align: center;
+    font-weight: 20px;
+    margin-bottom: 16px;
+}
 #subclasses .mdc-chip {
     margin-right: 8px;
     margin-bottom: 8px;
@@ -907,13 +913,13 @@ body.dark header .mdc-theme--on-primary {
     top: 40px;
     left: 0;
     overflow: hidden;
-    padding: 16px;
+    padding: 16px 16px 24px;
 }
 #subclasses.fixed .tab {
     display: block;
 }
 #subclasses.fixed.closed {
-    height: 0px;
+    height: 30px;
 }
 #subclasses.fixed.closed .tab {
     transform: rotateZ(180deg);
@@ -976,6 +982,103 @@ body.dark header .mdc-theme--on-primary {
 .roller {
     cursor: pointer;
     color: var(--mdc-theme-secondary, '#018786') !important;
+}
+/* Monster stats */
+.list.monsters .table-cell--border {
+    padding-right: 18px;
+}
+#stats.monster {
+    font-size: 13px;
+}
+#stats.monster strong {
+    font-size: 14px;
+}
+#stats.monster .name {
+    display: inline;
+    font-weight: bold;
+    font-size: 14px;
+}
+#stats.monster p {
+    display: inline;
+}
+#stats.monster p.spells {
+    display: block;
+    margin: 0;
+}
+#stats.monster p.second {
+    margin-top: 16px;
+}
+#stats.monster .stats-source {
+    font-size: 14px;
+}
+#stats.monster #sizetypealignment {
+    font-size: 14px;
+    font-style: italic;
+}
+#stats.monster #abilitynames,
+#stats.monster #abilityscores {
+    max-width: 350px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+#stats.monster #abilitynames,
+#stats.monster #abilityscores {
+    justify-content: space-around;
+}
+#stats.monster #abilitynames {
+    border-top: 1px solid var(--mdc-theme-text-primary-on-background, #000);
+    padding-top: 4px;
+    margin-top: 8px;
+    font-weight: bold;
+}
+#stats.monster #abilityscores {
+    border-bottom: 1px solid var(--mdc-theme-text-primary-on-background, #000);
+    padding-bottom: 4px;
+    margin-bottom: 8px;
+}
+#stats.monster #traits {
+    border-top: 1px solid var(--mdc-theme-text-primary-on-background, #000);
+    padding-top: 4px;
+    margin-top: 8px;
+}
+#stats.monster #actions {
+    border-top: 1px solid var(--mdc-theme-text-primary-on-background, #000);
+    padding-top: 24px;
+    margin-top: 4px;
+    font-size: 24px;
+}
+#stats.monster #reactions {
+    border-top: 1px solid var(--mdc-theme-text-primary-on-background, #000);
+    padding-top: 24px;
+    margin-top: 4px;
+    font-size: 24px;
+}
+#stats.monster #legendaries {
+    border-top: 1px solid var(--mdc-theme-text-primary-on-background, #000);
+    padding-top: 24px;
+    margin-top: 4px;
+    font-size: 24px;
+}
+#stats.monster #lairactions {
+    border-top: 1px solid var(--mdc-theme-text-primary-on-background, #000);
+    padding-top: 24px;
+    margin-top: 4px;
+    font-size: 24px;
+}
+#stats.monster #regionaleffects {
+    border-top: 1px solid var(--mdc-theme-text-primary-on-background, #000);
+    padding-top: 24px;
+    margin-top: 4px;
+    font-size: 24px;
+}
+#stats.monster .trait,
+#stats.monster .action,
+#stats.monster .legendary,
+#stats.monster .lairaction,
+#stats.monster .regionaleffect,
+#stats.monster .reaction {
+    margin: 16px 0;
 }
 
 /* Breakpoints */
@@ -1086,6 +1189,70 @@ body.dark header .mdc-theme--on-primary {
     }
 }
 
+/* Desktop and up */
+@media(min-width: 1321px) {
+    .container {
+        max-width: 1120px;
+        padding-left: 320px;
+    }
+    .mdc-top-app-bar__row .logo {
+        margin-left: 16px;
+    }
+    .mdc-drawer {
+        display: flex;
+        top: 65px;
+    }
+    .mdc-drawer + .mdc-drawer-scrim {
+        display: none;
+    }
+    .mdc-drawer--modal {
+        box-shadow: none;
+    }
+    .mdc-list {
+        margin-bottom: 65px;
+    }
+    .hidden-desktop-up {
+        display: none !important;
+    }
+    .breadcrumbs__list {
+        justify-content: flex-start;
+    }
+    .breadcrumbs__crumb {
+        font-size: 20px;
+    }
+    .class-grid-item {
+        width: calc(100% / 6 - 34px);
+    }
+    #subclasses.fixed {
+        padding-left: calc(((100vw - 320px - 1160px) / 2) + 320px);
+        padding-right: 1000px;
+        width: 1120px;
+        top: 48px;
+    }
+    #subclasses.fixed .tab {
+        padding-left: calc(((100vw - 320px - 1160px) / 2) + 320px);
+        width: 1120px;
+    }
+}
+
+/* Below Big Phone */
+@media(max-width: 598px) {
+    .hidden-big-mobile-down {
+        display: none !important;
+    }
+}
+/* Below Tablet */
+@media(max-width: 920px) {
+    .hidden-mobile-down {
+        display: none !important;
+    }
+}
+/* Below Desktop */
+@media(max-width: 1320px) {
+    .hidden-tablet-down {
+        display: none !important;
+    }
+}
 
 .mdc-drawer .list-item--activated .mdc-list-item__graphic {
     color: #6200ee
@@ -1142,67 +1309,6 @@ body.dark header .mdc-theme--on-primary {
 
 :not(.mdc-list--non-interactive)>:not(.mdc-list-item--disabled).list-item--activated.mdc-ripple-upgraded {
     --mdc-ripple-fg-opacity: 0.24
-}
-
-/* Desktop and up */
-@media(min-width: 1321px) {
-    .container {
-        max-width: 1120px;
-        padding-left: 320px;
-    }
-    .mdc-top-app-bar__row .logo {
-        margin-left: 16px;
-    }
-    .mdc-drawer {
-        display: flex;
-        top: 65px;
-    }
-    .mdc-drawer + .mdc-drawer-scrim {
-        display: none;
-    }
-    .mdc-drawer--modal {
-        box-shadow: none;
-    }
-    .mdc-list {
-        margin-bottom: 65px;
-    }
-    .hidden-desktop-up {
-        display: none !important;
-    }
-    .breadcrumbs__list {
-        justify-content: flex-start;
-    }
-    .breadcrumbs__crumb {
-        font-size: 20px;
-    }
-    .class-grid-item {
-        width: calc(100% / 6 - 34px);
-    }
-    #subclasses.fixed {
-        padding-left: calc(((100vw - 320px - 1160px) / 2) + 320px);
-        padding-right: 1000px;
-        width: 1120px;
-        top: 48px;
-    }
-}
-
-/* Below Big Phone */
-@media(max-width: 598px) {
-    .hidden-big-mobile-down {
-        display: none !important;
-    }
-}
-/* Below Tablet */
-@media(max-width: 920px) {
-    .hidden-mobile-down {
-        display: none !important;
-    }
-}
-/* Below Desktop */
-@media(max-width: 1320px) {
-    .hidden-tablet-down {
-        display: none !important;
-    }
 }
 
 /* Fixers */
@@ -1276,4 +1382,8 @@ body.dark header .mdc-theme--on-primary {
 
 strong {
     font-weight: bold;
+}
+
+em {
+    font-style: italic;
 }

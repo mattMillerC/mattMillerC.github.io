@@ -46,9 +46,11 @@ window.onload = function load() {
             } else {
                 $(".back-to-top").addClass("hidden");
             }
-			if ($("#subclassHeight").offset().top - $(window).scrollTop() < 40) {
+			if ($("#subclassHeight").offset().top - $(window).scrollTop() < 34) {
                 $("#subclasses").addClass("fixed");
-				$("#subclassHeight").css("height", $("#subclasses").height() + 35 + 'px');
+				if ($("#subclasses").height()) {
+                    $("#subclassHeight").css("height", $("#subclasses").height() + 40 + "px");
+				}
             } else {
                 $("#subclasses").removeClass("fixed");
                 $("#subclasses").removeClass("closed");
@@ -224,7 +226,8 @@ function loadhash (id) {
 			featureLink.click(function(e) {
 				e.preventDefault();
 				document.getElementById(featureId).scrollIntoView(true);
-				window.scrollBy(0, -64);
+				let offset = -84 - $("#subclasses").height();
+				window.scrollBy(0, offset);
 			});
 			featureNames.push(featureLink);
 
@@ -279,6 +282,7 @@ function loadhash (id) {
 	const subclassPillWrapper = $("div#subclasses");
 	// remove any from previous class
 	subclassPillWrapper.empty();
+	subclassPillWrapper.append(`<div class='title'>Subclasses</div>`)
 
 	// show/hide class features pill
 	makeGenericTogglePill("Class Features", CLSS_CLASS_FEATURES_ACTIVE, ID_CLASS_FEATURES_TOGGLE, HASH_HIDE_FEATURES, true);

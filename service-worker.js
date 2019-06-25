@@ -1,4 +1,5 @@
-var CACHE_NAME = "my-site-cache-v10";
+var CACHE_NAME = "my-site-cache-v11";
+var anticache = 'this is my swan song';
 var urlsToCache = [
     "/index.html",
     "/backgrounds.html",

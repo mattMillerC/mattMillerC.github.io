@@ -3,6 +3,9 @@
 const JSON_URL = "data/cults.json";
 let tableDefault, cultList;
 
+mdc.textField.MDCTextField.attachTo(document.querySelector(".mdc-text-field"));
+mdc.notchedOutline.MDCNotchedOutline.attachTo(document.querySelector(".mdc-notched-outline"));
+
 window.onload = function load() {
 	loadJSON(JSON_URL, onJsonLoad);
 };
