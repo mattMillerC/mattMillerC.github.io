@@ -244,20 +244,18 @@ function populateTablesAndFilters() {
 		tierTags.forEach(tt => tierFilter.addIfAbsent(tt));
 	}
 	// populate table
-	$("table.list.mundane").append(liList.mundane);
-	$("table.list.magic").append(liList.magic);
+	$(".list.items").append(liList.mundane);
+	$(".list.items").append(liList.magic);
 	// sort filters
 	sourceFilter.items.sort(ascSort);
 	typeFilter.items.sort(ascSort);
 
 	const options = {
 		valueNames: ["name", "source", "type", "rarity"],
-		listClass: "mundane"
+		listClass: "items"
 	};
 
-	const mundanelist = search(options);
-	options.listClass = "magic";
-	const magiclist = search(options);
+	const itemTableList = search(options);
 
 	filterBox.render();
 
@@ -285,14 +283,12 @@ function populateTablesAndFilters() {
 	}
 
 	function handleFilterChange() {
-		mundanelist.filter(listFilter);
-		magiclist.filter(listFilter);
+		itemTableList.filter(listFilter);
 	}
 
 	$("#filtertools").find("button.sort").on("click", function() {
 		$(this).attr("sortby", $(this).attr("sortby") === "asc" ? "desc" : "asc");
-		magiclist.sort($(this).attr("sort"), { order: $(this).attr("sortby"), sortFunction: sortItems });
-		mundanelist.sort($(this).attr("sort"), { order: $(this).attr("sortby"), sortFunction: sortItems });
+		itemTableList.sort($(this).attr("sort"), { order: $(this).attr("sortby"), sortFunction: sortItems });
 	});
 
 	initHistory();

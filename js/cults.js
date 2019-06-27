@@ -23,7 +23,7 @@ function onJsonLoad(data) {
 				<td class='table-cell name'>${name}</td>
 			</tr>`;
 	}
-	$("table.cults").append(tempString);
+	$(".list.cults").append(tempString);
 
 	const list = search({
 		valueNames: ['name'],

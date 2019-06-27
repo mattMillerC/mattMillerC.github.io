@@ -167,71 +167,39 @@
 				<div class="margin-bottom_small">Source: <span class="source"></span></div>
 			</div>
 
-			<div id="filter-search-input-group" class="filter-group">
-				<div class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-					<i class="material-icons mdc-text-field__icon mdc-theme--primary">search</i>
-					<input type="search" id="search-field" class="mdc-text-field__input search" >
-					<div class="mdc-notched-outline">
-						<div class="mdc-notched-outline__leading"></div>
-						<div class="mdc-notched-outline__notch">
-							<label for="search-field" class="mdc-floating-label">Search</label>
+			<div id="listcontainer">
+				<div id="filter-search-input-group" class="filter-group">
+					<div class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
+						<i class="material-icons mdc-text-field__icon mdc-theme--primary">search</i>
+						<input type="search" id="search-field" class="mdc-text-field__input search" >
+						<div class="mdc-notched-outline">
+							<div class="mdc-notched-outline__leading"></div>
+							<div class="mdc-notched-outline__notch">
+								<label for="search-field" class="mdc-floating-label">Search</label>
+							</div>
+							<div class="mdc-notched-outline__trailing"></div>
 						</div>
-						<div class="mdc-notched-outline__trailing"></div>
+					</div>
+					<div class="filter-group--buttons">
+						<button class="mdc-button mdc-button--raised" id="reset">
+							<span class="mdc-button__label">Reset</span>
+						</button>
 					</div>
 				</div>
-				<div class="filter-group--buttons">
-					<button class="mdc-button mdc-button--raised" id="reset">
-						<span class="mdc-button__label">Reset</span>
-					</button>
-				</div>
-			</div>
-		</div>
 
-		<div id="listcontainer">
-			<div class='collapse open margin-top_med'>
-				<div class='container collapse-toggle'>
-					Mundane Items
-				</div>
-				<div class='container collapse-wrapper'>
-					<div class='collapse-list'>
-						<div class="table-wrap mdc-elevation--z6">
-							<div class="table--scroll">
-								<table class="table list mundane">
-									<thead>
-										<tr class="table-row table-row--header">
-											<th class="sort" data-sort="name"><div class="table-cell">Name</div></th>
-											<th class="sort" data-sort="type"><div class="table-cell">Type</div></th>
-											<th class="sort hidden-mobile-down" data-sort="source"><div class="table-cell">Source</div></th>
-											<th class="sort hidden-mobile-down" data-sort="rarity"><div class="table-cell">Rarity</div></th>
-										</tr>
-									</thead>
-								</table>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			
-			<div class='collapse open margin-bottom_large'>
-				<div class='container collapse-toggle'>
-					Magical Items
-				</div>
-				<div class='container collapse-wrapper'>
-					<div class='collapse-list'>
-						<div class="table-wrap mdc-elevation--z6">
-							<div class="table--scroll">
-								<table class="table list magic">
-									<thead>
-										<tr class="table-row table-row--header">
-											<th class="sort" data-sort="name"><div class="table-cell">Name</div></th>
-											<th class="sort" data-sort="type"><div class="table-cell">Type</div></th>
-											<th class="sort hidden-mobile-down" data-sort="source"><div class="table-cell">Source</div></th>
-											<th class="sort hidden-mobile-down" data-sort="rarity"><div class="table-cell">Rarity</div></th>
-										</tr>
-									</thead>
-								</table>
-							</div>
-						</div>
+				<div class="table-wrap mdc-elevation--z6">
+					<div class="table--scroll">
+						<table class="table">
+							<thead>
+								<tr class="table-row table-row--header">
+									<th class="sort" data-sort="name"><div class="table-cell">Name</div></th>
+									<th class="sort" data-sort="type"><div class="table-cell">Type</div></th>
+									<th class="sort hidden-mobile-down" data-sort="source"><div class="table-cell">Source</div></th>
+									<th class="sort hidden-mobile-down" data-sort="rarity"><div class="table-cell">Rarity</div></th>
+								</tr>
+							</thead>
+							<tbody class='list items'></tbody>
+						</table>
 					</div>
 				</div>
 			</div>

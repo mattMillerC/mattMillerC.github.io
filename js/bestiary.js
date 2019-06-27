@@ -86,7 +86,7 @@ function populate(tobData, mainData) {
 		miscFilter
 	);
 
-	const table = $("table.monsters");
+	const table = $(".list.monsters");
 	let textStack = "";
 	// build the table
 	for (let i = 0; i < monsters.length; i++) {
@@ -632,9 +632,6 @@ function loadhash (id) {
 		const name = window.monsterName;
 		$("div#output").prepend(`<span>${name}: <em>${roll}</em> rolled ${$ele.attr("title") ? `${$ele.attr("title")} ` : "" }for <strong>${rollResult.total}</strong> (<em>${rollResult.rolls.join(", ")}</em>)<br></span>`).show();
 		$("div#output span:eq(5)").remove();
-		// $('html, body').animate({
-        // 	scrollTop: $('div#output').offset().top - 84
-		// }, 'fast');
 	}
 }
 

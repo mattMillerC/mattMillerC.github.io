@@ -263,7 +263,7 @@ function onJsonLoad(data) {
 		rangeFilter
 	);
 
-	const spellTable = $("table.spells");
+	const spellTable = $(".list.spells");
 	let tempString = "";
 	for (let i = 0; i < spellList.length; i++) {
 		const spell = spellList[i];

@@ -186,7 +186,7 @@ function utils_makeTable(tableObject) {
 
 	tableStack += "</tr></thead><tbody>";
 	for (let i = 0; i < tableObject.tbody.length; ++i) {
-		tableStack += "<tr>";
+		tableStack += "<tr class='table-row'>";
 		for (let j = 0; j < tableObject.tbody[i].length; ++j) {
 			tableStack += "<td" + makeTableTdClassText(tableObject, j) + ">" + tableObject.tbody[i][j] + "</td>";
 		}

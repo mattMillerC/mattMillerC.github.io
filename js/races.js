@@ -25,7 +25,7 @@ function onJsonLoad (data) {
 		sizeFilter
 	);
 
-	const racesTable = $("table.races");
+	const racesTable = $(".list.races");
 	let tempString = "";
 	for (let i = 0; i < raceList.length; i++) {
 		const race = raceList[i];

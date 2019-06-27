@@ -116,6 +116,9 @@ function loadhash (id) {
 	$(".mobile-clone-spells").remove();
 	const curClass = classes[id];
 	window.className = curClass.name;
+	
+	let svgName = curClass.name.replace(/(\s|\(|\))/g, "");
+	$('.class-icon use')[0].setAttribute('xlink:href', '#' + svgName);
 
 	const isUaClass = isNonstandardSource(curClass.source);
 

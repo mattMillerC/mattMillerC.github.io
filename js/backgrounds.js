@@ -17,7 +17,7 @@ function onJsonLoad(data) {
 	const sourceFilter = getSourceFilter();
 	const filterBox = initFilterBox(sourceFilter);
 
-	const bgTable = $("table.backgrounds");
+	const bgTable = $(".list.backgrounds");
 	let tempString = "";
 	for (let i = 0; i < bgList.length; i++) {
 		const bg = bgList[i];

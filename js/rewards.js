@@ -46,7 +46,7 @@ function onJsonLoad(data) {
 		// populate filters
 		sourceFilter.addIfAbsent(reward.source);
 	}
-	$("table.rewards").append(tempString);
+	$(".list.rewards").append(tempString);
 
 	// sort filters
 	sourceFilter.items.sort(ascSort);

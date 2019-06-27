@@ -53,7 +53,7 @@ function onJsonLoad(data) {
 		// populate filters
 		sourceFilter.addIfAbsent(curRule.source);
 	}
-	$("table.variantRules").append(tempString);
+	$(".list.variantRules").append(tempString);
 
 	const list = search({
 		valueNames: ['name', 'source', 'search'],

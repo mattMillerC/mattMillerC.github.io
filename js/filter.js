@@ -95,29 +95,25 @@ class FilterBox {
 				$quickBtns.append($default);
 				$line.append($quickBtns);
 
-				const $summary = $(`<span class="summary"/>`);
-				const $summaryInclude = $(`<span class="include" title="Hiding includes"/>`);
-				const $summarySpacer = $(`<span class="spacer"/>`);
-				const $summaryExclude = $(`<span class="exclude" title="Hidden excludes"/>`);
-				$summary.append($summaryInclude);
-				$summary.append($summarySpacer);
-				$summary.append($summaryExclude);
-				$summary.hide();
-				$line.append($summary);
-
-				$all.on(EVNT_CLICK, function() {
+				$all.on(EVNT_CLICK, function(e) {
+					e.stopPropagation();
+                    e.preventDefault();
 					$grid.find(".filter-pill").each(function() {
 						$(this).data("setter")(FilterBox._PILL_STATES[1]);
 					});
 				});
 
-				$clear.on(EVNT_CLICK, function() {
+				$clear.on(EVNT_CLICK, function(e) {
+					e.stopPropagation();
+					e.preventDefault();
 					$grid.find(".filter-pill").each(function() {
 						$(this).data("setter")(FilterBox._PILL_STATES[0]);
 					});
 				});
 
 				$default.on(EVNT_CLICK, function() {
+					e.stopPropagation();
+                    e.preventDefault();
 					self._reset(filter.header);
 				});
 
@@ -189,10 +185,7 @@ class FilterBox {
 					);
 					$pill.data("resetter",
 						(function() {
-							if (filter.deselFn && filter.deselFn(item)) {
-								$pill.attr("state", "no");
-								$miniPill.attr("state", "no");
-							} else if (filter.selFn && filter.selFn(item)) {
+							if (filter.selFn && filter.selFn(item)) {
 								$pill.attr("state", "yes");
 								$miniPill.attr("state", "yes");
 							} else {
@@ -220,23 +213,11 @@ class FilterBox {
 						const _totals = {yes: 0, no: 0, ignored: 0};
 						$pills.forEach(function(p) {
 							const state = p.attr("state");
-							out[p.val()] = state === "yes" ? 1 : state === "no" ? -1 : 0;
-							const countName = state === "yes" ? "yes" : state === "no" ? "no" : "ignored";
+							out[p.val()] = state === "yes" ? 1 : 0;
+							const countName = state === "yes" ? "yes" : "ignored";
 							_totals[countName] = _totals[countName]+1;
 						});
 						out._totals = _totals;
-						return out;
-					}
-				);
-
-				$grid.data(
-					"getCounts",
-					function() {
-						const out = {"yes": 0, "no": 0};
-						$pills.forEach(function(p) {
-							const state = p.attr("state");
-							if (out[state] !== undefined) out[state] = out[state] + 1;
-						});
 						return out;
 					}
 				);

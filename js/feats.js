@@ -26,7 +26,7 @@ function onJsonLoad(data) {
 		asiFilter
 	);
 
-	const featTable = $("table.feats");
+	const featTable = $(".list.feats");
 	let tempString = "";
 	for (let i = 0; i < featlist.length; i++) {
 		const curfeat = featlist[i];

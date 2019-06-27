@@ -106,7 +106,7 @@ function onJsonLoad(data) {
 		// populate filters
 		sourceFilter.addIfAbsent(p[JSON_ITEM_SOURCE]);
 	});
-	$('table.psionics').append(tempString);
+	$('.list.psionics').append(tempString);
 
 	// sort filters
 	sourceFilter.items.sort(ascSort);

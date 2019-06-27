@@ -6,15 +6,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<!--
-	XML data was compiled by a reddit community for use with the "Fight Club 5" app.
-	Google "5e xml files" for more info.
-
-	Feel free to use, edit, and redistribute this as you wish.
-	I don't own any of the XML data anyway.
--->
-
-	<title>Spells - 5e Tools</title>
+	<title>Dice Roller - 5e Tools</title>
 
 	<link rel="stylesheet" href="css/reset.css">
 	<link rel="stylesheet" href="css/material-components-web.min.css">
@@ -34,9 +26,8 @@
 		<div class="mdc-top-app-bar__row">
 			<div class="breadcrumbs mdc-theme--on-primary">
 				<div class="container breadcrumbs__list">
-					<div class="breadcrumbs__crumb"><a href="./index.html">References</a></div>
-					<div class="breadcrumbs__crumb breadcrumbs__no_caret"><a href="javascript:blankHash()">Spells</a></div>
-					<div class="breadcrumbs__crumb breadcrumbs__last"></div>
+					<div class="breadcrumbs__crumb"><a href="./index.html">Tools</a></div>
+					<div class="breadcrumbs__crumb breadcrumbs__last"><a href="javascript:blankHash()">Dice Roller</a></div>
 				</div>
 			</div>
 			<div class="nav-button">
@@ -75,7 +66,6 @@
 				</a>
 				<a class="mdc-list-item mdc-theme--on-surface" href="variantrules.html">
 					<i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">description</i>
-					
 					<span class="mdc-list-item__text">Variant Rules</span>
 				</a>
 
@@ -100,7 +90,7 @@
 
 				<hr class="mdc-list-divider">
 				<h6 class="mdc-list-group__subheader mdc-theme--on-surface">References</h6>
-				<a class="mdc-list-item mdc-theme--on-surface list-item--activated" href="spells.html">
+				<a class="mdc-list-item mdc-theme--on-surface" href="spells.html">
 					<i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">flash_on</i>
 					<span class="mdc-list-item__text">Spells</span>
 				</a>
@@ -131,11 +121,11 @@
 
 				<hr class="mdc-list-divider">
 				<h6 class="mdc-list-group__subheader mdc-theme--on-surface">Tools</h6>
-				<a class="mdc-list-item mdc-theme--on-surface" href="dice.html">
+				<a class="mdc-list-item mdc-theme--on-surface list-item--activated" href="dice.html">
 					<i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">casino</i>
 					<span class="mdc-list-item__text">Dice Roller</span>
 				</a>
-				<span class='version mdc-typography--caption'>v1.0.1</span>
+				<span class='version mdc-typography--caption'>v1.1.0</span>
 				
 			</nav>
 		</div>
@@ -145,48 +135,52 @@
 
 	<div class="main mdc-top-app-bar--fixed-adjust mdc-typography--body1 mdc-theme--background mdc-theme--text-primary-on-background">
 		<div class="container">
-			<h1 class="page-title mdc-typography--headline2">Spells</h1>
-
-			<button class="mdc-icon-button close-item material-icons">close</button>
-
-			<div class="stats-wrapper margin-bottom_large">
-			</div>
-
-			<div id="listcontainer">
-				<div id="filter-search-input-group" class="filter-group">
+			<h1 class="page-title mdc-typography--headline2">Dice Roller</h1>
+			
+			<div class="dice-wrapper">
+				<div class='dice-field-container'>
 					<div class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-  						<i class="material-icons mdc-text-field__icon mdc-theme--primary">search</i>
-						<input type="search" id="search-field" class="mdc-text-field__input search" >
+						<i class="material-icons mdc-text-field__icon mdc-theme--primary">casino</i>
+						<input type="input" class="mdc-text-field__input roll-field" >
 						<div class="mdc-notched-outline">
 							<div class="mdc-notched-outline__leading"></div>
 							<div class="mdc-notched-outline__notch">
-								<label for="search-field" class="mdc-floating-label">Search</label>
+								<label for="search-field" class="mdc-floating-label">Roll</label>
 							</div>
 							<div class="mdc-notched-outline__trailing"></div>
 						</div>
 					</div>
-					<div class="filter-group--buttons">
-						<button class="mdc-button mdc-button--raised" id="reset">
-							<span class="mdc-button__label">Reset</span>
-						</button>
+					<button class="mdc-button mdc-button--raised roll-submit">
+						<span class="mdc-button__label">Roll!</span>
+					</button>
+					<button class="mdc-button mdc-button--raised roll-clear" style='display: none;'>
+						<span class="mdc-button__label">Clear</span>
+					</button>
+
+					<div class='roll-total-wrap' style='display: none;'>
+						Total: <span id='total'></span>
 					</div>
+					<div id='output'></div>
 				</div>
 
-				<div class="table-wrap mdc-elevation--z6">
-					<div class="table--scroll">
-						<table class="table">
-							<thead>
-								<tr class="table-row table-row--header">
-									<th class="sort" data-sort="name"><div class="table-cell">Name</div></th>
-									<th class="sort" data-sort="source"><div class="table-cell">Source</div></th>
-									<th class="sort" data-sort="level"><div class="table-cell" style="width: 80px;">Level</div></th>
-									<th class="sort hidden-mobile-down " data-sort="time"><div class="table-cell">Time</div></th>
-									<th class="sort hidden-mobile-down " data-sort="school"><div class="table-cell">School</div></th>
-									<th class="sort hidden-mobile-down " data-sort="range"><div class="table-cell">Range</div></th>
-								</tr>
-							</thead>
-							<tbody class='list spells'></tbody> 
-						</table>
+				<div class='dice-list-container'>
+					<div class="dice-grid-item roll" data-roll='1d4'>
+						<svg class="dice-grid-item--image"><use xlink:href="#d4"></use></svg>
+					</div>
+					<div class="dice-grid-item roll" data-roll='1d6'>
+						<svg class="dice-grid-item--image"><use xlink:href="#d6"></use></svg>
+					</div>
+					<div class="dice-grid-item roll" data-roll='1d8'>
+						<svg class="dice-grid-item--image"><use xlink:href="#d8"></use></svg>
+					</div>
+					<div class="dice-grid-item roll" data-roll='1d10'>
+						<svg class="dice-grid-item--image"><use xlink:href="#d10"></use></svg>
+					</div>
+					<div class="dice-grid-item roll" data-roll='1d12'>
+						<svg class="dice-grid-item--image"><use xlink:href="#d12"></use></svg>
+					</div>
+					<div class="dice-grid-item roll" data-roll='1d20'>
+						<svg class="dice-grid-item--image"><use xlink:href="#d20"></use></svg>
 					</div>
 				</div>
 			</div>
@@ -201,9 +195,67 @@
 	<script type="text/javascript" src="js/utils.js"></script>
 	<script type="text/javascript" src="js/filter.js"></script>
 	<script type="text/javascript" src="js/history.js"></script>
-	<script type="text/javascript" src="js/entryrender.js"></script>
-	<script type="text/javascript" src="js/spells.js"></script>
+	<script type="text/javascript" src="js/dice.js"></script>
+	<script type="text/javascript" src="lib/droll.js"></script>
 	<script type="text/javascript" src="lib/list.js"></script>
 	<script type="text/javascript" src="lib/jquery.js"></script>
+	
+	<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display:none">
+		<defs>
+			<symbol id='d4' viewBox="0 0 100 100">
+				<title>4-sided dice</title>
+				<polygon stroke-width="3" stroke-miterlimit="10" points="50,6 7.5,61.5 50,94 92.5,61.5 "/>
+				<line stroke-width="3" stroke-miterlimit="10" x1="49.5" y1="6" x2="49.5" y2="94"/>
+			</symbol>
+
+			<symbol id='d6' viewBox="0 0 100 100">
+				<title>6-sided dice</title>
+				<polygon stroke-width="3" stroke-miterlimit="10" points="50,96.25 9.5,73.125 9.5,26.875 50,3.75 
+					90.5,26.875 90.5,73.125 "/>
+				<polyline stroke-width="3" stroke-miterlimit="10" points="9.5,26.75 49.5,50 49.5,96 "/>
+				<line stroke-width="3" stroke-miterlimit="10" x1="49.5" y1="50" x2="90.5" y2="26.875"/>
+			</symbol>
+
+			<symbol id='d8' viewBox="0 0 100 100">
+				<title>8-sided dice</title>
+				<rect x="18.887" y="18.887" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -20.7107 50)" stroke-width="3" stroke-miterlimit="10" width="62.225" height="62.225"/>
+				<polyline stroke-width="3" stroke-miterlimit="10" points="6,50 50,70.75 94,50 "/>
+				<line stroke-width="3" stroke-miterlimit="10" x1="49.5" y1="6" x2="49.5" y2="94"/>
+				<path stroke-width="3" stroke-miterlimit="10" d="M-40.5-22.5"/>
+			</symbol>
+
+			<symbol id='d10' viewBox="0 0 100 100">
+				<title>10-sided dice</title>
+				<polygon stroke-width="3" stroke-miterlimit="10" points="50,5 6,53 50,94.334 94,53 "/>
+				<polyline stroke-width="3" stroke-miterlimit="10" points="6,53 28.333,47 50,56 71.667,47 94,53 "/>
+				<line stroke-width="3" stroke-miterlimit="10" x1="49.5" y1="93" x2="49.5" y2="56"/>
+				<polyline stroke-width="3" stroke-miterlimit="10" points="28.333,47 49.5,7 71.667,47 "/>
+			</symbol>
+
+			<symbol id='d12' viewBox="0 0 100 100">
+				<title>12-sided dice</title>
+				<polygon stroke-width="3" stroke-miterlimit="10" points="37.5,8.5 23.5,15.75 7.5,42 7.5,58 22,83 35.5,90.5 64.5,90.5 78,83 92.5,58 92.5,42 76.5,15.75 62.5,8.5 "/>
+				<polyline stroke-width="3" stroke-miterlimit="10" points="92.5,42 72.167,63.5 50,50 28,63.5 7.5,42"/>
+				<polyline stroke-width="3" stroke-miterlimit="10" points="23.5,15.75 50,23.167 76.5,15.75 "/>
+				<line stroke-width="3" stroke-miterlimit="10" x1="49.5" y1="23" x2="49.5" y2="50"/>
+				<line stroke-width="3" stroke-miterlimit="10" x1="35.5" y1="90.5" x2="28" y2="63.5"/>
+				<line stroke-width="3" stroke-miterlimit="10" x1="64.5" y1="90.5" x2="72.167" y2="63.5"/>
+			</symbol>
+
+			<symbol id='d20' viewBox="0 0 100 100">
+				<title>20-sided dice</title>
+				<polygon stroke-width="3" stroke-miterlimit="10" points="50,97.57 8.5,73.785 8.5,26.215 50,2.43 
+					91.5,26.215 91.5,73.785 "/>
+				<polyline stroke-width="3" stroke-miterlimit="10" points="91.5,26.215 78.103,32.5 90.5,73 
+					50,81.175 9.667,73.167 21.896,32.5 8.5,26.215 "/>
+				<path stroke-width="3" stroke-miterlimit="10" d="M21.896,32.5"/>
+				<polygon stroke-width="3" stroke-miterlimit="10" points="78.103,32.5 50,3.75 21.896,32.5 50,81.175 
+					"/>
+				<line stroke-width="3" stroke-miterlimit="10" x1="49.5" y1="79" x2="49.5" y2="98"/>
+				<line stroke-width="3" stroke-miterlimit="10" x1="22" y1="33.5" x2="78" y2="33.5"/>
+			</symbol>
+		</defs>
+	</svg>
 </body>
+
 </html>
