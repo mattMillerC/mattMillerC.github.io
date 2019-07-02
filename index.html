@@ -136,7 +136,7 @@
 	</aside>
 
 	<div class="mdc-drawer-scrim"></div>
-	<div class="main mdc-top-app-bar--fixed-adjust mdc-typography--body1 mdc-theme--background mdc-theme--text-primary-on-background">
+	<div class="main mdc-top-app-bar--fixed-adjust mdc-typography--body1 mdc-theme--background mdc-theme--text-primary-on-background landing-page">
 		<div class="container">
 			<h1 class="mdc-typography--headline2 margin-bottom_large margin-top_large typography_mono">5e Tools</h1>
 			
@@ -214,24 +214,10 @@
 		</div>
 	</div>
 
-	<script type="text/javascript">
-		if ("serviceWorker" in navigator) {
-		window.addEventListener("load", function() {
-			navigator.serviceWorker.register("/service-worker.js").then(
-				function(registration) {
-					// Registration was successful
-					console.log("ServiceWorker registration successful with scope: ", registration.scope);
-				},
-				function(err) {
-					// registration failed :(
-					console.log("ServiceWorker registration failed: ", err);
-				}
-			);
-		});
-	}
-	</script>
 	<script type="text/javascript" src="lib/material-components-web.min.js"></script>
 	<script type="text/javascript" src="lib/jquery.js"></script>
+	<script src="lib/instantclick.min.js" data-no-instant></script>
+	<script data-no-instant>InstantClick.init();</script>
 	<script type="text/javascript" src="lib/swipe.js"></script>
  
     <script type="text/javascript" src="js/nav.js"></script>

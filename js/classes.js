@@ -47,8 +47,8 @@ window.onload = function load() {
                 $(".back-to-top").addClass("hidden");
             }
 			if ($("#subclassHeight").offset().top - $(window).scrollTop() < 34) {
-                $("#subclasses").addClass("fixed");
-				if ($("#subclasses").height()) {
+				if (!$("#subclasses").hasClass("fixed")) {
+                	$("#subclasses").addClass("fixed");
                     $("#subclassHeight").css("height", $("#subclasses").height() + 40 + "px");
 				}
             } else {
@@ -287,11 +287,11 @@ function loadhash (id) {
 	subclassPillWrapper.empty();
 	subclassPillWrapper.append(`<div class='title'>Subclasses</div>`)
 
-	// show/hide class features pill
-	makeGenericTogglePill("Class Features", CLSS_CLASS_FEATURES_ACTIVE, ID_CLASS_FEATURES_TOGGLE, HASH_HIDE_FEATURES, true);
-
 	// show/hide UA/other sources
 	const allSourcesToggle = makeGenericTogglePill("All Sources", CLSS_OTHER_SOURCES_ACTIVE, ID_OTHER_SOURCES_TOGGLE, HASH_ALL_SOURCES, false);
+
+	// show/hide class features pill
+	makeGenericTogglePill("Class Features", CLSS_CLASS_FEATURES_ACTIVE, ID_CLASS_FEATURES_TOGGLE, HASH_HIDE_FEATURES, true);
 
 	// subclass pills
 	const subClasses = curClass.subclasses

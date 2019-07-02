@@ -25,15 +25,6 @@ function onJsonLoad(data) {
         const toAdd = rulesList[i].parentlist;
         if ($.inArray(toAdd, listNames) === -1) listNames.push(toAdd);
     }
-    // const lists = [];
-    // listNames.forEach(ln => {
-    //     lists.push(
-    //         search({
-    //             valueNames: ["name", "id"],
-    //             listClass: ln
-    //         })
-    //     );
-    // });
 
     $(".list.rules").each(function() {
         $(this)
@@ -51,6 +42,7 @@ function onJsonLoad(data) {
     });
 
     let rulesCloned = $(".rules-wrapper").clone();
+    rulesCloned.find('.collapse').addClass('collapse--left-arrow');
     $("#rulescontent").before(rulesCloned);
 
     initHistory();

@@ -211,11 +211,15 @@ function getMetaFilterObj(s) {
 }
 
 window.onload = function load() {
+	performance.mark("spell load start");
 	loadJSON(JSON_URL, onJsonLoad);
 };
 
 let spellList;
 function onJsonLoad(data) {
+	performance.mark("spell load end");
+	performance.measure("spell load", "spell load start", "spell load end");
+	performance.mark("spell parse start");
 	tableDefault = $(".stats-wrapper").html();
 
 	spellList = data.spell;
@@ -397,6 +401,9 @@ function onJsonLoad(data) {
 
 	initHistory();
 	handleFilterChange();
+	
+	performance.mark("spell parse end");
+	performance.measure("spell parse", "spell parse start", "spell parse end");
 }
 
 function sortSpells(a, b, o) {

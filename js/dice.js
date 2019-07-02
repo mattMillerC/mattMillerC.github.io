@@ -78,7 +78,9 @@ window.onload = () => {
     $(document).on('click', ".roll[data-roll]", e => {
         e.preventDefault();
 
-        let roll = $(e.target).closest('.roll').data('roll');
+        let roll = $(e.target)
+            .closest(".roll")
+            .data("roll");
         if (roll) {
             outputRollResult(roll);
         }

@@ -1,5 +1,5 @@
-var CACHE_NAME = "my-site-cache-v12";
-var anticache = 'a wizard is never late';
+var CACHE_NAME = "my-site-cache-v13";
+var anticache = 'winter is coming';
 var urlsToCache = [
     "/index.html",
     "/backgrounds.html",
@@ -16,6 +16,7 @@ var urlsToCache = [
     "/rules.html",
     "/spells.html",
     "/variantrules.html",
+    "/dice.html",
 
     "/css/material-components-web.min.css",
     "/css/styles.css",
@@ -74,13 +75,15 @@ var urlsToCache = [
     "/js/utils.js",
     "/js/variantrules.js",
     "/js/darkmode.js",
+    "/js/dice.js",
 
     "/lib/droll.js",
     "/lib/jquery.js",
     "/lib/list.js",
     "/lib/throttle.js",
     "/lib/swipe.js",
-    "/lib/material-components-web.min.js"
+    "/lib/material-components-web.min.js",
+    "/lib/instantclick.min.js"
 ];
 
 self.addEventListener("install", function(event) {

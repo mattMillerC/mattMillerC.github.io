@@ -1367,12 +1367,19 @@ function joinConjunct(arr, joinWith, conjunctWith) {
 
 // JSON LOADING ========================================================================================================
 function loadJSON(url, onLoadFunction, ...otherData) {
-	const request = new XMLHttpRequest();
-	request.open('GET', url, true);
-	request.overrideMimeType("application/json");
-	request.onload = function() {
-		const data = JSON.parse(this.response);
-		onLoadFunction(data, otherData);
-	};
-	request.send();
+	if (!window.cachedData) {
+		window.cachedData = {};
+	}
+	if (window.cachedData[url]) {
+		onLoadFunction(window.cachedData[url], otherData);
+	} else {
+		const request = new XMLHttpRequest();
+		request.open("GET", url, true);
+		request.overrideMimeType("application/json");
+		request.onload = function() {
+			window.cachedData[url] = JSON.parse(this.response);
+			onLoadFunction(JSON.parse(this.response), otherData);
+		};
+		request.send();
+	}
 }
