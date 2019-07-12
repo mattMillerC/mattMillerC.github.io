@@ -130,13 +130,13 @@
 					<i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">casino</i>
 					<span class="mdc-list-item__text">Dice Roller</span>
 				</a>
-				<span class='version mdc-typography--caption'>v1.1.0</span>
+				<span class='version mdc-typography--caption'>v1.2.0</span>
 			</nav>
 		</div>
 	</aside>
 
 	<div class="mdc-drawer-scrim"></div>
-	<div class="main mdc-top-app-bar--fixed-adjust mdc-typography--body1 mdc-theme--background mdc-theme--text-primary-on-background">
+	<div class="main mdc-top-app-bar--fixed-adjust mdc-typography--body1 mdc-theme--background mdc-theme--text-primary-on-background landing-page">
 		<div class="container">
 			<h1 class="mdc-typography--headline2 margin-bottom_large margin-top_large typography_mono">5e Tools</h1>
 			
@@ -215,19 +215,19 @@
 	</div>
 
 	<script type="text/javascript">
-		if ("serviceWorker" in navigator) {
-		window.addEventListener("load", function() {
-			navigator.serviceWorker.register("/service-worker.js").then(
-				function(registration) {
-					// Registration was successful
-					console.log("ServiceWorker registration successful with scope: ", registration.scope);
-				},
-				function(err) {
-					// registration failed :(
-					console.log("ServiceWorker registration failed: ", err);
-				}
-			);
-		});
+		// if ("serviceWorker" in navigator) {
+		// window.addEventListener("load", function() {
+		// 	navigator.serviceWorker.register("/service-worker.js").then(
+		// 		function(registration) {
+		// 			// Registration was successful
+		// 			console.log("ServiceWorker registration successful with scope: ", registration.scope);
+		// 		},
+		// 		function(err) {
+		// 			// registration failed :(
+		// 			console.log("ServiceWorker registration failed: ", err);
+		// 		}
+		// 	);
+		// });
 	}
 	</script>
 	<script type="text/javascript" src="lib/material-components-web.min.js"></script>

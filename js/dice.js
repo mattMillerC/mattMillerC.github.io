@@ -7,6 +7,8 @@ window.onload = () => {
     let diceField = mdc.textField.MDCTextField.attachTo(document.querySelector(".mdc-text-field"));
     mdc.notchedOutline.MDCNotchedOutline.attachTo(document.querySelector(".mdc-notched-outline"));
 
+    diceField.useNativeValidation = false;
+
     let outputRollResult = (roll, name) => {
         let rollResult = droll.roll(roll.replace(/\s/g, ""));
         if (rollResult) {
@@ -46,6 +48,7 @@ window.onload = () => {
         } else {
             $(".dice-field-container .mdc-text-field").addClass("error");
         }
+        $(".roll-field").focus();
     });
 
     $(".roll-field").on('keydown', (e) => {
@@ -72,7 +75,19 @@ window.onload = () => {
         } else if (keyCode === 13) {
             e.preventDefault();
             $(".roll-submit").click();
+
+        // comma or period
+        } else if (keyCode === 190 || keyCode === 188) {
+            e.preventDefault();
+            diceField.value = diceField.value + 'd';
+
+        } else if (keyCode === 32 || keyCode === 189 || keyCode === 187) {
+            e.preventDefault();
+            diceField.value = diceField.value + " + ";
         }
+    }).on('submit', (e) => {
+        e.preventDefault();
+        $(".roll-submit").click();
     });
 
     $(document).on('click', ".roll[data-roll]", e => {
