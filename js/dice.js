@@ -1,6 +1,6 @@
 "use strict";
 
-window.onload = () => {
+(() => {
     let total = 0,
         historyIndex = -1;
 
@@ -10,13 +10,17 @@ window.onload = () => {
     let outputRollResult = (roll, name) => {
         let rollResult = droll.roll(roll.replace(/\s/g, ""));
         if (rollResult) {
-            $("div#output").prepend(
-                `<div>
-                    <em><a class='roll' data-roll='${roll}'>${roll}</a></em> rolled for <strong>${rollResult.total}</strong>${rollResult.rolls.length > 1 ? `<br>(${rollResult.rolls.join(", ")})` : ''}
-                </div>`
-            ).show();
+            $("div#output")
+                .prepend(
+                    `<div>
+                <em><a class='roll' data-roll='${roll}'>${roll}</a></em> rolled for <strong>${
+                        rollResult.total
+                    }</strong>${rollResult.rolls.length > 1 ? `<br>(${rollResult.rolls.join(", ")})` : ""}
+            </div>`
+                )
+                .show();
             total += rollResult.total;
-            $('#total').html(total)
+            $("#total").html(total);
             $(".roll-total-wrap").show();
             $(".roll-clear").show();
             diceField.value = "";
@@ -48,34 +52,34 @@ window.onload = () => {
         }
     });
 
-    $(".roll-field").on('keydown', (e) => {
+    $(".roll-field").on("keydown", e => {
         let keyCode = e.keyCode || e.which,
-            historyCount = $('#output > div').length;
+            historyCount = $("#output > div").length;
 
         // up
         if (keyCode === 38) {
             e.preventDefault();
             if (historyIndex + 1 < historyCount) {
-                historyIndex ++;
-                diceField.value = $(`#output div:eq(${historyIndex}) a.roll`).data('roll');
-            }
-
-        // down
-        } else if (keyCode === 40) {
-            e.preventDefault();
-            if (historyIndex - 1 > -1) {
-                historyIndex --;
+                historyIndex++;
                 diceField.value = $(`#output div:eq(${historyIndex}) a.roll`).data("roll");
             }
 
-        // enter
+            // down
+        } else if (keyCode === 40) {
+            e.preventDefault();
+            if (historyIndex - 1 > -1) {
+                historyIndex--;
+                diceField.value = $(`#output div:eq(${historyIndex}) a.roll`).data("roll");
+            }
+
+            // enter
         } else if (keyCode === 13) {
             e.preventDefault();
             $(".roll-submit").click();
         }
     });
 
-    $(document).on('click', ".roll[data-roll]", e => {
+    $(document).on("click", ".roll[data-roll]", e => {
         e.preventDefault();
 
         let roll = $(e.target)
@@ -85,4 +89,4 @@ window.onload = () => {
             outputRollResult(roll);
         }
     });
-};
+})();

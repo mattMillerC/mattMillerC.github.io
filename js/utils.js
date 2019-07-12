@@ -1371,7 +1371,9 @@ function loadJSON(url, onLoadFunction, ...otherData) {
 		window.cachedData = {};
 	}
 	if (window.cachedData[url]) {
-		onLoadFunction(window.cachedData[url], otherData);
+		setTimeout(() => {
+			onLoadFunction(window.cachedData[url], otherData);
+		}, 0);
 	} else {
 		const request = new XMLHttpRequest();
 		request.open("GET", url, true);
