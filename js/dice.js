@@ -51,44 +51,61 @@ window.onload = () => {
         $(".roll-field").focus();
     });
 
-    $(".roll-field").on('keydown', (e) => {
-        let keyCode = e.keyCode || e.which,
-            historyCount = $('#output > div').length;
+    $(".roll-field")
+        .on("keydown", e => {
+            let keyCode = e.keyCode || e.which,
+                historyCount = $("#output > div").length;
 
-        // up
-        if (keyCode === 38) {
-            e.preventDefault();
-            if (historyIndex + 1 < historyCount) {
-                historyIndex ++;
-                diceField.value = $(`#output div:eq(${historyIndex}) a.roll`).data('roll');
+            // up
+            if (keyCode === 38) {
+                e.preventDefault();
+                if (historyIndex + 1 < historyCount) {
+                    historyIndex++;
+                    diceField.value = $(`#output div:eq(${historyIndex}) a.roll`).data("roll");
+                }
+
+                // down
+            } else if (keyCode === 40) {
+                e.preventDefault();
+                if (historyIndex - 1 > -1) {
+                    historyIndex--;
+                    diceField.value = $(`#output div:eq(${historyIndex}) a.roll`).data("roll");
+                }
+
+                // enter
+            } else if (keyCode === 13) {
+                e.preventDefault();
+                $(".roll-submit").click();
+
+                // comma or period
+            } else if (keyCode === 190 || keyCode === 188) {
+                e.preventDefault();
+                diceField.value = diceField.value + "d";
+            } else if (keyCode === 32 || keyCode === 189 || keyCode === 187) {
+                e.preventDefault();
+                diceField.value = diceField.value + " + ";
             }
-
-        // down
-        } else if (keyCode === 40) {
-            e.preventDefault();
-            if (historyIndex - 1 > -1) {
-                historyIndex --;
-                diceField.value = $(`#output div:eq(${historyIndex}) a.roll`).data("roll");
-            }
-
-        // enter
-        } else if (keyCode === 13) {
+        })
+        .on("submit", e => {
             e.preventDefault();
             $(".roll-submit").click();
-
-        // comma or period
-        } else if (keyCode === 190 || keyCode === 188) {
-            e.preventDefault();
-            diceField.value = diceField.value + 'd';
-
-        } else if (keyCode === 32 || keyCode === 189 || keyCode === 187) {
-            e.preventDefault();
-            diceField.value = diceField.value + " + ";
-        }
-    }).on('submit', (e) => {
-        e.preventDefault();
-        $(".roll-submit").click();
-    });
+        })
+        .on("textInput", e => {
+            var keyData = e.originalEvent.data;
+            if (keyData && (keyData === "." || keyData === ",")) {
+                e.preventDefault();
+                diceField.value = diceField.value + "d";
+            } else if (keyData && (keyData === " " || keyData === "+")) {
+                e.preventDefault();
+                diceField.value = diceField.value + "+";
+            }
+        })
+        .on("focus", e => {
+            $(".dice-field-label").show();
+        })
+        .on("blur", e => {
+            $(".dice-field-label").hide();
+        });
 
     $(document).on('click', ".roll[data-roll]", e => {
         e.preventDefault();

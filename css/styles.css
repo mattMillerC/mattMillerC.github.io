@@ -823,6 +823,13 @@ thead:last-child {
 .dice-field-container .mdc-text-field {
     width: calc(100% - 4px);
 }
+.dice-field-label {
+    font-size: 11px;
+    line-height: 1.6;
+    width: 100%;
+    display: none;
+    margin-top: 5px;
+}
 .roll-submit {
     margin: 8px;
 }
