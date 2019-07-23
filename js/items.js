@@ -259,32 +259,28 @@ function populateTablesAndFilters() {
 
 	filterBox.render();
 
-	// filtering function
-	$(filterBox).on(
-		FilterBox.EVNT_VALCHANGE,
-		handleFilterChange
-	);
+	
+	let handleFilterChange = window.debounce(() => {
+        itemTableList.filter(function(item) {
+			const f = filterBox.getValues();
+			let filterId = $(item.elm).attr(FLTR_ID);
+			if (filterId) {
+				const i = itemList[filterId];
 
-	function listFilter(item) {
-		const f = filterBox.getValues();
-		let filterId = $(item.elm).attr(FLTR_ID);
-		if (filterId) {
-			const i = itemList[filterId];
+				return sourceFilter.toDisplay(f, i.source) &&
+				typeFilter.toDisplay(f, i._fTypes) &&
+				tierFilter.toDisplay(f, i._fTier) &&
+				rarityFilter.toDisplay(f, i.rarity) &&
+				attunementFilter.toDisplay(f, i._fAttunement) &&
+				categoryFilter.toDisplay(f, i.category);
+			} else {
+				return true;
+			}
+		});
+	}, 600);
 
-			return sourceFilter.toDisplay(f, i.source) &&
-			typeFilter.toDisplay(f, i._fTypes) &&
-			tierFilter.toDisplay(f, i._fTier) &&
-			rarityFilter.toDisplay(f, i.rarity) &&
-			attunementFilter.toDisplay(f, i._fAttunement) &&
-			categoryFilter.toDisplay(f, i.category);
-		} else {
-			return true;
-		}
-	}
-
-	function handleFilterChange() {
-		itemTableList.filter(listFilter);
-	}
+    // filtering function
+    $(filterBox).on(FilterBox.EVNT_VALCHANGE, handleFilterChange);
 
 	$("#filtertools").find("button.sort").on("click", function() {
 		$(this).attr("sortby", $(this).attr("sortby") === "asc" ? "desc" : "asc");

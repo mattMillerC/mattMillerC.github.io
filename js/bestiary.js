@@ -126,13 +126,7 @@ function populate(tobData, mainData) {
 
 	filterBox.render();
 
-	// filtering function
-	$(filterBox).on(
-		FilterBox.EVNT_VALCHANGE,
-		handleFilterChange
-	);
-
-	function handleFilterChange() {
+	let handleFilterChange = window.debounce(() => {
 		list.filter(function(item) {
 			const f = filterBox.getValues();
 			let filterId = $(item.elm).attr(FLTR_ID);
@@ -152,7 +146,13 @@ function populate(tobData, mainData) {
 				return true;
 			}
 		});
-	}
+	}, 600);
+
+	// filtering function
+	$(filterBox).on(
+		FilterBox.EVNT_VALCHANGE,
+		handleFilterChange
+	);
 
 	initHistory();
 	handleFilterChange();

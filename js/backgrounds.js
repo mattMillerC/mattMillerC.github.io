@@ -52,23 +52,21 @@ function onJsonLoad(data) {
 	// sort filters
 	sourceFilter.items.sort(ascSort);
 
-	$(filterBox).on(
-		FilterBox.EVNT_VALCHANGE,
-		handleFilterChange
-	);
+	let handleFilterChange = window.debounce(() => {
+		list.filter(item => {
+            const f = filterBox.getValues();
+            let filterId = $(item.elm).attr(FLTR_ID);
+            if (filterId) {
+                const bg = bgList[filterId];
+                return sourceFilter.toDisplay(f, bg.source);
+            } else {
+                return true;
+            }
+        });
+    }, 600);
 
-	function handleFilterChange() {
-		list.filter(function(item) {
-			const f = filterBox.getValues();
-			let filterId = $(item.elm).attr(FLTR_ID);
-			if (filterId) {
-				const bg = bgList[filterId];
-				return sourceFilter.toDisplay(f, bg.source);
-			} else {
-				return true;
-			}
-		});
-	}
+    // filtering function
+    $(filterBox).on(FilterBox.EVNT_VALCHANGE, handleFilterChange);
 
 	initHistory();
 	handleFilterChange();

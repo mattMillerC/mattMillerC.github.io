@@ -68,27 +68,23 @@ function onJsonLoad(data) {
 	});
 
 	filterBox.render();
-
-	// filtering function
-	$(filterBox).on(
-		FilterBox.EVNT_VALCHANGE,
-		handleFilterChange
-	);
-
-	// filtering function
-	function handleFilterChange() {
+	
+	let handleFilterChange = window.debounce(() => {
 		list.filter(function(item) {
-			const f = filterBox.getValues();
-			let filterId = $(item.elm).attr(FLTR_ID);
-			if (filterId) {
-				const ft = featlist[$(item.elm).attr(FLTR_ID)];
+            const f = filterBox.getValues();
+            let filterId = $(item.elm).attr(FLTR_ID);
+            if (filterId) {
+                const ft = featlist[$(item.elm).attr(FLTR_ID)];
 
-				return sourceFilter.toDisplay(f, ft.source) && asiFilter.toDisplay(f, ft._fAbility);
-			} else {
-				return true;
-			}
-		});
-	}
+                return sourceFilter.toDisplay(f, ft.source) && asiFilter.toDisplay(f, ft._fAbility);
+            } else {
+                return true;
+            }
+        });
+    }, 600);
+
+    // filtering function
+    $(filterBox).on(FilterBox.EVNT_VALCHANGE, handleFilterChange);
 
 	initHistory();
 	handleFilterChange();

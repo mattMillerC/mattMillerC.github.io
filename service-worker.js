@@ -1,4 +1,4 @@
-var CACHE_NAME = "my-site-cache-v15";
+var CACHE_NAME = "my-site-cache-v16";
 var urlsToCache = [
     "/index.html",
     "/backgrounds.html",
@@ -79,7 +79,6 @@ var urlsToCache = [
     "/lib/droll.js",
     "/lib/jquery.js",
     "/lib/list.js",
-    "/lib/throttle.js",
     "/lib/swipe.js",
     "/lib/material-components-web.min.js"
 ];

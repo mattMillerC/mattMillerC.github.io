@@ -115,6 +115,56 @@ body.dark header .mdc-theme--on-primary {
     cursor: pointer;
 }
 
+/* Spinner */
+.spinner,
+.spinner:after {
+  border-radius: 50%;
+  width: 10em;
+  height: 10em;
+}
+.spinner {
+  margin: 60px auto;
+  font-size: 10px;
+  position: relative;
+  text-indent: -9999em;
+  border-top: 1.1em solid rgba(255, 255, 255, 0.2);
+  border-right: 1.1em solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1.1em solid rgba(255, 255, 255, 0.2);
+  border-left: 1.1em solid var(--mdc-theme-secondary);
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-animation: load8 1.1s infinite linear;
+  animation: load8 1.1s infinite linear;
+  overflow: hidden;
+}
+@-webkit-keyframes load8 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes load8 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+.hidden {
+    display: none !important;
+}
+.main-spinner:not(.hidden) ~ * {
+    display: none;
+}
+
 /* Drawer */
 .mdc-drawer__header a {
     text-decoration: none;
@@ -352,7 +402,42 @@ thead:last-child {
     z-index: 1;
     margin-left: 100vw;
 }
-.filter-menu .mdc-menu {
+.filter-menu .filter-button {
+    font-family: Roboto, sans-serif;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    font-size: .875rem;
+    line-height: 2.25rem;
+    font-weight: 500;
+    letter-spacing: .0892857143em;
+    text-decoration: none;
+    text-transform: uppercase;
+    padding: 0 8px 0 8px;
+    display: inline-flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 64px;
+    height: 36px;
+    border: none;
+    outline: none;
+    line-height: inherit;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-appearance: none;
+    overflow: hidden;
+    vertical-align: middle;
+    border-radius: 4px;
+    color: var(--mdc-theme-primary, #6200ee);
+    cursor: pointer;
+}
+.filter-menu .filter-button:hover {
+    background-color: rgba(0, 0, 0, .04);
+}
+.filter-menu .mdc-menu-surface {
     border: 1px solid var(--mdc-theme-text-divider-on-background);
     width: 420px;
     overflow-x: hidden;
@@ -1027,6 +1112,7 @@ thead:last-child {
     left: 0;
     overflow: hidden;
     padding: 16px 16px 24px;
+    width: calc(100% - 32px);
 }
 #subclasses.fixed .tab {
     display: block;
@@ -1208,6 +1294,18 @@ thead:last-child {
 #stats.monster .regionaleffect,
 #stats.monster .reaction {
     margin: 16px 0;
+}
+
+.builder-name-wrapper {
+    height: 66px;
+    margin: 48px 0 24px;
+    background-color: var(--mdc-theme-background, #fff) !important;
+}
+.builder-name-wrapper input {
+    font-size: 26px;
+}
+.class-add-button {
+    margin: 24px 0;
 }
 
 /* Breakpoints */

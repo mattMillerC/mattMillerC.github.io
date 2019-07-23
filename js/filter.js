@@ -35,7 +35,7 @@ class FilterBox {
 		const $filterButton = getFilterButton();
 		this.$miniView = getMiniView();
 		const $inputGroup = $(this.inputGroup);
-		const $dropdownMenu = $('.mdc-menu', $filterButton);
+		const $dropdownMenu = $('.mdc-menu-surface', $filterButton);
 		for (let i = 0; i < this.filterList.length; ++i) {
 			$dropdownMenu.append(makeDropdownRow(i, this, this.filterList[i], this.$miniView));
 			if (i < this.filterList.length - 1) {
@@ -44,7 +44,7 @@ class FilterBox {
 		}
 		$inputGroup.find('.filter-group--buttons').prepend($filterButton);
 		$inputGroup.after(this.$miniView);
-		let materialMenu = mdc.menu.MDCMenu.attachTo($dropdownMenu.get(0));
+		let materialMenu = mdc.menuSurface.MDCMenuSurface.attachTo($dropdownMenu.get(0));
 
 		this.addDropdownHandlers($filterButton, materialMenu);
 		addResetHandler(this);
@@ -56,7 +56,7 @@ class FilterBox {
 						<i class="material-icons mdc-button__icon" aria-hidden="true">filter_list</i>
 						<span class="mdc-button__label">Filter</span>
 					</button>
-					<div class="mdc-menu mdc-menu-surface">
+					<div class="mdc-menu-surface">
 						<button class="mdc-icon-button close-menu material-icons">close</button>
 					</div>
 				</div>`);
@@ -87,11 +87,11 @@ class FilterBox {
 					</div>`);
 
 				const $quickBtns = $(`<div class="filter-menu-row__heading-buttons"/>`);
-				const $all = $(`<div class="mdc-button">All</div>`);
+				const $all = $(`<div class="filter-button">All</div>`);
 				$quickBtns.append($all);
-				const $clear = $(`<div class="mdc-button">Clear</div>`);
+				const $clear = $(`<div class="filter-button">Clear</div>`);
 				$quickBtns.append($clear);
-				const $default = $(`<div class="mdc-button">Default</div>`);
+				const $default = $(`<div class="filter-button">Default</div>`);
 				$quickBtns.append($default);
 				$line.append($quickBtns);
 
@@ -111,7 +111,7 @@ class FilterBox {
 					});
 				});
 
-				$default.on(EVNT_CLICK, function() {
+				$default.on(EVNT_CLICK, function(e) {
 					e.stopPropagation();
                     e.preventDefault();
 					self._reset(filter.header);
@@ -236,14 +236,9 @@ class FilterBox {
 	}
 
 	addDropdownHandlers(filterWrap, materialMenu) {
-		const observer = new MutationObserver((mutations) => {
-			mutations.forEach(() => {
-				if (!filterWrap.hasClass('mdc-menu-surface--open')) {
-					this._fireValChangeEvent();
-				}
-			});
-		});
-		observer.observe(filterWrap.find('.mdc-menu-surface')[0], {attributes : true, attributeFilter: ["class"]});
+		materialMenu.root_.addEventListener("MDCMenuSurface:closed", e => {
+			this._fireValChangeEvent();
+        });
 
 		$('.mdc-button', filterWrap).on('click', () => {
 			materialMenu.open = !materialMenu.open;

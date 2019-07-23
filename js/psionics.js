@@ -135,30 +135,30 @@ function onJsonLoad(data) {
 
 	filterBox.render();
 
+	let handleFilterChange = window.debounce(() => {
+        list.filter(function(item) {
+            const f = filterBox.getValues();
+            let filterId = $(item.elm).attr(FLTR_ID);
+
+            if (filterId) {
+                const p = PSIONIC_LIST[filterId];
+
+                const rightSource = sourceFilter.toDisplay(f, p.source);
+                const rightType = typeFilter.toDisplay(f, p.type);
+                const rightOrder = orderFilter.toDisplay(f, p.order);
+
+                return rightSource && rightType && rightOrder;
+            } else {
+                return true;
+            }
+        });
+    }, 600);
+
 	// filtering function
 	$(filterBox).on(
 		FilterBox.EVNT_VALCHANGE,
 		handleFilterChange
 	);
-
-	function handleFilterChange() {
-		list.filter(function (item) {
-			const f = filterBox.getValues();
-			let filterId = $(item.elm).attr(FLTR_ID);
-
-			if (filterId) {
-				const p = PSIONIC_LIST[filterId];
-
-				const rightSource = sourceFilter.toDisplay(f, p.source);
-				const rightType = typeFilter.toDisplay(f, p.type);
-				const rightOrder = orderFilter.toDisplay(f, p.order);
-
-				return rightSource && rightType && rightOrder;
-			} else {
-				return true;
-			}
-		});
-	}
 
 	initHistory();
 	handleFilterChange();

@@ -64,13 +64,7 @@ function onJsonLoad(data) {
 
 	filterBox.render();
 
-	// filtering function
-	$(filterBox).on(
-		FilterBox.EVNT_VALCHANGE,
-		handleFilterChange
-	);
-
-	function handleFilterChange() {
+	let handleFilterChange = window.debounce(() => {
 		list.filter(function(item) {
 			const f = filterBox.getValues();
 			let filterId = $(item.elm).attr(FLTR_ID);
@@ -83,7 +77,13 @@ function onJsonLoad(data) {
 				return true;
 			}
 		});
-	}
+	}, 600);
+
+	// filtering function
+	$(filterBox).on(
+		FilterBox.EVNT_VALCHANGE,
+		handleFilterChange
+	);
 
 	initHistory();
 	handleFilterChange();

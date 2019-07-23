@@ -79,30 +79,31 @@ function onJsonLoad (data) {
 
 	filterBox.render();
 
+
+	let handleFilterChange = window.debounce(() => {
+        list.filter(function(item) {
+            const f = filterBox.getValues();
+            let filterId = $(item.elm).attr(FLTR_ID);
+
+            if (filterId) {
+                const r = raceList[filterId];
+
+                const rightSource = sourceFilter.toDisplay(f, r.source);
+                const rightAsi = asiFilter.toDisplay(f, r._fAbility);
+                const rightSize = sizeFilter.toDisplay(f, r.size);
+
+                return rightSource && rightAsi && rightSize;
+            } else {
+                return true;
+            }
+        });
+    }, 600);
+
 	// filtering function
 	$(filterBox).on(
 		FilterBox.EVNT_VALCHANGE,
 		handleFilterChange
 	);
-
-	function handleFilterChange() {
-		list.filter(function(item) {
-			const f = filterBox.getValues();
-			let filterId = $(item.elm).attr(FLTR_ID);
-
-			if (filterId) {
-				const r = raceList[filterId];
-
-				const rightSource = sourceFilter.toDisplay(f, r.source);
-				const rightAsi = asiFilter.toDisplay(f, r._fAbility);
-				const rightSize = sizeFilter.toDisplay(f, r.size);
-
-				return rightSource && rightAsi && rightSize;
-			} else {
-				return true;
-			}
-		})
-	}
 
 	initHistory();
 	handleFilterChange();

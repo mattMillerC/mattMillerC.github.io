@@ -1,5 +1,6 @@
 "use strict";
 function hashchange(e) {
+	$(".main-spinner").removeClass("hidden");
 	const [link, ...sub] = _getHashParts();
 
 	if (link && (!e || sub.length === 0)) {
@@ -30,6 +31,7 @@ function hashchange(e) {
 	if (typeof loadsub === "function" && sub.length > 0) {
 		loadsub(sub);
 	}
+	$(".main-spinner").addClass("hidden");
 }
 
 function blankHash() {
@@ -60,6 +62,7 @@ function initHistory() {
 	$(document).on('click', '.close-item', (e) => {
 		blankHash();
 	});
+	$(".main-spinner").addClass('hidden');
 }
 
 function getSelectedListElement() {
