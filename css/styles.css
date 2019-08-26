@@ -1050,6 +1050,9 @@ thead:last-child {
 .class-page--class-container table#stats td {
     padding: 12px 20px 8px;
 }
+.class-page--class-container #stats b {
+    font-weight: bold;
+}
 .mobile-clone-spells .level.table-cell {
     padding: 8px;
 }

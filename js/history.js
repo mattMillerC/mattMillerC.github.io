@@ -19,7 +19,7 @@ function hashchange(e) {
 			$('.main .page-title').first().text(newTitle);
 			$('.main').addClass('item-opened');
 			$(".history-link.list-item--activated").removeClass("list-item--activated");
-			$(`.history-link[data-title='${newTitle}']`).addClass("list-item--activated");
+			$(`.history-link[data-title='${encodeForHash(newTitle)}']`).addClass("list-item--activated");
 			document.title = newTitle + " - 5E Tools";
 		} else {
 			resetHash();
