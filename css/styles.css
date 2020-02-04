@@ -1108,7 +1108,7 @@ thead:last-child {
     padding-top: 4px;
 }
 #subclasses.fixed {
-    background: var(--mdc-theme-background);
+    background: var(--mdc-theme-surface, #fff) !important;
     border-bottom: 1px solid var(--mdc-theme-text-divider-on-background);
     position: fixed;
     top: 40px;
@@ -1121,7 +1121,7 @@ thead:last-child {
     display: block;
 }
 #subclasses.fixed.closed {
-    height: 30px;
+    height: 24px;
 }
 #subclasses.fixed.closed .title {
     margin-bottom: 60px;

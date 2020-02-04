@@ -53,7 +53,6 @@ window.onload = function load() {
                 }
             } else {
                 $("#subclasses").removeClass("fixed");
-                $("#subclasses").removeClass("closed");
 				$("#subclassHeight").css("height", '0');
             }
         }, 100)
