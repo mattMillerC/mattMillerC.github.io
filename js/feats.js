@@ -1,112 +1,34 @@
-"use strict";
-const JSON_URL = "data/feats.json";
-let tabledefault = "";
-let featlist;
+import {
+  utils_makePrerequisite,
+  utils_combineText,
+  utils_joinPhraseArray,
+} from "../js/utils.js";
+import Parser from '../util/Parser.js'
 
-mdc.textField.MDCTextField.attachTo(document.querySelector('.mdc-text-field'));
-mdc.notchedOutline.MDCNotchedOutline.attachTo(document.querySelector('.mdc-notched-outline'));
+const stats_wrapper = `
+	<div class="stats-wrapper margin-bottom_large">
+		<div class="source margin-bottom_small"></div>
+		<div class="prerequisite margin-bottom_small"></div>
+		<div class="text"></div>
+	</div>`;
 
-function deselUa(val) {
-	return val.startsWith(SRC_UA_PREFIX);
-}
+function renderSelection(feat, rootEl) {
+	rootEl.querySelector(".selection-wrapper").innerHTML = stats_wrapper;
 
-window.onload = function load() {
-	loadJSON(JSON_URL, onJsonLoad);
-};
-
-function onJsonLoad(data) {
-	tabledefault = $(".stats-wrapper").html();
-	featlist = data.feat;
-
-	// TODO prerequisite filter?
-	const sourceFilter = getSourceFilter();
-	const asiFilter = getAsiFilter();
-	const filterBox = initFilterBox(
-		sourceFilter,
-		asiFilter
-	);
-
-	const featTable = $(".list.feats");
-	let tempString = "";
-	for (let i = 0; i < featlist.length; i++) {
-		const curfeat = featlist[i];
-		const name = curfeat.name;
-		const ability = utils_getAbilityData(curfeat.ability);
-		if (!ability.asText) {
-			ability.asText = STR_NONE;
-		}
-		curfeat._fAbility = ability.asCollection; // used when filtering
-		let prereqText = utils_makePrerequisite(curfeat.prerequisite, true);
-		if (!prereqText) {
-			prereqText = STR_NONE;
-		}
-		const CLS_COL_1 = "table-cell table-cell--border name ";
-		const CLS_COL_2 = `table-cell source source${curfeat.source}`;
-		const CLS_COL_3 = "table-cell ability " + (ability.asText === STR_NONE ? "list-entry-none " : "");
-		const CLS_COL_4 = "table-cell prerequisite hidden-mobile-down " + (prereqText === STR_NONE ? "list-entry-none " : "");
-
-		tempString += `
-			<tr class="table-row history-link" data-link="${encodeForHash(name)+HASH_LIST_SEP+encodeForHash(curfeat.source)}" data-title="${name}" ${FLTR_ID}="${i}" id='${i}'>
-				<td class='${CLS_COL_1}'>${name}</span>
-				<td class='${CLS_COL_2}' title='${Parser.sourceJsonToFull(curfeat.source)}'>${Parser.sourceJsonToAbv(curfeat.source)}</span>
-				<td class='${CLS_COL_3}'>${ability.asText}</span>
-				<td class='${CLS_COL_4}'>${prereqText}</span>
-			</tr>`;
-
-		// populate filters
-		sourceFilter.addIfAbsent(curfeat.source);
-	}
-	featTable.append(tempString);
-
-	// sort filters
-	sourceFilter.items.sort(ascSort);
-
-	// init list
-	const list = search({
-		valueNames: ['name', 'source', 'ability', 'prerequisite'],
-		listClass: "feats"
-	});
-
-	filterBox.render();
-	
-	let handleFilterChange = window.debounce(() => {
-		list.filter(function(item) {
-            const f = filterBox.getValues();
-            let filterId = $(item.elm).attr(FLTR_ID);
-            if (filterId) {
-                const ft = featlist[$(item.elm).attr(FLTR_ID)];
-
-                return sourceFilter.toDisplay(f, ft.source) && asiFilter.toDisplay(f, ft._fAbility);
-            } else {
-                return true;
-            }
-        });
-    }, 600);
-
-    // filtering function
-    $(filterBox).on(FilterBox.EVNT_VALCHANGE, handleFilterChange);
-
-	initHistory();
-	handleFilterChange();
-}
-
-function loadhash(id) {
-	$('.stats-wrapper').html(tabledefault);
-	const feat = featlist[id];
-
-	$('.stats-wrapper .source')
-		.addClass(`source${feat.source}`)
-		.attr('title', Parser.sourceJsonToFull(feat.source))
-		.html(`${Parser.sourceJsonToAbv(feat.source)}`);
+	let sourceEl = rootEl.querySelector('.stats-wrapper .source');
+	sourceEl.classList.add(`source${feat.source}`);
+	sourceEl.setAttribute("title", Parser.sourceJsonToFull(feat.source));
+	sourceEl.innerHTML = `${Parser.sourceJsonToAbv(feat.source)}`;
 
 	const prerequisite = utils_makePrerequisite(feat.prerequisite);
-	$('.stats-wrapper .prerequisite').html(prerequisite ? "Prerequisite: " + prerequisite : "");
+	rootEl.querySelector('.stats-wrapper .prerequisite').innerHTML = (prerequisite ? "Prerequisite: " + prerequisite : "");
 	addAttributeItem(feat.ability, feat.entries);
-	$('.stats-wrapper .text').html(utils_combineText(feat.entries, "p"));
+	rootEl.querySelector('.stats-wrapper .text').innerHTML = utils_combineText(feat.entries, "p");
 
 	function addAttributeItem(abilityObj, textArray) {
 		if (abilityObj === undefined) return;
-		for (let i = 0; i < textArray.length; ++i) { // insert the new list item at the head of the first list we find list; flag with "hasabilityitem" so we don't do it more than once
+		for (let i = 0; i < textArray.length; ++i) { 
+			// insert the new list item at the head of the first list we find list; flag with "hasabilityitem" so we don't do it more than once
 			if (textArray[i].type === "list" && textArray[i].hasabilityitem !== "YES") {
 				textArray[i].hasabilityitem = "YES";
 				textArray[i].items.unshift(abilityObjToListItem())
@@ -122,7 +44,7 @@ function loadhash(id) {
 					abbArr.push("Increase your " + Parser.attAbvToFull(att) + " score by " + abilityObj[att] + TO_MAX_OF_TWENTY);
 				}
 			} else {
-				const choose=abilityObj.choose;
+				const choose = abilityObj.choose;
 				for (let i = 0; i < choose.length; ++i) {
 					if (choose[i].from.length === 6) {
 						if (choose[i].textreference === "YES") { // only used in "Resilient"
@@ -146,3 +68,5 @@ function loadhash(id) {
 		}
 	}
 }
+
+export {renderSelection};

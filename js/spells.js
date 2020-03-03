@@ -1,6 +1,6 @@
 "use strict";
 
-const JSON_URL = "data/spells.json";
+const JSON_URL = "../data/spells.json";
 
 mdc.textField.MDCTextField.attachTo(document.querySelector('.mdc-text-field'));
 mdc.notchedOutline.MDCNotchedOutline.attachTo(document.querySelector('.mdc-notched-outline'));

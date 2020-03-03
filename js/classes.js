@@ -28,7 +28,7 @@ let classTableDefault;
 
 let classes;
 
-const jsonURL = "data/classes.json";
+const jsonURL = "../data/classes.json";
 
 const renderer = new EntryRenderer();
 

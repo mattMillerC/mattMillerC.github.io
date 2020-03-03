@@ -1,5 +1,5 @@
 "use strict";
-const JSON_URL = "data/backgrounds.json";
+const JSON_URL = "../data/backgrounds.json";
 let tabledefault = "";
 let bgList;
 

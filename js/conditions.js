@@ -1,5 +1,5 @@
 "use strict";
-const JSON_URL = "data/conditions.json";
+const JSON_URL = "../data/conditions.json";
 let tableDefault;
 let conditionList;
 

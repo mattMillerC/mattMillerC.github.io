@@ -1,7 +1,7 @@
 "use strict";
 
 let rulesList;
-const RULES_URL = "data/rules.json";
+const RULES_URL = "../data/rules.json";
 
 window.onload = function load () {
 	loadJSON(RULES_URL, onJsonLoad);

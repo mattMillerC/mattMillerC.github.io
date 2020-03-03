@@ -1,4 +1,4 @@
-window.registerSwipe = (element, direction, handler) => {
+export default function registerSwipe(element, direction, handler) {
     const TOUCH_DISTANCE_DELTA = 50;
 
     var xDown = null;

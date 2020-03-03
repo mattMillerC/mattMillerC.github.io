@@ -13,20 +13,18 @@
 	Feel free to use, edit, and redistribute this as you wish.
 	I don't own any of the XML data anyway.
 -->
+	<title>Rules - 5e Tools</title>
 
-	<title>Feats - 5e Tools</title>
+	<link rel="stylesheet" href="../css/reset.css">
+	<link rel="stylesheet" href="../css/material-components-web.min.css">
+	<link rel="stylesheet" href="../css/styles.css">
 
-
-	<link rel="stylesheet" href="css/reset.css">
-	<link rel="stylesheet" href="css/material-components-web.min.css">
-	<link rel="stylesheet" href="css/styles.css">
-
-	<link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
-	<link rel="shortcut icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
-	<link rel="shortcut icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
-	<link rel="manifest" href="manifest.json">
+	<link rel="apple-touch-icon" sizes="180x180" href="../img/apple-touch-icon.png">
+	<link rel="shortcut icon" type="image/png" sizes="32x32" href="../img/favicon-32x32.png">
+	<link rel="shortcut icon" type="image/png" sizes="16x16" href="../img/favicon-16x16.png">
+	<link rel="manifest" href="../manifest.json">
 	<meta name="theme-color" content="#03dac6">
-	<script type='text/javascript' src='js/darkmode.js'></script>
+	<script type='text/javascript' src='../js/darkmode.js'></script>
 </head>
 
 <body>
@@ -35,8 +33,8 @@
 		<div class="mdc-top-app-bar__row">
 			<div class="breadcrumbs mdc-theme--on-primary">
 				<div class="container breadcrumbs__list">
-					<div class="breadcrumbs__crumb"><a href="./index.html">Player Options</a></div>
-					<div class="breadcrumbs__crumb breadcrumbs__no_caret"><a href="javascript:blankHash()">Feats</a></div>
+					<div class="breadcrumbs__crumb"><a href="./index.html">References</a></div>
+					<div class="breadcrumbs__crumb breadcrumbs__no_caret"><a href="javascript:blankHash()">Rules</a></div>
 					<div class="breadcrumbs__crumb breadcrumbs__last"></div>
 				</div>
 			</div>
@@ -74,9 +72,84 @@
 					<i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">library_books</i>
 					<span class="mdc-list-item__text">Rules</span>
 				</a>
-				<a class="mdc-list-item mdc-theme--on-surface" href="variantrules.html">
-					<i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">description</i>
+
+				<div class='rules-wrapper'>
+					<ul class="rules undefined" style='display: none;'></ul>
+
+					<div class='collapse'>
+						<div class='collapse-toggle'>
+							<div class='mdc-list-item rule-title mdc-theme--on-surface'>
+								Character Creation
+							</div>
+						</div>
+						<div class='collapse-wrapper'>
+							<ul class='collapse-list rules charactercreation'>
+							</ul>
+						</div>
+					</div>
 					
+					<div class='collapse'>
+						<div class='collapse-toggle'>
+							<div class='mdc-list-item rule-title mdc-theme--on-surface'>
+								Equipment
+							</div>
+						</div>
+						<div class='collapse-wrapper'>
+							<ul class='collapse-list rules equipment'>
+							</ul>
+						</div>
+					</div>
+
+					<div class='collapse'>
+						<div class='collapse-toggle'>
+							<div class='mdc-list-item rule-title mdc-theme--on-surface'>
+								Playing the Game
+							</div>
+						</div>
+						<div class='collapse-wrapper'>
+							<ul class='collapse-list rules playingthegame'>
+							</ul>
+						</div>
+					</div>
+
+					<div class='collapse'>
+						<div class='collapse-toggle'>
+							<div class='mdc-list-item rule-title mdc-theme--on-surface'>
+								Running the Game
+							</div>
+						</div>
+						<div class='collapse-wrapper'>
+							<ul class='collapse-list rules runningthegame'>
+							</ul>
+						</div>
+					</div>
+
+					<div class='collapse'>
+						<div class='collapse-toggle'>
+							<div class='mdc-list-item rule-title mdc-theme--on-surface'>
+								Setting
+							</div>
+						</div>
+						<div class='collapse-wrapper'>
+							<ul class='collapse-list rules setting'>
+							</ul>
+						</div>
+					</div>
+
+					<div class='collapse'>
+						<div class='collapse-toggle'>
+							<div class='mdc-list-item rule-title mdc-theme--on-surface'>
+								Unearthed Arcana
+							</div>
+						</div>
+						<div class='collapse-wrapper'>
+							<ul class='collapse-list rules unearthedarcana'>
+							</ul>
+						</div>
+					</div>
+				</div>
+
+				<a class="rules-page-variant mdc-list-item mdc-theme--on-surface" href="variantrules.html">
 					<span class="mdc-list-item__text">Variant Rules</span>
 				</a>
 
@@ -90,7 +163,7 @@
 					<i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">public</i>
 					<span class="mdc-list-item__text">Backgrounds</span>
 				</a>
-				<a class="mdc-list-item mdc-theme--on-surface list-item--activated" href="feats.html">
+				<a class="mdc-list-item mdc-theme--on-surface" href="feats.html">
 					<i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">fitness_center</i>
 					<span class="mdc-list-item__text">Feats</span>
 				</a>
@@ -146,69 +219,25 @@
 
 	<div class="main mdc-top-app-bar--fixed-adjust mdc-typography--body1 mdc-theme--background mdc-theme--text-primary-on-background">
 		<div class="container">
-			<h1 class="page-title mdc-typography--headline2">Feats</h1>
+			<h1 class="page-title mdc-typography--headline2">Rules</h1>
 
+			<div id="rulescontent">
 
-			<div class="main-spinner spinner">Loading...</div>
-
-			<button class="mdc-icon-button close-item material-icons">close</button>
-
-			<div class="stats-wrapper  margin-bottom_large">
-				<div class="source margin-bottom_small"></div>
-				<div class="prerequisite margin-bottom_small"></div>
-				<div class="text"></div>
 			</div>
 
-			<div id="listcontainer">
-				<div id="filter-search-input-group" class="filter-group">
-					<div class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-  						<i class="material-icons mdc-text-field__icon mdc-theme--primary">search</i>
-						<input type="search" id="search-field" class="mdc-text-field__input search" >
-						<div class="mdc-notched-outline">
-							<div class="mdc-notched-outline__leading"></div>
-							<div class="mdc-notched-outline__notch">
-								<label for="search-field" class="mdc-floating-label">Search</label>
-							</div>
-							<div class="mdc-notched-outline__trailing"></div>
-						</div>
-					</div>
-					<div class="filter-group--buttons">
-						<button class="mdc-button mdc-button--raised" id="reset">
-							<span class="mdc-button__label">Reset</span>
-						</button>
-					</div>
-				</div>
-
-				<div class="table-wrap mdc-elevation--z6">
-					<div class="table--scroll">
-						<table class="table">
-							<thead>
-								<tr class="table-row table-row--header">
-									<th class="sort" data-sort="name"><div class="table-cell">Name</div></th>
-									<th class="sort" data-sort="source"><div class="table-cell" style="width: 116px;">Source</div></th>
-									<th class="sort" data-sort="ability"><div class="table-cell" style="width: 73px;">Ability</div></th>
-									<th class="sort hidden-mobile-down" data-sort="prerequisite"><div class="table-cell" style="width: 108px">Prerequisite</div></th>
-								</tr>
-							</thead>
-							<tbody class='list feats'></tbody>
-						</table>
-					</div>
-				</div>
-			</div>
 		</div>
 	</div>
 
-	<script type="text/javascript" src="lib/material-components-web.min.js"></script>
-	<script type="text/javascript" src="lib/swipe.js"></script>
+	<script type="text/javascript" src="../lib/material-components-web.min.js"></script>
+	<script type="text/javascript" src="../lib/swipe.js"></script>
  
-    <script type="text/javascript" src="js/nav.js"></script>
+    <script type="text/javascript" src="../js/nav.js"></script>
 
-	<script type="text/javascript" src="js/utils.js"></script>
-	<script type="text/javascript" src="js/filter.js"></script>
-	<script type="text/javascript" src="js/history.js"></script>
-	<script type="text/javascript" src="js/feats.js"></script>
-	<script type="text/javascript" src="lib/list.js"></script>
-	<script type="text/javascript" src="lib/jquery.js"></script>
+	<script type="text/javascript" src="../js/utils.js"></script>
+	<script type="text/javascript" src="../js/history.js"></script>
+	<script type="text/javascript" src="../js/rules.js"></script>
+	<script type="text/javascript" src="../lib/list.js"></script>
+	<script type="text/javascript" src="../lib/jquery.js"></script>
 </body>
 
 </html>

@@ -1,6 +1,6 @@
 "use strict";
 
-const JSON_URL = "data/cults.json";
+const JSON_URL = "../data/cults.json";
 let tableDefault, cultList;
 
 mdc.textField.MDCTextField.attachTo(document.querySelector(".mdc-text-field"));

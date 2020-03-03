@@ -1,7 +1,7 @@
 "use strict";
-const ITEMS_JSON_URL = "data/items.json";
-const BASIC_ITEMS_JSON_URL = "data/basicitems.json";
-const MAGIC_VARIANTS_JSON_URL = "data/magicvariants.json";
+const ITEMS_JSON_URL = "../data/items.json";
+const BASIC_ITEMS_JSON_URL = "../data/basicitems.json";
+const MAGIC_VARIANTS_JSON_URL = "../data/magicvariants.json";
 let tabledefault = "";
 let itemList;
 let basicItemList;

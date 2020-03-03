@@ -1,6 +1,6 @@
 "use strict";
-const BESTIARY_JSON_URL = "data/bestiary.json";
-const BESTIARY_TOB_JSON_URL = "data/bestiary-tob.json";
+const BESTIARY_JSON_URL = "../data/bestiary.json";
+const BESTIARY_TOB_JSON_URL = "../data/bestiary-tob.json";
 let tableDefault = "";
 
 mdc.textField.MDCTextField.attachTo(document.querySelector(".mdc-text-field"));

@@ -1,6 +1,6 @@
 "use strict";
 
-const JSON_URL = "data/rewards.json";
+const JSON_URL = "../data/rewards.json";
 
 let tableDefault;
 let rewardList;

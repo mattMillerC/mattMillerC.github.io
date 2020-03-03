@@ -1,0 +1,35 @@
+{
+  "name": "mattmillerc.github.io",
+  "version": "1.0.0",
+  "description": "",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "watch": "nodemon -x \"http-server\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mattMillerC/mattMillerC.github.io.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mattMillerC/mattMillerC.github.io/issues"
+  },
+  "homepage": "https://github.com/mattMillerC/mattMillerC.github.io#readme",
+  "dependencies": {
+    "@polymer/polymer": "^3.0.0-pre.12",
+    "@vaadin/vaadin-dialog": "^2.2.1",
+    "@vaadin/vaadin-grid": "^5.5.2",
+    "@vaadin/vaadin-text-field": "^2.5.4",
+    "@webcomponents/webcomponentsjs": "^1.0.20",
+    "http-server": "^0.12.1",
+    "material-components-web": "^5.1.0",
+    "nodemon": "^2.0.2"
+  },
+  "resolutions": {
+    "@webcomponents/webcomponentsjs": "1.0.20"
+  }
+}

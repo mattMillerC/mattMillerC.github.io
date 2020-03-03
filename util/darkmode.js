@@ -1,4 +1,4 @@
-window.swapCssVariables = isDark => {
+export default function setDarkmode(isDark) {
     let root = document.documentElement;
     if (isDark) {
         root.style.setProperty("--mdc-theme-primary", "#bb86fc");
@@ -51,12 +51,3 @@ window.swapCssVariables = isDark => {
         root.style.setProperty("--mdc-theme-text-icon-on-light", "rgba(0, 0, 0, 0.38)");
     }
 };
-
-let storedDarkMode = window.localStorage.getItem("darkMode");
-
-if (storedDarkMode === "true") {
-    window.darkModeSwitchChecked = true;
-} else {
-    window.darkModeSwitchChecked = false;
-}
-window.swapCssVariables(window.darkModeSwitchChecked);

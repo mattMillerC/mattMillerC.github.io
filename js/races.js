@@ -1,5 +1,5 @@
 "use strict";
-const JSON_URL = "data/races.json";
+const JSON_URL = "../data/races.json";
 let tableDefault = "";
 
 mdc.textField.MDCTextField.attachTo(document.querySelector('.mdc-text-field'));

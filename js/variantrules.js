@@ -1,5 +1,5 @@
 "use strict";
-const JSON_URL = "data/variantrules.json";
+const JSON_URL = "../data/variantrules.json";
 
 mdc.textField.MDCTextField.attachTo(document.querySelector('.mdc-text-field'));
 mdc.notchedOutline.MDCNotchedOutline.attachTo(document.querySelector('.mdc-notched-outline'));
