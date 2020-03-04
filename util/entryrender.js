@@ -1,3 +1,5 @@
+import { isNonstandardSource, encodeForHash } from "../js/utils.js";
+import { CLSS_NON_STANDARD_SOURCE, HASH_LIST_SEP } from "../util/consts.js";
 // ENTRY RENDERING =====================================================================================================
 /*
  * // EXAMPLE USAGE //
@@ -416,3 +418,5 @@ EntryRenderer.HEAD_0 = "statsBlockHead";
 EntryRenderer.HEAD_1 = "statsBlockSubHead";
 EntryRenderer.HEAD_2 = "statsInlineHead";
 EntryRenderer.DATA_NONE = "data-none";
+
+export default EntryRenderer;

@@ -169,6 +169,7 @@ import {
   UA_PREFIX_SHORT,
   PP3_SUFFIX
 } from "../util/consts.js";
+import { ascSort, hasBeenReprinted } from "../js/utils.js";
 
 let Parser = {};
 Parser._parse_aToB = function(abMap, a) {

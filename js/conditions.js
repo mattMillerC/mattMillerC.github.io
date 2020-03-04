@@ -1,40 +1,13 @@
-"use strict";
-const JSON_URL = "../data/conditions.json";
-let tableDefault;
-let conditionList;
+import { utils_combineText } from "../js/utils.js";
 
-mdc.textField.MDCTextField.attachTo(document.querySelector('.mdc-text-field'));
-mdc.notchedOutline.MDCNotchedOutline.attachTo(document.querySelector('.mdc-notched-outline'));
+const stats_wrapper = `
+	<div class="stats-wrapper margin-bottom_large">
+		<div class="text"></div>
+	</div>`;
 
-window.onload = function load() {
-	loadJSON(JSON_URL, onJsonLoad);
-};
-
-function onJsonLoad(data) {
-	conditionList = data.condition;
-
-	tableDefault = $(".stats-wrapper").html();
-
-	let tempString = "";
-	for (let i = 0; i < conditionList.length; i++) {
-		const name = conditionList[i].name;
-		tempString += `
-			<tr class="table-row history-link" data-link="${encodeURI(name).toLowerCase()}" data-title="${name}" ${FLTR_ID}="${i}" id='${i}'>
-				<td class='table-cell name'>${name}</td>
-			</tr>`;
-	}
-	$(".list.conditions").append(tempString);
-
-	const list = search({
-		valueNames: ['name'],
-		listClass: "conditions"
-	});
-
-	initHistory()
+function renderSelection(curcondition, rootEl) {
+  rootEl.querySelector(".selection-wrapper").innerHTML = stats_wrapper;
+  rootEl.querySelector(".stats-wrapper .text").innerHTML = utils_combineText(curcondition.entries, "p");
 }
 
-function loadhash (id) {
-	$(".stats-wrapper").html(tableDefault);
-	const curcondition = conditionList[id];
-	$(".stats-wrapper .text").html(utils_combineText(curcondition.entries, "p"));
-}
+export { renderSelection };

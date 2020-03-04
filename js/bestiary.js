@@ -1,326 +1,278 @@
-"use strict";
-const BESTIARY_JSON_URL = "../data/bestiary.json";
-const BESTIARY_TOB_JSON_URL = "../data/bestiary-tob.json";
-let tableDefault = "";
+import { parseHTML, utils_makeRoller, jqAfter, jqPrepend} from "../js/utils.js";
+import EntryRenderer from "../util/entryrender.js";
+import Parser from "../util/Parser.js"
+import droll from "../lib/droll.js"
 
-mdc.textField.MDCTextField.attachTo(document.querySelector(".mdc-text-field"));
-mdc.notchedOutline.MDCNotchedOutline.attachTo(document.querySelector(".mdc-notched-outline"));
+const MAX_ROLLS = 5
 
-function imgError(x) {
-	$(x).closest("div").css("padding-right", "0.2em");
-	$(x).remove();
-}
-
-function ascSortCr(a, b) {
-	// always put unknown values last
-	if (a === "Unknown" || a === undefined) a = "999";
-	if (b === "Unknown" || b === undefined) b = "999";
-	return ascSort(Parser.crToNumber(a), Parser.crToNumber(b))
-}
-
-window.onload = function load() {
-	tableDefault = $("#stats").html();
-	loadJSON(BESTIARY_JSON_URL, addToB);
-};
-
-const legendaryGroupList = {};
-function addToB(mainData) {
-	// Convert the legendary Group JSONs into a look-up, i.e. use the name as a JSON property name; do the same with the ToB data in the callback function
-	for (let i = 0; i < mainData.legendaryGroup.length; i++) legendaryGroupList[mainData.legendaryGroup[i].name] = {"lairActions": mainData.legendaryGroup[i].lairActions, "regionalEffects": mainData.legendaryGroup[i].regionalEffects};
-	loadJSON(BESTIARY_TOB_JSON_URL, populate, mainData);
-}
-
-let monsters;
-function populate(tobData, mainData) {
-	monsters = mainData[0].monster.concat(tobData.monster);
-	for (let i = 0; i < tobData.legendaryGroup.length; i++) legendaryGroupList[tobData.legendaryGroup[i].name] = {"lairActions": tobData.legendaryGroup[i].lairActions, "regionalEffects": tobData.legendaryGroup[i].regionalEffects};
-
-	// TODO alignment filter
-	const sourceFilter = getSourceFilter();
-	const crFilter = new Filter({header: "CR"});
-	const sizeFilter = new Filter({
-		header: "Size",
-		items: [
-			SZ_FINE,
-			SZ_DIMINUTIVE,
-			SZ_TINY,
-			SZ_SMALL,
-			SZ_MEDIUM,
-			SZ_LARGE,
-			SZ_HUGE,
-			SZ_GARGANTUAN,
-			SZ_COLOSSAL,
-			SZ_VARIES
-		],
-		displayFn: Parser.sizeAbvToFull
-	});
-	const typeFilter = new Filter({
-		header: "Type",
-		items: [
-			"aberration",
-			"beast",
-			"celestial",
-			"construct",
-			"dragon",
-			"elemental",
-			"fey",
-			"fiend",
-			"giant",
-			"humanoid",
-			"monstrosity",
-			"ooze",
-			"plant",
-			"undead"
-		],
-		displayFn: uppercaseFirst
-	});
-	const tagFilter = new Filter({header: "Tag", displayFn: uppercaseFirst});
-	const miscFilter = new Filter({header: "Miscellaneous", items: ["Legendary"], displayFn: uppercaseFirst});
-
-	const filterBox = initFilterBox(
-		sourceFilter,
-		crFilter,
-		sizeFilter,
-		typeFilter,
-		tagFilter,
-		miscFilter
-	);
-
-	const table = $(".list.monsters");
-	let textStack = "";
-	// build the table
-	for (let i = 0; i < monsters.length; i++) {
-		const mon = monsters[i];
-		mon._pTypes = Parser.monTypeToFullObj(mon.type); // store the parsed type
-		mon.cr = mon.cr === undefined ? "Unknown" : mon.cr;
-		let adjCR = mon.cr === "Unknown" ? "--" : mon.cr;
-
-		const abvSource = Parser.sourceJsonToAbv(mon.source);
-
-		textStack +=
-			`<tr class='table-row history-link' id=${i} data-link='${encodeForHash(mon.name)}_${encodeForHash(mon.source)}' data-title="${mon.name}" ${FLTR_ID}='${i}'>
-				<td class='table-cell table-cell--border name'>${mon.name}</td>
-				<td class='table-cell source source${abvSource}' title="${Parser.sourceJsonToFull(mon.source)}">${abvSource}</td>
-				<td class='table-cell type hidden-mobile-down'>${mon._pTypes.asText.uppercaseFirst()}</td>
-				<td class='table-cell cr'>${adjCR}</td>
-			</tr>`;
-
-		// populate filters
-		sourceFilter.addIfAbsent(mon.source);
-		crFilter.addIfAbsent(mon.cr);
-		mon._pTypes.tags.forEach(t => tagFilter.addIfAbsent(t));
-		mon._fMisc = mon.legendary || mon.legendaryGroup ? ["Legendary"] : [];
-	}
-	table.append(textStack);
-
-	// sort filters
-	sourceFilter.items.sort(ascSort);
-	crFilter.items.sort(ascSortCr);
-	typeFilter.items.sort(ascSort);
-	tagFilter.items.sort(ascSort);
-
-	const list = search({
-		valueNames: ["name", "source", "type", "cr"],
-		listClass: "monsters"
-	});
-
-	filterBox.render();
-
-	let handleFilterChange = window.debounce(() => {
-		list.filter(function(item) {
-			const f = filterBox.getValues();
-			let filterId = $(item.elm).attr(FLTR_ID);
-
-			if (filterId) {
-				const m = monsters[filterId];
-
-				return (
-					sourceFilter.toDisplay(f, m.source) &&
-					crFilter.toDisplay(f, m.cr) &&
-					sizeFilter.toDisplay(f, m.size) &&
-					typeFilter.toDisplay(f, m._pTypes.type) &&
-					tagFilter.toDisplay(f, m._pTypes.tags) &&
-					miscFilter.toDisplay(f, m._fMisc)
-				);
-			} else {
-				return true;
-			}
-		});
-	}, 600);
-
-	// filtering function
-	$(filterBox).on(
-		FilterBox.EVNT_VALCHANGE,
-		handleFilterChange
-	);
-
-	initHistory();
-	handleFilterChange();
-
-	// sorting headers
-	$("#filtertools").find("button.sort").on(EVNT_CLICK, function() {
-		const $this = $(this);
-		$this.data("sortby", $this.data("sortby") === "asc" ? "desc" : "asc");
-		list.sort($this.data("sort"), { order: $this.data("sortby"), sortFunction: sortMonsters });
-	});
-}
-
-// sorting for form filtering
-function sortMonsters(a, b, o) {
-	a = monsters[a.elm.getAttribute(FLTR_ID)];
-	b = monsters[b.elm.getAttribute(FLTR_ID)];
-
-	if (o.valueName === "name") {
-		return ascSort(a.name, b.name);
-	}
-
-	if (o.valueName === "type") {
-		return ascSort(a._pTypes.asText, b._pTypes.asText);
-	}
-
-	if (o.valueName === "source") {
-		return ascSort(a.source, b.source);
-	}
-
-	if (o.valueName === "cr") {
-		return ascSortCr(a.cr, b.cr)
-	}
-
-	return 0;
-}
+const stats_wrapper = `
+	<div class="margin-bottom_large stats-wrapper">
+		<div id="stats" class="monster">
+			<div id="name">
+				Name <span class="source" title="Source book">SRC</span>
+			</div>
+			<div id="sizetypealignment">
+				<span id="size">Size</span> <span id="type">type</span>, <span id="alignment">alignment</span>
+			</div>
+			<div class="divider"></div>
+			<div>
+				<strong>Armor Class</strong> <span id="ac">## (source)</span>
+			</div>
+			<div>
+				<strong>Hit Points</strong> <span id="hp">hp</span>
+			</div>
+			<div>
+				<strong>Speed</strong> <span id="speed">30 ft.</span>
+			</div>
+			<div id="abilitynames">
+				<div>STR</div>
+				<div>DEX</div>
+				<div>CON</div>
+				<div>INT</div>
+				<div>WIS</div>
+				<div>CHA</div>
+			</div>
+			<div id="abilityscores">
+				<div id="str"><span class="score">10</span> (<span class="mod">0</span>)</div>
+				<div id="dex"><span class="score">10</span> (<span class="mod">0</span>)</div>
+				<div id="con"><span class="score">10</span> (<span class="mod">0</span>)</div>
+				<div id="int"><span class="score">10</span> (<span class="mod">0</span>)</div>
+				<div id="wis"><span class="score">10</span> (<span class="mod">0</span>)</div>
+				<div id="cha"><span class="score">10</span> (<span class="mod">0</span>)</div>
+			</div>
+			<div>
+				<strong>Saving Throws</strong> <span id="saves">Str +0</span>
+			</div>
+			<div>
+				<strong>Skills</strong> <span id="skills">Perception +0</span>
+			</div>
+			<div>
+				<strong>Damage Vulnerabilities</strong> <span id="dmgvuln">fire</span>
+			</div>
+			<div>
+				<strong>Damage Resistances</strong> <span id="dmgres">cold</span>
+			</div>
+			<div>
+				<strong>Damage Immunities</strong> <span id="dmgimm">lightning</span>
+			</div>
+			<div>
+				<strong>Condition Immunities</strong> <span id="conimm">exhaustion</span>
+			</div>
+			<div>
+				<strong>Senses</strong> <span id="senses">darkvision 30 ft.</span> passive Perception <span id="pp">10</span>
+			</div>
+			<div>
+				<strong>Languages</strong> <span id="languages">Common</span>
+			</div>
+			<div>
+				<strong>Challenge</strong> <span id="cr">1</span> (<span id="xp">450</span> XP)
+			</div>
+			<div id="traits">
+			</div>
+			<div id="actions">
+				<span>Actions</span>
+			</div>
+			<div id="reactions">
+				<span>Reactions</span>
+			</div>
+			<div id="legendaries">
+				<span>Legendary Actions</span>
+			</div>
+			<div id="lairactions">
+				<span>Lair Actions</span>
+			</div>
+			<div id="regionaleffects">
+				<span>Regional Effects</span>
+			</div>
+		</div>
+		<div id="output"></div>
+	</div>`;
 
 function objToTitleCaseStringWithCommas(obj) {
-	return Object.keys(obj).map(function(k){return k.uppercaseFirst() + ' ' + obj[k]}).join(', ');
+  return Object.keys(obj)
+    .map(function(k) {
+      return k.uppercaseFirst() + " " + obj[k];
+    })
+    .join(", ");
+}
+const ATB_PROF_MODE = "mode";
+const ATB_PROF_BONUS_STR = "profBonusStr";
+const ATB_PROF_DICE_STR = "profDiceStr";
+const PROF_MODE_BONUS = "bonus";
+const PROF_MODE_DICE = "dice";
+function getProfBonusFromCr(cr) {
+  if (CR_TO_PROF[cr]) return CR_TO_PROF[cr];
+  return 0;
+}
+const CR_TO_PROF = {
+  "0": 2,
+  "1/8": 2,
+  "1/4": 2,
+  "1/2": 2,
+  "1": 2,
+  "2": 2,
+  "3": 2,
+  "4": 2,
+  "5": 3,
+  "6": 3,
+  "7": 3,
+  "8": 3,
+  "9": 4,
+  "10": 4,
+  "11": 4,
+  "12": 4,
+  "13": 5,
+  "14": 5,
+  "15": 5,
+  "16": 5,
+  "17": 6,
+  "18": 6,
+  "19": 6,
+  "20": 6,
+  "21": 7,
+  "22": 7,
+  "23": 7,
+  "24": 7,
+  "25": 8,
+  "26": 8,
+  "27": 8,
+  "28": 8,
+  "29": 9,
+  "30": 9
+};
+const SKILL_TO_ATB_ABV = {
+  athletics: "dex",
+  acrobatics: "dex",
+  "sleight of hand": "dex",
+  stealth: "dex",
+  arcana: "int",
+  history: "int",
+  investigation: "int",
+  nature: "int",
+  religion: "int",
+  "animal handling": "wis",
+  insight: "wis",
+  medicine: "wis",
+  perception: "wis",
+  survival: "wis",
+  deception: "cha",
+  intimidation: "cha",
+  performance: "cha",
+  persuasion: "cha"
+};
+function getAttribute(skill) {
+  return SKILL_TO_ATB_ABV[skill.toLowerCase().trim()];
 }
 
 const renderer = new EntryRenderer();
-// load selected monster stat block
-function loadhash (id) {
-	$("#stats").html(tableDefault);
-	$("#output").empty();
+function renderSelection(mon, rootEl) {
+  rootEl.querySelector(".selection-wrapper").innerHTML = stats_wrapper;
 	let renderStack = [];
 	let entryList = {};
-	var mon = monsters[id];
 	var name = mon.name;
 	window.monsterName = name;
 	var source = mon.source;
 	var type = mon._pTypes.asText;
 	source = Parser.sourceJsonToAbv(source);
 
-	$("#name").html(
-		`<span class="stats-source source${source}" title="${Parser.sourceJsonToFull(source)}">${Parser.sourceJsonToAbv(source)}</span>
-		<a href="img/${source}/${name}.png">
-			<img src="img/${source}/${name}.png" class='token' onerror='imgError(this)'>
-		</a>`
+	rootEl.querySelector("#name").innerHTML = (
+		`<span class="stats-source source${source}" title="${Parser.sourceJsonToFull(source)}">${Parser.sourceJsonToAbv(source)}</span>`
 	);
-
-	$("span#size").html(Parser.sizeAbvToFull(mon.size));
-
-	$("span#type").html(type);
-
-	$("span#alignment").html(mon.alignment);
-
-	$("span#ac").html(mon.ac);
-
-	$("span#hp").html(mon.hp);
-
-	$("span#speed").html(mon.speed);
-
-	$("#str span.score").html(mon.str);
-	$("#str span.mod").html(Parser.getAbilityModifier(mon.str));
-
-	$("#dex span.score").html(mon.dex);
-	$("#dex span.mod").html(Parser.getAbilityModifier(mon.dex));
-
-	$("#con span.score").html(mon.con);
-	$("#con span.mod").html(Parser.getAbilityModifier(mon.con));
-
-	$("#int span.score").html(mon.int);
-	$("#int span.mod").html(Parser.getAbilityModifier(mon.int));
-
-	$("#wis span.score").html(mon.wis);
-	$("#wis span.mod").html(Parser.getAbilityModifier(mon.wis));
-
-	$("#cha span.score").html(mon.cha);
-	$("#cha span.mod").html(Parser.getAbilityModifier(mon.cha));
+	rootEl.querySelector("#size").innerHTML = (Parser.sizeAbvToFull(mon.size));
+	rootEl.querySelector("#type").innerHTML = (type);
+	rootEl.querySelector("#alignment").innerHTML = (mon.alignment);
+	rootEl.querySelector("#ac").innerHTML = (mon.ac);
+	rootEl.querySelector("#hp").innerHTML = (mon.hp);
+	rootEl.querySelector("#speed").innerHTML = (mon.speed);
+	rootEl.querySelector("#str span.score").innerHTML = (mon.str);
+	rootEl.querySelector("#str span.mod").innerHTML = (Parser.getAbilityModifier(mon.str));
+	rootEl.querySelector("#dex span.score").innerHTML = (mon.dex);
+	rootEl.querySelector("#dex span.mod").innerHTML = (Parser.getAbilityModifier(mon.dex));
+	rootEl.querySelector("#con span.score").innerHTML = (mon.con);
+	rootEl.querySelector("#con span.mod").innerHTML = (Parser.getAbilityModifier(mon.con));
+	rootEl.querySelector("#int span.score").innerHTML = (mon.int);
+	rootEl.querySelector("#int span.mod").innerHTML = (Parser.getAbilityModifier(mon.int));
+	rootEl.querySelector("#wis span.score").innerHTML = (mon.wis);
+	rootEl.querySelector("#wis span.mod").innerHTML = (Parser.getAbilityModifier(mon.wis));
+	rootEl.querySelector("#cha span.score").innerHTML = (mon.cha);
+	rootEl.querySelector("#cha span.mod").innerHTML = (Parser.getAbilityModifier(mon.cha));
 
 	var saves = mon.save;
 	if (saves) {
-		$("span#saves").parent().show();
-		$("span#saves").html(saves);
+		rootEl.querySelector("#saves").parentElement.style.display = 'block';
+		rootEl.querySelector("#saves").innerHTML = (saves);
 	} else {
-		$("span#saves").parent().hide();
+		rootEl.querySelector("#saves").parentElement.style.display = 'none';
 	}
 
 	var skills = mon.skill;
 	let perception = 0;
 	if (skills) {
-		$("span#skills").parent().show();
-		$("span#skills").html(objToTitleCaseStringWithCommas(skills));
+		rootEl.querySelector("#skills").parentElement.style.display = 'block';
+		rootEl.querySelector("#skills").innerHTML = (objToTitleCaseStringWithCommas(skills));
 		if (skills.perception) perception = parseInt(skills.perception);
 	} else {
-		$("span#skills").parent().hide();
+		rootEl.querySelector("#skills").parentElement.style.display = 'none';
 	}
 
 	var dmgvuln = mon.vulnerable;
 	if (dmgvuln) {
-		$("span#dmgvuln").parent().show();
-		$("span#dmgvuln").html(dmgvuln);
+		rootEl.querySelector("#dmgvuln").parentElement.style.display = 'block';
+		rootEl.querySelector("#dmgvuln").innerHTML = (dmgvuln);
 	} else {
-		$("span#dmgvuln").parent().hide();
+		rootEl.querySelector("#dmgvuln").parentElement.style.display = 'none';
 	}
 
 	var dmgres = mon.resist;
 	if (dmgres) {
-		$("span#dmgres").parent().show();
-		$("span#dmgres").html(dmgres);
+		rootEl.querySelector("#dmgres").parentElement.style.display = 'block';
+		rootEl.querySelector("#dmgres").innerHTML = (dmgres);
 	} else {
-		$("span#dmgres").parent().hide();
+		rootEl.querySelector("#dmgres").parentElement.style.display = 'none';
 	}
 
 	var dmgimm = mon.immune;
 	if (dmgimm) {
-		$("span#dmgimm").parent().show();
-		$("span#dmgimm").html(dmgimm);
+		rootEl.querySelector("#dmgimm").parentElement.style.display = 'block';
+		rootEl.querySelector("#dmgimm").innerHTML = (dmgimm);
 	} else {
-		$("span#dmgimm").parent().hide();
+		rootEl.querySelector("#dmgimm").parentElement.style.display = 'none';
 	}
 
 	var conimm = mon.conditionImmune;
 	if (conimm) {
-		$("span#conimm").parent().show();
-		$("span#conimm").html(conimm);
+		rootEl.querySelector("#conimm").parentElement.style.display = 'block';
+		rootEl.querySelector("#conimm").innerHTML = (conimm);
 	} else {
-		$("span#conimm").parent().hide();
+		rootEl.querySelector("#conimm").parentElement.style.display = 'none';
 	}
 
 	var senses = mon.senses;
 	if (senses) {
-		$("span#senses").html(senses + ", ");
+		rootEl.querySelector("#senses").innerHTML = (senses + ", ");
 	} else {
-		$("span#senses").html("");
+		rootEl.querySelector("#senses").innerHTML = ("");
 	}
 
 	var passive = mon.passive || (10 + perception).toString;
-	$("span#pp").html(passive)
+	rootEl.querySelector("#pp").innerHTML = (passive)
 
 	var languages = mon.languages;
 	if (languages) {
-		$("span#languages").html(languages);
+		rootEl.querySelector("#languages").innerHTML = (languages);
 	} else {
-		$("span#languages").html("\u2014");
+		rootEl.querySelector("#languages").innerHTML = ("\u2014");
 	}
 
 	var cr = mon.cr === undefined ? "Unknown" : mon.cr;
-	$("span#cr").html(cr);
-	$("span#xp").html(Parser.crToXp(cr));
+	rootEl.querySelector("#cr").innerHTML = (cr);
+	rootEl.querySelector("#xp").innerHTML = (Parser.crToXp(cr));
 
 	var traits = mon.trait;
-	$(".trait").remove();
-	$("#traits").hide();
+	rootEl.querySelector("#traits").style.display = 'none';
 
 	if (traits && traits.length > 0) {
-		$("#traits").show();
+		rootEl.querySelector("#traits").style.display = 'block';
 		for (var i = traits.length - 1; i >= 0; i--) {
 			var traitname = traits[i].name;
 			var traittext = traits[i].text;
@@ -340,12 +292,13 @@ function loadhash (id) {
 
 				traittexthtml = traittexthtml + "<p class='" + firstsecond + spells + "'>" + traittext[n].replace(/\u2022\s?(?=C|\d|At\swill)/g, "")+"</p>";
 			}
-
-			$("#traits").after("<div class='trait'><div class='trait" + i + "'><span class='name'>" + traitname + ".</span> " + traittexthtml + "</div></div>");
+			const newTrait = parseHTML("<div class='trait'><div class='trait" + i + "'><span class='name'>" + traitname + ".</span> " + traittexthtml + "</div></div>");
+			jqAfter(rootEl.querySelector("#traits"), newTrait);
 
 			// parse spells, make hyperlinks
-			$(".trait").children("div").children("p.spells").each(function () {
-				let spellslist = $(this).html();
+			const spellLinks = rootEl.querySelectorAll('.trait div p.spells');
+			for (let spellLink of spellLinks) {
+				let spellslist = spellLink.innerHTML;
 				if (spellslist[0] === "*") return;
 				spellslist = spellslist.split(": ")[1].split(/\, (?!\+|\dd|appears|inside gems)/g);
 				for (let i = 0; i < spellslist.length; i++) {
@@ -353,13 +306,12 @@ function loadhash (id) {
 					if (i !== spellslist.length - 1) spellslist[i] = spellslist[i] + ", ";
 				}
 
-				$(this).html($(this).html().split(": ")[0] + ": " + spellslist.join(""))
-			});
+				spellLink.innerHTML = (spellLink.innerHTML.split(": ")[0] + ": " + spellslist.join(""));
+			}
 		}
 	}
 
 	const actions = mon.action;
-	$(".action").remove();
 
 	if (actions && actions.length) for (let i = actions.length - 1; i >= 0; i--) {
 		const actionname = actions[i].name;
@@ -376,17 +328,16 @@ function loadhash (id) {
 
 			actiontexthtml = actiontexthtml + "<p class='"+firstsecond+"'>"+actiontext[n]+"</p>";
 		}
-
-		$("#actions").after("<div class='action'><div class='action"+i+"'><span class='name'>"+actionname+".</span> "+actiontexthtml+"</div></div>");
+		const newAction = parseHTML("<div class='action'><div class='action"+i+"'><span class='name'>"+actionname+".</span> "+actiontexthtml+"</div></div>")
+		jqAfter(rootEl.querySelector('#actions'), newAction);
 	}
 
 	const reactions = mon.reaction;
-	$("#reactions").hide();
-	$(".reaction").remove();
+	rootEl.querySelector("#reactions").style.display = 'none';
 
 	if (reactions && (reactions.text || reactions.length)) {
 
-		$("#reactions").show();
+		rootEl.querySelector("#reactions").style.display = 'block';
 
 		if (!reactions.length) {
 			const reactionname = reactions.name;
@@ -404,7 +355,8 @@ function loadhash (id) {
 				reactiontexthtml = reactiontexthtml + "<p class='" + firstsecond + "'>" + reactiontext[n] + "</p>";
 			}
 
-			$("#reactions").after("<div class='reaction'><div class='reaction0'><span class='name'>" + reactionname + ".</span> " + reactiontexthtml + "</div></div>");
+			const newNonReaction = parseHTML("<div class='reaction'><div class='reaction0'><span class='name'>" + reactionname + ".</span> " + reactiontexthtml + "</div></div>")
+			jqAfter(rootEl.querySelector("#reactions"), newNonReaction);
 		}
 
 		if (reactions.length) for (let i = reactions.length - 1; i >= 0; i--) {
@@ -417,15 +369,16 @@ function loadhash (id) {
 				reactiontexthtml = reactiontexthtml + "<p>" + reactiontext[n] + "</p>";
 			}
 
-			$("#reactions").after("<div class='reaction'><div class='reaction" + i + "'><span class='name'>" + reactionname + ".</span> " + reactiontexthtml + "</div></div>");
+			const newReaction = parseHTML("<div class='reaction'><div class='reaction" + i + "'><span class='name'>" + reactionname + ".</span> " + reactiontexthtml + "</div></div>")
+			jqAfter(rootEl.querySelector("#reactions"), newReaction);
 		}
 	}
 
 	const legendaries = mon.legendary;
-	$(".legendary").remove();
-	$("#legendaries").hide();
+	rootEl.querySelector("#legendaries").style.display = 'none';
 	if (legendaries) {
-		$("#legendaries").show();
+		rootEl.querySelector("#legendaries").style.display = 'block';
+		let shouldAddCap = legendaries.length > 0;
 		for (let i = legendaries.length - 1; i >= 0; i--) {
 			const legendaryname = legendaries[i].name ? legendaries[i].name + "." : "";
 			const legendarytext = legendaries[i].text;
@@ -439,45 +392,45 @@ function loadhash (id) {
 				if (renderedcount === 2) firstsecond = "second ";
 				legendarytexthtml += `<p class='${firstsecond}'>${legendarytext[n]}</p>`;
 			}
-			$("#legendaries").after(`<div class='legendary'><div class='legendary'><span class='name'>${legendaryname}</span> ${legendarytexthtml}</div></div>`);
+			const newLegendary = parseHTML(`<div class='legendary'><div class='legendary'><span class='name'>${legendaryname}</span> ${legendarytexthtml}</div></div>`)
+			jqAfter(rootEl.querySelector("#legendaries"), newLegendary);
+			if (legendaryname.trim() === '' || legendaryname.indexOf('Legendary Actions') > -1) {
+				shouldAddCap = false;
+			}
 		}
-		if ($(".legendary").length && !$(".legendary span.name:empty").length && !$(".legendary span.name:contains(Legendary Actions)").length) {
+		if (shouldAddCap) {
 			const legendaryActions = mon.legendaryActions || 3;
 			const legendaryName = name.split(",");
-			$("#legendaries").after(`<div class='legendary'><div class='legendary'><span class='name'></span> <span>${legendaryName[0]} can take ${legendaryActions} legendary action${legendaryActions > 1 ? "s" : ""}, choosing from the options below. Only one legendary action can be used at a time and only at the end of another creature's turn. ${legendaryName[0]} regains spent legendary actions at the start of its turn.</span></div></div>`);
+			const newLegendaryCap = parseHTML(`<div class='legendary'><div class='legendary'><span class='name'></span> <span>${legendaryName[0]} can take ${legendaryActions} legendary action${legendaryActions > 1 ? "s" : ""}, choosing from the options below. Only one legendary action can be used at a time and only at the end of another creature's turn. ${legendaryName[0]} regains spent legendary actions at the start of its turn.</span></div></div>`)
+			jqAfter(rootEl.querySelector("#legendaries"), newLegendaryCap);
 		}
 	}
 
-	const legendaryGroup = mon.legendaryGroup;
-	$(".lairaction").remove();
-	$("#lairactions").hide();
-	$(".regionaleffect").remove();
-	$("#regionaleffects").hide();
-	if (legendaryGroup) {
-		const thisGroup = legendaryGroupList[legendaryGroup];
-		if (thisGroup.lairActions) renderSection("lairaction", thisGroup.lairActions);
-		if (thisGroup.regionalEffects) renderSection("regionaleffect", thisGroup.regionalEffects);
-	}
+	rootEl.querySelector("#lairactions").style.display = 'none';
+	rootEl.querySelector("#regionaleffects").style.display = 'none';
+	if (mon.lairActions) renderSection("lairaction", mon.lairActions);
+	if (mon.regionalEffects) renderSection("regionaleffect", mon.regionalEffects);
 
 	function renderSection(sectionClass, sectionEntries) {
-		$(`#${sectionClass}s`).show();
+		rootEl.querySelector(`#${sectionClass}s`).style.display = 'block';
 		entryList = {type: "entries", entries: sectionEntries};
 		renderStack = [];
 		renderer.recursiveEntryRender(entryList, renderStack);
-		$(`#${sectionClass}s`).after(`<div class='${sectionClass}'><div class='legendary'>${utils_makeRoller(renderStack.join(""))}</div></div>`);
+		const newThing = parseHTML(`<div class='${sectionClass}'><div class='legendary'>${utils_makeRoller(renderStack.join(""))}</div></div>`)
+		jqAfter(rootEl.querySelector(`#${sectionClass}s`), newThing);
 	}
 
 	if (mon.skill) {
-		$("#skills").each(makeSkillRoller);
+		makeSkillRoller(rootEl.querySelector("#skills"));
 	}
 	if (mon.save) {
-		$("#saves").each(makeSaveRoller);
+		makeSaveRoller(rootEl.querySelector("#saves"));
 	}
-	function makeSkillRoller() {
-		const $this = $(this);
+	function makeSkillRoller(element) {
+		const $this = element;
 
 		const re = /,\s*(?![^()]*\))/g; // Don't split commas within parentheses
-		const skills = $this.html().split(re).map(s => s.trim());
+		const skills = $this.innerHTML.split(re).map(s => s.trim());
 		const out = [];
 
 		skills.map(s => {
@@ -509,11 +462,11 @@ function loadhash (id) {
 			out.push(skillString);
 		});		
 
-		$this.html(out.join(", "));
+		$this.innerHTML = (out.join(", "));
 	}
-	function makeSaveRoller() {
-		const $this = $(this);
-		const saves = $this.html().split(",").map(s => s.trim());
+	function makeSaveRoller(element) {
+		const $this = element;
+		const saves = $this.innerHTML.split(",").map(s => s.trim());
 		const out = [];
 		saves.map(s => {
 			const spl = s.split("+").map(s => s.trim());
@@ -528,7 +481,7 @@ function loadhash (id) {
 
 			out.push(spl[0] + ' ' + renderSkillOrSaveRoller(spl[0], pBonusStr, pDiceStr, true));
 		});
-		$this.html(out.join(", "));
+		$this.innerHTML = (out.join(", "));
 	}
 	function renderSkillOrSaveRoller(itemName, profBonusString, profDiceString, isSave) {
 		const mode = PROF_MODE_BONUS;
@@ -536,17 +489,18 @@ function loadhash (id) {
 	}
 
 	// inline rollers
-	$("#stats p").each(function(){
-		addNonD20Rollers(this);
+	const statPEls = rootEl.querySelectorAll("#stats p");
+	for (let statPEl of statPEls) {
+		addNonD20Rollers(statPEl);
 
 		// add proficiency dice stuff for attack rolls, since those _generally_ have proficiency
 		// this is not 100% accurate; for example, ghouls don't get their prof bonus on bite attacks
 		// fixing it would probably involve machine learning though; we need an AI to figure it out on-the-fly
 		// (Siri integration forthcoming)
-		const titleMaybe = attemptToGetTitle(this);
+		const titleMaybe = attemptToGetTitle(statPEl);
 		const mode = PROF_MODE_BONUS;
 
-		$(this).html($(this).html().replace(/(\-|\+)?\d+(?= to hit)/g, function(match) {
+		statPEl.innerHTML = (statPEl.innerHTML.replace(/(\-|\+)?\d+(?= to hit)/g, function(match) {
 			const bonus = Number(match);
 
 			const expectedPB = getProfBonusFromCr(mon.cr);
@@ -561,7 +515,7 @@ function loadhash (id) {
 			}
 		}));
 
-		$(this).html($(this).html().replace(/DC\s*(\d+)/g, function(match, capture) {
+		statPEl.innerHTML = (statPEl.innerHTML.replace(/DC\s*(\d+)/g, function(match, capture) {
 			const dc = Number(capture);
 
 			const expectedPB = getProfBonusFromCr(mon.cr);
@@ -575,19 +529,17 @@ function loadhash (id) {
 				return match; // if there was no proficiency bonus to work with, fall back on this
 			}
 		}));
-	});
-	$("#stats span#hp").each(function() {
-		addNonD20Rollers(this);
-	});
+	}
+	addNonD20Rollers(rootEl.querySelector("#stats #hp"));
 	function addNonD20Rollers (ele) {
-		$(ele).html($(ele).html().replace(/\d+d\d+(\s?(\-|\+)\s?\d+\s?)?/g, function(match) {
-			const titleMaybe = attemptToGetTitle(ele);
-			return `<span class='roller' ${titleMaybe ? `title="${titleMaybe}"` : ""} data-roll='${match}'>${match}</span>`
-		}));
+		ele.innerHTML = ele.innerHTML.replace(/\d+d\d+(\s?(\-|\+)\s?\d+\s?)?/g, function(match) {
+      const titleMaybe = attemptToGetTitle(ele);
+      return `<span class='roller' ${titleMaybe ? `title="${titleMaybe}"` : ""} data-roll='${match}'>${match}</span>`;
+    });
 	}
 	function attemptToGetTitle(ele) {
-		let titleMaybe = $(ele.parentElement).find(".name")[0];
-		if (titleMaybe !== undefined) {
+		let titleMaybe = ele.parentElement.querySelector(".name");
+		if (titleMaybe) {
 			titleMaybe = titleMaybe.innerHTML;
 			if (titleMaybe) {
 				titleMaybe = titleMaybe.substring(0, titleMaybe.length-1).trim();
@@ -596,110 +548,56 @@ function loadhash (id) {
 		return titleMaybe;
 	}
 
-	$(".spells span.roller").contents().unwrap();
-	$("#stats").find("span.roller").click(function() {
-		const $this = $(this);
-		let roll;
-		let rollResult;
-		if ($this.attr(ATB_PROF_MODE) === PROF_MODE_DICE) {
-			roll = $this.attr("data-roll-alt").replace(/\s+/g, "");
-			// hacks because droll doesn't support e.g. "1d20+1d4+2" :joy: :ok_hand:
-			const multi = roll.split(";");
-			roll = roll.replace(";", "+");
-			rollResult =  droll.roll(multi[0]);
-			const res2 = droll.roll(multi[1]);
-			rollResult.rolls = rollResult.rolls.concat(res2.rolls);
-			rollResult.total += res2.total;
-		} else {
-			roll = $this.attr("data-roll").replace(/\s+/g, "");
-			rollResult = droll.roll(roll);
-		}
-		outputRollResult($this, roll, rollResult);
-	});
-
-	$("#stats").find("span.dc-roller").click(function() {
-		const $this = $(this);
-		let roll;
-		let rollResult;
-		if ($this.attr(ATB_PROF_MODE) === PROF_MODE_DICE) {
-			roll = $this.attr("data-roll-alt").replace(/\s+/g, "");
-			rollResult = droll.roll(roll);
+	//$(".spells span.roller").contents().unwrap();
+	let statsRollerEls = rootEl.querySelectorAll("#stats span.roller");
+	for (let statsRollerEl of statsRollerEls) {
+		statsRollerEl.addEventListener('click', () => {
+			const $this = statsRollerEl;
+			let roll;
+			let rollResult;
+			if ($this.getAttribute(ATB_PROF_MODE) === PROF_MODE_DICE) {
+				roll = $this.getAttribute("data-roll-alt").replace(/\s+/g, "");
+				// hacks because droll doesn't support e.g. "1d20+1d4+2" :joy: :ok_hand:
+				const multi = roll.split(";");
+				roll = roll.replace(";", "+");
+				rollResult = droll.roll(multi[0]);
+				const res2 = droll.roll(multi[1]);
+				rollResult.rolls = rollResult.rolls.concat(res2.rolls);
+				rollResult.total += res2.total;
+			} else {
+				roll = $this.getAttribute("data-roll").replace(/\s+/g, "");
+				rollResult = droll.roll(roll);
+			}
 			outputRollResult($this, roll, rollResult);
-		}
-	});
+		});
+	}
+	
+	let statsDCRollerEls = rootEl.querySelectorAll("#stats span.roller");
+	for (let statsDCRollerEl of statsDCRollerEls) {
+		const $this = statsDCRollerEl;
+    let roll;
+    let rollResult;
+    if ($this.getAttribute(ATB_PROF_MODE) === PROF_MODE_DICE) {
+      roll = $this.getAttribute("data-roll-alt").replace(/\s+/g, "");
+      rollResult = droll.roll(roll);
+      outputRollResult($this, roll, rollResult);
+    }
+	}
 
 	function outputRollResult($ele, roll, rollResult) {
 		const name = window.monsterName;
-		$("div#output").prepend(`<span>${name}: <em>${roll}</em> rolled ${$ele.attr("title") ? `${$ele.attr("title")} ` : "" }for <strong>${rollResult.total}</strong> (<em>${rollResult.rolls.join(", ")}</em>)<br></span>`).show();
-		$("div#output span:eq(5)").remove();
+		const newResult = parseHTML(
+      `<span>${name}: <em>${roll}</em> rolled ${
+        $ele.getAttribute("title") ? `${$ele.getAttribute("title")} ` : ""
+      }for <strong>${rollResult.total}</strong> (<em>${rollResult.rolls.join(", ")}</em>)<br></span>`
+		);
+		const outputEl = rootEl.querySelector("#output");
+		jqPrepend(outputEl, newResult);
+		outputEl.style.display = 'block';
+		if (outputEl.children.length === MAX_ROLLS + 1) {
+			outputEl.children[MAX_ROLLS].remove();
+		}
 	}
 }
 
-const ATB_PROF_MODE = "mode";
-const ATB_PROF_BONUS_STR = "profBonusStr";
-const ATB_PROF_DICE_STR = "profDiceStr";
-const PROF_MODE_BONUS = "bonus";
-const PROF_MODE_DICE = "dice";
-function getProfBonusFromCr(cr) {
-	if (CR_TO_PROF[cr]) return CR_TO_PROF[cr];
-	return 0;
-}
-const CR_TO_PROF = {
-	"0"			: 2,
-	"1/8"		: 2,
-	"1/4"		: 2,
-	"1/2"		: 2,
-	"1"			: 2,
-	"2"			: 2,
-	"3"			: 2,
-	"4"			: 2,
-	"5"			: 3,
-	"6"			: 3,
-	"7"			: 3,
-	"8"			: 3,
-	"9"			: 4,
-	"10"		: 4,
-	"11"		: 4,
-	"12"		: 4,
-	"13"		: 5,
-	"14"		: 5,
-	"15"		: 5,
-	"16"		: 5,
-	"17"		: 6,
-	"18"		: 6,
-	"19"		: 6,
-	"20"		: 6,
-	"21"		: 7,
-	"22"		: 7,
-	"23"		: 7,
-	"24"		: 7,
-	"25"		: 8,
-	"26"		: 8,
-	"27"		: 8,
-	"28"		: 8,
-	"29"		: 9,
-	"30"		: 9
-};
-const SKILL_TO_ATB_ABV = {
-	"athletics": "dex",
-	"acrobatics": "dex",
-	"sleight of hand": "dex",
-	"stealth": "dex",
-	"arcana": "int",
-	"history": "int",
-	"investigation": "int",
-	"nature": "int",
-	"religion": "int",
-	"animal handling": "wis",
-	"insight": "wis",
-	"medicine":  "wis",
-	"perception": "wis",
-	"survival": "wis",
-	"deception": "cha",
-	"intimidation": "cha",
-	"performance": "cha",
-	"persuasion": "cha"
-};
-function getAttribute(skill) {
-	return SKILL_TO_ATB_ABV[skill.toLowerCase().trim()];
-}
+export { renderSelection };

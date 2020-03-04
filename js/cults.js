@@ -1,49 +1,31 @@
-"use strict";
+import {
+  utils_combineText,
+} from "../js/utils.js";
 
-const JSON_URL = "../data/cults.json";
-let tableDefault, cultList;
+const stats_wrapper = `
+	<div class="stats-wrapper margin-bottom_large">
+		<div class="text"></div>
+	</div>`;
 
-mdc.textField.MDCTextField.attachTo(document.querySelector(".mdc-text-field"));
-mdc.notchedOutline.MDCNotchedOutline.attachTo(document.querySelector(".mdc-notched-outline"));
+function renderSelection(curcult, rootEl) {
+	rootEl.querySelector(".selection-wrapper").innerHTML = stats_wrapper;
 
-window.onload = function load() {
-	loadJSON(JSON_URL, onJsonLoad);
-};
+  const textlist = curcult.text;
+  let texthtml = "";
 
-function onJsonLoad(data) {
-	tableDefault = $(".stats-wrapper").html();
-	cultList = data;
+  if (curcult.goal !== undefined)
+    texthtml += utils_combineText(curcult.goal.text, "p", "<span class='stat-name'>Goals:</span> ");
+  if (curcult.cultists !== undefined)
+    texthtml += utils_combineText(curcult.cultists.text, "p", "<span class='stat-name'>Typical Cultist:</span> ");
+  if (curcult.signaturespells !== undefined)
+    texthtml += utils_combineText(
+      curcult.signaturespells.text,
+      "p",
+      "<span class='stat-name'>Signature Spells:</span> "
+    );
+  texthtml += utils_combineText(textlist, "p");
 
-	let tempString = "";
-	for (let i = 0; i < cultList.length; i++) {
-		const name = cultList[i].name;
-
-		tempString += `
-			<tr class="table-row history-link" data-link="${encodeURI(name).toLowerCase()}" data-title="${name}" ${FLTR_ID}="${i}" id='${i}'>
-				<td class='table-cell name'>${name}</td>
-			</tr>`;
-	}
-	$(".list.cults").append(tempString);
-
-	const list = search({
-		valueNames: ['name'],
-		listClass: "cults"
-	});
-
-	initHistory()
-};
-
-function loadhash (id) {
-	$(".stats-wrapper").html(tableDefault);
-	const curcult = cultList[id];
-
-	const textlist = curcult.text;
-	let texthtml = "";
-
-	if (curcult.goal !== undefined) texthtml += utils_combineText(curcult.goal.text, "p", "<span class='stat-name'>Goals:</span> ");
-	if (curcult.cultists !== undefined) texthtml += utils_combineText(curcult.cultists.text, "p", "<span class='stat-name'>Typical Cultist:</span> ");
-	if (curcult.signaturespells !== undefined) texthtml += utils_combineText(curcult.signaturespells.text, "p", "<span class='stat-name'>Signature Spells:</span> ");
-	texthtml += utils_combineText(textlist, "p");
-
-	$(".stats-wrapper .text").html(texthtml);
+  rootEl.querySelector(".stats-wrapper .text").innerHTML = texthtml;
 }
+
+export {renderSelection};

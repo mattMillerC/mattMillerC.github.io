@@ -1,102 +1,23 @@
-"use strict";
-const JSON_URL = "../data/variantrules.json";
-
-mdc.textField.MDCTextField.attachTo(document.querySelector('.mdc-text-field'));
-mdc.notchedOutline.MDCNotchedOutline.attachTo(document.querySelector('.mdc-notched-outline'));
-
-window.onload = function load() {
-	loadJSON(JSON_URL, onJsonLoad);
-};
-
-let rulesList;
-let tableDefault;
+import EntryRenderer from "../util/entryrender.js";
+import Parser from "../util/Parser.js";
 
 const entryRenderer = new EntryRenderer();
+const stats_wrapper = `
+	<div class="stats-wrapper margin-bottom_large">
+		<div class="source margin-bottom_small"></div>
+		<div class="text"></div>
+	</div>`;
 
-function getNames(nameStack, entry) {
-	if (entry.name) nameStack.push(entry.name);
-	if (entry.entries) {
-		for (const eX of entry.entries) {
-			getNames(nameStack, eX);
-		}
-	}
-	if (entry.items) {
-		for (const eX of entry.items) {
-			getNames(nameStack, eX);
-		}
-	}
+function renderSelection(curRule, rootEl) {
+  rootEl.querySelector(".selection-wrapper").innerHTML = stats_wrapper;
+  const sourceEl = rootEl.querySelector(".stats-wrapper .source");
+  sourceEl.classList.add(`source${curRule.source}`);
+  sourceEl.setAttribute("title", Parser.sourceJsonToFull(curRule.source));
+	sourceEl.innerHTML = `${Parser.sourceJsonToAbv(curRule.source)}`;
+
+  const textStack = [];
+  entryRenderer.recursiveEntryRender(curRule, textStack);
+  rootEl.querySelector(".stats-wrapper .text").innerHTML = textStack.join("");
 }
 
-function onJsonLoad(data) {
-	rulesList = data;
-	tableDefault = $(".stats-wrapper").html();
-
-	const sourceFilter = getSourceFilter();
-	const filterBox = initFilterBox(sourceFilter);
-
-	let tempString = "";
-	for (let i = 0; i < rulesList.length; i++) {
-		const curRule = rulesList[i];
-
-		const searchStack = [];
-		for (const e1 of curRule.entries) {
-			getNames(searchStack, e1);
-		}
-
-		tempString += `
-			<tr class="table-row history-link" data-link="${encodeForHash(curRule.name)}_${encodeForHash(curRule.source)}" data-title="${curRule.name}" ${FLTR_ID}="${i}" id='${i}'>
-				<td class='table-cell table-cell--border name'>${curRule.name}</td>
-				<td class='table-cell source source${Parser.sourceJsonToAbv(curRule.source)}' style='width: 72px;' title='${Parser.sourceJsonToFull(curRule.source)}'>${Parser.sourceJsonToAbv(curRule.source)}</td>
-				<td class='search' style='display:none;'>${searchStack.join(",")}</span>
-			</tr>`;
-
-		// populate filters
-		sourceFilter.addIfAbsent(curRule.source);
-	}
-	$(".list.variantRules").append(tempString);
-
-	const list = search({
-		valueNames: ['name', 'source', 'search'],
-		listClass: "variantRules"
-	});
-
-	sourceFilter.items.sort(ascSort);
-
-	filterBox.render();
-
-	let handleFilterChange = window.debounce(() => {
-		list.filter(function(item) {
-			const f = filterBox.getValues();
-			let filterId = $(item.elm).attr(FLTR_ID);
-
-			if (filterId) {
-				const r = rulesList[filterId];
-				return sourceFilter.toDisplay(f, r.source);
-				
-			} else {
-				return true;
-			}
-		});
-	}, 600);
-
-	// filtering function
-	$(filterBox).on(
-		FilterBox.EVNT_VALCHANGE,
-		handleFilterChange
-	);
-
-	initHistory();
-	handleFilterChange();
-}
-
-function loadhash (id) {
-	// reset details pane to initial HTML
-	$(".stats-wrapper").html(tableDefault);
-
-	const curRule = rulesList[id];
-
-	// build text list and display
-	const textStack = [];
-	entryRenderer.recursiveEntryRender(curRule, textStack);
-	$(".stats-wrapper .text").after(textStack.join(""));
-}
+export { renderSelection };
