@@ -1,4 +1,7 @@
 import {PolymerElement, html} from '@polymer/polymer';
+import "./styles/material-styles.js";
+import "./styles/my-styles.js";
+import {initCollapseToggles} from '../js/utils.js';
 
 class DndSelectedItem extends PolymerElement {
   static get properties() {
@@ -12,6 +15,11 @@ class DndSelectedItem extends PolymerElement {
       },
       _renderSelection: {
         type: Function
+      },
+      disableScrollBack: {
+        type: Boolean,
+        reflectToAttribute: true,
+        value: false
       }
     };
   }
@@ -23,6 +31,9 @@ class DndSelectedItem extends PolymerElement {
   __renderSelection() {
     if (this._renderSelection && this.selectedItem) {
       this._renderSelection(this.selectedItem, this.shadowRoot);
+      if (!this.disableScrollBack) {
+        window.scrollTo(0, 0);
+      }
     }
   }
 

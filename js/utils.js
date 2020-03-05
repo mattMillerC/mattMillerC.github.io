@@ -223,7 +223,6 @@ function utils_makeOldList(listObj) {
 	return outStack + "</ul>";
 }
 
-
 function utils_makeList(listObj) {
 	let listTag = "ul";
 	const subtype = listObj.subtype;
@@ -247,7 +246,6 @@ function utils_makeList(listObj) {
 	}
 	return outStack + "</"+listTag+">";
 }
-
 
 function utils_makeSubHeader(text) {
 	return "<span class='stats-sub-header'>" + text + ".</span> "
@@ -685,6 +683,24 @@ function jqAfter(after, insertEl) {
   insertIn.insertBefore(insertEl, insertBefore);
 }
 
+function jqWrap(el, wrapper) {
+	var temp = document.createElement("div"),
+    parent = el.parentNode,
+    insertWhere = el.previousSibling,
+    target;
+
+	temp.innerHTML = wrapper;
+	target = temp.firstChild;
+
+	while (target.firstChild) {
+		target = target.firstChild;
+	}
+
+	target.appendChild(el);
+
+	parent.insertBefore(temp.firstChild, (insertWhere ? insertWhere.nextSibling : parent.firstChild));
+}
+
 function parse_psionicTypeToFull(type) {
   if (type === "T") return "Talent";
   else if (type === "D") return "Discipline";
@@ -885,6 +901,23 @@ function getFromPath(obj, pathStr) {
 	return result;
 }
 
+function initCollapseToggles(rootEl) {
+	const toggles = rootEl.querySelectorAll(".collapse .collapse-toggle");
+	for (let toggle of toggles) {
+		toggle.addEventListener("click", e => {
+			let collapse = e.target.closest(".collapse"),
+				list = collapse.querySelector(".collapse-list");
+
+			if (collapse.classList.contains("open")) {
+				list.style["margin-top"] = "-" + jqHeight(list) + "px";
+			} else {
+				list.style["margin-top"] = "0px";
+			}
+			collapse.classList.toggle("open");
+		});
+	}
+}
+
 export {
   throttle,
   debounce,
@@ -922,8 +955,8 @@ export {
   getAsiFilter,
   getFilterWithMergedOptions,
   initFilterBox,
-	encodeForHash,
-	decodeForHash,
+  encodeForHash,
+  decodeForHash,
   ascSort,
   asc_sort,
   asc_sort_cr,
@@ -931,8 +964,9 @@ export {
   joinConjunct,
   parseHTML,
   jqHeight,
-	jqPrepend,
-	jqAfter,
+  jqPrepend,
+  jqAfter,
+  jqWrap,
   getHiddenModeList,
   parse_psionicTypeToFull,
   parse_psionicOrderToFull,
@@ -947,5 +981,6 @@ export {
   getMetaFilterObj,
   getRuleSearchStackNames,
   cloneDeep,
-  getFromPath
+  getFromPath,
+  initCollapseToggles
 };

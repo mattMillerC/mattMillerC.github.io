@@ -23,196 +23,88 @@
 	<link rel="shortcut icon" type="image/png" sizes="16x16" href="../img/favicon-16x16.png">
 	<link rel="manifest" href="../manifest.json">
 	<meta name="theme-color" content="#03dac6">
-	<script type='text/javascript' src='../js/darkmode.js'></script>
+	<script src="../node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js"></script>
+	<script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+	<script type="module" src=" ../components/dnd-layout.js"> </script>
 </head>
 
 <body>
 
-	<header class="mdc-top-app-bar mdc-top-app-bar--fixed mdc-theme--primary-bg mdc-theme--on-primary">
-		<div class="mdc-top-app-bar__row">
-			<div class="breadcrumbs mdc-theme--on-primary">
-				<div class="container breadcrumbs__list">
-				</div>
-			</div>
-			<div class="nav-button">
-				<button class="material-icons mdc-top-app-bar__navigation-icon mdc-theme--on-primary hidden-desktop-up margin-left_small">menu</button>
-				<a href='index.html'><div class="logo logo-white light-only"></div></a>
-				<a href='index.html'><div class="logo dark-only"></div></a>
-				<a href='index.html'><span class="mdc-top-app-bar__title mdc-theme--on-primary typography_mono hidden-tablet-down">5e Tools</span></a>
-			</div>
+	<dnd-layout>
+		<h1 class="mdc-typography--headline2 margin-bottom_large margin-top_large typography_mono">5e Tools</h1>
+		
+		<h2 class="mdc-typography--headline5 margin-bottom_small margin-top_med">Rules</h2>
+		<div class="class-list-container">
+			<a class="class-grid-item" href="rules.html">
+				<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">library_books</i>
+				<span class="class-grid-item--text">Rules</span>
+			</a>
+			<a class="class-grid-item" href="variantrules.html">
+				<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">description</i>
+				<span class="class-grid-item--text">Variant Rules</span>
+			</a>
 		</div>
-	</header>
 
-	<aside class="mdc-drawer mdc-drawer--modal mdc-theme--surface">
-		<div class="mdc-drawer__content">
-			<nav class="mdc-list">
-				<div class="mdc-drawer__header hidden-desktop-up">
-					<a href='index.html'><h3 class="mdc-drawer__title mdc-theme--on-surface typography_mono"><div class="logo margin-right_small"></div>5e Tools</h3>
-					<h6 class="mdc-drawer__subtitle mdc-theme--text-secondary-on-background margin-top_small typography_mono">A D&amp;D Players Companion</h6></a>
-				</div>
-
-				<a class="mdc-list-item mdc-theme--on-surface" href="#">
-					<label class="darkmode-label" for="dark-mode-switch">Dark Mode</label>
-					<div class="mdc-switch mdc-list-item__meta">
-						<div class="mdc-switch__track"></div>
-						<div class="mdc-switch__thumb-underlay">
-							<div class="mdc-switch__thumb">
-								<input type="checkbox" id="dark-mode-switch" class="mdc-switch__native-control" role="switch">
-							</div>
-						</div>
-					</div>
-				</a>
-
-				<hr class="mdc-list-divider">
-				<a class="mdc-list-item mdc-theme--on-surface" href="rules.html" tabindex="0">
-					<i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">library_books</i>
-					<span class="mdc-list-item__text">Rules</span>
-				</a>
-				<a class="mdc-list-item mdc-theme--on-surface" href="variantrules.html">
-					<i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">description</i>
-					
-					<span class="mdc-list-item__text">Variant Rules</span>
-				</a>
-
-				<hr class="mdc-list-divider">
-				<h6 class="mdc-list-group__subheader mdc-theme--on-surface">Player Options</h6>
-				<a class="mdc-list-item mdc-theme--on-surface" href="classes.html">
-					<i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">class</i>
-					<span class="mdc-list-item__text">Classes</span>
-				</a>
-				<a class="mdc-list-item mdc-theme--on-surface" href="backgrounds.html">
-					<i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">public</i>
-					<span class="mdc-list-item__text">Backgrounds</span>
-				</a>
-				<a class="mdc-list-item mdc-theme--on-surface" href="feats.html">
-					<i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">fitness_center</i>
-					<span class="mdc-list-item__text">Feats</span>
-				</a>
-				<a class="mdc-list-item mdc-theme--on-surface" href="races.html">
-					<i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">face</i>
-					<span class="mdc-list-item__text">Races</span>
-				</a>
-
-				<hr class="mdc-list-divider">
-				<h6 class="mdc-list-group__subheader mdc-theme--on-surface">References</h6>
-				<a class="mdc-list-item mdc-theme--on-surface" href="spells.html">
-					<i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">flash_on</i>
-					<span class="mdc-list-item__text">Spells</span>
-				</a>
-				<a class="mdc-list-item mdc-theme--on-surface" href="conditions.html">
-					<i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">sentiment_very_dissatisfied</i>
-					<span class="mdc-list-item__text">Conditions</span>
-				</a>
-				<a class="mdc-list-item mdc-theme--on-surface" href="items.html">
-					<i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">restaurant</i>
-					<span class="mdc-list-item__text">Items</span>
-				</a>
-				<a class="mdc-list-item mdc-theme--on-surface" href="rewards.html">
-					<i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">toll</i>
-					<span class="mdc-list-item__text">Other Rewards</span>
-				</a>
-				<a class="mdc-list-item mdc-theme--on-surface" href="bestiary.html">
-					<i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">warning</i>
-					<span class="mdc-list-item__text">Bestiary</span>
-				</a>
-				<a class="mdc-list-item mdc-theme--on-surface" href="psionics.html">
-					<i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">record_voice_over</i>
-					<span class="mdc-list-item__text">Psionics</span>
-				</a>
-				<a class="mdc-list-item mdc-theme--on-surface" href="cults.html">
-					<i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">group</i>
-					<span class="mdc-list-item__text">Cults</span>
-				</a>
-
-				<hr class="mdc-list-divider">
-				<h6 class="mdc-list-group__subheader mdc-theme--on-surface">Tools</h6>
-				<a class="mdc-list-item mdc-theme--on-surface" href="dice.html">
-					<i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">casino</i>
-					<span class="mdc-list-item__text">Dice Roller</span>
-				</a>
-				<span class='version mdc-typography--caption'>v1.2.1</span>
-			</nav>
+		<h2 class="mdc-typography--headline5 margin-bottom_small margin-top_med">Player Options</h2>
+		<div class="class-list-container">
+			<a class="class-grid-item" href="classes.html">
+				<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">class</i>
+				<span class="class-grid-item--text">Classes</span>
+			</a>
+			<a class="class-grid-item" href="backgrounds.html">
+				<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">public</i>
+				<span class="class-grid-item--text">Backgrounds</span>
+			</a>
+			<a class="class-grid-item" href="feats.html">
+				<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">fitness_center</i>
+				<span class="class-grid-item--text">Feats</span>
+			</a>
+			<a class="class-grid-item" href="races.html">
+				<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">face</i>
+				<span class="class-grid-item--text">Races</span>
+			</a>
 		</div>
-	</aside>
 
-	<div class="mdc-drawer-scrim"></div>
-	<div class="main mdc-top-app-bar--fixed-adjust mdc-typography--body1 mdc-theme--background mdc-theme--text-primary-on-background landing-page">
-		<div class="container">
-			<h1 class="mdc-typography--headline2 margin-bottom_large margin-top_large typography_mono">5e Tools</h1>
-			
-			<h2 class="mdc-typography--headline5 margin-bottom_small margin-top_med">Rules</h2>
-			<div class="class-list-container">
-				<a class="class-grid-item" href="rules.html">
-					<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">library_books</i>
-					<span class="class-grid-item--text">Rules</span>
-				</a>
-				<a class="class-grid-item" href="variantrules.html">
-					<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">description</i>
-					<span class="class-grid-item--text">Variant Rules</span>
-				</a>
-			</div>
-
-			<h2 class="mdc-typography--headline5 margin-bottom_small margin-top_med">Player Options</h2>
-			<div class="class-list-container">
-				<a class="class-grid-item" href="classes.html">
-					<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">class</i>
-					<span class="class-grid-item--text">Classes</span>
-				</a>
-				<a class="class-grid-item" href="backgrounds.html">
-					<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">public</i>
-					<span class="class-grid-item--text">Backgrounds</span>
-				</a>
-				<a class="class-grid-item" href="feats.html">
-					<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">fitness_center</i>
-					<span class="class-grid-item--text">Feats</span>
-				</a>
-				<a class="class-grid-item" href="races.html">
-					<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">face</i>
-					<span class="class-grid-item--text">Races</span>
-				</a>
-			</div>
-
-			<h2 class="mdc-typography--headline5 margin-bottom_small margin-top_med">References</h2>
-			<div class="class-list-container">
-				<a class="class-grid-item" href="spells.html">
-					<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">flash_on</i>
-					<span class="class-grid-item--text">Spells</span>
-				</a>
-				<a class="class-grid-item" href="conditions.html">
-					<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">sentiment_very_dissatisfied</i>
-					<span class="class-grid-item--text">Conditions</span>
-				</a>
-				<a class="class-grid-item" href="items.html">
-					<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">restaurant</i>
-					<span class="class-grid-item--text">Items</span>
-				</a>
-				<a class="class-grid-item" href="rewards.html">
-					<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">toll</i>
-					<span class="class-grid-item--text">Other Rewards</span>
-				</a>
-				<a class="class-grid-item" href="bestiary.html">
-					<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">warning</i>
-					<span class="class-grid-item--text">Bestiary</span>
-				</a>
-				<a class="class-grid-item" href="psionics.html">
-					<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">record_voice_over</i>
-					<span class="class-grid-item--text">Psionics</span>
-				</a>
-				<a class="class-grid-item" href="cults.html">
-					<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">group</i>
-					<span class="class-grid-item--text">Cults</span>
-				</a>
-			</div>
-
-			<h2 class="mdc-typography--headline5 margin-bottom_small margin-top_med">Tools</h2>
-			<div class="class-list-container">
-				<a class="class-grid-item" href="dice.html">
-					<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">casino</i>
-					<span class="class-grid-item--text">Dice Roller</span>
-				</a>
-			</div>
+		<h2 class="mdc-typography--headline5 margin-bottom_small margin-top_med">References</h2>
+		<div class="class-list-container">
+			<a class="class-grid-item" href="spells.html">
+				<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">flash_on</i>
+				<span class="class-grid-item--text">Spells</span>
+			</a>
+			<a class="class-grid-item" href="conditions.html">
+				<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">sentiment_very_dissatisfied</i>
+				<span class="class-grid-item--text">Conditions</span>
+			</a>
+			<a class="class-grid-item" href="items.html">
+				<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">restaurant</i>
+				<span class="class-grid-item--text">Items</span>
+			</a>
+			<a class="class-grid-item" href="rewards.html">
+				<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">toll</i>
+				<span class="class-grid-item--text">Other Rewards</span>
+			</a>
+			<a class="class-grid-item" href="bestiary.html">
+				<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">warning</i>
+				<span class="class-grid-item--text">Bestiary</span>
+			</a>
+			<a class="class-grid-item" href="psionics.html">
+				<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">record_voice_over</i>
+				<span class="class-grid-item--text">Psionics</span>
+			</a>
+			<a class="class-grid-item" href="cults.html">
+				<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">group</i>
+				<span class="class-grid-item--text">Cults</span>
+			</a>
 		</div>
-	</div>
+
+		<h2 class="mdc-typography--headline5 margin-bottom_small margin-top_med">Tools</h2>
+		<div class="class-list-container">
+			<a class="class-grid-item" href="dice.html">
+				<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">casino</i>
+				<span class="class-grid-item--text">Dice Roller</span>
+			</a>
+		</div>
+	</dnd-layout>
 
 	<!-- <script type="text/javascript">
 		if ("serviceWorker" in navigator) {
@@ -230,9 +122,5 @@
 			});
 		}
 	</script> -->
-	<script type="text/javascript" src="../lib/material-components-web.min.js"></script>
-	<script type="text/javascript" src="../lib/jquery.js"></script>
-	<script type="text/javascript" src="../lib/swipe.js"></script>
-	<script type="text/javascript" src="../js/nav.js"></script>
 </body>
 </html>

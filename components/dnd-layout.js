@@ -14,6 +14,10 @@ class DndLayout extends PolymerElement {
       selectedTitle: {
         type: String,
         value: ""
+      },
+      breadcrumbRoot: {
+        type: String,
+        value: ""
       }
     };
   }
@@ -118,11 +122,16 @@ class DndLayout extends PolymerElement {
 
   _initSelectionEvents() {
     this.addEventListener("selection-change", e => {
-      this.selectedTitle = e.detail.title;
+      if (e.detail.title) {
+        this.selectedTitle = e.detail.title;
+      } else if (e.detail.breadcrumb) {
+        this.selectedBreadcrumb = e.detail.breadcrumb;
+      }
     });
 
     this.addEventListener("selection-deselected", () => {
       this.selectedTitle = "";
+      this.selectedBreadcrumb = "";
     });
   }
 
@@ -142,13 +151,17 @@ class DndLayout extends PolymerElement {
     return !!a;
   }
 
-  _centerBreadcrumbCssClass(selectedTitle) {
-    return selectedTitle ? "breadcrumbs__crumb" : "breadcrumbs__crumb breadcrumbs__no_caret";
+  _or(a, b) {
+    return a || b;
+  }
+
+  _centerBreadcrumbCssClass(selectedTitle, selectedBreadcrumb) {
+    return selectedTitle || selectedBreadcrumb ? "breadcrumbs__crumb" : "breadcrumbs__crumb breadcrumbs__no_caret";
   }
 
   _resetHash() {
-    window.location.hash = '';
-    this.selectedTitle = '';
+    window.location.hash = "";
+    this.selectedTitle = "";
     const selectionListChild = this.querySelector("dnd-selection-list");
     if (selectionListChild) {
       selectionListChild.dispatchEvent(new CustomEvent("selection-deselected", { bubble: true, composed: true }));
@@ -164,9 +177,11 @@ class DndLayout extends PolymerElement {
           <div class="breadcrumbs mdc-theme--on-primary">
             <div class="container breadcrumbs__list">
               <div class="breadcrumbs__crumb"><a href="./index.html">Player Options</a></div>
-              <div class$="[[_centerBreadcrumbCssClass(selectedTitle)]]"><a on-click="_resetHash">[[title]]</a></div>
-              <div class="breadcrumbs__crumb breadcrumbs__last" hidden$="[[!_exists(selectedTitle)]]">
-                [[selectedTitle]]
+              <div class$="[[_centerBreadcrumbCssClass(selectedTitle, selectedBreadcrumb)]]">
+                <a on-click="_resetHash">[[_or(title, breadcrumbRoot)]]</a>
+              </div>
+              <div class="breadcrumbs__crumb breadcrumbs__last" hidden$="[[!_or(selectedTitle, selectedBreadcrumb)]]">
+                [[_or(selectedTitle, selectedBreadcrumb)]]
               </div>
             </div>
           </div>

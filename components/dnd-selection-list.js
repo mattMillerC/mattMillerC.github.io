@@ -1,6 +1,8 @@
 import {PolymerElement, html} from '@polymer/polymer';
 import "./dnd-list.js";
 import "./dnd-selected-item.js";
+import "./styles/material-styles.js";
+import "./styles/my-styles.js";
 import loadUrl from "../util/loadUrl.js";
 import { resolveHash } from "../util/renderTable.js";
 
