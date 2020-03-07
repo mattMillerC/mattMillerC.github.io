@@ -10,17 +10,6 @@ styleElement.innerHTML = `
        * Use of this source code is governed by an MIT-style license that can be
        * found in the LICENSE file at https://github.com/material-components/material-components-web/blob/master/LICENSE
        */
-      @font-face {
-        font-family: 'Material Icons';
-        font-style: normal;
-        font-weight: 400;
-        font-display: block;
-        src: local('Material Icons'),
-          local('MaterialIcons-Regular'),
-          url(../fonts/MaterialIcons-Regular.woff2) format('woff2'),
-          url(../fonts/MaterialIcons-Regular.woff) format('woff'),
-          url(../fonts/MaterialIcons-Regular.ttf) format('truetype');
-      }
 
       .material-icons {
           font-family: 'Material Icons';
@@ -10220,6 +10209,7 @@ styleElement.innerHTML = `
       }
 
       .mdc-top-app-bar {
+          font-family: Roboto, sans-serif;
           background-color: #6200ee;
           background-color: var(--mdc-theme-primary, #6200ee);
           color: #fff;
@@ -10788,5 +10778,5 @@ styleElement.innerHTML = `
       }
     </style>
   </template
-`
+`;
 styleElement.register("material-styles");

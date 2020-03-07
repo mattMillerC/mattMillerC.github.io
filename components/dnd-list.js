@@ -1,9 +1,11 @@
 import {PolymerElement, html} from '@polymer/polymer';
 import "@polymer/polymer/lib/elements/dom-repeat.js";
-import {renderTable} from "../util/renderTable.js";
+import { MDCTextField } from "@material/textfield";
+import { MDCNotchedOutline } from "@material/notched-outline";
+import { renderTable } from "../util/renderTable.js";
 import './styles/material-styles.js';
 import "./styles/my-styles.js";
-import * as Material from "material-components-web";
+import "./dnd-spinner.js";
 
 class DndList extends PolymerElement {
   static get properties() {
@@ -14,20 +16,26 @@ class DndList extends PolymerElement {
       data: {
         type: Array,
         observer: '_dataChange'
+      },
+      loading: {
+        type: Boolean,
+        reflectToAttribute: true,
+        value: true
       }
     };
   }
 
   connectedCallback() {
     super.connectedCallback();
-    Material.textField.MDCTextField.attachTo(this.shadowRoot.querySelector(".mdc-text-field"));
-    Material.notchedOutline.MDCNotchedOutline.attachTo(this.shadowRoot.querySelector(".mdc-notched-outline"));
+    new MDCTextField(this.shadowRoot.querySelector(".mdc-text-field"));
+    new MDCNotchedOutline(this.shadowRoot.querySelector(".mdc-notched-outline"));
   }
 
   _dataChange() {
     if (this.data) {
       renderTable(this.data, this.shadowRoot, this.columns);
       this._setSelectionListeners();
+      this.loading = false;
     }
   }
 
@@ -56,7 +64,13 @@ class DndList extends PolymerElement {
 
   static get template() {
     return html`
-      <style include="material-styles my-styles"></style>
+      <style include="material-styles my-styles">
+        dnd-spinner[loading] ~ #listcontainer {
+          display: none;
+        }
+      </style>
+
+      <dnd-spinner loading$="[[loading]]"></dnd-spinner>
 
       <div id="listcontainer">
         <div id="filter-search-input-group" class="filter-group">

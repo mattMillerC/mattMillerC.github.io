@@ -123,13 +123,13 @@ styleElement.innerHTML = `
       }
 
 
-      body.dark header.mdc-theme--primary-bg {
+      header.dark.mdc-theme--primary-bg {
         background-color: #fff !important;
         background-color: var(--mdc-theme-surface, #fff) !important;
       }
 
-      body.dark header.mdc-theme--on-primary,
-      body.dark header .mdc-theme--on-primary {
+      headerdark.mdc-theme--on-primary,
+      header.dark .mdc-theme--on-primary {
         color: #000 !important;
         color: var(--mdc-theme-text-primary-on-background, #000) !important
       }
@@ -1423,7 +1423,7 @@ styleElement.innerHTML = `
         .main.item-opened #listcontainer {
           display: block !important;
         }
-        .main .close-item {
+        .close-item {
           display: none !important;
         }
         .page-title {

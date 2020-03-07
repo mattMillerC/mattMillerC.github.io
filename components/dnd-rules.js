@@ -3,7 +3,6 @@ import "@polymer/polymer/lib/elements/dom-repeat.js";
 import loadUrl from "../util/loadUrl.js";
 import "./styles/material-styles.js";
 import "./styles/my-styles.js";
-import * as Material from "material-components-web";
 import { jqWrap, initCollapseToggles, encodeForHash, decodeForHash } from "../js/utils.js";
 
 class DndRules extends PolymerElement {
@@ -45,7 +44,7 @@ class DndRules extends PolymerElement {
       this.dispatchEvent(new CustomEvent("selection-change", {
         bubbles: true,
         composed: true,
-        detail: { breadcrumb: this.selectedRule.name }
+        detail: { title: this.selectedRule.name }
       }));
       this.$.rulescontent.innerHTML = this.selectedRule.htmlcontent;
       let tables = this.$.rulescontent.querySelectorAll("table");
@@ -113,10 +112,6 @@ class DndRules extends PolymerElement {
     window.location.hash = hash;
   }
 
-  _computeTitle(selectedRule) {
-    return selectedRule ? selectedRule.name : "Rules";
-  }
-
   _exists(a) {
     return !!a;
   }
@@ -124,7 +119,6 @@ class DndRules extends PolymerElement {
   static get template() {
     return html`
       <style include="material-styles my-styles"></style>
-      <h1 class="page-title mdc-typography--headline2">[[_computeTitle(selectedRule)]]</h1>
 
       <div class="rules-wrapper" hidden$="[[_exists(selectedRule)]]">
         <template is="dom-repeat" items="[[contentsOrder]]" as="category">

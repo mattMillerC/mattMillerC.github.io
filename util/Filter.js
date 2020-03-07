@@ -4,7 +4,7 @@ import {
   ID_RESET_BUTTON,
   EVNT_CLICK}
 from './consts.js'
-import * as Material from "material-components-web";
+import { MDCMenuSurface } from "@material/menu-surface";
 
 /**
  * The API is as follows:
@@ -50,7 +50,7 @@ class FilterBox {
     const filterGroupButtons = $inputGroup.querySelector(".filter-group--buttons");
     filterGroupButtons.insertBefore($filterButton, filterGroupButtons.firstChild);
     $inputGroup.insertAdjacentElement("afterend", this.$miniView);
-    let materialMenu = new Material.menuSurface.MDCMenuSurface($dropdownMenu);
+    let materialMenu = new MDCMenuSurface($dropdownMenu);
 
     this.addDropdownHandlers($filterButton, materialMenu);
     addResetHandler(this);

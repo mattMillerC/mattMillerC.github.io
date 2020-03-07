@@ -5,108 +5,44 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<!--
-	XML data was compiled by a reddit community for use with the "Fight Club 5" app.
-	Google "5e xml files" for more info.
 
-	Feel free to use, edit, and redistribute this as you wish.
-	I don't own any of the XML data anyway.
-	-->
 	<title>5e Tools</title>
 
-	<link rel="stylesheet" href="../css/reset.css">
-	<link rel="stylesheet" href="../css/material-components-web.min.css">
-	<link rel="stylesheet" href="../css/styles.css">
-
-	<link rel="apple-touch-icon" sizes="180x180" href="../img/apple-touch-icon.png">
-	<link rel="shortcut icon" type="image/png" sizes="32x32" href="../img/favicon-32x32.png">
-	<link rel="shortcut icon" type="image/png" sizes="16x16" href="../img/favicon-16x16.png">
-	<link rel="manifest" href="../manifest.json">
+	<link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+	<link rel="shortcut icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+	<link rel="shortcut icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+	<link rel="manifest" href="/manifest.json">
 	<meta name="theme-color" content="#03dac6">
-	<script src="../node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js"></script>
-	<script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
-	<script type="module" src=" ../components/dnd-layout.js"> </script>
+	<script src="/node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js"></script>
+	<script src="/node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+	<script type="module" src="../index.bundle.js" crossorigin></script>
+	<style>
+		html, body {
+			margin: 0;
+			padding: 0;
+			border: 0;
+			font-size: 100%;
+			font: inherit;
+			vertical-align: baseline;
+		}
+		@font-face {
+			font-family: 'Material Icons';
+			font-style: normal;
+			font-weight: 400;
+			font-display: block;
+			src: local('Material Icons'),
+			local('MaterialIcons-Regular'),
+			url('/fonts/MaterialIcons-Regular.woff2') format('woff2'),
+			url('/fonts/MaterialIcons-Regular.woff') format('woff'),
+			url('/fonts/MaterialIcons-Regular.ttf') format('truetype');
+		}
+	</style>
 </head>
 
 <body>
+	<dnd-index-view></dnd-index-view>
 
-	<dnd-layout>
-		<h1 class="mdc-typography--headline2 margin-bottom_large margin-top_large typography_mono">5e Tools</h1>
-		
-		<h2 class="mdc-typography--headline5 margin-bottom_small margin-top_med">Rules</h2>
-		<div class="class-list-container">
-			<a class="class-grid-item" href="rules.html">
-				<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">library_books</i>
-				<span class="class-grid-item--text">Rules</span>
-			</a>
-			<a class="class-grid-item" href="variantrules.html">
-				<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">description</i>
-				<span class="class-grid-item--text">Variant Rules</span>
-			</a>
-		</div>
-
-		<h2 class="mdc-typography--headline5 margin-bottom_small margin-top_med">Player Options</h2>
-		<div class="class-list-container">
-			<a class="class-grid-item" href="classes.html">
-				<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">class</i>
-				<span class="class-grid-item--text">Classes</span>
-			</a>
-			<a class="class-grid-item" href="backgrounds.html">
-				<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">public</i>
-				<span class="class-grid-item--text">Backgrounds</span>
-			</a>
-			<a class="class-grid-item" href="feats.html">
-				<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">fitness_center</i>
-				<span class="class-grid-item--text">Feats</span>
-			</a>
-			<a class="class-grid-item" href="races.html">
-				<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">face</i>
-				<span class="class-grid-item--text">Races</span>
-			</a>
-		</div>
-
-		<h2 class="mdc-typography--headline5 margin-bottom_small margin-top_med">References</h2>
-		<div class="class-list-container">
-			<a class="class-grid-item" href="spells.html">
-				<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">flash_on</i>
-				<span class="class-grid-item--text">Spells</span>
-			</a>
-			<a class="class-grid-item" href="conditions.html">
-				<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">sentiment_very_dissatisfied</i>
-				<span class="class-grid-item--text">Conditions</span>
-			</a>
-			<a class="class-grid-item" href="items.html">
-				<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">restaurant</i>
-				<span class="class-grid-item--text">Items</span>
-			</a>
-			<a class="class-grid-item" href="rewards.html">
-				<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">toll</i>
-				<span class="class-grid-item--text">Other Rewards</span>
-			</a>
-			<a class="class-grid-item" href="bestiary.html">
-				<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">warning</i>
-				<span class="class-grid-item--text">Bestiary</span>
-			</a>
-			<a class="class-grid-item" href="psionics.html">
-				<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">record_voice_over</i>
-				<span class="class-grid-item--text">Psionics</span>
-			</a>
-			<a class="class-grid-item" href="cults.html">
-				<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">group</i>
-				<span class="class-grid-item--text">Cults</span>
-			</a>
-		</div>
-
-		<h2 class="mdc-typography--headline5 margin-bottom_small margin-top_med">Tools</h2>
-		<div class="class-list-container">
-			<a class="class-grid-item" href="dice.html">
-				<i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">casino</i>
-				<span class="class-grid-item--text">Dice Roller</span>
-			</a>
-		</div>
-	</dnd-layout>
-
-	<!-- <script type="text/javascript">
+	<script type="text/javascript">
 		if ("serviceWorker" in navigator) {
 			window.addEventListener("load", function() {
 				navigator.serviceWorker.register("/../service-worker.js").then(
@@ -121,6 +57,6 @@
 				);
 			});
 		}
-	</script> -->
+	</script>
 </body>
 </html>

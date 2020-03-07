@@ -2,8 +2,6 @@ import Parser from '../util/Parser.js';
 import {Filter, FilterBox} from '../util/Filter.js';
 import {
   HASH_LIST_SEP,
-  ID_SEARCH_BAR,
-  ID_RESET_BUTTON,
   TYP_STRING,
   TYP_NUMBER,
   TYP_OBJECT,
@@ -633,10 +631,15 @@ function joinConjunct(arr, joinWith, conjunctWith) {
 	return arr.length === 1 ? String(arr[0]) : arr.length === 2 ? arr.join(conjunctWith) : arr.slice(0, -1).join(joinWith) + conjunctWith + arr.slice(-1);
 }
 
-function parseHTML(str, isTable) {
+function parseHTML(str, isTable, isInner) {
 	var tmp = document.implementation.createHTMLDocument();
 	if (isTable) {
 		tmp.body.innerHTML = "<table><tbody>" + str + "</tbody></table>";
+		if (isInner) {
+			return tmp.body.children[0].children[0].children[0].children.length === 1
+				? tmp.body.children[0].children[0].children[0].children[0]
+				: tmp.body.children[0].children[0].children[0];
+		}
 		return tmp.body.children[0].children[0].children.length === 1
       ? tmp.body.children[0].children[0].children[0]
       : tmp.body.children[0].children[0];
@@ -699,6 +702,20 @@ function jqWrap(el, wrapper) {
 	target.appendChild(el);
 
 	parent.insertBefore(temp.firstChild, (insertWhere ? insertWhere.nextSibling : parent.firstChild));
+}
+
+function jqOffset(el) {
+	var rect = el.getBoundingClientRect();
+	return {
+		top: rect.top + document.body.scrollTop,
+		left: rect.left + document.body.scrollLeft
+	}
+}
+
+function jqEmpty(el) {
+	while(el.firstChild) {
+		el.removeChild(el.firstChild);
+	}
 }
 
 function parse_psionicTypeToFull(type) {
@@ -966,7 +983,9 @@ export {
   jqHeight,
   jqPrepend,
   jqAfter,
-  jqWrap,
+	jqWrap,
+	jqOffset,
+	jqEmpty,
   getHiddenModeList,
   parse_psionicTypeToFull,
   parse_psionicOrderToFull,

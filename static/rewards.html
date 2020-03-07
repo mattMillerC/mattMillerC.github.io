@@ -6,44 +6,41 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<!--
-	XML data was compiled by a reddit community for use with the "Fight Club 5" app.
-	Google "5e xml files" for more info.
-
-	Feel free to use, edit, and redistribute this as you wish.
-	I don't own any of the XML data anyway.
--->
-
 	<title>Other Rewards - 5e Tools</title>
 
-	<link rel="stylesheet" href="../css/reset.css">
-	<link rel="stylesheet" href="../css/material-components-web.min.css">
-	<link rel="stylesheet" href="../css/styles.css">
-
-	<link rel="apple-touch-icon" sizes="180x180" href="../img/apple-touch-icon.png">
-	<link rel="shortcut icon" type="image/png" sizes="32x32" href="../img/favicon-32x32.png">
-	<link rel="shortcut icon" type="image/png" sizes="16x16" href="../img/favicon-16x16.png">
-	<link rel="manifest" href="../manifest.json">
+	<link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+	<link rel="shortcut icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+	<link rel="shortcut icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+	<link rel="manifest" href="/manifest.json">
 	<meta name="theme-color" content="#03dac6">
-	<script src="../node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js"></script>
-	<script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
-	<script type="module" src=" ../components/dnd-layout.js"> </script>
-	<script type="module" src=" ../components/dnd-selection-list.js"> </script>
+	<script src="/node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js"></script>
+	<script src="/node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+	<script type="module" src="../rewards.bundle.js" crossorigin></script>
+	<style>
+		html, body {
+			margin: 0;
+			padding: 0;
+			border: 0;
+			font-size: 100%;
+			font: inherit;
+			vertical-align: baseline;
+		}
+		@font-face {
+			font-family: 'Material Icons';
+			font-style: normal;
+			font-weight: 400;
+			font-display: block;
+			src: local('Material Icons'),
+			local('MaterialIcons-Regular'),
+			url('/fonts/MaterialIcons-Regular.woff2') format('woff2'),
+			url('/fonts/MaterialIcons-Regular.woff') format('woff'),
+			url('/fonts/MaterialIcons-Regular.ttf') format('truetype');
+		}
+	</style>
 </head>
 
 <body>
-
-	<dnd-layout title="Rewards">
-		<dnd-selection-list
-			enable-hash-routing
-			model-id="rewards"
-			columns='[
-				{"id":"name","label":"Name"},
-				{"id":"source","label":"Source"}, 
-				{"id":"reward-type","label":"Type","cssClass":"hidden-mobile-down"}
-			]'>
-		</dnd-selection-list>
-	</dnd-layout>
+	<dnd-rewards-view></dnd-rewards-view>
 </body>
 
 </html>

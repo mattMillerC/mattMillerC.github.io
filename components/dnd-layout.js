@@ -1,14 +1,16 @@
 import {PolymerElement, html} from '@polymer/polymer';
+import { MDCRipple } from "@material/ripple";
+import { MDCDrawer } from "@material/drawer";
+import { MDCSwitch } from "@material/switch";
 import "./styles/material-styles.js";
 import "./styles/my-styles.js";
-import * as Material from "material-components-web";
 import registerSwipe from '../util/swipe.js';
 import setDarkmode from "../util/darkmode.js";
 
 class DndLayout extends PolymerElement {
   static get properties() {
     return {
-      title: {
+      header: {
         type: String
       },
       selectedTitle: {
@@ -31,8 +33,8 @@ class DndLayout extends PolymerElement {
     this._initActiveLink();
   }
 
-  __computeTitle(title, selectedTitle) {
-    return selectedTitle ? selectedTitle : title;
+  __computeTitle(header, selectedTitle) {
+    return selectedTitle ? selectedTitle : header;
   }
 
   _initDarkmode() {
@@ -45,13 +47,13 @@ class DndLayout extends PolymerElement {
       this.darkModeSwitchChecked = false;
     }
     setDarkmode(this.darkModeSwitchChecked);
-    const darkModeSwitch = Material.switchControl.MDCSwitch.attachTo(this.shadowRoot.querySelector(".mdc-switch"));
+    const darkModeSwitch = new MDCSwitch(this.shadowRoot.querySelector(".mdc-switch"));
     darkModeSwitch.checked = this.darkModeSwitchChecked;
 
     if (this.darkModeSwitchChecked) {
-      document.body.classList.add("dark");
+      this.shadowRoot.querySelector("header").classList.add("dark");
     } else {
-      document.body.classList.remove("dark");
+      this.shadowRoot.querySelector("header").classList.remove("dark");
     }
     this.shadowRoot.querySelector(".darkmode-label").addEventListener("click", () => {
       darkModeSwitch.checked = !darkModeSwitch.checked;
@@ -83,10 +85,8 @@ class DndLayout extends PolymerElement {
 
   _initNavDrawer() {
     // Nav Button
-    const button = Material.ripple.MDCRipple.attachTo(
-      this.shadowRoot.querySelector(".mdc-top-app-bar__navigation-icon")
-    );
-    const drawer = Material.drawer.MDCDrawer.attachTo(this.shadowRoot.querySelector(".mdc-drawer"));
+    const button = new MDCRipple(this.shadowRoot.querySelector(".mdc-top-app-bar__navigation-icon"));
+    const drawer = new MDCDrawer(this.shadowRoot.querySelector(".mdc-drawer"));
     window.drawer = drawer;
     this.shadowRoot.querySelector(".mdc-top-app-bar__navigation-icon").addEventListener("click", e => {
       drawer.open = !drawer.open;
@@ -101,7 +101,7 @@ class DndLayout extends PolymerElement {
     // List Items
     const listItems = this.shadowRoot.querySelectorAll(".mdc-drawer .mdc-list-item");
     for (let listItem of listItems) {
-      Material.ripple.MDCRipple.attachTo(listItem);
+      new MDCRipple(listItem);
     }
 
     const collapseToggles = this.shadowRoot.querySelectorAll(".collapse .collapse-toggle");
@@ -170,7 +170,14 @@ class DndLayout extends PolymerElement {
 
   static get template() {
     return html`
-      <style include="material-styles my-styles"></style>
+      <style include="material-styles my-styles">
+        .main {
+          min-height: calc(100vh - 64px);
+        }
+        .container {
+          padding-bottom: 32px;
+        }
+      </style>
 
       <header class="mdc-top-app-bar mdc-top-app-bar--fixed mdc-theme--primary-bg mdc-theme--on-primary">
         <div class="mdc-top-app-bar__row">
@@ -178,7 +185,7 @@ class DndLayout extends PolymerElement {
             <div class="container breadcrumbs__list">
               <div class="breadcrumbs__crumb"><a href="./index.html">Player Options</a></div>
               <div class$="[[_centerBreadcrumbCssClass(selectedTitle, selectedBreadcrumb)]]">
-                <a on-click="_resetHash">[[_or(title, breadcrumbRoot)]]</a>
+                <a on-click="_resetHash">[[_or(header, breadcrumbRoot)]]</a>
               </div>
               <div class="breadcrumbs__crumb breadcrumbs__last" hidden$="[[!_or(selectedTitle, selectedBreadcrumb)]]">
                 [[_or(selectedTitle, selectedBreadcrumb)]]
@@ -317,7 +324,7 @@ class DndLayout extends PolymerElement {
         class="main mdc-top-app-bar--fixed-adjust mdc-typography--body1 mdc-theme--background mdc-theme--text-primary-on-background"
       >
         <div class="container">
-          <h1 class="page-title mdc-typography--headline2">[[__computeTitle(title, selectedTitle)]]</h1>
+          <h1 class="page-title mdc-typography--headline2">[[__computeTitle(header, selectedTitle)]]</h1>
 
           <slot></slot>
         </div>

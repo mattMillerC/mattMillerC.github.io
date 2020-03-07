@@ -1,118 +1,133 @@
-"use strict";
+import { parseHTML, jqPrepend } from '../js/utils.js';
+import { MDCTextField } from "@material/textfield";
+import { MDCNotchedOutline } from "@material/notched-outline";
+import droll from "../lib/droll.js";
 
-window.onload = () => {
-    let total = 0,
-        historyIndex = -1;
+function onLoad(rootEl) {
+  let outputEl = rootEl.querySelector("div#output");
+  let total = 0,
+  historyIndex = -1;
+  
+  let diceField = new MDCTextField(rootEl.querySelector(".mdc-text-field"));
+  new MDCNotchedOutline(rootEl.querySelector(".mdc-notched-outline"));
+  
+  diceField.useNativeValidation = false;
+  
+  let outputRollResult = (roll) => {
+    let rollResult = droll.roll(roll.replace(/\s/g, ""));
+    if (rollResult) {
+      let newOutput = parseHTML(`<div>
+        <em><a class='roll' data-roll='${roll}'>${roll}</a></em> rolled for <strong>${rollResult.total}</strong>${rollResult.rolls.length > 1 ? `<br>(${rollResult.rolls.join(", ")})` : ''}
+        </div>`)
+      
+      jqPrepend(outputEl, newOutput);
+      outputEl.style.display = null;
+      addRollHandler(newOutput);
 
-    let diceField = mdc.textField.MDCTextField.attachTo(document.querySelector(".mdc-text-field"));
-    mdc.notchedOutline.MDCNotchedOutline.attachTo(document.querySelector(".mdc-notched-outline"));
+      total += rollResult.total;
+      rootEl.querySelector('#total').innerHTML = total;
+      rootEl.querySelector(".roll-total-wrap").style.display = null;
+      rootEl.querySelector(".roll-clear").style.display = null;
+      diceField.value = "";
+    } else {
+      rootEl.querySelector(".dice-field-container .mdc-text-field").classList.add("error");
+    }
+  };
+  
+  rootEl.querySelector(".roll-clear").addEventListener("click", e => {
+    e.preventDefault();
+    
+    historyIndex = -1;
+    outputEl.innerHTML = '';
+    rootEl.querySelector(".roll-total-wrap").style.display = 'none';
+    rootEl.querySelector(".roll-clear").style.display = "none";
+    total = 0;
+  });
+  
+  rootEl.querySelector(".roll-submit").addEventListener("click", e => {
+    e.preventDefault();
+    
+    historyIndex = -1;
+    rootEl.querySelector(".dice-field-container .mdc-text-field").classList.remove("error");
+    let roll = rootEl.querySelector(".roll-field").value;
+    if (roll) {
+      outputRollResult(roll);
+    } else {
+      rootEl.querySelector(".dice-field-container .mdc-text-field").classList.add("error");
+    }
+    rootEl.querySelector(".roll-field").focus();
+  });
+  
+  rootEl.querySelector(".roll-field").addEventListener("keydown", e => {
+    let keyCode = e.keyCode || e.which,
+    historyCount = rootEl.querySelectorAll("#output > div").length;
+    
+    // up
+    if (keyCode === 38) {
+      e.preventDefault();
+      if (historyIndex + 1 < historyCount) {
+        historyIndex++;
+        diceField.value = rootEl.querySelector(`#output div:eq(${historyIndex}) a.roll`).getAttribute("data-roll");
+      }
+      
+      // down
+    } else if (keyCode === 40) {
+      e.preventDefault();
+      if (historyIndex - 1 > -1) {
+        historyIndex--;
+        diceField.value = rootEl.querySelector(`#output div:eq(${historyIndex}) a.roll`).getAttribute("data-roll");
+      }
+      
+      // enter
+    } else if (keyCode === 13) {
+      e.preventDefault();
+      rootEl.querySelector(".roll-submit").click();
+      
+      // comma or period
+    } else if (keyCode === 190 || keyCode === 188) {
+      e.preventDefault();
+      diceField.value = diceField.value + "d";
+    } else if (keyCode === 32 || keyCode === 189 || keyCode === 187) {
+      e.preventDefault();
+      diceField.value = diceField.value + " + ";
+    }
+  });
+  rootEl.querySelector(".roll-field").addEventListener("submit", e => {
+    e.preventDefault();
+    rootEl.querySelector(".roll-submit").click();
+  })
+  rootEl.querySelector(".roll-field").addEventListener("textInput", e => {
+    var keyData = e.originalEvent.data;
+    if (keyData && (keyData === "." || keyData === ",")) {
+      e.preventDefault();
+      diceField.value = diceField.value + "d";
+    } else if (keyData && (keyData === " " || keyData === "+")) {
+      e.preventDefault();
+      diceField.value = diceField.value + "+";
+    }
+  });
+  rootEl.querySelector(".roll-field").addEventListener("focus", e => {
+    rootEl.querySelector(".dice-field-label").style.display = null;
+  });
+  rootEl.querySelector(".roll-field").addEventListener("blur", e => {
+    rootEl.querySelector(".dice-field-label").style.display = 'none';
+  });
 
-    diceField.useNativeValidation = false;
+  let rolls = rootEl.querySelectorAll(".roll[data-roll]");
+  for (let roll of rolls) {
+    addRollHandler(roll);
+  }
+  
+  function addRollHandler(roll) {
+    roll.addEventListener("click", e => {
+      e.preventDefault();
 
-    let outputRollResult = (roll, name) => {
-        let rollResult = droll.roll(roll.replace(/\s/g, ""));
-        if (rollResult) {
-            $("div#output").prepend(
-                `<div>
-                    <em><a class='roll' data-roll='${roll}'>${roll}</a></em> rolled for <strong>${rollResult.total}</strong>${rollResult.rolls.length > 1 ? `<br>(${rollResult.rolls.join(", ")})` : ''}
-                </div>`
-            ).show();
-            total += rollResult.total;
-            $('#total').html(total)
-            $(".roll-total-wrap").show();
-            $(".roll-clear").show();
-            diceField.value = "";
-        } else {
-            $(".dice-field-container .mdc-text-field").addClass("error");
-        }
-    };
-
-    $(".roll-clear").click(e => {
-        e.preventDefault();
-
-        historyIndex = -1;
-        $("div#output").empty();
-        $(".roll-total-wrap").hide();
-        $(".roll-clear").hide();
-        total = 0;
+      let roll = e.target.closest(".roll").getAttribute("data-roll");
+      if (roll) {
+        outputRollResult(roll);
+      }
     });
-
-    $(".roll-submit").click(e => {
-        e.preventDefault();
-
-        historyIndex = -1;
-        $(".dice-field-container .mdc-text-field").removeClass("error");
-        let roll = $(".roll-field").val();
-        if (roll) {
-            outputRollResult(roll);
-        } else {
-            $(".dice-field-container .mdc-text-field").addClass("error");
-        }
-        $(".roll-field").focus();
-    });
-
-    $(".roll-field")
-        .on("keydown", e => {
-            let keyCode = e.keyCode || e.which,
-                historyCount = $("#output > div").length;
-
-            // up
-            if (keyCode === 38) {
-                e.preventDefault();
-                if (historyIndex + 1 < historyCount) {
-                    historyIndex++;
-                    diceField.value = $(`#output div:eq(${historyIndex}) a.roll`).data("roll");
-                }
-
-                // down
-            } else if (keyCode === 40) {
-                e.preventDefault();
-                if (historyIndex - 1 > -1) {
-                    historyIndex--;
-                    diceField.value = $(`#output div:eq(${historyIndex}) a.roll`).data("roll");
-                }
-
-                // enter
-            } else if (keyCode === 13) {
-                e.preventDefault();
-                $(".roll-submit").click();
-
-                // comma or period
-            } else if (keyCode === 190 || keyCode === 188) {
-                e.preventDefault();
-                diceField.value = diceField.value + "d";
-            } else if (keyCode === 32 || keyCode === 189 || keyCode === 187) {
-                e.preventDefault();
-                diceField.value = diceField.value + " + ";
-            }
-        })
-        .on("submit", e => {
-            e.preventDefault();
-            $(".roll-submit").click();
-        })
-        .on("textInput", e => {
-            var keyData = e.originalEvent.data;
-            if (keyData && (keyData === "." || keyData === ",")) {
-                e.preventDefault();
-                diceField.value = diceField.value + "d";
-            } else if (keyData && (keyData === " " || keyData === "+")) {
-                e.preventDefault();
-                diceField.value = diceField.value + "+";
-            }
-        })
-        .on("focus", e => {
-            $(".dice-field-label").show();
-        })
-        .on("blur", e => {
-            $(".dice-field-label").hide();
-        });
-
-    $(document).on('click', ".roll[data-roll]", e => {
-        e.preventDefault();
-
-        let roll = $(e.target).closest('.roll').data('roll');
-        if (roll) {
-            outputRollResult(roll);
-        }
-    });
+  }
 };
+
+export { onLoad };
