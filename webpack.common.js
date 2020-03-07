@@ -40,7 +40,7 @@ module.exports = {
           toType: "dir"
         },
         {
-          from: "static/*",
+          from: "static/",
           to: ".",
           toType: "dir"
         },

@@ -255,9 +255,13 @@ styleElement.innerHTML = `
       .rules-page-variant {
         padding-left: 48px !important;
       }
+      .mdc-drawer__content > nav.mdc-list {
+        position: relative;
+      }
       .version {
-        float: right;
-        padding: 0 16px 8px 0;
+        position: absolute;
+        bottom: 6px;
+        right: 20px;
       }
 
       /* Tables */

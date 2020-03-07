@@ -313,7 +313,7 @@ class DndLayout extends PolymerElement {
               <i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">casino</i>
               <span class="mdc-list-item__text">Dice Roller</span>
             </a>
-            <span class="version mdc-typography--caption">v1.2.1</span>
+            <span class="version mdc-typography--caption">v2.0.0</span>
           </nav>
         </div>
       </aside>
