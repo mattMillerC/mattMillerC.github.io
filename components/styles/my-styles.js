@@ -146,12 +146,10 @@ styleElement.innerHTML = `
         margin: 24px 0 24px;
       }
       .main.item-opened .class-icon {
-        display: inline-block;
+        display: block;
         width: 40px;
         height: 40px;
-        margin-right: 8px;
-        top: 7px;
-        position: relative;
+        margin-bottom: 24px;
       }
       .main .class-icon {
         display: none;
@@ -393,9 +391,9 @@ styleElement.innerHTML = `
       }
       .breadcrumbs__crumb {
         white-space: nowrap;
-      }
-      .breadcrumbs__crumb:nth-child(1) {
-        display: none;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
       }
       .breadcrumbs__crumb:nth-child(3) {
         display: none;
@@ -404,7 +402,19 @@ styleElement.innerHTML = `
         display: none !important;
       }  
       .breadcrumbs__crumb:not(:last-child):not(.breadcrumbs__no_caret)::after {
-        content: '>';
+        content: 'chevron_right';
+        font-family: 'Material Icons';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        -moz-font-feature-settings: 'liga';
+        -moz-osx-font-smoothing: grayscale;
         left: -2px;
         margin: 0 .5em;
         position: relative;
@@ -713,7 +723,7 @@ styleElement.innerHTML = `
         overflow: hidden;
       }
       .collapse .collapse-toggle:after {
-        content: '\e5cf';
+        content: 'expand_more';
         font-family: 'Material Icons';
         top: 8px;
         position: absolute;
@@ -721,6 +731,17 @@ styleElement.innerHTML = `
         display: block;
         right: 8px;
         transition: transform 235ms cubic-bezier(.4,0,.2,1);
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        -moz-font-feature-settings: 'liga';
+        -moz-osx-font-smoothing: grayscale;
       }
       .collapse.open .collapse-toggle:after {
         transform: rotateZ(180deg);
@@ -1373,7 +1394,7 @@ styleElement.innerHTML = `
       /* Big Phone and up */
       @media(min-width: 599px) {
         .breadcrumbs__crumb:nth-child(3) {
-          display: block;
+          display: flex;
         }
         .breadcrumbs__crumb:nth-child(2):not(.breadcrumbs__no_caret):after {
           display: inline !important;
@@ -1419,7 +1440,7 @@ styleElement.innerHTML = `
           padding: 0;
         }
         .breadcrumbs__crumb:nth-child(1) {
-          display: block;
+          display: flex;
         }
         .main {
           overflow-x: auto;

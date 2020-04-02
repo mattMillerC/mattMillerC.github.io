@@ -65,11 +65,8 @@ class DndClasses extends PolymerElement {
     return html`
       <style include="material-styles my-styles"></style>
       <div class="main">
-        <dnd-svg></dnd-svg>
 
-        <svg class="class-icon stand-alone-icon">
-          <use xlink:href="#Barbarian"></use>
-        </svg>
+        <dnd-svg class="class-icon stand-alone-icon"></dnd-svg>
 
         <button class="mdc-icon-button close-item material-icons">close</button>
         <button class="mdc-icon-button mdc-button--raised back-to-top material-icons hidden">arrow_upward</button>

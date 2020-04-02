@@ -109,7 +109,7 @@ function onDataLoad(data, rootEl) {
 			`<div class='class-grid-item history-link class-grid-item__${curClass.name.replace(/(\s|\(|\))/g,'')}'
 				data-link='${encodeForHash(curClass.name, curClass.source)}' data-title='${curClass.name}'>
 				<span class='class-grid-item--text'>${curClass.name}</span>
-				<svg class='class-grid-item--image class-grid-item__${svg}'><use xlink:href='#${svg}'></use></svg>
+				<dnd-svg id='${svg}' class='class-grid-item--image class-grid-item__${svg}'></dnd-svg>
 			</div>`
 	}
 	//classLinkList.append(parseHTML(tempString));
@@ -132,7 +132,7 @@ function onHashChange(classes, hash, rootEl) {
   const curClass = resolveHash(classes.class, hash);
 
   let svgName = curClass.name.replace(/(\s|\(|\))/g, "");
-  rootEl.querySelector(".class-icon.stand-alone-icon use").setAttribute("xlink:href", "#" + svgName);
+  rootEl.querySelector(".class-icon.stand-alone-icon").id = svgName;
 
   const isUaClass = isNonstandardSource(curClass.source);
 

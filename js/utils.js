@@ -29,7 +29,8 @@ import {
   RNG_HEMISPHERE,
   RNG_SPHERE,
   RNG_CUBE,
-  SRC_PHB
+  SRC_PHB,
+  SRC_SCAG
 } from "../util/consts.js";
 import List from '../lib/list.js';
 

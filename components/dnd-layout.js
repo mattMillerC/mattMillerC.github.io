@@ -183,7 +183,6 @@ class DndLayout extends PolymerElement {
         <div class="mdc-top-app-bar__row">
           <div class="breadcrumbs mdc-theme--on-primary">
             <div class="container breadcrumbs__list">
-              <div class="breadcrumbs__crumb"><a href="./index.html">Player Options</a></div>
               <div class$="[[_centerBreadcrumbCssClass(selectedTitle, selectedBreadcrumb)]]">
                 <a on-click="_resetHash">[[_or(header, breadcrumbRoot)]]</a>
               </div>

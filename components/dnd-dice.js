@@ -13,7 +13,6 @@ class DndDice extends PolymerElement {
   static get template() {
     return html`
       <style include="material-styles my-styles"></style>
-      <dnd-svg></dnd-svg>
 
       <div class="dice-wrapper">
         <div class="dice-field-container">
@@ -44,22 +43,22 @@ class DndDice extends PolymerElement {
 
         <div class="dice-list-container">
           <div class="dice-grid-item roll" data-roll="1d4">
-            <svg class="dice-grid-item--image"><use href="#d4"></use></svg>
+            <dnd-svg id="d4" class="dice-grid-item--image"></dnd-svg>
           </div>
           <div class="dice-grid-item roll" data-roll="1d6">
-            <svg class="dice-grid-item--image"><use href="#d6"></use></svg>
+            <dnd-svg id="d6" class="dice-grid-item--image"></dnd-svg>
           </div>
           <div class="dice-grid-item roll" data-roll="1d8">
-            <svg class="dice-grid-item--image"><use href="#d8"></use></svg>
+            <dnd-svg id="d8" class="dice-grid-item--image"></dnd-svg>
           </div>
           <div class="dice-grid-item roll" data-roll="1d10">
-            <svg class="dice-grid-item--image"><use href="#d10"></use></svg>
+            <dnd-svg id="d10" class="dice-grid-item--image"></dnd-svg>
           </div>
           <div class="dice-grid-item roll" data-roll="1d12">
-            <svg class="dice-grid-item--image"><use href="#d12"></use></svg>
+            <dnd-svg id="d12" class="dice-grid-item--image"></dnd-svg>
           </div>
           <div class="dice-grid-item roll" data-roll="1d20">
-            <svg class="dice-grid-item--image"><use href="#d20"></use></svg>
+            <dnd-svg id="d20" class="dice-grid-item--image"></dnd-svg>
           </div>
         </div>
       </div>
