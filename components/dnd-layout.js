@@ -15,7 +15,8 @@ class DndLayout extends PolymerElement {
       },
       selectedTitle: {
         type: String,
-        value: ""
+        value: "",
+        observer: 'selectedTitleChange'
       },
       breadcrumbRoot: {
         type: String,
@@ -31,6 +32,14 @@ class DndLayout extends PolymerElement {
     this._initNavDrawer();
     this._initSelectionEvents();
     this._initActiveLink();
+  }
+
+  selectedTitleChange() {
+    if (this.selectedTitle) {
+      document.title = this.selectedTitle;
+    } else {
+      document.title = this.header;
+    }
   }
 
   __computeTitle(header, selectedTitle) {
