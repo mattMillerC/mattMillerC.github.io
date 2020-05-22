@@ -56,6 +56,12 @@ styleElement.innerHTML = `
       [hidden] {
         display: none !important;
       }
+      [visible] {
+        display: block !important;
+      }
+      .hidden-easy {
+        display: none;
+      }
       body {
         min-height: 100vh;
         display: flex;

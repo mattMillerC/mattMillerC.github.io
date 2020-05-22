@@ -33,6 +33,7 @@ class DndSelectedItem extends PolymerElement {
     super.connectedCallback();
 
     this.$.closeBtn.addEventListener("click", e => {
+      window.location.hash = "";
       this.dispatchEvent(new CustomEvent("selection-deselected", { bubbles: true, composed: true }));
     });
   }
@@ -67,8 +68,8 @@ class DndSelectedItem extends PolymerElement {
     }
   }
 
-  _exists(a) {
-    return !!a;
+  _exists(thing) {
+    return !!thing;
   }
 
   static get template() {
@@ -77,7 +78,7 @@ class DndSelectedItem extends PolymerElement {
 
       <dnd-spinner loading$="[[loading]]"></dnd-spinner>
 
-      <div hidden$="[[!_exists(selectedItem)]]">
+      <div class="hidden-easy" visible$="[[_exists(selectedItem)]]">
         <button class="mdc-icon-button close-item material-icons" id="closeBtn">close</button>
         <div class="selection-wrapper"></div>
       </div>

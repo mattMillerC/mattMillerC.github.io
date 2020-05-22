@@ -16,7 +16,9 @@ let schema = {
     {
       id: 'rogue',
       hpRoll: 8,
-      choices: []
+      choices: [{
+        
+      }]
     }
   ]
 }

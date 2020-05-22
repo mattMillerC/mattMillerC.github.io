@@ -1,5 +1,6 @@
 import {PolymerElement, html} from '@polymer/polymer';
 import './dnd-layout.js';
+import { jqEmpty } from '../js/utils.js';
 
 class DndBaseRoutingView extends PolymerElement {
   static get properties() {
@@ -24,6 +25,10 @@ class DndBaseRoutingView extends PolymerElement {
       this.viewId = window.location.search.substring(1);
     }
 
+    window.onpopstate = (e) => {
+      this.viewId = window.location.search.substring(1);
+    }
+
     // Overrides Anchor click for links, Uses viewId to change the loaded route
     document.body.addEventListener('click', (event) => {
       let anchor = event.originalTarget.closest('a');
@@ -33,6 +38,7 @@ class DndBaseRoutingView extends PolymerElement {
 
         if (href.indexOf(".html") > -1) {
           event.preventDefault();
+          window.location.hash = "";
           this.viewId = href.substring(0, href.indexOf(".html"));
           window.history.pushState({}, '', `?${this.viewId}`);
         }
@@ -45,6 +51,7 @@ class DndBaseRoutingView extends PolymerElement {
 
     await import(`./views/dnd-${this.viewId}-view.js`);
 
+    jqEmpty(this.$.routeTarget);
     this.$.routeTarget.innerHTML = `<dnd-${this.viewId}-view></dnd-${this.viewId}-view>`;
   }
 

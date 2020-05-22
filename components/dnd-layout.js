@@ -35,15 +35,7 @@ class DndLayout extends PolymerElement {
   }
 
   selectedTitleChange() {
-    if (this.selectedTitle) {
-      document.title = this.selectedTitle;
-    } else {
-      document.title = this.header;
-    }
-  }
-
-  __computeTitle(header, selectedTitle) {
-    return selectedTitle ? selectedTitle : header;
+    document.title = this.selectedTitle || this.header || '5e Tools';
   }
 
   _initDarkmode() {
@@ -79,6 +71,9 @@ class DndLayout extends PolymerElement {
     });
   }
 
+  /**
+   * Adds eventing to open nav on swipe.
+   */
   _initSwipe() {
     registerSwipe(document.body, "left", () => {
       if (drawer.open) {
@@ -92,6 +87,9 @@ class DndLayout extends PolymerElement {
     });
   }
 
+  /**
+   * Initialize Material Components JS for Nav Drawer and internals
+   */
   _initNavDrawer() {
     // Nav Button
     const button = new MDCRipple(this.shadowRoot.querySelector(".mdc-top-app-bar__navigation-icon"));
@@ -129,6 +127,10 @@ class DndLayout extends PolymerElement {
     }
   }
 
+
+  /**
+   * Adds Selection-Change listeners for updating the breadcrumbs / title
+   */
   _initSelectionEvents() {
     this.addEventListener("selection-change", e => {
       if (e.detail.title) {
@@ -144,6 +146,9 @@ class DndLayout extends PolymerElement {
     });
   }
 
+  /**
+   * Finds and adds CSS class to the Active Link in the nav
+   */
   _initActiveLink() {
     const links = this.shadowRoot.querySelectorAll("a.mdc-list-item");
     const path = window.location.pathname;
@@ -153,6 +158,18 @@ class DndLayout extends PolymerElement {
       if (link.getAttribute("href") === fileName) {
         link.classList.add("list-item--activated");
       }
+    }
+  }
+
+  /**
+   * Clears Location.hash to reset the selection and trigger an update
+   */
+  _resetHashClickHandler() {
+    window.location.hash = "";
+    this.selectedTitle = "";
+    const selectionListChild = this.querySelector("dnd-selection-list");
+    if (selectionListChild) {
+      selectionListChild.dispatchEvent(new CustomEvent("selection-deselected", { bubble: true, composed: true }));
     }
   }
 
@@ -166,15 +183,6 @@ class DndLayout extends PolymerElement {
 
   _centerBreadcrumbCssClass(selectedTitle, selectedBreadcrumb) {
     return selectedTitle || selectedBreadcrumb ? "breadcrumbs__crumb" : "breadcrumbs__crumb breadcrumbs__no_caret";
-  }
-
-  _resetHash() {
-    window.location.hash = "";
-    this.selectedTitle = "";
-    const selectionListChild = this.querySelector("dnd-selection-list");
-    if (selectionListChild) {
-      selectionListChild.dispatchEvent(new CustomEvent("selection-deselected", { bubble: true, composed: true }));
-    }
   }
 
   static get template() {
@@ -193,7 +201,7 @@ class DndLayout extends PolymerElement {
           <div class="breadcrumbs mdc-theme--on-primary">
             <div class="container breadcrumbs__list">
               <div class$="[[_centerBreadcrumbCssClass(selectedTitle, selectedBreadcrumb)]]">
-                <a on-click="_resetHash">[[_or(header, breadcrumbRoot)]]</a>
+                <a on-click="_resetHashClickHandler">[[_or(header, breadcrumbRoot)]]</a>
               </div>
               <div class="breadcrumbs__crumb breadcrumbs__last" hidden$="[[!_or(selectedTitle, selectedBreadcrumb)]]">
                 [[_or(selectedTitle, selectedBreadcrumb)]]
@@ -332,7 +340,7 @@ class DndLayout extends PolymerElement {
         class="main mdc-top-app-bar--fixed-adjust mdc-typography--body1 mdc-theme--background mdc-theme--text-primary-on-background"
       >
         <div class="container">
-          <h1 class="page-title mdc-typography--headline2">[[__computeTitle(header, selectedTitle)]]</h1>
+          <h1 class="page-title mdc-typography--headline2">[[_or(selectedTitle, header)]]</h1>
 
           <slot></slot>
         </div>
