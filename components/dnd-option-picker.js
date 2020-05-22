@@ -5,8 +5,20 @@ class DndOptionPicker extends PolymerElement {
   
   static get properties() {
     return {
+      name: {
+        type: String
+      },
+      description: {
+        type: String,
+      },
       options: {
         type: Array
+      },
+      selectionCount: {
+        type: Number
+      },
+      selections: {
+        type: Number
       }
     };
   }

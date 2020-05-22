@@ -77,6 +77,13 @@ String.prototype.formatUnicorn = String.prototype.formatUnicorn || function () {
 	return str;
 };
 
+String.prototype.uppercaseFirst = String.prototype.uppercaseFirst || function () {
+	const str = this.toString();
+	if (str.length === 0) return str;
+	if (str.length === 1) return str.charAt(0).toUpperCase();
+	return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
 function utils_joinPhraseArray(array, joiner, lastJoiner) {
 	if (array.length === 0) return "";
 	if (array.length === 1) return array[0];
@@ -91,13 +98,6 @@ function utils_joinPhraseArray(array, joiner, lastJoiner) {
 		return outStr;
 	}
 }
-
-String.prototype.uppercaseFirst = String.prototype.uppercaseFirst || function () {
-	const str = this.toString();
-	if (str.length === 0) return str;
-	if (str.length === 1) return str.charAt(0).toUpperCase();
-	return str.charAt(0).toUpperCase() + str.slice(1);
-};
 
 function uppercaseFirst(string) {
 	return string.uppercaseFirst();

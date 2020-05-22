@@ -8,9 +8,8 @@ class DndClassesView extends PolymerElement {
   static get template() {
     return html`
       <style include="material-styles my-styles"></style>
-      <dnd-layout header="Classes">
-        <dnd-classes></dnd-classes>
-      </dnd-layout>
+      
+      <dnd-classes></dnd-classes>
     `;
   }
 }

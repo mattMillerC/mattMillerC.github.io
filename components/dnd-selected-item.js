@@ -19,14 +19,14 @@ class DndSelectedItem extends PolymerElement {
         reflectToAttribute: true,
         value: false
       },
-      _renderSelection: {
+      _modelsRenderSelection: {
         type: Function
       }
     };
   }
 
   static get observers() {
-    return ["__renderSelection(_renderSelection, selectedItem)"];
+    return ["__renderSelection(_modelsRenderSelection, selectedItem)"];
   }
 
   connectedCallback() {
@@ -38,24 +38,25 @@ class DndSelectedItem extends PolymerElement {
   }
 
   __renderSelection() {
-    if (this._renderSelection && this.selectedItem) {
-      this._renderSelection(this.selectedItem, this.shadowRoot);
+    if (this._modelsRenderSelection && this.selectedItem) {
+      this._modelsRenderSelection(this.selectedItem, this.shadowRoot);
       initCollapseToggles(this.shadowRoot);
       this.loading = false;
     }
-    if (!this._renderSelection && this.selectedItem) {
+    if (!this._modelsRenderSelection && this.selectedItem) {
       this.loading = true;
     }
   }
 
   _modelChange() {
     if (this.modelId) {
-      this.set("_renderSelection", undefined);
+      this.set("_modelsRenderSelection", undefined);
 
+      // Dynamically Loading of the model page's renderSelection JS
       import(/* webpackMode: "eager" */ `../js/${this.modelId}.js`)
         .then(module => {
           if (typeof module.renderSelection === "function") {
-            this._renderSelection = module.renderSelection;
+            this._modelsRenderSelection = module.renderSelection;
           } else {
             console.error("Model module is missing the renderSelection export.");
           }

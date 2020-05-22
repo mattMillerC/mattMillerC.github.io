@@ -2,7 +2,7 @@ import {PolymerElement, html} from '@polymer/polymer';
 import "./styles/material-styles.js";
 import "./styles/my-styles.js";
 import './dnd-svg.js';
-import loadUrl from '../util/loadUrl.js';
+import loadModel from '../util/data.js';
 import { onLoad, onDataLoad, onHashChange, onSubChange } from "../js/classes.js";
 
 
@@ -42,7 +42,7 @@ class DndClasses extends PolymerElement {
 
   constructor() {
     super();
-    loadUrl("/data/classes.json").then(data => {
+    loadModel("classes").then(data => {
       this.set("classes", data);
     });
 

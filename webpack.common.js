@@ -4,21 +4,7 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   entry: {
-    backgrounds: "./components/views/dnd-backgrounds-view.js",
-    bestiary: "./components/views/dnd-bestiary-view.js",
-    classes: "./components/views/dnd-classes-view.js",
-    conditions: "./components/views/dnd-conditions-view.js",
-    cults: "./components/views/dnd-cults-view.js",
-    dice: "./components/views/dnd-dice-view.js",
-    feats: "./components/views/dnd-feats-view.js",
-    index: "./components/views/dnd-index-view.js",
-    items: "./components/views/dnd-items-view.js",
-    psionics: "./components/views/dnd-psionics-view.js",
-    races: "./components/views/dnd-races-view.js",
-    rewards: "./components/views/dnd-rewards-view.js",
-    rules: "./components/views/dnd-rules-view.js",
-    spells: "./components/views/dnd-spells-view.js",
-    variantrules: "./components/views/dnd-variantrules-view.js"
+    index: "./components/dnd-base-routing-view.js",
   },
   plugins: [
     new CleanWebpackPlugin(["dist"]),

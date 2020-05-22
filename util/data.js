@@ -1,10 +1,30 @@
 import {cloneDeep} from "../js/utils.js";
-import Parser from "../util/Parser.js";
+import Parser from "./Parser.js";
 
-export default function loadUrl(url, skipCheck = false) {
-  if (url.indexOf("/items.json") > -1 && !skipCheck) {
-    return loadAllItemData(url);
+let cache = {};
+
+/**
+ * Returns model data object, serving the cached version if already requested.
+ * @param {String} modelId Model ID for the data being requested.
+ */
+export default async function loadModel(modelId) {
+  // Checks model cache for data
+  if (!cache.hasOwnProperty(modelId)) {
+    // Catch for items.json to load additional data
+    if (modelId.indexOf("items") > -1) {
+      cache[modelId] = await loadAllItemData();
+    } else {
+      cache[modelId] = await loadUrl(`/data/${modelId}.json`);
+    }
   }
+  return cache[modelId];
+}
+
+/**
+ * Loads JSON from the given URL. Includes extra parsing step for Bestiary.
+ * @param {String} url Makes request to specified URL, returns JSON
+ */
+function loadUrl(url) {
   return fetch(url)
     .then((response) => {
       if (!response.ok) {
@@ -45,14 +65,18 @@ function parseLegendaryMonsters(monsterData) {
   return monsterData;
 }
 
-function loadAllItemData(itemData) {
+/**
+ * 
+ * Loads and merges all Item data.
+ */
+function loadAllItemData() {
   const ITEMS_JSON_URL = "/data/items.json";
   const BASIC_ITEMS_JSON_URL = "/data/basicitems.json";
   const MAGIC_VARIANTS_JSON_URL = "/data/magicvariants.json";
   const promises = [];
-  promises.push(loadUrl(ITEMS_JSON_URL, true));
-  promises.push(loadUrl(BASIC_ITEMS_JSON_URL, true));
-  promises.push(loadUrl(MAGIC_VARIANTS_JSON_URL, true));
+  promises.push(loadUrl(ITEMS_JSON_URL));
+  promises.push(loadUrl(BASIC_ITEMS_JSON_URL));
+  promises.push(loadUrl(MAGIC_VARIANTS_JSON_URL));
   return Promise.all(promises).then((data) => {
     return mergeItems(data[0], data[1], data[2]);
   });
@@ -125,6 +149,13 @@ function mergeItems(itemData, basicItemData, variantData) {
 		}
 	}
 	
+
+  let pushObject = (targetObject, objectToBePushed) => {
+    const copiedObject = JSON.parse(JSON.stringify(targetObject));
+    copiedObject.push(objectToBePushed);
+    return copiedObject;
+  };
+
 	for (let i = 0; i < itemList.length; i++) {
 		const item = itemList[i];
 		if (item.noDisplay) continue;
@@ -184,10 +215,4 @@ function mergeItems(itemData, basicItemData, variantData) {
 		}
   }
   return itemList;
-}
-
-function pushObject(targetObject, objectToBePushed) {
-	const copiedObject = JSON.parse(JSON.stringify(targetObject));
-	copiedObject.push(objectToBePushed);
-	return copiedObject;
 }

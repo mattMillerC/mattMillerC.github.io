@@ -1,4 +1,4 @@
-import { parseHTML, jqPrepend } from '../js/utils.js';
+import { parseHTML, jqPrepend } from './utils.js';
 import { MDCTextField } from "@material/textfield";
 import { MDCNotchedOutline } from "@material/notched-outline";
 import droll from "../lib/droll.js";

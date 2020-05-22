@@ -8,16 +8,15 @@ class DndConditionsView extends PolymerElement {
   static get template() {
     return html`
       <style include="material-styles my-styles"></style>
-      <dnd-layout header="Conditions">
-        <dnd-selection-list
-          enable-hash-routing
-          model-id="conditions"
-          columns='[
-				{"id":"name","label":"Name"}
-			]'
-        >
-        </dnd-selection-list>
-      </dnd-layout>
+      
+      <dnd-selection-list
+        enable-hash-routing
+        model-id="conditions"
+        columns='[
+          {"id":"name","label":"Name"}
+        ]'
+      >
+      </dnd-selection-list>
     `;
   }
 }

@@ -1,6 +1,6 @@
 import {PolymerElement, html} from '@polymer/polymer';
 import "@polymer/polymer/lib/elements/dom-repeat.js";
-import loadUrl from "../util/loadUrl.js";
+import loadModel from "../util/data.js";
 import "./styles/material-styles.js";
 import "./styles/my-styles.js";
 import { jqWrap, initCollapseToggles, encodeForHash, decodeForHash } from "../js/utils.js";
@@ -80,7 +80,7 @@ class DndRules extends PolymerElement {
 
   constructor() {
     super();
-    loadUrl("/data/rules.json").then((data) => {
+    loadModel("rules").then((data) => {
       const rulesObject = {};
       const rules = data.compendium.rules;
       for (let rule of rules) {

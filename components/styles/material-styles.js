@@ -2193,7 +2193,7 @@ styleElement.innerHTML = `
           margin-top: 0;
           line-height: normal;
           margin: 0;
-          padding: 0 16px
+          padding: 0 16px;
       }
 
       .mdc-drawer .mdc-list-group__subheader::before {

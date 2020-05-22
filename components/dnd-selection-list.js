@@ -1,7 +1,7 @@
 import {PolymerElement, html} from '@polymer/polymer';
 import "./dnd-list.js";
 import "./dnd-selected-item.js";
-import loadUrl from "../util/loadUrl.js";
+import loadModel from "../util/data.js";
 import { resolveHash } from "../util/renderTable.js";
 
 class DndSelectionList extends PolymerElement {
@@ -122,7 +122,9 @@ class DndSelectionList extends PolymerElement {
   _modelChange() {
     if (this.modelId) {
       this.set("_data", undefined);
-      loadUrl(`/data/${this.modelId}.json`)
+
+      // Load JSON Data for Model
+      loadModel(this.modelId)
         .then(result => {
           while (!Array.isArray(result) && typeof result === "object") {
             result = result[Object.keys(result)[0]];
