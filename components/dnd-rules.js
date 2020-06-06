@@ -4,6 +4,7 @@ import loadModel from "../util/data.js";
 import "./styles/material-styles.js";
 import "./styles/my-styles.js";
 import { jqWrap, initCollapseToggles, encodeForHash, decodeForHash } from "../js/utils.js";
+import { clearRouteSelection, setRouteSelection, routeEventChannel, readRouteSelection } from '../util/routing.js';
 
 class DndRules extends PolymerElement {
   
@@ -41,7 +42,7 @@ class DndRules extends PolymerElement {
 
   _selectedRuleChange() {
     if (this.selectedRule && this.selectedRule.htmlcontent) {
-      this.dispatchEvent(new CustomEvent("selection-change", {
+      this.dispatchEvent(new CustomEvent("title-change", {
         bubbles: true,
         composed: true,
         detail: { title: this.selectedRule.name }
@@ -51,9 +52,6 @@ class DndRules extends PolymerElement {
       for (let table of tables) {
         jqWrap(table, '<div class="table-scroll-wrap">');
       }
-    } else {
-
-      this.dispatchEvent(new CustomEvent("selection-deselected", { bubbles: true, composed: true }));
     }
   }
 
@@ -72,7 +70,11 @@ class DndRules extends PolymerElement {
           break;
         }
       }
-      this.set("selectedRule", selectedRule);
+      if (selectedRule) {
+        this.set("selectedRule", selectedRule);
+      } else {
+        clearRouteSelection();
+      }
     } else {
       this.set("selectedRule", undefined);
     }
@@ -92,12 +94,34 @@ class DndRules extends PolymerElement {
       }
       this.set('rules', rulesObject);
       initCollapseToggles(this.shadowRoot);
+      let currentSelection = readRouteSelection();
+      if (currentSelection) {
+        this.hash = currentSelection;
+      }
     });
+  }
 
-    window.addEventListener("hashchange", () => {
-      this.hash = window.location.hash;
-    });
-    this.hash = window.location.hash;
+  connectedCallback() {
+    super.connectedCallback();
+
+    this.selectionChangeHandler = (e) => {
+      if (e.detail && e.detail.selection) {
+        this.hash = e.detail.selection;
+      }
+    };
+    this.deselectionChangeHandler = () => {
+      this.set("selectedRule", undefined);
+    }
+    routeEventChannel().addEventListener("selection-change", this.selectionChangeHandler);
+    routeEventChannel().addEventListener("selection-deselected", this.deselectionChangeHandler);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+
+    this.deselectionChangeHandler();
+    routeEventChannel().removeEventListener("selection-change", this.selectionChangeHandler);
+    routeEventChannel().removeEventListener("selection-deselected", this.deselectionChangeHandler);
   }
 
   _getCategoryRules(id, rules) {
@@ -109,7 +133,7 @@ class DndRules extends PolymerElement {
     let category = el.getAttribute("category");
     let rule = el.getAttribute("rule");
     let hash = encodeForHash(this.rules[category][rule].name);
-    window.location.hash = hash;
+    setRouteSelection(hash);
   }
 
   _exists(a) {

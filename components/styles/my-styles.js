@@ -1737,6 +1737,13 @@ styleElement.innerHTML = `
       em {
         font-style: italic;
       }
+
+      .class-tabs {
+        display: flex;
+
+      }
+
+      @medi
     </style>
   </template
 `;

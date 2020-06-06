@@ -3,6 +3,7 @@ import "./dnd-list.js";
 import "./dnd-selected-item.js";
 import loadModel from "../util/data.js";
 import { resolveHash } from "../util/renderTable.js";
+import { readRouteSelection, routeEventChannel, clearRouteSelection } from '../util/routing.js';
 
 class DndSelectionList extends PolymerElement {
   static get properties() {
@@ -35,95 +36,69 @@ class DndSelectionList extends PolymerElement {
       _selectedItem: {
         type: Object
       },
-      _selectedIndex: {
-        type: Number
-      },
       _selectedHash: {
         type: String
+      },
+      loading: {
+        type: Boolean,
+        value: true,
+        observer: '_loadingChange'
       }
     };
   }
 
-  static get observers() {
-    return ["_updateSelectionFromIndex(_data, _selectedIndex)"];
+  _loadingChange() {
+    this.dispatchEvent(new CustomEvent("loading-data", {
+      bubbles: true,
+      composed: true,
+      detail: {
+        loading: this.loading
+      }
+    }));
   }
 
-  constructor() {
-    super();
-
-    window.addEventListener("hashchange", (e) => {
-      this._checkHashForSelection();
-    }, false);
-  }
-
+  /**
+   * Connects to route eventing channel and checks for loaded selection
+   * from hash.
+   */
   connectedCallback() {
     super.connectedCallback();
 
-    this.addEventListener("selection-change", e => {
-      if (e.detail) {
-        if (e.detail.index) {
-          this._selectedIndex = e.detail.index;
-        }
-        if (e.detail.link) {
-          window.location.hash = e.detail.link;
-        }
-      }
-    });
+    this.selectionEventHandler = (e) => {
+      this._checkHashForSelection(e.detail.selection);
+    };
 
-    this.addEventListener("selection-deselected", () => {
+    this.deselectionEventHandler = () => {
       this._selectedItem = undefined;
       this.hasSelection = false;
-    });
+    };
+
+    // In case the list data has already been loaded, check if the hash is there
+    this._checkHashForSelection();
+
+    routeEventChannel().addEventListener("selection-change", this.selectionEventHandler);
+    routeEventChannel().addEventListener("selection-deselected", this.deselectionEventHandler);
+    routeEventChannel().addEventListener("view-change", this.deselectionEventHandler);
   }
 
-  _updateSelectionFromIndex() {
-    if (Array.isArray(this._data) && this._selectedIndex) {
-      if (this._data[this._selectedIndex] !== undefined) {
-        const _selectedIndex = this._selectedIndex;
-        this._selectedIndex = undefined;
-        this.set("_selectedItem", this._data[_selectedIndex]);
-        this.hasSelection = true;
-        if (!this.disableScrollBack) {
-          window.scrollTo(0, 0);
-        }
-      }
-    }
+  /**
+   * Disconnects from route eventing channel.
+   */
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    routeEventChannel().removeEventListener("selection-change", this.selectionEventHandler);
+    routeEventChannel().removeEventListener("selection-deselected", this.deselectionEventHandler);
   }
 
-  _checkHashForSelection() {
-    if (this.enableHashRouting && Array.isArray(this._data)) {
-      if (window.location.hash && window.location.hash.length > 1) {
-        const itemFromHash = resolveHash(this._data, window.location.hash);
-        if (itemFromHash) {
-          this.set("_selectedItem", itemFromHash);
-          this.hasSelection = true;
-          if (!this.disableScrollBack) {
-            window.scrollTo(0, 0);
-          }
-          this.dispatchEvent(
-            new CustomEvent("selection-change", {
-              bubbles: true,
-              composed: true,
-              detail: { title: itemFromHash.name }
-            })
-          );
-        }
-      } else {
-        this.dispatchEvent(
-          new CustomEvent("selection-deselected", {
-            bubbles: true,
-            composed: true
-          })
-        );
-      }
-    }
-  }
-
+  /**
+   * Loads the JSON data for the given modelId, then checks to see if 
+   * the current routed selection is present in the data.
+   */
   _modelChange() {
     if (this.modelId) {
       this.set("_data", undefined);
+      this.loading = true;
 
-      // Load JSON Data for Model
       loadModel(this.modelId)
         .then(result => {
           while (!Array.isArray(result) && typeof result === "object") {
@@ -131,6 +106,7 @@ class DndSelectionList extends PolymerElement {
           }
           this.set("_data", result);
           this._checkHashForSelection();
+          this.loading = false;
         })
         .catch(e => {
           console.error("Model requested for list did not return.", e);
@@ -138,12 +114,39 @@ class DndSelectionList extends PolymerElement {
     }
   }
 
+  /**
+   * Looks through the loaded Data array for an item that matches the 
+   * selection string.
+   * @param {String} [newSelection] Optional. If selection isn't provided,
+   * checks the current hash for the second pathed variable.
+   */
+  _checkHashForSelection(newSelection) {
+    let hashSelection = newSelection;
+    if (!hashSelection) {
+      hashSelection = readRouteSelection();
+    }
+    if (hashSelection && this.enableHashRouting && Array.isArray(this._data)) {
+      const itemFromHash = resolveHash(this._data, hashSelection);
+      if (itemFromHash) {
+        this.set("_selectedItem", itemFromHash);
+        this.hasSelection = true;
+        if (!this.disableScrollBack) {
+          window.scrollTo(0, 0);
+        }
+        this.dispatchEvent(new CustomEvent("title-change", {
+          bubbles: true,
+          composed: true,
+          detail: { title: itemFromHash.name }
+        }));
+      } else {
+        clearRouteSelection();
+      }
+    }
+  }
+
   static get template() {
     return html`
       <style>
-        dnd-selected-item[loading] ~ dnd-list[loading] {
-          display: none;
-        }
         :host([has-selection]) dnd-list {
           display: none;
         }

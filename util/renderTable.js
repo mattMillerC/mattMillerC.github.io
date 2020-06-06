@@ -40,6 +40,7 @@ import {
 } from "./consts.js";
 import Parser from "./Parser.js";
 import { Filter, FilterBox } from "./Filter.js";
+import { readRouteSelection } from "./routing.js";
 
 function renderTable(data, rootEl, columns) {
   const filters = {};
@@ -392,8 +393,9 @@ function renderTable(data, rootEl, columns) {
   
   function deselectFilter(deselectProperty, deselectValue) {
     return function(val) {
-      if (window.location.hash.length) {
-        const itemProperty = resolveHash(data, window.location.hash)[deselectProperty];
+      let selectionHash = readRouteSelection();
+      if (selectionHash.length) {
+        const itemProperty = resolveHash(data, selectionHash)[deselectProperty];
         if (itemProperty === deselectValue) {
           return deselNoHash();
         } else {

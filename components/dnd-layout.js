@@ -1,11 +1,13 @@
 import {PolymerElement, html} from '@polymer/polymer';
 import { MDCRipple } from "@material/ripple";
 import { MDCDrawer } from "@material/drawer";
+import { MDCList } from "@material/list";
 import { MDCSwitch } from "@material/switch";
 import "./styles/material-styles.js";
 import "./styles/my-styles.js";
 import registerSwipe from '../util/swipe.js';
 import setDarkmode from "../util/darkmode.js";
+import { clearRouteSelection, routeEventChannel, readRouteView } from '../util/routing.js';
 
 class DndLayout extends PolymerElement {
   static get properties() {
@@ -17,10 +19,6 @@ class DndLayout extends PolymerElement {
         type: String,
         value: "",
         observer: 'selectedTitleChange'
-      },
-      breadcrumbRoot: {
-        type: String,
-        value: ""
       }
     };
   }
@@ -31,7 +29,14 @@ class DndLayout extends PolymerElement {
     this._initSwipe();
     this._initNavDrawer();
     this._initSelectionEvents();
-    this._initActiveLink();
+
+    this._resetActiveLink();
+    routeEventChannel().addEventListener("view-change", this._resetActiveLink.bind(this));
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    routeEventChannel().removeEventListener("view-change", this._resetActiveLink.bind(this));
   }
 
   selectedTitleChange() {
@@ -92,85 +97,59 @@ class DndLayout extends PolymerElement {
    */
   _initNavDrawer() {
     // Nav Button
-    const button = new MDCRipple(this.shadowRoot.querySelector(".mdc-top-app-bar__navigation-icon"));
+    const navButton = this.shadowRoot.querySelector(".mdc-top-app-bar__navigation-icon");
+    new MDCRipple(navButton);
     const drawer = new MDCDrawer(this.shadowRoot.querySelector(".mdc-drawer"));
-    window.drawer = drawer;
-    this.shadowRoot.querySelector(".mdc-top-app-bar__navigation-icon").addEventListener("click", e => {
+    navButton.addEventListener("click", () => {
       drawer.open = !drawer.open;
     });
-    const navListItems = this.shadowRoot.querySelectorAll(".rules .mdc-list-item, .classes .mdc-list-item");
-    for (let navListItem of navListItems) {
-      navListItem.addEventListener("click", () => {
-        drawer.open = false;
-      });
-    }
 
     // List Items
     const listItems = this.shadowRoot.querySelectorAll(".mdc-drawer .mdc-list-item");
     for (let listItem of listItems) {
       new MDCRipple(listItem);
     }
-
-    const collapseToggles = this.shadowRoot.querySelectorAll(".collapse .collapse-toggle");
-    for (let collapseToggle of collapseToggles) {
-      collapseToggle.addEventListener("click", e => {
-        let collapse = $(e.target).closest(".collapse"),
-          list = collapse.find(".collapse-list");
-
-        if (collapse.hasClass("open")) {
-          list.css("margin-top", "-" + list.height() + "px");
-        } else {
-          list.css("margin-top", "0px");
-        }
-        collapse.toggleClass("open");
-      });
-    }
   }
 
 
   /**
-   * Adds Selection-Change listeners for updating the breadcrumbs / title
+   * Adds listeners for updating the breadcrumbs / title
    */
   _initSelectionEvents() {
-    this.addEventListener("selection-change", e => {
+    this.addEventListener("title-change", e => {
       if (e.detail.title) {
         this.selectedTitle = e.detail.title;
-      } else if (e.detail.breadcrumb) {
-        this.selectedBreadcrumb = e.detail.breadcrumb;
       }
     });
 
-    this.addEventListener("selection-deselected", () => {
+    routeEventChannel().addEventListener("selection-deselected", () => {
       this.selectedTitle = "";
-      this.selectedBreadcrumb = "";
     });
   }
 
   /**
    * Finds and adds CSS class to the Active Link in the nav
    */
-  _initActiveLink() {
+  _resetActiveLink() {
+    const activeLink = this.shadowRoot.querySelector("a.list-item--activated");
+    if (activeLink) {
+      activeLink.classList.remove("list-item--activated");
+    }
     const links = this.shadowRoot.querySelectorAll("a.mdc-list-item");
-    const path = window.location.pathname;
-    const fileName = path.substring(path.lastIndexOf("/") + 1);
+    const view = readRouteView();
 
     for (let link of links) {
-      if (link.getAttribute("href") === fileName) {
+      if (link.getAttribute("href") === `#/${view}`) {
         link.classList.add("list-item--activated");
       }
     }
   }
 
   /**
-   * Clears Location.hash to reset the selection and trigger an update
+   * Clears routing to reset the selection and trigger an update
    */
   _resetHashClickHandler() {
-    window.location.hash = "";
-    this.selectedTitle = "";
-    const selectionListChild = this.querySelector("dnd-selection-list");
-    if (selectionListChild) {
-      selectionListChild.dispatchEvent(new CustomEvent("selection-deselected", { bubble: true, composed: true }));
-    }
+    clearRouteSelection();
   }
 
   _exists(a) {
@@ -181,8 +160,8 @@ class DndLayout extends PolymerElement {
     return a || b;
   }
 
-  _centerBreadcrumbCssClass(selectedTitle, selectedBreadcrumb) {
-    return selectedTitle || selectedBreadcrumb ? "breadcrumbs__crumb" : "breadcrumbs__crumb breadcrumbs__no_caret";
+  _centerBreadcrumbCssClass(selectedTitle) {
+    return selectedTitle ? "breadcrumbs__crumb" : "breadcrumbs__crumb breadcrumbs__no_caret";
   }
 
   static get template() {
@@ -200,11 +179,11 @@ class DndLayout extends PolymerElement {
         <div class="mdc-top-app-bar__row">
           <div class="breadcrumbs mdc-theme--on-primary">
             <div class="container breadcrumbs__list">
-              <div class$="[[_centerBreadcrumbCssClass(selectedTitle, selectedBreadcrumb)]]">
-                <a on-click="_resetHashClickHandler">[[_or(header, breadcrumbRoot)]]</a>
+              <div class$="[[_centerBreadcrumbCssClass(selectedTitle)]]">
+                <a on-click="_resetHashClickHandler">[[header]]</a>
               </div>
-              <div class="breadcrumbs__crumb breadcrumbs__last" hidden$="[[!_or(selectedTitle, selectedBreadcrumb)]]">
-                [[_or(selectedTitle, selectedBreadcrumb)]]
+              <div class="breadcrumbs__crumb breadcrumbs__last" hidden$="[[!selectedTitle]]">
+                [[selectedTitle]]
               </div>
             </div>
           </div>
@@ -214,9 +193,9 @@ class DndLayout extends PolymerElement {
             >
               menu
             </button>
-            <a href="index.html"><div class="logo logo-white light-only"></div></a>
-            <a href="index.html"><div class="logo dark-only"></div></a>
-            <a href="index.html"
+            <a href="#/index"><div class="logo logo-white light-only"></div></a>
+            <a href="#/index"><div class="logo dark-only"></div></a>
+            <a href="#/index"
               ><span class="mdc-top-app-bar__title mdc-theme--on-primary typography_mono hidden-tablet-down"
                 >5e Tools</span
               ></a
@@ -229,7 +208,7 @@ class DndLayout extends PolymerElement {
         <div class="mdc-drawer__content">
           <nav class="mdc-list">
             <div class="mdc-drawer__header hidden-desktop-up">
-              <a href="index.html"
+              <a href="#/index"
                 ><h3 class="mdc-drawer__title mdc-theme--on-surface typography_mono">
                   <div class="logo margin-right_small"></div>
                   5e Tools
@@ -255,13 +234,13 @@ class DndLayout extends PolymerElement {
             </a>
 
             <hr class="mdc-list-divider" />
-            <a class="mdc-list-item mdc-theme--on-surface" href="rules.html" tabindex="0">
+            <a class="mdc-list-item mdc-theme--on-surface" href="#/rules" tabindex="0">
               <i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true"
                 >library_books</i
               >
               <span class="mdc-list-item__text">Rules</span>
             </a>
-            <a class="mdc-list-item mdc-theme--on-surface" href="variantrules.html">
+            <a class="mdc-list-item mdc-theme--on-surface" href="#/variantrules">
               <i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">description</i>
 
               <span class="mdc-list-item__text">Variant Rules</span>
@@ -269,66 +248,70 @@ class DndLayout extends PolymerElement {
 
             <hr class="mdc-list-divider" />
             <h6 class="mdc-list-group__subheader mdc-theme--on-surface">Player Options</h6>
-            <a class="mdc-list-item mdc-theme--on-surface" href="classes.html">
+            <a class="mdc-list-item mdc-theme--on-surface" href="#/classes">
               <i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">class</i>
               <span class="mdc-list-item__text">Classes</span>
             </a>
-            <a class="mdc-list-item mdc-theme--on-surface" href="backgrounds.html">
+            <a class="mdc-list-item mdc-theme--on-surface" href="#/backgrounds">
               <i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">public</i>
               <span class="mdc-list-item__text">Backgrounds</span>
             </a>
-            <a class="mdc-list-item mdc-theme--on-surface" href="feats.html">
+            <a class="mdc-list-item mdc-theme--on-surface" href="#/feats">
               <i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true"
                 >fitness_center</i
               >
               <span class="mdc-list-item__text">Feats</span>
             </a>
-            <a class="mdc-list-item mdc-theme--on-surface" href="races.html">
+            <a class="mdc-list-item mdc-theme--on-surface" href="#/races">
               <i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">face</i>
               <span class="mdc-list-item__text">Races</span>
             </a>
 
             <hr class="mdc-list-divider" />
             <h6 class="mdc-list-group__subheader mdc-theme--on-surface">References</h6>
-            <a class="mdc-list-item mdc-theme--on-surface" href="spells.html">
+            <a class="mdc-list-item mdc-theme--on-surface" href="#/spells">
               <i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">flash_on</i>
               <span class="mdc-list-item__text">Spells</span>
             </a>
-            <a class="mdc-list-item mdc-theme--on-surface" href="conditions.html">
+            <a class="mdc-list-item mdc-theme--on-surface" href="#/conditions">
               <i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true"
                 >sentiment_very_dissatisfied</i
               >
               <span class="mdc-list-item__text">Conditions</span>
             </a>
-            <a class="mdc-list-item mdc-theme--on-surface" href="items.html">
+            <a class="mdc-list-item mdc-theme--on-surface" href="#/items">
               <i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">restaurant</i>
               <span class="mdc-list-item__text">Items</span>
             </a>
-            <a class="mdc-list-item mdc-theme--on-surface" href="rewards.html">
+            <a class="mdc-list-item mdc-theme--on-surface" href="#/rewards">
               <i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">toll</i>
               <span class="mdc-list-item__text">Other Rewards</span>
             </a>
-            <a class="mdc-list-item mdc-theme--on-surface" href="bestiary.html">
+            <a class="mdc-list-item mdc-theme--on-surface" href="#/bestiary">
               <i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">warning</i>
               <span class="mdc-list-item__text">Bestiary</span>
             </a>
-            <a class="mdc-list-item mdc-theme--on-surface" href="psionics.html">
+            <a class="mdc-list-item mdc-theme--on-surface" href="#/psionics">
               <i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true"
                 >record_voice_over</i
               >
               <span class="mdc-list-item__text">Psionics</span>
             </a>
-            <a class="mdc-list-item mdc-theme--on-surface" href="cults.html">
+            <a class="mdc-list-item mdc-theme--on-surface" href="#/cults">
               <i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">group</i>
               <span class="mdc-list-item__text">Cults</span>
             </a>
 
             <hr class="mdc-list-divider" />
             <h6 class="mdc-list-group__subheader mdc-theme--on-surface">Tools</h6>
-            <a class="mdc-list-item mdc-theme--on-surface" href="dice.html">
+            <a class="mdc-list-item mdc-theme--on-surface" href="#/dice">
               <i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">casino</i>
               <span class="mdc-list-item__text">Dice Roller</span>
             </a>
+            <!--<a class="mdc-list-item mdc-theme--on-surface" href="#/character-builder">
+              <i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">build</i>
+              <span class="mdc-list-item__text">Character Builder</span>
+            </a>-->
             <span class="version mdc-typography--caption">v2.0.0</span>
           </nav>
         </div>

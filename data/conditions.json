@@ -108,10 +108,10 @@
 								"type": "link",
 								"href": {
 									"type": "internal",
-									"path": "conditions.html",
+									"path": "",
 									"hash": {
 										"type": "constant",
-										"value": "incapacitated"
+										"value": "/conditions/incapacitated"
 									}
 								},
 								"text": "incapacitated"
@@ -158,10 +158,10 @@
 								"type": "link",
 								"href": {
 									"type": "internal",
-									"path": "conditions.html",
+									"path": "",
 									"hash": {
 										"type": "constant",
-										"value": "incapacitated"
+										"value": "/conditions/incapacitated"
 									}
 								},
 								"text": "incapacitated"
@@ -187,10 +187,10 @@
 								"type": "link",
 								"href": {
 									"type": "internal",
-									"path": "conditions.html",
+									"path": "",
 									"hash": {
 										"type": "constant",
-										"value": "incapacitated"
+										"value": "/conditions/incapacitated"
 									}
 								},
 								"text": "incapacitated"
@@ -254,10 +254,10 @@
 								"type": "link",
 								"href": {
 									"type": "internal",
-									"path": "conditions.html",
+									"path": "",
 									"hash": {
 										"type": "constant",
-										"value": "incapacitated"
+										"value": "/conditions/incapacitated"
 									}
 								},
 								"text": "incapacitated"
@@ -282,10 +282,10 @@
 								"type": "link",
 								"href": {
 									"type": "internal",
-									"path": "conditions.html",
+									"path": "",
 									"hash": {
 										"type": "constant",
-										"value": "incapacitated"
+										"value": "/conditions/incapacitated"
 									}
 								},
 								"text": "incapacitated"

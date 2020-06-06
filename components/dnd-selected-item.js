@@ -3,6 +3,7 @@ import "./styles/material-styles.js";
 import "./styles/my-styles.js";
 import "./dnd-spinner.js";
 import {initCollapseToggles} from '../js/utils.js';
+import { clearRouteSelection } from '../util/routing.js';
 
 class DndSelectedItem extends PolymerElement {
   static get properties() {
@@ -16,8 +17,8 @@ class DndSelectedItem extends PolymerElement {
       },
       loading: {
         type: Boolean,
-        reflectToAttribute: true,
-        value: false
+        value: false,
+        observer: "_loadingChange"
       },
       _modelsRenderSelection: {
         type: Function
@@ -32,32 +33,39 @@ class DndSelectedItem extends PolymerElement {
   connectedCallback() {
     super.connectedCallback();
 
-    this.$.closeBtn.addEventListener("click", e => {
-      window.location.hash = "";
-      this.dispatchEvent(new CustomEvent("selection-deselected", { bubbles: true, composed: true }));
+    this.$.closeBtn.addEventListener("click", () => {
+      clearRouteSelection();
     });
+  }
+  
+  _loadingChange() {
+    this.dispatchEvent(new CustomEvent("loading-render", {
+      bubbles: true,
+      composed: true,
+      detail: {
+        loading: this.loading
+      }
+    }));
   }
 
   __renderSelection() {
     if (this._modelsRenderSelection && this.selectedItem) {
       this._modelsRenderSelection(this.selectedItem, this.shadowRoot);
       initCollapseToggles(this.shadowRoot);
-      this.loading = false;
-    }
-    if (!this._modelsRenderSelection && this.selectedItem) {
-      this.loading = true;
     }
   }
 
   _modelChange() {
     if (this.modelId) {
+      this.loading = true;
       this.set("_modelsRenderSelection", undefined);
 
-      // Dynamically Loading of the model page's renderSelection JS
+      // Dynamically load the model page's renderSelection JS
       import(/* webpackMode: "eager" */ `../js/${this.modelId}.js`)
         .then(module => {
           if (typeof module.renderSelection === "function") {
             this._modelsRenderSelection = module.renderSelection;
+            this.loading = false;
           } else {
             console.error("Model module is missing the renderSelection export.");
           }
@@ -75,8 +83,6 @@ class DndSelectedItem extends PolymerElement {
   static get template() {
     return html`
       <style include="material-styles my-styles"></style>
-
-      <dnd-spinner loading$="[[loading]]"></dnd-spinner>
 
       <div class="hidden-easy" visible$="[[_exists(selectedItem)]]">
         <button class="mdc-icon-button close-item material-icons" id="closeBtn">close</button>

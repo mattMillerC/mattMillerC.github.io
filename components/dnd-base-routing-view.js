@@ -1,6 +1,8 @@
 import {PolymerElement, html} from '@polymer/polymer';
 import './dnd-layout.js';
+import './dnd-spinner.js';
 import { jqEmpty } from '../js/utils.js';
+import { initRouting, routeEventChannel, readRouteView } from '../util/routing.js';
 
 class DndBaseRoutingView extends PolymerElement {
   static get properties() {
@@ -10,52 +12,90 @@ class DndBaseRoutingView extends PolymerElement {
         value: 'index',
         observer: 'viewIdChange'
       },
-      viewHeader: {
+      header: {
         type: String,
-        computed: '_lookupViewHeader(viewId)'
+        computed: '_lookupheader(viewId)'
+      },
+      loadingRender: {
+        type: Boolean,
+        value: false
+      },
+      loadingData: {
+        type: Boolean,
+        value: false
+      },
+      loadingView: {
+        type: Boolean,
+        value: true
+      },
+      loading: {
+        type: Boolean,
+        value: true,
+        computed: 'anyLoading(loadingRender, loadingData, loadingView)'
       }
     }
   }
 
-  constructor() {
-    super();
+  anyLoading(loadingRender, loadingData, loadingView) {
+    return loadingRender || loadingData || loadingView;
+  }
 
-    // Grab existing viewId on load
-    if (window.location.search) {
-      this.viewId = window.location.search.substring(1);
+  ready() {
+    super.ready();
+
+    this.routeComps = {};
+
+    initRouting(this.shadowRoot);
+    let initialView = readRouteView();
+    if (initialView) {
+      this.viewId = initialView;
     }
-
-    window.onpopstate = (e) => {
-      this.viewId = window.location.search.substring(1);
-    }
-
-    // Overrides Anchor click for links, Uses viewId to change the loaded route
-    document.body.addEventListener('click', (event) => {
-      let anchor = event.originalTarget.closest('a');
-
-      if (anchor) {
-      let href = anchor.getAttribute('href');
-
-        if (href.indexOf(".html") > -1) {
-          event.preventDefault();
-          window.location.hash = "";
-          this.viewId = href.substring(0, href.indexOf(".html"));
-          window.history.pushState({}, '', `?${this.viewId}`);
-        }
-      }
+    routeEventChannel().addEventListener("view-change", e => {
+      this.viewId = e.detail.view;
     });
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+
+    this.loadingRenderEventHandler = (e) => {
+      if (e.detail && e.detail.loading !== undefined && e.detail.loading !== this.loadingRender) {
+        this.loadingRender = e.detail.loading;
+      }
+    }
+    this.loadingDataEventHandler = (e) => {
+      if (e.detail && e.detail.loading !== undefined && e.detail.loading !== this.loadingData) {
+        this.loadingData = e.detail.loading;
+      }
+    }
+
+    this.addEventListener("loading-render", this.loadingRenderEventHandler);
+    this.addEventListener("loading-data", this.loadingDataEventHandler);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+
+    this.removeEventListener("loading-render", this.loadingRenderEventHandler);
+    this.removeEventListener("loading-data", this.loadingDataEventHandler);
   }
 
   // Triggers a dynamic import of sub-component and replaces the rendered route component
   async viewIdChange() {
+    this.loadingView = true;
+    jqEmpty(this.$.routeTarget);
 
     await import(`./views/dnd-${this.viewId}-view.js`);
-
-    jqEmpty(this.$.routeTarget);
-    this.$.routeTarget.innerHTML = `<dnd-${this.viewId}-view></dnd-${this.viewId}-view>`;
+    this.loadingView = false;
+    
+    if (!this.routeComps[this.viewId]) {
+      this.routeComps[this.viewId] = document.createElement(`dnd-${this.viewId}-view`);
+    }
+    
+    this.$.routeTarget.appendChild(this.routeComps[this.viewId]);
   }
 
-  _lookupViewHeader(viewId) {
+  _lookupheader(viewId) {
     switch (viewId) {
       case 'variantrules':
         return 'Variant Rules';
@@ -64,14 +104,15 @@ class DndBaseRoutingView extends PolymerElement {
       case 'dice':
         return 'Dice Roller';
       default:
-        return viewId.charAt(0).toUpperCase() + viewId.slice(1)
+        return viewId ? viewId.charAt(0).toUpperCase() + viewId.slice(1) : '';
     }
   }
   
   static get template() {
     return html`
-      <dnd-layout header="[[viewHeader]]">
-        <div id="routeTarget"></div>
+      <dnd-layout header="[[header]]">
+        <dnd-spinner loading$="[[loading]]"></dnd-spinner>
+        <div hidden$="[[loading]]" id="routeTarget"></div>
       </dnd-layout>
     `;
   }

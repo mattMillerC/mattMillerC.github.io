@@ -1,7 +1,7 @@
 const merge = require("webpack-merge");
 const common = require("./webpack.common.js");
-const SWPrecacheWebpackPlugin = require("sw-precache-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const WorkboxPlugin = require('workbox-webpack-plugin');
 
 module.exports = merge(common, {
   mode: "production",
@@ -17,13 +17,11 @@ module.exports = merge(common, {
       ],
       {}
     ),
-    new SWPrecacheWebpackPlugin({
-      cacheId: "dnd-tools-cache-v1",
-      dontCacheBustUrlsMatching: /\.\w{8}\./,
-      filename: "service-worker.js",
-      minify: true,
-      navigateFallback: "/static/index.html",
-      staticFileGlobsIgnorePatterns: [/\.map$/, /asset-manifest\.json$/]
-    })
+    new WorkboxPlugin.GenerateSW({
+      // these options encourage the ServiceWorkers to get in there fast
+      // and not allow any straggling "old" SWs to hang around
+      clientsClaim: true,
+      skipWaiting: true,
+    }),
   ]
 });

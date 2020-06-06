@@ -6,6 +6,7 @@ import { renderTable } from "../util/renderTable.js";
 import './styles/material-styles.js';
 import "./styles/my-styles.js";
 import "./dnd-spinner.js";
+import { setRouteSelection } from '../util/routing.js';
 
 class DndList extends PolymerElement {
   static get properties() {
@@ -16,11 +17,6 @@ class DndList extends PolymerElement {
       data: {
         type: Array,
         observer: '_dataChange'
-      },
-      loading: {
-        type: Boolean,
-        reflectToAttribute: true,
-        value: true
       }
     };
   }
@@ -35,7 +31,6 @@ class DndList extends PolymerElement {
     if (this.data) {
       renderTable(this.data, this.shadowRoot, this.columns);
       this._setSelectionListeners();
-      this.loading = false;
     }
   }
 
@@ -43,17 +38,9 @@ class DndList extends PolymerElement {
     const links = this.shadowRoot.querySelectorAll(".history-link");
     for (let link of links) {
       link.addEventListener("click", e => {
-        const linkEl = e.target.closest('.history-link')
-        const selectionEvent = new CustomEvent("selection-change", {
-          bubbles: true,
-          composed: true,
-          detail: {
-            title: linkEl.getAttribute("data-title"),
-            link: linkEl.getAttribute("data-link"),
-            index: linkEl.getAttribute("id")
-          }
-        });
-        this.dispatchEvent(selectionEvent);
+        const linkEl = e.target.closest('.history-link');
+        const selectionId = linkEl.getAttribute("data-link");
+        setRouteSelection(selectionId);
       });
     }
   }
@@ -64,13 +51,7 @@ class DndList extends PolymerElement {
 
   static get template() {
     return html`
-      <style include="material-styles my-styles">
-        dnd-spinner[loading] ~ #listcontainer {
-          display: none;
-        }
-      </style>
-
-      <dnd-spinner loading$="[[loading]]"></dnd-spinner>
+      <style include="material-styles my-styles"></style>
 
       <div id="listcontainer">
         <div id="filter-search-input-group" class="filter-group">

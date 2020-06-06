@@ -14,6 +14,7 @@
     "@material/notched-outline": "^5.1.0",
     "@material/ripple": "^5.1.0",
     "@material/switch": "^5.1.0",
+    "@material/tab-bar": "^6.0.0",
     "@material/textfield": "^5.1.0",
     "@polymer/polymer": "^3.0.0-pre.12",
     "@vaadin/vaadin-dialog": "^2.2.1",
@@ -28,11 +29,11 @@
     "http-server": "^0.11.1",
     "polymer-cli": "^1.8.0",
     "static-http2-server": "^1.7.1",
-    "sw-precache-webpack-plugin": "^0.11.5",
     "wct-browser-legacy": "^1.0.0",
     "webpack": "^4.20.2",
     "webpack-cli": "^3.1.2",
     "webpack-dev-server": "^3.1.9",
-    "webpack-merge": "^4.1.4"
+    "webpack-merge": "^4.1.4",
+    "workbox-webpack-plugin": "^5.1.3"
   }
 }

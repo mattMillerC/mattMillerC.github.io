@@ -3,7 +3,9 @@ import "./styles/material-styles.js";
 import "./styles/my-styles.js";
 import './dnd-svg.js';
 import loadModel from '../util/data.js';
+import { resolveHash } from '../util/renderTable.js';
 import { onLoad, onDataLoad, onHashChange, onSubChange } from "../js/classes.js";
+import { readRouteSelection, routeEventChannel } from '../util/routing.js';
 
 
 class DndClasses extends PolymerElement {
@@ -16,6 +18,11 @@ class DndClasses extends PolymerElement {
       hash: {
         type: String,
         value: ''
+      },
+      loading: {
+        type: Boolean,
+        value: true,
+        observer: '_loadingChange'
       }
     };
   }
@@ -24,41 +31,80 @@ class DndClasses extends PolymerElement {
     return ["_updateClassFromHash(classes, hash)"]
   }
 
-  _updateClassFromHash() {
-    if (this.classes && this.hash) {
-	    this.shadowRoot.querySelector(".main").classList.add("item-opened");
-      if (this.hash.indexOf(',') > -1) {
-        let hashParts = this.hash.split(',');
-        onHashChange(this.classes, hashParts[0], this.shadowRoot);
-        onSubChange(hashParts.slice(1), this.hash, this.shadowRoot);
-      } else {
-        onHashChange(this.classes, this.hash, this.shadowRoot);
-      }
-    }
-    if (!this.hash) {
-	    this.shadowRoot.querySelector(".main").classList.remove("item-opened");
-    }
-  }
-
   constructor() {
     super();
+    this.loading = true;
     loadModel("classes").then(data => {
-      this.set("classes", data);
+      this.set("classes", data.class);
+      this.loading = false;
     });
-
-    window.addEventListener("hashchange", () => {
-      this.hash = window.location.hash;
-    });
-    this.hash = window.location.hash;
   }
 
   connectedCallback() {
     super.connectedCallback();
+
+    this.selectionChangeEventHandler = (e) => {
+      let selection = e ? e.detail.selection : readRouteSelection();
+      if (selection) {
+        this.set("hash", selection);
+      }
+    };
+    this.deselectionChangeEventHandler = () => {
+      this.set("hash", "");
+    }
+
+    this.selectionChangeEventHandler();
+
+    routeEventChannel().addEventListener("selection-change", this.selectionChangeEventHandler);
+    routeEventChannel().addEventListener("selection-deselected", this.deselectionChangeEventHandler);
+
     onLoad(this.shadowRoot);
   }
 
+  disconnectedCallback() {
+    super.disconnectedCallback();
+
+    this.deselectionChangeEventHandler();
+    routeEventChannel().removeEventListener("selection-change", this.selectionChangeEventHandler);
+    routeEventChannel().removeEventListener("selection-deselected", this.deselectionChangeEventHandler);
+  }
+
+  _loadingChange() {
+    this.dispatchEvent(new CustomEvent("loading-data", {
+      bubbles: true,
+      composed: true,
+      detail: {
+        loading: this.loading
+      }
+    }));
+  }
+
   _dataLoaded() {
-    onDataLoad(this.classes, this.shadowRoot)
+    onDataLoad(this.classes, this.shadowRoot);
+  }
+
+  _updateClassFromHash() {
+    if (this.classes && this.hash) {
+      this.shadowRoot.querySelector(".main").classList.add("item-opened");
+      let selectedClass;
+      if (this.hash.indexOf(',') > -1) {
+        let hashParts = this.hash.split(',');
+        selectedClass = resolveHash(this.classes, hashParts[0]);
+        onHashChange(selectedClass, this.shadowRoot);
+        onSubChange(hashParts.slice(1), this.hash, this.shadowRoot);
+      } else {
+        selectedClass = resolveHash(this.classes, this.hash);
+        onHashChange(selectedClass, this.shadowRoot);
+      }
+      this.dispatchEvent(new CustomEvent("title-change", {
+        bubbles: true,
+        composed: true,
+        detail: { title: selectedClass.name }
+      }));
+    }
+    if (!this.hash) {
+	    this.shadowRoot.querySelector(".main").classList.remove("item-opened");
+    }
   }
 
   static get template() {

@@ -45,9 +45,9 @@ import {
   ATB_DATA_LIST_SEP,
   HASH_START
 } from "../util/consts.js";
-import { resolveHash } from '../util/renderTable.js';
 import EntryRenderer from '../util/entryrender.js';
 import Parser from '../util/Parser.js';
+import { setRouteSelection, readRouteSelection } from "../util/routing.js";
 
 const renderer = new EntryRenderer();
 export { onLoad, onDataLoad, onHashChange, onSubChange };
@@ -83,9 +83,7 @@ function onLoad(rootEl) {
   );
 }
 
-function onDataLoad(data, rootEl) {
-	let classes = data.class;
-
+function onDataLoad(classes, rootEl) {
 	// alphabetically sort subclasses
 	for (const c of classes) {
 		c.subclasses = c.subclasses.sort((a, b) => ascSort(a.name, b.name));
@@ -115,21 +113,19 @@ function onDataLoad(data, rootEl) {
 	//classLinkList.append(parseHTML(tempString));
 	let newClasses = parseHTML(gridString);
 	while (newClasses.length > 0) {
-		newClasses[0].addEventListener('click', (e) => {
-			let tar = e.target.closest('.class-grid-item');
-			window.location.hash = tar.getAttribute('data-link');
-			rootEl.dispatchEvent(new CustomEvent("selection-change", { bubbles: true, composed: true, detail: {title: tar.getAttribute("data-title")}}))
-		});
+		newClasses[0].addEventListener("click", (e) => {
+			let tar = e.target.closest(".class-grid-item");
+      setRouteSelection(tar.getAttribute("data-link"));
+    });
 		rootEl.querySelector(".class-list-container").appendChild(newClasses[0]);
 	}
 }
 
-function onHashChange(classes, hash, rootEl) {
+function onHashChange(curClass, rootEl) {
   rootEl.querySelector("#classtable").innerHTML = window.classTableDefault;
   rootEl.querySelector("#subclasses").classList.remove("fixed");
   rootEl.querySelector("#subclasses").classList.remove("closed");
   rootEl.querySelector(".mobile-clone-spells") && rootEl.querySelector(".mobile-clone-spells").remove();
-  const curClass = resolveHash(classes.class, hash);
 
   let svgName = curClass.name.replace(/(\s|\(|\))/g, "");
   rootEl.querySelector(".class-icon.stand-alone-icon").id = svgName;
@@ -273,8 +269,8 @@ function onHashChange(classes, hash, rootEl) {
       const featureLinkPart = HASH_FEATURE + encodeForHash(feature.name) + i;
       const featureLink = parseHTML(
         `<a href="#${encodeForHash(curClass.name, curClass.source)}${HASH_PART_SEP}${featureLinkPart}"
-          class="${CLSS_FEATURE_LINK}" 
-          ${ATB_DATA_FEATURE_LINK}="${featureLinkPart}" 
+          class="${CLSS_FEATURE_LINK}"
+          ${ATB_DATA_FEATURE_LINK}="${featureLinkPart}"
           ${ATB_DATA_FEATURE_ID}="${featureId}">${feature.name}</a>`
       );
       featureLink.addEventListener("click", function(e) {
@@ -431,7 +427,7 @@ function onHashChange(classes, hash, rootEl) {
 
     function handleToggleFeaturesClicks(isPillActive) {
       const outStack = [];
-      const split = window.location.hash.split(HASH_PART_SEP);
+      const split = readRouteSelection().split(HASH_PART_SEP);
 
       for (let i = 0; i < split.length; i++) {
         const hashPart = split[i];
@@ -442,19 +438,20 @@ function onHashChange(classes, hash, rootEl) {
       } else {
         outStack.push(hashKey + "false");
       }
-
-      window.location.hash = outStack.join(HASH_PART_SEP);
+      const newHash = outStack.join(HASH_PART_SEP);
+      setRouteSelection(newHash);
     }
   }
 
   function handleSubclassClick(isPillActive, subclassName, subclassSource) {
     const outStack = [];
-    const split = window.location.hash.split(HASH_PART_SEP);
+    const routeSelection = readRouteSelection();
+    const split = routeSelection.split(HASH_PART_SEP);
 
     const encodedSubClass = encodeForHash(subclassName, subclassSource);
     const subclassLink = HASH_SUBCLASS + encodedSubClass;
 
-    if (isPillActive && window.location.hash.includes(HASH_SUBCLASS)) {
+    if (isPillActive && routeSelection.includes(HASH_SUBCLASS)) {
       for (let i = 0; i < split.length; i++) {
         const hashPart = split[i];
         if (!hashPart.startsWith(HASH_SUBCLASS)) {
@@ -491,8 +488,8 @@ function onHashChange(classes, hash, rootEl) {
 
       if (!hasSubclassHash) outStack.push(subclassLink);
     }
-
-    window.location.hash = outStack.join(HASH_PART_SEP);
+    const newHash = outStack.join(HASH_PART_SEP);
+    setRouteSelection(newHash);
   }
 }
 
@@ -513,35 +510,6 @@ function onSubChange(sub, curHash, rootEl) {
 	}
 
 	const hideOtherSources = showAllSources === null || showAllSources === false;
-
-	// deselect any pills that would be hidden
-	if (subclasses !== null && hideOtherSources) {
-		const toDeselect = [];
-		const activeNonStandardPillEls = rootEl.querySelectorAll(`.${CLSS_SUBCLASS_PILL}.${CLSS_NON_STANDARD_SOURCE}.${CLSS_ACTIVE}`);
-		for (let activeNonStandardPillEl of activeNonStandardPillEls) {
-			const $this = activeNonStandardPillEl;
-			const thisSc = encodeForHash($this.getAttribute(ATB_DATA_SC), $this.getAttribute(ATB_DATA_SRC));
-			if (subclasses.indexOf(thisSc) > -1) {
-				toDeselect.push(thisSc)
-			}
-		}
-		const toKeep = subclasses.filter(sc => toDeselect.indexOf(sc) < 0);
-		if (toKeep.length !== subclasses.length) {
-			const newHashStack = [];
-			for (let i = 0; i < sub.length; i++) {
-				const hashPart = sub[i];
-
-				if (!hashPart.startsWith(HASH_SUBCLASS)) newHashStack.push(hashPart);
-				else if (toKeep.length > 0) newHashStack.push(HASH_SUBCLASS + toKeep.join(HASH_LIST_SEP))
-			}
-			const curParts = _getHashParts();
-			if (curParts.length > 1) {
-				const newParts = [curParts[0]].concat(newHashStack);
-				window.location.hash = HASH_START + newParts.join(HASH_PART_SEP);
-			}
-			return;
-		}
-	}
 
 	if (subclasses !== null) {
 		updateClassTableLinks();
@@ -568,50 +536,17 @@ function onSubChange(sub, curHash, rootEl) {
 			}
 		}
 
-		if ($toShow.length === 0) {
-			displayAllSubclasses();
-		} else {
-			const otherSrcSubFeats = rootEl.querySelectorAll(`p.${CLSS_NON_STANDARD_SOURCE}`);
-			const shownInTable = [];
+    const otherSrcSubFeats = rootEl.querySelectorAll(`p.${CLSS_NON_STANDARD_SOURCE}`);
+    const shownInTable = [];
 
-			for (let v of $toShow) {
-				v.classList.add(CLSS_ACTIVE);
-        let selectedSCFeatures = rootEl.querySelectorAll(`.${CLSS_SUBCLASS_FEATURE}[${ATB_DATA_SC}="${v.getAttribute(ATB_DATA_SC)}"][${ATB_DATA_SRC}="${v.getAttribute(ATB_DATA_SRC)}"]`);
-				for (let selectedSCFeature of selectedSCFeatures) {
-					selectedSCFeature.style.display = null;
-				}
-        if (hideOtherSources) {
-					for (let otherSrcSubFeat of otherSrcSubFeats) {
-						if (
-              otherSrcSubFeat.getAttribute(ATB_DATA_SC) === v.getAttribute(ATB_DATA_SC) &&
-              otherSrcSubFeat.getAttribute(ATB_DATA_SRC) === v.getAttribute(ATB_DATA_SRC)
-            ) {
-              otherSrcSubFeat.style.display = "none";
-            }
-					}
-				} else {
-					for (let otherSrcSubFeat of otherSrcSubFeats) {
-						if (
-              otherSrcSubFeat.getAttribute(ATB_DATA_SC) === v.getAttribute(ATB_DATA_SC) &&
-              otherSrcSubFeat.getAttribute(ATB_DATA_SRC) === v.getAttribute(ATB_DATA_SRC)
-            ) {
-              otherSrcSubFeat.style.display = null;
-            }
-					}
-				}
-
-        const asInTable = v.getAttribute(ATB_DATA_SC) + ATB_DATA_PART_SEP + v.getAttribute(ATB_DATA_SRC);
-        shownInTable.push(asInTable);
-        handleTableGroups(shownInTable, asInTable, true);
-			}
-
-			for (let v of $toHide) {
-				v.classList.remove(CLSS_ACTIVE);
-				let selectedSCFeatures = rootEl.querySelectorAll(`.${CLSS_SUBCLASS_FEATURE}[${ATB_DATA_SC}="${v.getAttribute(ATB_DATA_SC)}"][${ATB_DATA_SRC}="${v.getAttribute(ATB_DATA_SRC)}"]`);
-				for (let selectedSCFeature of selectedSCFeatures) {
-					selectedSCFeature.style.display = 'none';
-				}
-				for (let otherSrcSubFeat of otherSrcSubFeats) {
+    for (let v of $toShow) {
+      v.classList.add(CLSS_ACTIVE);
+      let selectedSCFeatures = rootEl.querySelectorAll(`.${CLSS_SUBCLASS_FEATURE}[${ATB_DATA_SC}="${v.getAttribute(ATB_DATA_SC)}"][${ATB_DATA_SRC}="${v.getAttribute(ATB_DATA_SRC)}"]`);
+      for (let selectedSCFeature of selectedSCFeatures) {
+        selectedSCFeature.style.display = null;
+      }
+      if (hideOtherSources) {
+        for (let otherSrcSubFeat of otherSrcSubFeats) {
           if (
             otherSrcSubFeat.getAttribute(ATB_DATA_SC) === v.getAttribute(ATB_DATA_SC) &&
             otherSrcSubFeat.getAttribute(ATB_DATA_SRC) === v.getAttribute(ATB_DATA_SRC)
@@ -619,33 +554,62 @@ function onSubChange(sub, curHash, rootEl) {
             otherSrcSubFeat.style.display = "none";
           }
         }
-        v.getAttribute(ATB_DATA_SC);
-				const asInTable = v.getAttribute(ATB_DATA_SC) + ATB_DATA_PART_SEP + v.getAttribute(ATB_DATA_SRC);
-				handleTableGroups(shownInTable, asInTable, false);
-			};
-
-			if (hideOtherSources) {
-				for (let otherSrcSubFeat of otherSrcSubFeats) {
-					if (
-            !otherSrcSubFeat.classList.contains(CLSS_SUBCLASS_FEATURE) &&
-            otherSrcSubFeat.getAttribute(ATB_DATA_SC) === EntryRenderer.DATA_NONE &&
-            otherSrcSubFeat.getAttribute(ATB_DATA_SRC) === EntryRenderer.DATA_NONE
-          ) {
-            otherSrcSubFeat.style.display = "none";
-          }
-				}
-			} else {
-				for (let otherSrcSubFeat of otherSrcSubFeats) {
-					if (
-            !otherSrcSubFeat.classList.contains(CLSS_SUBCLASS_FEATURE) &&
-            otherSrcSubFeat.getAttribute(ATB_DATA_SC) === EntryRenderer.DATA_NONE &&
-            otherSrcSubFeat.getAttribute(ATB_DATA_SRC) === EntryRenderer.DATA_NONE
+      } else {
+        for (let otherSrcSubFeat of otherSrcSubFeats) {
+          if (
+            otherSrcSubFeat.getAttribute(ATB_DATA_SC) === v.getAttribute(ATB_DATA_SC) &&
+            otherSrcSubFeat.getAttribute(ATB_DATA_SRC) === v.getAttribute(ATB_DATA_SRC)
           ) {
             otherSrcSubFeat.style.display = null;
           }
-				}
-			}
-		}
+        }
+      }
+
+      const asInTable = v.getAttribute(ATB_DATA_SC) + ATB_DATA_PART_SEP + v.getAttribute(ATB_DATA_SRC);
+      shownInTable.push(asInTable);
+      handleTableGroups(shownInTable, asInTable, true);
+    }
+
+    for (let v of $toHide) {
+      v.classList.remove(CLSS_ACTIVE);
+      let selectedSCFeatures = rootEl.querySelectorAll(`.${CLSS_SUBCLASS_FEATURE}[${ATB_DATA_SC}="${v.getAttribute(ATB_DATA_SC)}"][${ATB_DATA_SRC}="${v.getAttribute(ATB_DATA_SRC)}"]`);
+      for (let selectedSCFeature of selectedSCFeatures) {
+        selectedSCFeature.style.display = 'none';
+      }
+      for (let otherSrcSubFeat of otherSrcSubFeats) {
+        if (
+          otherSrcSubFeat.getAttribute(ATB_DATA_SC) === v.getAttribute(ATB_DATA_SC) &&
+          otherSrcSubFeat.getAttribute(ATB_DATA_SRC) === v.getAttribute(ATB_DATA_SRC)
+        ) {
+          otherSrcSubFeat.style.display = "none";
+        }
+      }
+      v.getAttribute(ATB_DATA_SC);
+      const asInTable = v.getAttribute(ATB_DATA_SC) + ATB_DATA_PART_SEP + v.getAttribute(ATB_DATA_SRC);
+      handleTableGroups(shownInTable, asInTable, false);
+    };
+
+    if (hideOtherSources) {
+      for (let otherSrcSubFeat of otherSrcSubFeats) {
+        if (
+          !otherSrcSubFeat.classList.contains(CLSS_SUBCLASS_FEATURE) &&
+          otherSrcSubFeat.getAttribute(ATB_DATA_SC) === EntryRenderer.DATA_NONE &&
+          otherSrcSubFeat.getAttribute(ATB_DATA_SRC) === EntryRenderer.DATA_NONE
+        ) {
+          otherSrcSubFeat.style.display = "none";
+        }
+      }
+    } else {
+      for (let otherSrcSubFeat of otherSrcSubFeats) {
+        if (
+          !otherSrcSubFeat.classList.contains(CLSS_SUBCLASS_FEATURE) &&
+          otherSrcSubFeat.getAttribute(ATB_DATA_SC) === EntryRenderer.DATA_NONE &&
+          otherSrcSubFeat.getAttribute(ATB_DATA_SRC) === EntryRenderer.DATA_NONE
+        ) {
+          otherSrcSubFeat.style.display = null;
+        }
+      }
+    }
 
 		// show subclass prefixes if we're displaying more than 1 subclass
 		let subClassEls = rootEl.querySelectorAll(`.${CLSS_SUBCLASS_PREFIX}`);
@@ -658,8 +622,6 @@ function onSubChange(sub, curHash, rootEl) {
 				subClassEl.style.display = 'none';
 			}
 		}
-	} else {
-		displayAllSubclasses();
 	}
 
 	// hide class features as required
@@ -741,41 +703,6 @@ function onSubChange(sub, curHash, rootEl) {
 		let els = rootEl.querySelectorAll(`.${CLSS_FEATURE_LINK}`);
 		for (let el of els) {
 			el.href = HASH_START+outParts.join(HASH_PART_SEP)+HASH_PART_SEP+el.getAttribute(ATB_DATA_FEATURE_LINK);
-		}
-	}
-
-	function displayAllSubclasses() {
-		updateClassTableLinks();
-		let els = rootEl.querySelectorAll(`.${CLSS_SUBCLASS_PILL}`);
-		for (let el of els) {
-			el.classList.add(CLSS_ACTIVE);
-		}
-		let els1 = rootEl.querySelectorAll(`.${CLSS_SUBCLASS_FEATURE}`);
-		for (let el of els1) {
-			el.style.display = null;
-		}
-		let els2 = rootEl.querySelectorAll(`.${CLSS_SUBCLASS_PREFIX}`);
-		for (let el of els2) {
-			el.style.display = null;
-		}
-		let els3 = rootEl.querySelectorAll(`div.${CLSS_NON_STANDARD_SOURCE}`);
-		for (let el of els3) {
-			el.style.display = null;
-		}
-		// if we're hiding features from some sources, make sure these stay hidden
-		if (hideOtherSources) {
-			let els4 = rootEl.querySelectorAll(`.${CLSS_NON_STANDARD_SOURCE}`)
-			for (let el of els4) {
-				if (!el.classList.contains(CLSS_SUBCLASS_PILL)) {
-					el.style.display = "none";
-				}
-			}
-		}
-		// show all table col groups
-		// TODO add handling for non-standard sources if UA non-caster->caster subclass are introduced
-		let els5 = rootEl.querySelectorAll(`[data-subclass-list]`)
-		for (let el of els5) {
-			el.style.display = null;
 		}
 	}
 }
