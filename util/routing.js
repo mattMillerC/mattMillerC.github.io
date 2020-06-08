@@ -6,53 +6,57 @@ function routeEventChannel() {
 
 function initRouting() {
 	window.addEventListener("hashchange", (e) => {
-		let oldHashView = readRouteView(e.oldURL),
-			oldHashSelection = readRouteSelection(e.oldURL),
-			newHashView = readRouteView(e.newURL),
-			newHashSelection = readRouteSelection(e.newURL),
-			eventDetail = {}
+		hashChangeHandler(e);
+	});
+}
 
-		if (newHashView !== oldHashView) {
-			let viewChangeEvent = new CustomEvent("view-change", {
+function hashChangeHandler(e) {
+	let oldHashView = readRouteView(e.oldURL),
+		oldHashSelection = readRouteSelection(e.oldURL),
+		newHashView = readRouteView(e.newURL),
+		newHashSelection = readRouteSelection(e.newURL),
+		eventDetail = {}
+
+	if (newHashView !== oldHashView) {
+		let viewChangeEvent = new CustomEvent("view-change", {
+			bubbles: true,
+			composed: true,
+			detail: {
+				view: newHashView
+			}
+		});
+		routingChannel.dispatchEvent(viewChangeEvent);
+		eventDetail.view = newHashView;
+	}
+
+	if (newHashSelection !== oldHashSelection) {
+		if (!newHashSelection) {
+			let deselectionEvent = new CustomEvent("selection-deselected", {
+				bubbles: true,
+				composed: true
+			});
+			routingChannel.dispatchEvent(deselectionEvent);
+		} else {
+			let selectionChangeEvent = new CustomEvent("selection-change", {
 				bubbles: true,
 				composed: true,
 				detail: {
-					view: newHashView
+					selection: newHashSelection
 				}
 			});
-			routingChannel.dispatchEvent(viewChangeEvent);
-			eventDetail.view = newHashView;
+			routingChannel.dispatchEvent(selectionChangeEvent);
 		}
+		eventDetail.selection = newHashSelection;
+	}
 
-		if (newHashSelection !== oldHashSelection) {
-			if (!newHashSelection) {
-				let deselectionEvent = new CustomEvent("selection-deselected", {
-					bubbles: true,
-					composed: true
-				});
-        routingChannel.dispatchEvent(deselectionEvent);
-			} else {
-				let selectionChangeEvent = new CustomEvent("selection-change", {
-					bubbles: true,
-					composed: true,
-					detail: {
-						selection: newHashSelection
-					}
-				});
-				routingChannel.dispatchEvent(selectionChangeEvent);
-			}
-			eventDetail.selection = newHashSelection;
-		}
-
-		if (Object.keys(eventDetail).length) {
-			let routeChangeEvent = new CustomEvent("route-change", {
-				bubbles: true,
-				composed: true,
-				detail: eventDetail
-			});
-			routingChannel.dispatchEvent(routeChangeEvent);
-		}
-	});
+	if (Object.keys(eventDetail).length) {
+		let routeChangeEvent = new CustomEvent("route-change", {
+			bubbles: true,
+			composed: true,
+			detail: eventDetail
+		});
+		routingChannel.dispatchEvent(routeChangeEvent);
+	}
 }
 
 function readHashRouting(newURL) {
@@ -92,18 +96,34 @@ function readRouteSelection(newURL) {
 	}
 }
 
-function clearRouteSelection() {
+function clearRouteSelection(noHistory) {
 	let hashView = readRouteView();
-	window.location.hash = "#/" + hashView;
+	if (noHistory) {
+		let oldURL = window.location.href,
+			urlSansHash = window.location.href.substring(0, window.location.href.lastIndexOf("#")),
+			newURL = urlSansHash + "#/" + hashView;
+		window.history.replaceState(null, "", newURL);
+		hashChangeHandler({oldURL, newURL});
+	} else {
+		window.location.hash = "#/" + hashView;
+	}
 }
 
 function setRouteView(newRoute) {
 	window.location.hash = "#/" + newRoute;
 }
 
-function setRouteSelection(newSelection) {
+function setRouteSelection(newSelection, noHistory) {
 	let hashView = readRouteView();
-	window.location.hash = "#/" + hashView + "/" + newSelection;
+	if (noHistory) {
+		let oldURL = window.location.href,
+			urlSansHash = window.location.href.substring(0, window.location.href.lastIndexOf("#")),
+			newURL = urlSansHash + "#/" + hashView + "/" + newSelection;
+		window.history.replaceState(null, "", newURL);
+		hashChangeHandler({oldURL, newURL});
+	} else {
+		window.location.hash = "#/" + hashView + "/" + newSelection;
+	}
 }
 
 export {

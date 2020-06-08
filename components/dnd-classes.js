@@ -5,7 +5,7 @@ import './dnd-svg.js';
 import loadModel from '../util/data.js';
 import { resolveHash } from '../util/renderTable.js';
 import { onLoad, onDataLoad, onHashChange, onSubChange } from "../js/classes.js";
-import { readRouteSelection, routeEventChannel } from '../util/routing.js';
+import { readRouteSelection, routeEventChannel, clearRouteSelection } from '../util/routing.js';
 
 
 class DndClasses extends PolymerElement {
@@ -86,21 +86,30 @@ class DndClasses extends PolymerElement {
   _updateClassFromHash() {
     if (this.classes && this.hash) {
       this.shadowRoot.querySelector(".main").classList.add("item-opened");
-      let selectedClass;
+      let selectedClass, selectedSubclass;
+
       if (this.hash.indexOf(',') > -1) {
         let hashParts = this.hash.split(',');
         selectedClass = resolveHash(this.classes, hashParts[0]);
-        onHashChange(selectedClass, this.shadowRoot);
-        onSubChange(hashParts.slice(1), this.hash, this.shadowRoot);
+        selectedSubclass = hashParts.slice(1);
       } else {
         selectedClass = resolveHash(this.classes, this.hash);
-        onHashChange(selectedClass, this.shadowRoot);
       }
-      this.dispatchEvent(new CustomEvent("title-change", {
-        bubbles: true,
-        composed: true,
-        detail: { title: selectedClass.name }
-      }));
+
+      if (selectedClass) {
+        onHashChange(selectedClass, this.shadowRoot);
+        
+        if (selectedSubclass) {
+          onSubChange(selectedSubclass, this.hash, this.shadowRoot);
+        }
+        this.dispatchEvent(new CustomEvent("title-change", {
+          bubbles: true,
+          composed: true,
+          detail: { title: selectedClass.name }
+        }));
+      } else {
+        clearRouteSelection(true);
+      }
     }
     if (!this.hash) {
 	    this.shadowRoot.querySelector(".main").classList.remove("item-opened");

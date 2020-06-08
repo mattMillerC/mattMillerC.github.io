@@ -73,7 +73,7 @@ class DndRules extends PolymerElement {
       if (selectedRule) {
         this.set("selectedRule", selectedRule);
       } else {
-        clearRouteSelection();
+        clearRouteSelection(true);
       }
     } else {
       this.set("selectedRule", undefined);

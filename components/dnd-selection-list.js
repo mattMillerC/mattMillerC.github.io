@@ -136,7 +136,7 @@ class DndSelectionList extends PolymerElement {
           detail: { title: itemFromHash.name }
         }));
       } else {
-        clearRouteSelection();
+        clearRouteSelection(true);
       }
     }
   }

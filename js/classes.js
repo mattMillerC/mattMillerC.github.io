@@ -475,7 +475,10 @@ function onHashChange(curClass, rootEl) {
     });
 
     // if this is a UA class, toggle the "All Sources" button
-    if (isUaClass) allSourcesToggle.click();
+    if (isUaClass) {
+      allSourcesToggle.click();
+      allSourcesToggle.classList.add("hidden");
+    }
   } else {
     rootEl.querySelector("#subclasses").classList.add("hidden");
   }
@@ -506,7 +509,7 @@ function onHashChange(curClass, rootEl) {
         outStack.push(hashKey + "false");
       }
       const newHash = outStack.join(HASH_PART_SEP);
-      setRouteSelection(newHash);
+      setRouteSelection(newHash, true);
     }
   }
 
@@ -556,7 +559,7 @@ function onHashChange(curClass, rootEl) {
       if (!hasSubclassHash) outStack.push(subclassLink);
     }
     const newHash = outStack.join(HASH_PART_SEP);
-    setRouteSelection(newHash);
+    setRouteSelection(newHash, true);
   }
 }
 
