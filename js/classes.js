@@ -52,6 +52,11 @@ import { setRouteSelection, readRouteSelection } from "../util/routing.js";
 const renderer = new EntryRenderer();
 export { onLoad, onDataLoad, onHashChange, onSubChange };
 
+function renderStr(string) {
+  let renderStack = []
+  renderer.recursiveEntryRender(string, renderStack, 0);
+  return renderStack.join(" ");
+}
 function setSubclassFixation(rootEl) {
   if (jqOffset(rootEl.querySelector("#subclassHeight")).top - document.body.scrollTop < 34) {
     if (!rootEl.querySelector("#subclasses").classList.contains("fixed")) {
@@ -86,7 +91,9 @@ function onLoad(rootEl) {
 function onDataLoad(classes, rootEl) {
 	// alphabetically sort subclasses
 	for (const c of classes) {
-		c.subclasses = c.subclasses.sort((a, b) => ascSort(a.name, b.name));
+    if (c.subclasses) {
+      c.subclasses = c.subclasses.sort((a, b) => ascSort(a.name, b.name));
+    }
 	}
 
 	window.classTableDefault = rootEl.querySelector("#classtable").innerHTML;
@@ -134,49 +141,91 @@ function onHashChange(curClass, rootEl) {
 
   // SUMMARY SIDEBAR =================================================================================================
   // hit dice and HP
-  rootEl.querySelector("#hp div#hitdice span").innerHTML = EntryRenderer.getEntryDice(curClass.hd);
-  rootEl.querySelector("#hp div#hp1stlevel span").innerHTML = curClass.hd.faces + " + your Constitution modifier";
-  rootEl.querySelector("#hp div#hphigherlevels span").innerHTML =
-    `${EntryRenderer.getEntryDice(curClass.hd)} (or ${curClass.hd.faces / 2 + 1}) + your Constitution modifier per ${
-      curClass.name
-    } level after 1st`;
+  if (curClass.hd) {
+    rootEl.querySelector("#hp").classList.remove("hidden");
+    rootEl.querySelector("#hp div#hitdice span").innerHTML = EntryRenderer.getEntryDice(curClass.hd);
+    rootEl.querySelector("#hp div#hp1stlevel span").innerHTML = curClass.hd.faces + " + your Constitution modifier";
+    rootEl.querySelector("#hp div#hphigherlevels span").innerHTML =
+      `${EntryRenderer.getEntryDice(curClass.hd)} (or ${curClass.hd.faces / 2 + 1}) + your Constitution modifier per ${
+        curClass.name
+      } level after 1st`;
+  } else {
+    rootEl.querySelector("#hp").classList.add("hidden");
+  }
 
   // save proficiency
-  rootEl.querySelector("#prof div#saves span").innerHTML = curClass.proficiency.map(p => Parser.attAbvToFull(p)).join(", ");
+  if (curClass.proficiency) {
+    rootEl.querySelector("#prof").classList.remove("hidden");
+    rootEl.querySelector("#prof div#saves span").innerHTML = curClass.proficiency.map(p => Parser.attAbvToFull(p)).join(", ");
+  } else {
+    rootEl.querySelector("#prof").classList.add("hidden");
+  }
 
   // starting proficiencies
   const sProfs = curClass.startingProficiencies;
-  const profSel = rootEl.querySelector("#prof");
-  rootEl.querySelector("div#armor span").innerHTML =
-		sProfs.armor === undefined
-			? STR_PROF_NONE
-			: sProfs.armor.map(a => (a === "light" || a === "medium" || a === "heavy" ? a + " armor" : a)).join(", ");
-  rootEl.querySelector("div#weapons span").innerHTML =
-    sProfs.weapons === undefined
-      ? STR_PROF_NONE
-      : sProfs.weapons.map(w => (w === "simple" || w === "martial" ? w + " weapons" : w)).join(", ");
-  rootEl.querySelector("div#tools span").innerHTML =
-    sProfs.tools === undefined ? STR_PROF_NONE : sProfs.tools.join(", ");
-  rootEl.querySelector("div#skills span").innerHTML =
-    sProfs.skills === undefined ? STR_PROF_NONE : getSkillProfString(sProfs.skills);
+  if (sProfs) {
+    rootEl.querySelector("#armor").classList.remove("hidden");
+    rootEl.querySelector("#weapons").classList.remove("hidden");
+    rootEl.querySelector("#tools").classList.remove("hidden");
+    rootEl.querySelector("#skills").classList.remove("hidden");
+    rootEl.querySelector("div#armor span").innerHTML =
+      sProfs.armor === undefined
+        ? STR_PROF_NONE
+        : sProfs.armor.map(a => (a === "light" || a === "medium" || a === "heavy" ? a + " armor" : a)).join(", ");
+    rootEl.querySelector("div#weapons span").innerHTML =
+      sProfs.weapons === undefined
+        ? STR_PROF_NONE
+        : sProfs.weapons.map(w => (w === "simple" || w === "martial" ? w + " weapons" : w)).join(", ");
+    rootEl.querySelector("div#tools span").innerHTML =
+      sProfs.tools === undefined ? STR_PROF_NONE : sProfs.tools.join(", ");
+    rootEl.querySelector("div#skills span").innerHTML =
+      sProfs.skills === undefined ? STR_PROF_NONE : getSkillProfString(sProfs.skills);
+  } else {
+    rootEl.querySelector("#armor").classList.add("hidden");
+    rootEl.querySelector("#weapons").classList.add("hidden");
+    rootEl.querySelector("#tools").classList.add("hidden");
+    rootEl.querySelector("#skills").classList.add("hidden");
+  }
+
   function getSkillProfString(skills) {
-    const numString = Parser.numberToString(skills.choose);
-    return skills.from.length === 18
-      ? `Choose any ${numString}.`
-      : `Choose ${numString} from ${joinConjunct(skills.from, ", ", ", and ")}.`;
+    let numString, skillOptions, result;
+    // Different data structure for v2 classes
+    if (Array.isArray(skills)) {
+      for (let skill of skills) {
+        if (skill.choose) {
+          numString = Parser.numberToString(skill.choose.count);
+          skillOptions = skill.choose.from;
+          result += skillOptions.length === 18
+            ? `Choose any ${numString}.`
+            : `Choose ${numString} from ${joinConjunct(skillOptions, ", ", ", and ")}.`;
+        }
+      }
+    } else {
+      numString = Parser.numberToString(skills.choose);
+      skillOptions = skills.from;
+      result += skillOptions.length === 18
+        ? `Choose any ${numString}.`
+        : `Choose ${numString} from ${joinConjunct(skillOptions, ", ", ", and ")}.`;
+    }
+    return result;
   }
 
   // starting equipment
   const sEquip = curClass.startingEquipment;
-  const fromBackground = sEquip.additionalFromBackground
-    ? "<p>You start with the following items, plus anything provided by your background.</p>"
-    : "";
-  const defList = sEquip.default.length === 0 ? "" : `<ul><li>${sEquip.default.join("</li><li>")}</ul>`;
-  const goldAlt =
-    sEquip.goldAlternative === undefined
-      ? ""
-      : `<p>Alternatively, you may start with ${sEquip.goldAlternative} gp to buy your own equipment.</p>`;
-  rootEl.querySelector("#equipment div").innerHTML = `${fromBackground}${defList}${goldAlt}`;
+  if (sEquip) {
+    rootEl.querySelector("#equipment").classList.remove("hidden");
+    const fromBackground = sEquip.additionalFromBackground
+      ? "<p>You start with the following items, plus anything provided by your background.</p>"
+      : "";
+    const defList = sEquip.default.length === 0 ? "" : `<ul><li>${sEquip.default.map(i => renderStr(i)).join("</li><li>")}</ul>`;
+    const goldAlt =
+      sEquip.goldAlternative === undefined
+        ? ""
+        : `<p>Alternatively, you may start with ${renderStr(sEquip.goldAlternative)} gp to buy your own equipment.</p>`;
+    rootEl.querySelector("#equipment div").innerHTML = `${fromBackground}${defList}${goldAlt}`;
+  } else {
+    rootEl.querySelector("#equipment").classList.add("hidden");
+  }
 
   // FEATURE TABLE ===================================================================================================
   const tData = curClass.classTableGroups;
@@ -184,47 +233,61 @@ function onHashChange(curClass, rootEl) {
   const colHeaders = rootEl.querySelector("#colHeaders");
   const levelTrs = [];
   let spellsFlag = false;
-  for (let i = 0; i < tData.length; i++) {
-    const tGroup = tData[i];
+  if (tData) {
+    for (let i = 0; i < tData.length; i++) {
+      const tGroup = tData[i];
 
-    const hasTitle = tGroup.title !== undefined;
-    let subclassData = "";
-    if (tGroup.subclasses !== undefined) {
-      subclassData = `${ATB_DATA_SC_LIST}="${tGroup.subclasses
-        .map(s => s.name+ATB_DATA_PART_SEP+s.source)
-        .join(ATB_DATA_LIST_SEP)}"`;
-    }
-    groupHeaders.append(parseHTML(
-      `<th ${hasTitle ? `class="colGroupTitle table-cell"` : ""} colspan="${tGroup.colLabels.length}" ${subclassData}>${
-        hasTitle ? tGroup.title : ""
-      }</th>`, true, true));
+      const hasTitle = tGroup.title !== undefined;
+      let subclassData = "";
+      if (tGroup.subclasses !== undefined) {
+        subclassData = `${ATB_DATA_SC_LIST}="${tGroup.subclasses
+          .map(s => s.name+ATB_DATA_PART_SEP+s.source)
+          .join(ATB_DATA_LIST_SEP)}"`;
+      }
+      groupHeaders.append(parseHTML(
+        `<th ${hasTitle ? `class="colGroupTitle table-cell"` : ""} colspan="${tGroup.colLabels.length}" ${subclassData}>${
+          hasTitle ? tGroup.title : ""
+        }</th>`, true, true));
 
-    for (let j = 0; j < tGroup.colLabels.length; j++) {
-      const lbl = tGroup.colLabels[j];
-      colHeaders.append(parseHTML(`<th class="centred-col table-cell" ${subclassData}>${lbl}</th>`, true, true));
-    }
+      for (let j = 0; j < tGroup.colLabels.length; j++) {
+        let lbl = tGroup.colLabels[j];
+        if (lbl.indexOf("@") > -1) {
+          let renderStack = []
+          renderer.recursiveEntryRender(lbl, renderStack, 0);
+          lbl = renderStack.join(" ");
+        }
+        colHeaders.append(parseHTML(`<th class="centred-col table-cell" ${subclassData}>${lbl}</th>`, true, true));
+      }
 
-    for (let j = 0; j < 20; j++) {
-      const tr = rootEl.querySelector(`#level${j + 1}`);
-      levelTrs[j] = tr;
-      for (let k = 0; k < tGroup.rows[j].length; k++) {
-        let entry = tGroup.rows[j][k];
-        if (entry === 0) entry = "\u2014";
-        const stack = [];
-        renderer.recursiveEntryRender(entry, stack, "", "");
-        tr.append(parseHTML(`<td class="centred-col" ${subclassData}>${stack.join("")}</td>`, true, true));
+      for (let j = 0; j < 20; j++) {
+        const tr = rootEl.querySelector(`#level${j + 1}`);
+        levelTrs[j] = tr;
+        for (let k = 0; k < tGroup.rows[j].length; k++) {
+          let entry = tGroup.rows[j][k];
+          if (entry === 0) entry = "\u2014";
+          const stack = [];
+          renderer.recursiveEntryRender(entry, stack, "", "");
+          tr.append(parseHTML(`<td class="centred-col" ${subclassData}>${stack.join("")}</td>`, true, true));
+        }
+      }
+      if (
+        !spellsFlag &&
+        (tGroup.colLabels.indexOf("Spells Known") > -1 ||
+          tGroup.colLabels.indexOf("Cantrips Known") > -1 ||
+          tGroup.colLabels.indexOf("1st") > -1 ||
+          tGroup.colLabels.indexOf("Ki Points") > -1 ||
+          tGroup.colLabels.indexOf("Rages") > -1 ||
+          tGroup.colLabels.indexOf("Talents Known") > -1)
+      ) {
+        spellsFlag = true;
       }
     }
-    if (
-      !spellsFlag &&
-      (tGroup.colLabels.indexOf("Spells Known") > -1 ||
-        tGroup.colLabels.indexOf("Cantrips Known") > -1 ||
-        tGroup.colLabels.indexOf("1st") > -1 ||
-        tGroup.colLabels.indexOf("Ki Points") > -1 ||
-        tGroup.colLabels.indexOf("Rages") > -1 ||
-        tGroup.colLabels.indexOf("Talents Known") > -1)
-    ) {
-      spellsFlag = true;
+  // uses different data structure for Fighter, since no classTableGroups
+  } else if (curClass.classFeatures.length) {
+    // for each level, find and index the feature cell
+    for (let i = 0; i < 20; i++) {
+      const tr = rootEl.querySelector(`#level${i + 1}`);
+      levelTrs[i] = tr;
     }
   }
 
@@ -378,40 +441,44 @@ function onHashChange(curClass, rootEl) {
   );
 
   // subclass pills
-  const subClasses = curClass.subclasses
-    .map(sc => ({ name: sc.name, source: sc.source, shortName: sc.shortName }))
-    .sort(function(a, b) {
-      return ascSort(a.shortName, b.shortName);
+  if (curClass.subclasses) {
+    const subClasses = curClass.subclasses
+      .map(sc => ({ name: sc.name, source: sc.source, shortName: sc.shortName }))
+      .sort(function(a, b) {
+        return ascSort(a.shortName, b.shortName);
+      });
+    for (let i = 0; i < subClasses.length; i++) {
+      const nonStandardSource =
+        isNonstandardSource(subClasses[i].source) || hasBeenReprinted(subClasses[i].shortName, subClasses[i].source);
+      const styleClasses = [CLSS_ACTIVE, CLSS_SUBCLASS_PILL];
+      if (nonStandardSource) styleClasses.push(CLSS_NON_STANDARD_SOURCE);
+      const pillText = hasBeenReprinted(subClasses[i].shortName, subClasses[i].source)
+        ? `${subClasses[i].shortName} (${Parser.sourceJsonToAbv(subClasses[i].source)})`
+        : subClasses[i].shortName;
+      const pill = parseHTML(
+        `<div class="${styleClasses.join(" ")}" ${ATB_DATA_SC}="${subClasses[i].name}" ${ATB_DATA_SRC}="${
+          subClasses[i].source
+        }" title="Source: ${Parser.sourceJsonToFull(
+          subClasses[i].source
+        )}"><span class='mdc-chip__text'>${pillText}</span></div>`
+      );
+      pill.addEventListener("click", function() {
+        handleSubclassClick(pill.classList.contains(CLSS_ACTIVE), subClasses[i].name, subClasses[i].source);
+      });
+      if (nonStandardSource) pill.style.display = 'none';
+      subclassPillWrapper.append(pill);
+    }
+    subclassPillWrapper.append(parseHTML(`<div class='tab material-icons'>expand_less</div>`));
+
+    rootEl.querySelector("#subclasses .tab").addEventListener("click", () => {
+      rootEl.querySelector("#subclasses").classList.toggle("closed");
     });
-  for (let i = 0; i < subClasses.length; i++) {
-    const nonStandardSource =
-      isNonstandardSource(subClasses[i].source) || hasBeenReprinted(subClasses[i].shortName, subClasses[i].source);
-    const styleClasses = [CLSS_ACTIVE, CLSS_SUBCLASS_PILL];
-    if (nonStandardSource) styleClasses.push(CLSS_NON_STANDARD_SOURCE);
-    const pillText = hasBeenReprinted(subClasses[i].shortName, subClasses[i].source)
-      ? `${subClasses[i].shortName} (${Parser.sourceJsonToAbv(subClasses[i].source)})`
-      : subClasses[i].shortName;
-    const pill = parseHTML(
-      `<div class="${styleClasses.join(" ")}" ${ATB_DATA_SC}="${subClasses[i].name}" ${ATB_DATA_SRC}="${
-        subClasses[i].source
-      }" title="Source: ${Parser.sourceJsonToFull(
-        subClasses[i].source
-      )}"><span class='mdc-chip__text'>${pillText}</span></div>`
-    );
-    pill.addEventListener("click", function() {
-      handleSubclassClick(pill.classList.contains(CLSS_ACTIVE), subClasses[i].name, subClasses[i].source);
-    });
-    if (nonStandardSource) pill.style.display = 'none';
-    subclassPillWrapper.append(pill);
+
+    // if this is a UA class, toggle the "All Sources" button
+    if (isUaClass) allSourcesToggle.click();
+  } else {
+    rootEl.querySelector("#subclasses").classList.add("hidden");
   }
-  subclassPillWrapper.append(parseHTML(`<div class='tab material-icons'>expand_less</div>`));
-
-  rootEl.querySelector("#subclasses .tab").addEventListener("click", () => {
-    rootEl.querySelector("#subclasses").classList.toggle("closed");
-  });
-
-  // if this is a UA class, toggle the "All Sources" button
-  if (isUaClass) allSourcesToggle.click();
 
   // helper functions
   function makeGenericTogglePill(pillText, pillActiveClass, pillId, hashKey, defaultActive) {

@@ -8,50 +8,104 @@ let cache = {};
  * @param {String} modelId Model ID for the data being requested.
  */
 export default async function loadModel(modelId) {
-  // Checks model cache for data
-  if (!cache.hasOwnProperty(modelId)) {
-    // Catch for items.json to load additional data
-    if (modelId.indexOf("items") > -1) {
-      cache[modelId] = await loadAllItemData();
-    } else {
-      cache[modelId] = await loadUrl(`/data/${modelId}.json`);
-    }
-  }
-  return cache[modelId];
+	if (modelId) {
+		// Checks model cache for data
+		if (!cache.hasOwnProperty(modelId)) {
+			// Catch for items.json to load additional data
+			switch (modelId) {
+				case "items":
+					cache[modelId] = await loadAllItemData();
+					break;
+
+				case "bestiary":
+					cache[modelId] = await loadAllMonsterData();
+					break;
+
+				case "spells":
+				case "classes":
+					cache[modelId] = await loadModelFromIndex(modelId);
+					break;
+
+				default:
+					cache[modelId] = await loadModelFromSingleJSON(modelId);
+			}
+		}
+		return cache[modelId];
+	} else {
+		console.error("Missing modelID");
+		return [];
+	}
 }
 
 /**
- * Loads JSON from the given URL. Includes extra parsing step for Bestiary.
+ * Loads JSON from the given URL.
  * @param {String} url Makes request to specified URL, returns JSON
  */
-function loadUrl(url) {
+function loadJSON(url) {
   return fetch(url)
     .then((response) => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
       return response.json();
-    })
-    .then((data) => {
-      if (url.indexOf("bestiary.json") > -1) {
-        return parseLegendaryMonsters(data);
-      } else {
-        return data;
-      }
     });
 };
 
-function parseLegendaryMonsters(monsterData) {
+async function loadModelFromSingleJSON(modelId) {
+	const modelData = await loadJSON(`/data/${modelId}.json`);
+	if (Array.isArray(modelData)) {
+		return modelData;
+	} else {
+		console.error("Array data not found from model JSON");
+		return [];
+	}
+}
+
+async function loadModelFromIndex(modelId) {
+	const modelData = await loadJSON(`/data/${modelId}/index.json`);
+	if (modelData.index) {
+		let promises = [];
+
+		for (let srcURL of Object.values(modelData.index)) {
+			promises.push(loadJSON(`/data/${modelId}/${srcURL}`));
+		}
+		return Promise.all(promises).then(data => {
+			let allData = [];
+
+			for (let srcData of data) {
+				allData = allData.concat(srcData);
+			}
+
+			return allData;
+		});
+	} else {
+		console.error("Model index data not found from model JSON");
+		return [];
+	}
+}
+
+function loadAllMonsterData() {
+	const promises = [];
+
+	promises.push(loadJSON(`/data/bestiary.json`));
+	promises.push(loadJSON(`/data/legendarygroups.json`));
+
+	return Promise.all(promises).then(data => {
+		return parseLegendaryMonsters(data[0], data[1]);
+	});
+}
+
+function parseLegendaryMonsters(monsterData, legendaryGroupData) {
   const legendaryGroupList = {};
 
-  for (let legendaryGroup of monsterData.legendaryGroup) {
+  for (let legendaryGroup of legendaryGroupData) {
     legendaryGroupList[legendaryGroup.name] = {
       lairActions: legendaryGroup.lairActions,
       regionalEffects: legendaryGroup.regionalEffects
     };
   }
 
-  for (let monster of monsterData.monster) {
+  for (let monster of monsterData) {
     if (monster.legendaryGroup) {
       const legendaryGroup = monster.legendaryGroup;
       if (legendaryGroup) {
@@ -61,40 +115,37 @@ function parseLegendaryMonsters(monsterData) {
       }
     }
   }
-  delete monsterData.legendaryGroup;
   return monsterData;
 }
 
 /**
- * 
  * Loads and merges all Item data.
  */
 function loadAllItemData() {
-  const ITEMS_JSON_URL = "/data/items.json";
-  const BASIC_ITEMS_JSON_URL = "/data/basicitems.json";
-  const MAGIC_VARIANTS_JSON_URL = "/data/magicvariants.json";
-  const promises = [];
-  promises.push(loadUrl(ITEMS_JSON_URL));
-  promises.push(loadUrl(BASIC_ITEMS_JSON_URL));
-  promises.push(loadUrl(MAGIC_VARIANTS_JSON_URL));
+	const promises = [];
+
+  promises.push(loadJSON("/data/items.json"));
+  promises.push(loadJSON("/data/basicitems.json"));
+	promises.push(loadJSON("/data/magicvariants.json"));
+
   return Promise.all(promises).then((data) => {
-    return mergeItems(data[0], data[1], data[2]);
+		return mergeItemsData(data[0], data[1], data[2]);
   });
 }
 
-function mergeItems(itemData, basicItemData, variantData) {
+function mergeItemsData(itemData, basicItemData, variantData) {
   const propertyList = {};
   const typeList = {};
-  let itemList = itemData.item;
+  let itemList = itemData;
 
-	let basicItemList = basicItemData.basicitem;
+	let basicItemList = basicItemData.basicitems;
 	const itemPropertyList = basicItemData.itemProperty;
 	const itemTypeList = basicItemData.itemType;
 	// Convert the property and type list JSONs into look-ups, i.e. use the abbreviation as a JSON property name
 	for (let i = 0; i < itemPropertyList.length; i++) propertyList[itemPropertyList[i].abbreviation] = itemPropertyList[i].name ? JSON.parse(JSON.stringify(itemPropertyList[i])) : {"name": itemPropertyList[i].entries[0].name.toLowerCase(), "entries": itemPropertyList[i].entries};
 	for (let i = 0; i < itemTypeList.length; i++) typeList[itemTypeList[i].abbreviation] = itemTypeList[i].name ? JSON.parse(JSON.stringify(itemTypeList[i])): {"name": itemTypeList[i].entries[0].name.toLowerCase(), "entries": itemTypeList[i].entries};
 
-	let variantList = variantData.variant;
+	let variantList = variantData;
 	itemList = itemList.concat(basicItemList);
 	for (let i = 0; i < variantList.length; i++) {
 		variantList[i].tier = variantList[i].inherits.tier;

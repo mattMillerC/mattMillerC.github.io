@@ -886,9 +886,11 @@ function getMetaFilterObj(s) {
 	if (s.meta && s.meta.ritual) out.push("Ritual");
 	if (s.meta && s.meta.technomagic) out.push("Technomagic");
 	if (s.duration.filter(d => d.concentration).length) out.push("Concentration");
-	if (s.components.v) out.push("Verbal");
-	if (s.components.s) out.push("Somatic");
-	if (s.components.m) out.push("Material");
+	if (s.components) {
+		if (s.components.v) out.push("Verbal");
+		if (s.components.s) out.push("Somatic");
+		if (s.components.m) out.push("Material");
+	}
 	return out;
 }
 

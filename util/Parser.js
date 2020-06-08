@@ -377,9 +377,11 @@ Parser.getSingletonUnit = function(unit) {
 
 Parser.spComponentsToFull = function(comp) {
   const out = [];
-  if (comp.v) out.push("V");
-  if (comp.s) out.push("S");
-  if (comp.m) out.push("M" + (comp.m.length ? ` (${comp.m})` : ""));
+  if (comp) {
+    if (comp.v) out.push("V");
+    if (comp.s) out.push("S");
+    if (comp.m) out.push("M" + (comp.m.length ? ` (${comp.m})` : ""));
+  }
   return out.join(", ");
 };
 
@@ -414,10 +416,10 @@ Parser.spClassesToFull = function(classes) {
 };
 
 Parser.spMainClassesToFull = function(classes) {
-  return classes.fromClassList
+  return classes.fromClassList ? classes.fromClassList
     .sort((a, b) => ascSort(a.name, b.name))
     .map(c => `<span title="Source: ${Parser.sourceJsonToFull(c.source)}">${c.name}</span>`)
-    .join(", ");
+    .join(", ") : '';
 };
 
 Parser.spSubclassesToFull = function(classes) {
@@ -552,7 +554,8 @@ Parser.SP_SCHOOL_ABV_TO_FULL = {
   D: "Divination",
   N: "Necromancy",
   T: "Transmutation",
-  C: "Conjuration"
+  C: "Conjuration",
+  P: "Psionics"
 };
 
 Parser.ATB_ABV_TO_FULL = {

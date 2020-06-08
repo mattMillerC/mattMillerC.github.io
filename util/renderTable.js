@@ -207,7 +207,7 @@ function renderTable(data, rootEl, columns) {
             classFilter.metric = "_fClasses";
             filters[col.id] = classFilter;
           }
-          curItem._fClasses = curItem.classes.fromClassList.map(c => getClassFilterStr(c));
+          curItem._fClasses = curItem.classes.fromClassList ? curItem.classes.fromClassList.map(c => getClassFilterStr(c)) : [];
 		      curItem._fClasses.forEach(c => filters[col.id].addIfAbsent(c));
           columnsHtmlString += `<td class='table-cell ${col.cssClass} classes'>${Parser.spClassesToFull(curItem.classes)}</td>`;
           break;

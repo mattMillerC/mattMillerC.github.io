@@ -5,7 +5,8 @@ import {
   ATB_DATA_SC,
   ATB_DATA_SRC,
   CLSS_SUBCLASS_FEATURE,
-  SRC_MM
+	SRC_MM,
+	SRC_PHB
 } from "../util/consts.js";
 import Parser from "../util/Parser.js";
 // ENTRY RENDERING =====================================================================================================
@@ -318,19 +319,20 @@ function EntryRenderer() {
 							"type": "link",
 							"href": {
 								"type": "internal",
+								"path": "",
 								"hash": hash
 							},
 							"text": (displayText ? displayText : name)
 						};
 						switch (tag) {
 							case "@spell":
-								fauxEntry.href.path = "spells.html";
 								if (!source) fauxEntry.href.hash += HASH_LIST_SEP + SRC_PHB;
+								fauxEntry.href.hash = "/spells/" + fauxEntry.href.hash;
 								self.recursiveEntryRender(fauxEntry, textStack, depth);
 								break;
 							case "@item":
-								fauxEntry.href.path = "items.html";
 								if (!source) fauxEntry.href.hash += "_dmg";
+								fauxEntry.href.hash = "/items/" + fauxEntry.href.hash;
 								self.recursiveEntryRender(fauxEntry, textStack, depth);
 								break;
 							case "@class":
@@ -339,14 +341,21 @@ function EntryRenderer() {
 									fauxEntry.href.hash = classMatch[1].trim(); // TODO pass this in
 									fauxEntry.href.subhashes = [{"key": "sub", "value": classMatch[2].trim() + "~phb"}] // TODO pass this in
 								}
-								fauxEntry.href.path = "classes.html";
 								if (!source) fauxEntry.href.hash += HASH_LIST_SEP + SRC_PHB;
+								fauxEntry.href.hash = "/classes/" + fauxEntry.href.hash;
 								self.recursiveEntryRender(fauxEntry, textStack, depth);
 								break;
 							case "@creature":
-								fauxEntry.href.path = "bestiary.html";
 								if (!source) fauxEntry.href.hash += HASH_LIST_SEP + SRC_MM;
+								fauxEntry.href.hash = "/bestiary/" + fauxEntry.href.hash;
 								self.recursiveEntryRender(fauxEntry, textStack, depth);
+								break;
+							case "@filter":
+								// todo... maybe
+								textStack.push(name);
+								break;
+							case "@dice":
+								// todo
 								break;
 						}
 					}
@@ -408,7 +417,15 @@ function EntryRenderer() {
 
 EntryRenderer.getEntryDice = function (entry) {
 	// TODO make droll integration optional
-	const toAdd = String(entry.number) + "d" + entry.faces;
+	let toAdd;
+	if (entry.number && entry.faces) {
+		toAdd = String(entry.number) + "d" + entry.faces;
+	} else if (entry.toRoll && entry.toRoll.length) {
+		for (let roll of entry.toRoll) {
+			toAdd = String(roll.number) + "d" + roll.faces + " + "
+		}
+		toAdd = toAdd.substring(0, toAdd.length - 3);
+	}
 	if (typeof droll !== "undefined" && entry.rollable === true) {
 		// TODO output this somewhere nice
 		// TODO make this less revolting

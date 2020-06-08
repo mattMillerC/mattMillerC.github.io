@@ -35,7 +35,7 @@ class DndClasses extends PolymerElement {
     super();
     this.loading = true;
     loadModel("classes").then(data => {
-      this.set("classes", data.class);
+      this.set("classes", data);
       this.loading = false;
     });
   }

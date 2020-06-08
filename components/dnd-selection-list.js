@@ -101,9 +101,6 @@ class DndSelectionList extends PolymerElement {
 
       loadModel(this.modelId)
         .then(result => {
-          while (!Array.isArray(result) && typeof result === "object") {
-            result = result[Object.keys(result)[0]];
-          }
           this.set("_data", result);
           this._checkHashForSelection();
           this.loading = false;
