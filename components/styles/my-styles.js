@@ -62,6 +62,9 @@ styleElement.innerHTML = `
       .hidden-easy {
         display: none;
       }
+      b {
+        font-weight: bold;
+      }
       body {
         min-height: 100vh;
         display: flex;
@@ -639,6 +642,15 @@ styleElement.innerHTML = `
         font-weight: bold;
       }
 
+      ul.list-hang-notitle {
+        padding-left: 0;
+        list-style: none;
+      }
+
+      ul.list-hang-notitle li {
+        margin-bottom: 16px;
+      }
+
       .stat-name {
         font-weight: bold;
       }
@@ -717,6 +729,41 @@ styleElement.innerHTML = `
       .sourceEEPC {
         font-weight: bold;
         color: #57b6c6;
+      }
+
+      .sourceMOT {
+        font-weight: bold;
+        color: #556b2e;
+      }
+
+      .sourceBGDIA {
+        font-weight: bold;
+        color: #752418;
+      }
+
+      .sourceGGR {
+        font-weight: bold;
+        color: #bfa76c;
+      }
+
+      .sourceAI {
+        font-weight: bold;
+        color: #5baf04;
+      }
+
+      .sourceEGW {
+        font-weight: bold;
+        color: #855a6e;
+      }
+
+      .sourceERLW {
+        font-weight: bold;
+        color: #983426;
+      }
+
+      .sourceGoS {
+        font-weight: bold;
+        color: #3d695a;
       }
 
       /* Collapse */

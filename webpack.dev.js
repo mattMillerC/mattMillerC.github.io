@@ -13,9 +13,9 @@ module.exports = merge(common, {
     https: true,
     host: '0.0.0.0',
     port: 443,
-    public: 'ec2-52-12-213-157.us-west-2.compute.amazonaws.com',
-    key: fs.readFileSync('/home/ubuntu/keys/dnd-webpack-dev-server/private.key'),
-    cert: fs.readFileSync('/home/ubuntu/keys/dnd-webpack-dev-server/private.crt'),
+    public: 'ec2-3-128-50-114.us-east-2.compute.amazonaws.com',
+    key: fs.readFileSync('/home/ubuntu/keys/https.key'),
+    cert: fs.readFileSync('/home/ubuntu/keys/https.crt'),
   },
   plugins: [
     new CopyWebpackPlugin(

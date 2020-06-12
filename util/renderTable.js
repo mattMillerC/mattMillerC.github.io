@@ -11,6 +11,7 @@ import {
   getHiddenModeList,
   parse_psionicTypeToFull,
   parse_psionicOrderToFull,
+  parse_backgroundSkills,
   getTblTimeStr,
   getRangeType,
   getFltrSpellLevelStr,
@@ -95,11 +96,9 @@ function renderTable(data, rootEl, columns) {
           break;
 
         case "proficiencies":
-          const proficiencies = curItem.trait.filter(i => {
-            return i.name === "Skill Proficiencies";
-          });
-          const prof = proficiencies.length > 0 ? proficiencies[0].text[0] : "--";
-          columnsHtmlString += `<td class="table-cell proficiencies ${col.cssClass}">${prof}</span>;`;
+          const prof = curItem.skillProficiencies && curItem.skillProficiencies.length > 0
+            ? parse_backgroundSkills(curItem.skillProficiencies) : "--";
+          columnsHtmlString += `<td class="table-cell proficiencies ${col.cssClass}">${prof}</td>`;
           break;
 
         case "psy-type":

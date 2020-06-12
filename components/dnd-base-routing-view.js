@@ -1,7 +1,7 @@
 import {PolymerElement, html} from '@polymer/polymer';
 import './dnd-layout.js';
 import './dnd-spinner.js';
-import { jqEmpty } from '../js/utils.js';
+import { jqEmpty, util_capitalize } from '../js/utils.js';
 import { initRouting, routeEventChannel, readRouteView } from '../util/routing.js';
 
 class DndBaseRoutingView extends PolymerElement {
@@ -104,7 +104,7 @@ class DndBaseRoutingView extends PolymerElement {
       case 'dice':
         return 'Dice Roller';
       default:
-        return viewId ? viewId.charAt(0).toUpperCase() + viewId.slice(1) : '';
+        return viewId ? util_capitalize(viewId) : '';
     }
   }
   

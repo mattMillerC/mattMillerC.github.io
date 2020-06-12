@@ -462,6 +462,34 @@ function utils_getAbilityData(abObj) {
 	}
 }
 
+function parse_backgroundSkills(skillsProf) {
+	let result = "";
+	for (let option of skillsProf) {
+		let props = [];
+		for (let key of Object.keys(option)) {
+			if (key === "choose") {
+				let choice = option[key],
+					number = choice.count !== undefined ? choice.count : 1;
+				result += `${number} of ${choice.from.map(util_capitalizeAll).join(', ')}; `
+			} else {
+				props.push(util_capitalizeAll(key));
+			}
+		}
+		result += props.join(', ');
+		result += " OR "
+	}
+	result = result.substring(0, result.length - 4);
+	return result;
+}
+
+function util_capitalize(str) {
+	return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+function util_capitalizeAll(str) {
+	return str.split(' ').map(util_capitalize).join(' ');
+}
+
 function hasBeenReprinted(shortName, source) {
 	return (shortName !== undefined && shortName !== null && source !== undefined && source !== null) &&
 		(shortName === "Sun Soul" && source === SRC_SCAG) ||
@@ -991,7 +1019,10 @@ export {
 	jqEmpty,
   getHiddenModeList,
   parse_psionicTypeToFull,
-  parse_psionicOrderToFull,
+	parse_psionicOrderToFull,
+	parse_backgroundSkills,
+	util_capitalize,
+	util_capitalizeAll,
   getTblTimeStr,
   getRangeType,
   getFltrSpellLevelStr,

@@ -1,49 +1,8 @@
 import {
-  HASH_PART_SEP,
-  HASH_LIST_SEP,
-  HASH_START,
   STR_EMPTY,
-  STR_VOID_LINK,
   STR_SLUG_DASH,
   STR_APOSTROPHE,
-  ID_SEARCH_BAR,
-  ID_RESET_BUTTON,
-  TYP_STRING,
-  TYP_NUMBER,
-  TYP_OBJECT,
-  ELE_SPAN,
-  ELE_UL,
-  ELE_LI,
-  ELE_A,
-  ELE_P,
-  ELE_DIV,
-  ELE_BUTTON,
-  ELE_INPUT,
-  EVNT_MOUSEOVER,
-  EVNT_MOUSEOUT,
-  EVNT_MOUSELEAVE,
-  EVNT_MOUSEENTER,
-  EVNT_CLICK,
-  ATB_ID,
-  ATB_CLASS,
-  ATB_TITLE,
-  ATB_VALUE,
-  ATB_HREF,
-  ATB_STYLE,
-  ATB_CHECKED,
-  ATB_TYPE,
-  ATB_ONCLICK,
-  STL_DISPLAY_INITIAL,
-  STL_DISPLAY_NONE,
-  FLTR_ID,
-  CLSS_NON_STANDARD_SOURCE,
-  CLSS_SUBCLASS_FEATURE,
-  ATB_DATA_LIST_SEP,
-  ATB_DATA_PART_SEP,
-  ATB_DATA_SC,
-  ATB_DATA_SRC,
   STR_CANTRIP,
-  STR_NONE,
   RNG_SPECIAL,
   RNG_POINT,
   RNG_LINE,
@@ -55,17 +14,9 @@ import {
   RNG_SELF,
   RNG_SIGHT,
   RNG_UNLIMITED,
-  RNG_UNLIMITED_SAME_PLANE,
   RNG_TOUCH,
   UNT_FEET,
   UNT_MILES,
-  ABIL_STR,
-  ABIL_DEX,
-  ABIL_CON,
-  ABIL_INT,
-  ABIL_WIS,
-  ABIL_CHA,
-  ABIL_CH_ANY,
   LEVEL_TO_XP_EASY,
   LEVEL_TO_XP_MEDIUM,
   LEVEL_TO_XP_HARD,
@@ -118,12 +69,10 @@ import {
   SRC_ALCoS,
   SRC_ALEE,
   SRC_ALRoD,
-  SRC_PS_PREFIX,
   SRC_PSA,
   SRC_PSI,
   SRC_PSK,
   SRC_PSZ,
-  SRC_UA_PREFIX,
   SRC_UAA,
   SRC_UAEAG,
   SRC_UAEBB,
@@ -158,7 +107,13 @@ import {
   SRC_UATF,
   SRC_UAWR,
   SRC_UAESR,
-  SRC_3PP_SUFFIX,
+  SRC_MOT,
+  SRC_GGR,
+  SRC_AI,
+  SRC_BGDIA,
+  SRC_GoS,
+  SRC_EGW,
+  SRC_ERLW,
   SRC_BOLS_3PP,
   SRC_ToB_3PP,
   AL_PREFIX,
@@ -175,6 +130,7 @@ let Parser = {};
 Parser._parse_aToB = function(abMap, a) {
   a = a.trim();
   if (abMap[a] !== undefined) return abMap[a];
+  console.error(a);
   return a;
 };
 
@@ -696,6 +652,13 @@ Parser.SOURCE_JSON_TO_FULL[SRC_UAWAW] = UA_PREFIX + "Warlock and Wizard";
 Parser.SOURCE_JSON_TO_FULL[SRC_UATF] = UA_PREFIX + "The Faithful";
 Parser.SOURCE_JSON_TO_FULL[SRC_UAWR] = UA_PREFIX + "Wizard Revisited";
 Parser.SOURCE_JSON_TO_FULL[SRC_UAESR] = UA_PREFIX + "Elf Subraces";
+Parser.SOURCE_JSON_TO_FULL[SRC_MOT] = "Mythic Odysseys of Theros";
+Parser.SOURCE_JSON_TO_FULL[SRC_GGR] = "Guildmasters’ Guide to Ravnica";
+Parser.SOURCE_JSON_TO_FULL[SRC_AI] = "Acquisitions Incorporated";
+Parser.SOURCE_JSON_TO_FULL[SRC_BGDIA] = "Baldur’s Gate: Descent Into Avernus";
+Parser.SOURCE_JSON_TO_FULL[SRC_GoS] = "Ghosts of Saltmarsh";
+Parser.SOURCE_JSON_TO_FULL[SRC_EGW] = "Explorer’s Guide to Wildemount";
+Parser.SOURCE_JSON_TO_FULL[SRC_ERLW] = "Eberron: Rising from the Last War";
 Parser.SOURCE_JSON_TO_FULL[SRC_BOLS_3PP] = "Book of Lost Spells" + PP3_SUFFIX;
 Parser.SOURCE_JSON_TO_FULL[SRC_ToB_3PP] = "Tome of Beasts" + PP3_SUFFIX;
 
@@ -762,6 +725,13 @@ Parser.SOURCE_JSON_TO_ABV[SRC_UAWAW] = "UAWAW";
 Parser.SOURCE_JSON_TO_ABV[SRC_UATF] = "UATF";
 Parser.SOURCE_JSON_TO_ABV[SRC_UAWR] = "UAWR";
 Parser.SOURCE_JSON_TO_ABV[SRC_UAESR] = "UAESR";
+Parser.SOURCE_JSON_TO_ABV[SRC_MOT] = "MOT";
+Parser.SOURCE_JSON_TO_ABV[SRC_GGR] = "GGR";
+Parser.SOURCE_JSON_TO_ABV[SRC_AI] = "AI";
+Parser.SOURCE_JSON_TO_ABV[SRC_BGDIA] = "BGDIA";
+Parser.SOURCE_JSON_TO_ABV[SRC_GoS] = "GoS";
+Parser.SOURCE_JSON_TO_ABV[SRC_EGW] = "EGW";
+Parser.SOURCE_JSON_TO_ABV[SRC_ERLW] = "ERLW";
 Parser.SOURCE_JSON_TO_ABV[SRC_BOLS_3PP] = "BolS (3pp)";
 Parser.SOURCE_JSON_TO_ABV[SRC_ToB_3PP] = "ToB (3pp)";
 

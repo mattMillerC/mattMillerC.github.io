@@ -1,5 +1,8 @@
-import { utils_combineText, parseHTML, jqHeight, jqPrepend } from "../js/utils.js";
+import {parseHTML, jqHeight, jqPrepend } from "../js/utils.js";
 import Parser from "../util/Parser.js";
+import EntryRenderer from "../util/entryrender.js";
+
+const renderer = new EntryRenderer();
 
 const stats_wrapper = `
 	<div class="stats-wrapper margin-bottom_large">
@@ -7,7 +10,7 @@ const stats_wrapper = `
 		<div class="stats margin-bottom_small"></div>
 		<div class="table-container collapse collapse--left-arrow disabled">
 			<div class="collapse-toggle">
-				<div class="mdc-list-item">Trait Roll Tables</div>
+				<div class="mdc-list-item stat-name">Suggested Characteristics</div>
 			</div>
 			<div class="collapse-wrapper">
 				<div class="collapse-list"></div>
@@ -15,7 +18,7 @@ const stats_wrapper = `
 		</div>
 	</div>`;
 
-function renderSelection(curbg, rootEl) {
+function renderSelection(curbg, rootEl, allBgs) {
   rootEl.querySelector(".selection-wrapper").innerHTML = stats_wrapper;
   const source = curbg.source;
   const sourceAbv = Parser.sourceJsonToAbv(source);
@@ -26,36 +29,25 @@ function renderSelection(curbg, rootEl) {
 	sourceEl.setAttribute("title", sourceFull);
 	sourceEl.innerHTML = sourceAbv;
 
-  const traitlist = curbg.trait;
+  const entries = curbg.entries;
 
-  for (let n = traitlist.length - 1; n >= 0; n--) {
-    let texthtml = "";
-    texthtml += utils_combineText(traitlist[n].text, "p", "<span class='stat-name'>" + traitlist[n].name + ".</span> ");
+  if (entries.length) {
+    for (let n = entries.length - 1; n >= 0; n--) {
+      let entry = entries[n],
+        outStack = [];
+      renderer.recursiveEntryRender(entry, outStack, 0);
+      let texthtml = outStack.join(' ');
 
-    const subtraitlist = traitlist[n].subtrait;
-    if (subtraitlist !== undefined) {
-      for (let j = 0; j < subtraitlist.length; j++) {
-        texthtml = texthtml + "<p class='subtrait'>";
-        const subtrait = subtraitlist[j];
-        texthtml = texthtml + "<span class='stat-name'>" + subtrait.name + ".</span> ";
-        for (let k = 0; k < subtrait.text.length; k++) {
-          if (!subtrait.text[k]) continue;
-          if (k === 0) {
-            texthtml = texthtml + "<span>" + subtrait.text[k] + "</span>";
-          } else {
-            texthtml = texthtml + "<p class='subtrait'>" + subtrait.text[k] + "</p>";
-          }
-        }
-        texthtml = texthtml + "</p>";
+      if (entry.name === "Suggested Characteristics") {
+        rootEl.querySelector(".stats-wrapper .table-container").classList.remove("disabled");
+        const collapseList = rootEl.querySelector(".stats-wrapper .table-container .collapse-list");
+        const traitTables = parseHTML(texthtml);
+        traitTables.querySelector(".stat-name").remove();
+        jqPrepend(collapseList, traitTables);
+      } else {
+        const statsEl = rootEl.querySelector(".stats-wrapper .stats");
+        jqPrepend(statsEl, parseHTML(texthtml));
       }
-    }
-    if (texthtml.indexOf("<table") === 0) {
-			rootEl.querySelector(".stats-wrapper .table-container").classList.remove("disabled");
-			const collapseList = rootEl.querySelector(".stats-wrapper .table-container .collapse-list");
-			jqPrepend(collapseList, parseHTML(texthtml));
-    } else {
-			const statsEl = rootEl.querySelector(".stats-wrapper .stats");
-			jqPrepend(statsEl, parseHTML(texthtml));
     }
   }
 
