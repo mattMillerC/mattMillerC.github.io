@@ -2,7 +2,6 @@ import {
   getSourceFilter,
   getAsiFilter,
   initFilterBox,
-  utils_getAbilityData,
   utils_makePrerequisite,
   search,
   debounce,
@@ -24,6 +23,7 @@ import {
   decodeForHash,
   encodeForHash
 } from "../js/utils.js";
+import { parse_abilityShort, parse_abilityCollection } from "../util/ability.js";
 import {
   FLTR_ID,
   STR_NONE,
@@ -58,14 +58,11 @@ function renderTable(data, rootEl, columns) {
             asiFilter.metric = "_fAbility";
             filters[col.id] = asiFilter;
           }
-          const ability = utils_getAbilityData(curItem.ability);
-          if (!ability.asText) {
-            ability.asText = STR_NONE;
-          }
-          curItem._fAbility = ability.asCollection;
+          const ability = parse_abilityShort(curItem.ability) || STR_NONE;
+          curItem._fAbility = parse_abilityCollection(curItem.ability);
           columnsHtmlString += `<td class='table-cell ability ${
-            ability.asText === STR_NONE ? "list-entry-none " : ""
-          } ${col.cssClass}'>${ability.asText}</td>`;
+            ability === STR_NONE ? "list-entry-none " : ""
+          } ${col.cssClass}'>${ability}</td>`;
           break;
 
         case "name":

@@ -1,6 +1,7 @@
-import { utils_combineText, utils_getAbilityData } from "../js/utils.js";
+import { utils_combineText } from "../js/utils.js";
 import EntryRenderer from "../util/entryrender.js";
 import Parser from "../util/Parser.js";
+import { parse_abilityShort } from "../util/ability.js";
 
 const stats_wrapper = `
 	<div class="stats-wrapper margin-bottom_large">
@@ -24,15 +25,18 @@ function renderSelection(race, rootEl) {
     rootEl.querySelector(".stats-wrapper .size").style.display = "none";
   }
 
-  const ability = utils_getAbilityData(race.ability);
-  rootEl.querySelector(".stats-wrapper .ability").innerHTML = ability.asText;
+  const ability = parse_abilityShort(race.ability);
+  rootEl.querySelector(".stats-wrapper .ability").innerHTML = ability;
 
   let speed;
-  if (typeof race.speed === "string") {
-    speed = race.speed + (race.speed === "Varies" ? "" : "ft. ");
-  } else {
-    speed = race.speed.walk + "ft.";
-    if (race.speed.climb) speed += `, climb ${race.speed.climb}ft.`;
+  if (race.speed) {
+    if (race.speed.walk) {
+      speed = race.speed.walk + " ft.";
+      if (race.speed.climb) speed += `, climb ${race.speed.climb} ft.`;
+      if (race.speed.fly) speed += `, fly ${race.speed.fly} ft.`;
+    } else {
+      speed = race.speed + (race.speed === "Varies" ? "" : " ft. ");
+    }
   }
   rootEl.querySelector(".stats-wrapper .speed").innerHTML = speed;
   if (speed === "") {

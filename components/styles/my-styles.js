@@ -766,6 +766,11 @@ styleElement.innerHTML = `
         color: #3d695a;
       }
 
+      .sourceMTF {
+        font-weight: bold;
+        color: #1f6e7b;
+      }
+
       /* Collapse */
       .collapse .collapse-toggle {
         height: 48px;

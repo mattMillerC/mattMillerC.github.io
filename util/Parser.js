@@ -114,6 +114,10 @@ import {
   SRC_GoS,
   SRC_EGW,
   SRC_ERLW,
+  SRC_UA2POR,
+  SRC_UAFRW,
+  SRC_MTF,
+  SRC_PSX,
   SRC_BOLS_3PP,
   SRC_ToB_3PP,
   AL_PREFIX,
@@ -197,6 +201,7 @@ Parser.armorFullToAbv = function(armor) {
 Parser.sourceJsonToFull = function(source) {
   return Parser._parse_aToB(Parser.SOURCE_JSON_TO_FULL, source).replace("'", STR_APOSTROPHE);
 };
+
 Parser.sourceJsonToFullCompactPrefix = function(source) {
   return Parser._parse_aToB(Parser.SOURCE_JSON_TO_FULL, source)
     .replace("'", STR_APOSTROPHE)
@@ -204,6 +209,7 @@ Parser.sourceJsonToFullCompactPrefix = function(source) {
     .replace(AL_PREFIX, AL_PREFIX_SHORT)
     .replace(PS_PREFIX, PS_PREFIX_SHORT);
 };
+
 Parser.sourceJsonToAbv = function(source) {
   return Parser._parse_aToB(Parser.SOURCE_JSON_TO_ABV, source);
 };
@@ -250,7 +256,6 @@ Parser.numberToString = function(num) {
     }
   }
 };
-
 // sp-prefix functions are for parsing spell data, and shared with the roll20 script
 Parser.spSchoolAbvToFull = function(school) {
   return Parser._parse_aToB(Parser.SP_SCHOOL_ABV_TO_FULL, school);
@@ -611,6 +616,10 @@ Parser.SOURCE_JSON_TO_FULL[SRC_TYP] = "Tales from the Yawning Portal";
 Parser.SOURCE_JSON_TO_FULL[SRC_VGM] = "Volo's Guide to Monsters";
 Parser.SOURCE_JSON_TO_FULL[SRC_XGE] = "Xanathar's Guide to Everything";
 Parser.SOURCE_JSON_TO_FULL[SRC_OGA] = "One Grung Above";
+Parser.SOURCE_JSON_TO_FULL[SRC_MTF] = "Mordenkainen’s Tome of Foes";
+Parser.SOURCE_JSON_TO_FULL[SRC_UA2POR] = UA_PREFIX + "2020 Psionic Options Revisited";
+Parser.SOURCE_JSON_TO_FULL[SRC_PSX] = PS_PREFIX + "Ixalan";
+Parser.SOURCE_JSON_TO_FULL[SRC_UAFRW] = UA_PREFIX + "Fighter, Rogue, and Wizard";
 Parser.SOURCE_JSON_TO_FULL[SRC_ALCoS] = AL_PREFIX + "Curse of Strahd";
 Parser.SOURCE_JSON_TO_FULL[SRC_ALEE] = AL_PREFIX + "Elemental Evil";
 Parser.SOURCE_JSON_TO_FULL[SRC_ALRoD] = AL_PREFIX + "Rage of Demons";
@@ -732,6 +741,10 @@ Parser.SOURCE_JSON_TO_ABV[SRC_BGDIA] = "BGDIA";
 Parser.SOURCE_JSON_TO_ABV[SRC_GoS] = "GoS";
 Parser.SOURCE_JSON_TO_ABV[SRC_EGW] = "EGW";
 Parser.SOURCE_JSON_TO_ABV[SRC_ERLW] = "ERLW";
+Parser.SOURCE_JSON_TO_ABV[SRC_UA2POR] = "UA2POR";
+Parser.SOURCE_JSON_TO_ABV[SRC_MTF] = "MTF";
+Parser.SOURCE_JSON_TO_ABV[SRC_PSX] = "PSX";
+Parser.SOURCE_JSON_TO_ABV[SRC_UAFRW] = "UAFRW";
 Parser.SOURCE_JSON_TO_ABV[SRC_BOLS_3PP] = "BolS (3pp)";
 Parser.SOURCE_JSON_TO_ABV[SRC_ToB_3PP] = "ToB (3pp)";
 
