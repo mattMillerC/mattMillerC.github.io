@@ -620,6 +620,9 @@ styleElement.innerHTML = `
       .main:not(.item-opened) #rulescontent {
         display: none;
       }
+      .main:not(.item-opened) .selection-wrapper {
+        display: none;
+      }
       .close-item {
         position: absolute;
         top: 57px;
@@ -627,6 +630,7 @@ styleElement.innerHTML = `
         height: 64px;
         width: 64px;
         font-size: 44px;
+        display: none;
       }
       .stats-wrapper p,
       .stats-wrapper ul {
@@ -1192,6 +1196,12 @@ styleElement.innerHTML = `
       .mobile-clone-spells #classtable .table-row--header .table-cell {
         padding: 8px 1px;
       }
+      .spicy-sauce .stat-name {
+        color: var(--mdc-theme-secondary);
+      }
+      #stats i {
+        font-style: italic;
+      }
       #statsprof ul {
         padding-left: 16px;
         list-style: unset;
@@ -1313,10 +1323,26 @@ styleElement.innerHTML = `
         display: block;
         font-size: 1.6rem;
         font-weight: normal;
+        line-height: 1.2;
       }
       #stats .statsBlockSubHead .stat-name {
         font-size: 1.2rem;
         font-weight: normal;
+      }
+      #stats .statsInlineHead {
+        margin-bottom: 16px;
+      }
+      #stats .statsInlineHead .stat-name {
+        font-size: .8rem;
+        font-weight: bold;
+        display: inline;
+      }
+      #stats .statsInlineHead .stat-name + p {
+        display: inline;
+      }
+      #stats .spell-ability {
+        margin: 0 24px;
+        display: block;
       }
       #stats .subclass-feature,
       #stats .class-feature {
@@ -1325,6 +1351,13 @@ styleElement.innerHTML = `
       }
       #stats a {
         color: var(--mdc-theme-secondary, '#018786') !important;
+      }
+      #stats ul {
+        padding-left: 24px;
+        list-style: disc;
+      }
+      #stats ul li {
+        margin-bottom: 8px;
       }
       .roller {
         cursor: pointer;

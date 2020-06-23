@@ -93,6 +93,7 @@ class DndBaseRoutingView extends PolymerElement {
     }
     
     this.$.routeTarget.appendChild(this.routeComps[this.viewId]);
+    window.scrollTo(0,0);
   }
 
   _lookupheader(viewId) {

@@ -99,9 +99,9 @@ class DndLayout extends PolymerElement {
     // Nav Button
     const navButton = this.shadowRoot.querySelector(".mdc-top-app-bar__navigation-icon");
     new MDCRipple(navButton);
-    const drawer = new MDCDrawer(this.shadowRoot.querySelector(".mdc-drawer"));
+    this.drawer = new MDCDrawer(this.shadowRoot.querySelector(".mdc-drawer"));
     navButton.addEventListener("click", () => {
-      drawer.open = !drawer.open;
+      this.drawer.open = !this.drawer.open;
     });
 
     // List Items
@@ -131,6 +131,8 @@ class DndLayout extends PolymerElement {
    * Finds and adds CSS class to the Active Link in the nav
    */
   _resetActiveLink() {
+    this.drawer.open = false;
+    
     const activeLink = this.shadowRoot.querySelector("a.list-item--activated");
     if (activeLink) {
       activeLink.classList.remove("list-item--activated");

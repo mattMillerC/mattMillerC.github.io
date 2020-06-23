@@ -19,6 +19,9 @@ class DndClasses extends PolymerElement {
         type: String,
         value: ''
       },
+      itemOpened: {
+        value: false
+      },
       loading: {
         type: Boolean,
         value: true,
@@ -85,7 +88,6 @@ class DndClasses extends PolymerElement {
 
   _updateClassFromHash() {
     if (this.classes && this.hash) {
-      this.shadowRoot.querySelector(".main").classList.add("item-opened");
       let selectedClass, selectedSubclass;
 
       if (this.hash.indexOf(',') > -1) {
@@ -97,8 +99,14 @@ class DndClasses extends PolymerElement {
       }
 
       if (selectedClass) {
-        onHashChange(selectedClass, this.shadowRoot);
-        
+        this.itemOpened = true;
+
+        let isNewClass = selectedClass !== this.prevClass;
+        this.prevClass = selectedClass;
+
+        if (isNewClass) {
+          onHashChange(selectedClass, this.shadowRoot);
+        }
         if (selectedSubclass) {
           onSubChange(selectedSubclass, this.hash, this.shadowRoot);
         }
@@ -107,23 +115,34 @@ class DndClasses extends PolymerElement {
           composed: true,
           detail: { title: selectedClass.name }
         }));
+        if (isNewClass) {
+          window.scrollTo(0,0);
+        }
       } else {
         clearRouteSelection(true);
       }
     }
     if (!this.hash) {
-	    this.shadowRoot.querySelector(".main").classList.remove("item-opened");
+      this.itemOpened = false;
     }
+  }
+
+  _clearSelectionHandler() {
+    clearRouteSelection(true);
+  }
+
+  _mainClass() {
+    return this.itemOpened ? "main item-opened" : "main";
   }
 
   static get template() {
     return html`
       <style include="material-styles my-styles"></style>
-      <div class="main">
+      <div class$="[[_mainClass(itemOpened)]]">
 
         <dnd-svg class="class-icon stand-alone-icon"></dnd-svg>
 
-        <button class="mdc-icon-button close-item material-icons">close</button>
+        <button class="mdc-icon-button close-item material-icons" on-click="_clearSelectionHandler">close</button>
         <button class="mdc-icon-button mdc-button--raised back-to-top material-icons hidden">arrow_upward</button>
 
         <div class="class-list-container"></div>

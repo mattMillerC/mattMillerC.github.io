@@ -72,6 +72,7 @@ class DndRules extends PolymerElement {
       }
       if (selectedRule) {
         this.set("selectedRule", selectedRule);
+        window.scrollTo(0,0);
       } else {
         clearRouteSelection(true);
       }
@@ -84,7 +85,7 @@ class DndRules extends PolymerElement {
     super();
     loadModel("rules").then((data) => {
       const rulesObject = {};
-      const rules = data.compendium.rules;
+      const rules = data;
       for (let rule of rules) {
         if (rulesObject[rule.parentlist]) {
           rulesObject[rule.parentlist].push(rule);

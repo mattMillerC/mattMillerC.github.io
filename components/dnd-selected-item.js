@@ -29,14 +29,6 @@ class DndSelectedItem extends PolymerElement {
   static get observers() {
     return ["__renderSelection(_modelsRenderSelection, selectedItem)"];
   }
-
-  connectedCallback() {
-    super.connectedCallback();
-
-    this.$.closeBtn.addEventListener("click", () => {
-      clearRouteSelection();
-    });
-  }
   
   _loadingChange() {
     this.dispatchEvent(new CustomEvent("loading-render", {
@@ -80,12 +72,20 @@ class DndSelectedItem extends PolymerElement {
     return !!thing;
   }
 
+  _mainClass() {
+    return this.selectedItem ? "main item-opened" : "main";
+  }
+
+  clearSelection() {
+    clearRouteSelection(true);
+  }
+
   static get template() {
     return html`
       <style include="material-styles my-styles"></style>
 
-      <div class="hidden-easy" visible$="[[_exists(selectedItem)]]">
-        <button class="mdc-icon-button close-item material-icons" id="closeBtn">close</button>
+      <div class$="[[_mainClass(selectedItem)]]">
+        <button class="mdc-icon-button close-item material-icons" on-click="clearSelection">close</button>
         <div class="selection-wrapper"></div>
       </div>
     `;

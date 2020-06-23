@@ -137,8 +137,6 @@ function onHashChange(curClass, rootEl) {
   let svgName = curClass.name.replace(/(\s|\(|\))/g, "");
   rootEl.querySelector(".class-icon.stand-alone-icon").id = svgName;
 
-  const isUaClass = isNonstandardSource(curClass.source);
-
   // SUMMARY SIDEBAR =================================================================================================
   // hit dice and HP
   if (curClass.hd) {
@@ -188,7 +186,7 @@ function onHashChange(curClass, rootEl) {
   }
 
   function getSkillProfString(skills) {
-    let numString, skillOptions, result;
+    let numString, skillOptions, result = '';
     // Different data structure for v2 classes
     if (Array.isArray(skills)) {
       for (let skill of skills) {
@@ -270,14 +268,15 @@ function onHashChange(curClass, rootEl) {
           tr.append(parseHTML(`<td class="centred-col" ${subclassData}>${stack.join("")}</td>`, true, true));
         }
       }
+      let combinedLabels = tGroup.colLabels.join(' ');
       if (
         !spellsFlag &&
-        (tGroup.colLabels.indexOf("Spells Known") > -1 ||
-          tGroup.colLabels.indexOf("Cantrips Known") > -1 ||
-          tGroup.colLabels.indexOf("1st") > -1 ||
-          tGroup.colLabels.indexOf("Ki Points") > -1 ||
-          tGroup.colLabels.indexOf("Rages") > -1 ||
-          tGroup.colLabels.indexOf("Talents Known") > -1)
+        (combinedLabels.indexOf("Spells Known") > -1 ||
+          combinedLabels.indexOf("Cantrips Known") > -1 ||
+          combinedLabels.indexOf("1st") > -1 ||
+          combinedLabels.indexOf("Ki Points") > -1 ||
+          combinedLabels.indexOf("Rages") > -1 ||
+          combinedLabels.indexOf("Talents Known") > -1)
       ) {
         spellsFlag = true;
       }
@@ -292,6 +291,7 @@ function onHashChange(curClass, rootEl) {
   }
 
   rootEl.querySelector("#classtable").classList.remove("mobile-clone-features");
+  
   if (spellsFlag) {
     rootEl.querySelector("#classtable").classList.add("mobile-clone-features");
 		let mobileClone = parseHTML('<div class="mobile-clone-spells"></div>');
@@ -330,9 +330,11 @@ function onHashChange(curClass, rootEl) {
       const featureId = HASH_FEATURE + encodeForHash(feature.name) + "_" + i;
 
       const featureLinkPart = HASH_FEATURE + encodeForHash(feature.name) + i;
+      const featureLinkClasses = [CLSS_FEATURE_LINK];
+      if (isNonstandardSource(feature.source)) featureLinkClasses.push(CLSS_NON_STANDARD_SOURCE);
       const featureLink = parseHTML(
         `<a href="#${encodeForHash(curClass.name, curClass.source)}${HASH_PART_SEP}${featureLinkPart}"
-          class="${CLSS_FEATURE_LINK}"
+          class="${featureLinkClasses.join(" ")}"
           ${ATB_DATA_FEATURE_LINK}="${featureLinkPart}"
           ${ATB_DATA_FEATURE_ID}="${featureId}">${feature.name}</a>`
       );
@@ -408,13 +410,8 @@ function onHashChange(curClass, rootEl) {
   }
   rootEl.querySelector("#stats").innerHTML = renderStack.join("");
 
-  // hide UA/other sources by default
-	let nonStandardPills = rootEl.querySelectorAll(`.${CLSS_NON_STANDARD_SOURCE}`);
-	for (let nonStandardPill of nonStandardPills) {
-		if (!nonStandardPill.classList.contains(CLSS_SUBCLASS_PILL)) {
-			nonStandardPill.style.display = 'none';
-		}
-	}
+  // show UA/other features by default
+  toggleUAFeatures(true);
 
   // CLASS FEATURE/UA/SUBCLASS PILL BUTTONS ==========================================================================
   const subclassPillWrapper = rootEl.querySelector("div#subclasses");
@@ -424,11 +421,12 @@ function onHashChange(curClass, rootEl) {
 
   // show/hide UA/other sources
   const allSourcesToggle = makeGenericTogglePill(
-    "All Sources",
+    "Show UA Sources",
     CLSS_OTHER_SOURCES_ACTIVE,
     ID_OTHER_SOURCES_TOGGLE,
     HASH_ALL_SOURCES,
-    false
+    false,
+    true
   );
 
   // show/hide class features pill
@@ -475,23 +473,27 @@ function onHashChange(curClass, rootEl) {
     });
 
     // if this is a UA class, toggle the "All Sources" button
-    if (isUaClass) {
+    const showUA = readRouteSelection().indexOf(HASH_ALL_SOURCES + 'true') > -1 || readRouteSelection().indexOf(HASH_ALL_SOURCES + 'false') === -1
+    if (showUA) {
       allSourcesToggle.click();
-      allSourcesToggle.classList.add("hidden");
     }
   } else {
     rootEl.querySelector("#subclasses").classList.add("hidden");
   }
 
   // helper functions
-  function makeGenericTogglePill(pillText, pillActiveClass, pillId, hashKey, defaultActive) {
+  function makeGenericTogglePill(pillText, pillActiveClass, pillId, hashKey, defaultActive, isUA) {
     const pill = parseHTML(`<div id="${pillId}" class="mdc-chip"><span class="mdc-chip__text">${pillText}</span></div>`);
-    if (defaultActive) pill.classList.add(pillActiveClass);
     subclassPillWrapper.append(pill);
     pill.addEventListener("click", function() {
       let active = pill.classList.contains(pillActiveClass);
       if (!defaultActive) active = !active;
       handleToggleFeaturesClicks(active);
+      // enable UA features
+      if (isUA) {
+        toggleUAFeatures(active);
+        pill.querySelector('.mdc-chip__text').innerHTML = active ? "Hide UA Sources" : "Show UA Sources";
+      }
     });
     return pill;
 
@@ -560,6 +562,15 @@ function onHashChange(curClass, rootEl) {
     }
     const newHash = outStack.join(HASH_PART_SEP);
     setRouteSelection(newHash, true);
+  }
+
+  function toggleUAFeatures(active) {
+    let nonStandardPills = rootEl.querySelectorAll(`.${CLSS_NON_STANDARD_SOURCE}`);
+    for (let nonStandardPill of nonStandardPills) {
+      if (!nonStandardPill.classList.contains(CLSS_SUBCLASS_PILL)) {
+        nonStandardPill.style.display = active ? null : 'none';
+      }
+    }
   }
 }
 

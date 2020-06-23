@@ -10,18 +10,38 @@ class DndSvg extends PolymerElement {
       hide: {
         type: Boolean,
         value: true
-      }
+			},
+			color: {
+				type: String
+			}
     };
   }
 
   idChanged() {
-    if (this.id && this[this.id.toLowerCase()] && typeof this[this.id.toLowerCase()] === "function") {
-      this.$.svg.innerHTML = this[this.id.toLowerCase()]();
-      this.hide = false;
+    if (this.id) {
+			let fixedId = this.transformId(this.id).toLowerCase();
+			if (this[fixedId] && typeof this[fixedId] === "function") {
+				this.$.svg.innerHTML = this[fixedId](this.color);
+				this.hide = false;
+			} else {
+				this.hide = true;
+			}
     } else {
       this.hide = true;
     }
-  }
+	}
+	
+	transformId(id) {
+		switch (id) {
+			case 'ArtificerUA':
+			case 'ArtificerRevisited':
+				return 'Artificer';
+			case 'RangerSpell-less':
+				return 'RangerRevised';
+			default:
+				return id;
+		}
+	}
 
   static get template() {
     return html`
@@ -114,10 +134,10 @@ class DndSvg extends PolymerElement {
 			<line stroke-width="3" stroke-miterlimit="10" x1="22" y1="33.5" x2="78" y2="33.5"/>`;
   }
 
-  barbarian() {
+  barbarian(color = "#64B0BF") {
     return `
 			<path
-				fill="#64B0BF"
+				fill="${color}"
 				fill-rule="evenodd"
 				clip-rule="evenodd"
 				d="M81.838,10.638c-1.268-1.684-2.415-1.328-3.722-0.044
@@ -139,10 +159,10 @@ class DndSvg extends PolymerElement {
     `;
   }
 
-  bard() {
+  bard(color = "#CD9BCE") {
     return `
 			<path
-				fill="#CD9BCE"
+				fill="${color}"
 				fill-rule="evenodd"
 				clip-rule="evenodd"
 				d="M85.64,19.954C73.155,14.499,60.71,8.956,48.253,3.441
@@ -163,10 +183,10 @@ class DndSvg extends PolymerElement {
     `;
   }
 
-  cleric() {
+  cleric(color = "#ECA85F") {
     return `
 			<path 
-				fill="#ECA85F"
+				fill="${color}"
 				fill-rule="evenodd"
 				clip-rule="evenodd"
 				d="M90.595,51.78c-2.157-11.849-7.867-21.687-16.96-29.562
@@ -194,10 +214,10 @@ class DndSvg extends PolymerElement {
     `;
   }
 
-  druid() {
+  druid(color = "#C1D693") {
     return `
 			<path
-				fill="#C1D693"
+				fill="${color}"
 				fill-rule="evenodd"
 				clip-rule="evenodd"
 				d="M88.015,88.841c-1.41-1.245-2.607-2.734-4.04-3.95
@@ -223,10 +243,10 @@ class DndSvg extends PolymerElement {
     `;
   }
 
-  fighter() {
+  fighter(color = "#C24B4D") {
     return `
 			<path
-				fill="#C24B4D"
+				fill="${color}"
 				fill-rule="evenodd"
 				clip-rule="evenodd"
 				d="M91.786,89.322c-4.047-4.055-8.047-8.158-12.178-12.125
@@ -251,10 +271,10 @@ class DndSvg extends PolymerElement {
     `;
   }
 
-  monk() {
+  monk(color = "#C1D693") {
     return `
 			<path
-				fill="#C1D693"
+				fill="${color}"
 				fill-rule="evenodd"
 				clip-rule="evenodd"
 				d="M50.17,9.803C28.096,9.718,9.787,27.87,9.683,49.941
@@ -270,10 +290,10 @@ class DndSvg extends PolymerElement {
     `;
   }
 
-  paladin() {
+  paladin(color = '#CD9BCD') {
     return `
 			<path
-				fill="#CD9BCD"
+				fill="${color}"
 				fill-rule="evenodd"
 				clip-rule="evenodd"
 				d="M86.206,22.873c-0.232-1.063-0.53-1.961-1.778-2.331
@@ -296,10 +316,10 @@ class DndSvg extends PolymerElement {
     `;
   }
 
-  ranger() {
+  ranger(color = '#C14B4D') {
     return `
 			<path
-				fill="#C14B4D"
+				fill="${color}"
 				fill-rule="evenodd"
 				clip-rule="evenodd"
 				d="M94.825,48.159c-1.959,0.052-3.921-0.03-5.88,0.035
@@ -341,10 +361,10 @@ class DndSvg extends PolymerElement {
     `;
   }
 
-  rangerrevised() {
+  rangerrevised(color = '#c1844b') {
     return `
 			<path
-				fill="#c1844b"
+				fill="${color}"
 				fill-rule="evenodd"
 				clip-rule="evenodd"
 				d="M94.825,48.159c-1.959,0.052-3.921-0.03-5.88,0.035
@@ -384,7 +404,7 @@ class DndSvg extends PolymerElement {
 				c3.085,0.082,6.177,0.095,9.261-0.014C83.101,51.611,83.423,52.263,83.273,53.694z"
 			/>
 			<g
-				fill="#c1844b">
+				fill="${color}">
 				<path
 					d="M14,6c0,6.667,0,13.333,0,20c0,1.935,3,1.935,3,0c0-6.667,0-13.333,0-20C17,4.065,14,4.065,14,6L14,6z"
 				/>
@@ -396,10 +416,10 @@ class DndSvg extends PolymerElement {
     `;
   }
 
-  rogue() {
+  rogue(color = '#D6B173') {
     return `
 			<path
-				fill="#D6B173"
+				fill="${color}"
 				fill-rule="evenodd"
 				clip-rule="evenodd"
 				d="M80.339,20.018c-2.21-5.303-5.775-9.329-10.928-11.833
@@ -419,7 +439,7 @@ class DndSvg extends PolymerElement {
 				c0.463,5.211,0.298,10.376-0.46,15.541C81.205,57.603,80.927,58.221,80.369,58.784z"
 			/>
 			<path
-				fill="#D6B173"
+				fill="${color}"
 				fill-rule="evenodd"
 				clip-rule="evenodd"
 				d="M47.713,49.938c-5.393-4.505-11.865-5.866-18.596-6.499
@@ -429,7 +449,7 @@ class DndSvg extends PolymerElement {
 				C45.294,52.348,45.136,52.983,44.104,54.017z"
 			/>
 			<path
-				fill="#D6B173"
+				fill="${color}"
 				fill-rule="evenodd"
 				clip-rule="evenodd"
 				d="M72.731,43.476c-5.199,0.458-10.256,1.563-14.835,4.189
@@ -441,10 +461,10 @@ class DndSvg extends PolymerElement {
     `;
   }
 
-  sorcerer() {
+  sorcerer(color = '#D5B273') {
     return `
 			<path
-				fill="#D5B273"
+				fill="${color}"
 				fill-rule="evenodd"
 				clip-rule="evenodd"
 				d="M95.935,48.037c-5.688-2.58-11.358-5.204-17.097-7.669
@@ -476,10 +496,10 @@ class DndSvg extends PolymerElement {
     `;
   }
 
-  warlock() {
+  warlock(color = '#65B0C1') {
     return `
 			<path
-				fill="#65B0C1"
+				fill="${color}"
 				fill-rule="evenodd"
 				clip-rule="evenodd"
 				d="M97.769,87.929c-8.627-15.093-17.261-30.182-25.904-45.265
@@ -490,7 +510,7 @@ class DndSvg extends PolymerElement {
 				C65.051,88,36.54,88,7.58,88z"
 			/>
 			<path
-				fill="#65B0C1"
+				fill="${color}"
 				fill-rule="evenodd"
 				clip-rule="evenodd"
 				d="M72.497,58.767c-5.08-5.035-11.607-7.145-18.62-7.602
@@ -506,10 +526,10 @@ class DndSvg extends PolymerElement {
     `;
   }
 
-  wizard() {
+  wizard(color = '#BAC9CC') {
     return `
 			<path
-				fill="#BAC9CC"
+				fill="${color}"
 				fill-rule="evenodd"
 				clip-rule="evenodd"
 				d="M93.606,75.127c-1.5-1.853-3.475-3.089-5.571-4.146
@@ -530,47 +550,47 @@ class DndSvg extends PolymerElement {
     `;
   }
 
-  mystic() {
+  mystic(color = '#FF7BAC') {
     return `
 			<path
-				stroke="#FF7BAC" stroke-width="3" fill="none"
+				stroke="${color}" stroke-width="3" fill="none"
 				d="M60.152,38.258L54.41,34.57l1.641,6.555l-5.129,4.098l6.566,0.613l2.461,6.145l2.461-6.145l6.77-0.41
 				l-5.129-4.301l1.641-6.555L60.152,38.258z"
 			/>
 			<path
-				stroke="#FF7BAC" stroke-width="3"  fill="none"
+				stroke="${color}" stroke-width="3"  fill="none"
 				d="M48.871,35.391l5.949-7.582l9.434,2.051l-5.535-7.988l4.715-8.398l-9.23,2.867l-6.355-7.168l-0.207,9.625
 				l-8.82,3.895l9.027,3.277L48.871,35.391z"
 			/>
 			<path
-				stroke="#FF7BAC" stroke-width="3"  fill="none"
+				stroke="${color}" stroke-width="3"  fill="none"
 				d="M53.59,81.684c-3.488-7.172-16-4.918-18.461-13.52c-3.281-11.473,7.793-17.82,5.742-26.836
 				c-2.254-10.242-12.922-5.938-15.59-10.648c-6.766-11.473,8.41-25.195,8.41-25.195S17.898,16.75,18.516,29.652
 				c0.613,12.293,12.715,12.906,15.383,16.797c6.152,8.809-8.207,16.184-5.949,29.293c1.848,10.035,22.152,18.23,22.152,18.23
 				S57.078,89.055,53.59,81.684z"
 			/>
 			<path
-				stroke="#FF7BAC" stroke-width="3"  fill="none"
+				stroke="${color}" stroke-width="3"  fill="none"
 				d="M45.387,57.305c-0.617-7.371,3.074-10.648,3.074-10.648s-17.844,10.445,1.641,25.602
 				c19.488,15.16,0,21.918,0,21.918s18.871-4.504,16.82-13.109C63.641,68.367,46.207,68.164,45.387,57.305z"
 			/>
 			<path
-				stroke="#FF7BAC" stroke-width="3"  fill="none"
+				stroke="${color}" stroke-width="3"  fill="none"
 				d="M66.512,65.297c-6.562-5.531-16.613-1.844-17.844-13.93c-1.641,9.422,2.871,12.086,7.59,13.93
 				C72.871,71.441,68.973,82.91,68.973,82.91S76.359,73.898,66.512,65.297z"
 			/>
 			<path
-				stroke="#FF7BAC" stroke-width="3"  fill="none"
+				stroke="${color}" stroke-width="3"  fill="none"
 				d="M81.484,25.762l-5.125-0.203l-1.848-4.918l-2.051,4.918l-5.129,0.203l4.102,3.277L70,34.16l4.512-2.867
 				l4.309,2.867l-1.23-5.121L81.484,25.762z"
 			/>
     `;
   }
 
-  artificer() {
+  artificer(color = '#bb86fb') {
     return `
 			<path
-				fill="#bb86fb"
+				fill="${color}"
 				d="M77.372,52.986c-0.354-0.699-1.206-0.979-1.906-0.625c-0.698,0.352-0.979,1.205-0.626,1.904
 				c1.99,3.941,2.999,8.195,2.999,12.643c0,1.273-0.086,2.527-0.252,3.756c-2.006-0.912-4.004-2.078-6.182-2.961
 				c-8.506-3.447-13.001-0.707-17.348,1.943c-7.33,4.469-13.134,6.539-20.254,1.779c-0.389-0.26-0.779-0.531-1.191-0.818
@@ -593,13 +613,13 @@ class DndSvg extends PolymerElement {
 				C39.751,21.142,38.691,20.081,38.691,18.777L38.691,18.777z"
 			/>
 			<path
-				fill="#bb86fb"
+				fill="${color}"
 				d="M35.854,60.473c0,3.27,2.66,5.932,5.931,5.932s5.931-2.662,5.931-5.932s-2.66-5.93-5.931-5.93S35.854,57.203,35.854,60.473z
 				M44.879,60.473c0,1.707-1.388,3.094-3.094,3.094s-3.094-1.387-3.094-3.094c0-1.705,1.388-3.094,3.094-3.094
 				S44.879,58.768,44.879,60.473z"
 			/>
 			<path
-				fill="#bb86fb"
+				fill="${color}"
 				d="M53.15,42.031c-2.831,0-5.133,2.302-5.133,5.133c0,2.83,2.302,5.132,5.133,5.132c2.83,0,5.133-2.302,5.133-5.132
 				C58.283,44.334,55.98,42.031,53.15,42.031L53.15,42.031z M53.15,49.46c-1.266,0-2.296-1.03-2.296-2.296
 				c0-1.267,1.03-2.296,2.296-2.296c1.267,0,2.296,1.03,2.296,2.296C55.446,48.43,54.416,49.46,53.15,49.46z"

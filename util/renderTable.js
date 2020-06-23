@@ -416,7 +416,7 @@ function resolveHash(data, hash) {
   for (let item of data) {
     if (
       item.name.toLowerCase() === name.toLowerCase() &&
-      (!source || item.source.toLowerCase() === source.toLowerCase())
+      (!source || !item.source || item.source.toLowerCase() === source.toLowerCase())
     ) {
       return item;
     }

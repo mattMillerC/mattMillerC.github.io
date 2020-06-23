@@ -6,7 +6,8 @@ import {
   ATB_DATA_SRC,
   CLSS_SUBCLASS_FEATURE,
 	SRC_MM,
-	SRC_PHB
+	SRC_PHB,
+	SRC_DMG
 } from "../util/consts.js";
 import Parser from "../util/Parser.js";
 // ENTRY RENDERING =====================================================================================================
@@ -297,13 +298,15 @@ function EntryRenderer() {
 				if (s.charAt(0) === "@") {
 					const [tag, text] = splitFirstSpace(s);
 
-					if (tag === "@bold" || tag === "@italic" || tag === "@skill" || tag === "@action") {
+					if (tag === "@bold" || tag === "@b" || tag === "@italic" || tag === "@i" || tag === "@skill" || tag === "@action") {
 						switch (tag) {
+							case "@b":
 							case "@bold":
 								textStack.push(`<b>`);
 								self.recursiveEntryRender(text, textStack, depth);
 								textStack.push(`</b>`);
 								break;
+							case "@i":
 							case "@italic":
 								textStack.push(`<i>`);
 								self.recursiveEntryRender(text, textStack, depth);
@@ -325,7 +328,7 @@ function EntryRenderer() {
 							"href": {
 								"type": "internal",
 								"path": "",
-								"hash": hash
+								"hash": encodeForHash(hash)
 							},
 							"text": (displayText ? displayText : name)
 						};
@@ -336,8 +339,13 @@ function EntryRenderer() {
 								self.recursiveEntryRender(fauxEntry, textStack, depth);
 								break;
 							case "@item":
-								if (!source) fauxEntry.href.hash += "_dmg";
+								if (!source) fauxEntry.href.hash += HASH_LIST_SEP + SRC_DMG;
 								fauxEntry.href.hash = "/items/" + fauxEntry.href.hash;
+								self.recursiveEntryRender(fauxEntry, textStack, depth);
+								break;
+							case "@condition":
+								if (!source) fauxEntry.href.hash += HASH_LIST_SEP + SRC_PHB;
+								fauxEntry.href.hash = "/conditions/" + fauxEntry.href.hash;
 								self.recursiveEntryRender(fauxEntry, textStack, depth);
 								break;
 							case "@class":
@@ -361,6 +369,19 @@ function EntryRenderer() {
 								break;
 							case "@dice":
 								// todo
+								textStack.push(name);
+								break;
+							case "@book":
+								//todo
+								textStack.push(name);
+								break;
+							case "@5etools":
+								if (source.indexOf(".") > -1) {
+									fauxEntry.href.hash = "/" + source.substring(0, source.indexOf("."))
+								} else {
+									fauxEntry.href.hash = "/" + source;
+								}
+								self.recursiveEntryRender(fauxEntry, textStack, depth);
 								break;
 						}
 					}
