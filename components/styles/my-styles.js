@@ -382,14 +382,25 @@ styleElement.innerHTML = `
         width: 20px;
         font-size: 18px;
         margin-right: 4px;
-        top: 3px;
+        top: 6px;
         display: inline-block;
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        -moz-font-feature-settings: 'liga';
+        -moz-osx-font-smoothing: grayscale;
       }
       .sort.asc .table-cell:before {
-        content: '\e5d8';
+        content: 'arrow_drop_down';
       }
       .sort.desc .table-cell:before {
-        content: '\e5db';
+        content: 'arrow_drop_up';
       }
 
       /* Breadcrumbs */
