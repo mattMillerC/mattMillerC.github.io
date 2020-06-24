@@ -1,13 +1,16 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[13],{33:function(e,s,t){"use strict";t.r(s);var l=t(12);t(21),t(22),t(50);class n extends l.a{static get template(){return l.b`
+(window.webpackJsonp=window.webpackJsonp||[]).push([[13],{39:function(e,s,i){"use strict";i.r(s);var l=i(11);i(26),i(27),i(54);class t extends l.a{static get template(){return l.b`
       <style include="material-styles my-styles"></style>
 
-      <dnd-selection-list
-        enable-hash-routing
-        model-id="cults"
-        columns='[
-          {"id":"name","label":"Name"}
-        ]'
-      >
-      </dnd-selection-list>
-    `}}customElements.define("dnd-cults-view",n)}}]);
+        <dnd-selection-list
+          enable-hash-routing
+          model-id="feats"
+          columns='[
+            {"id":"name","label":"Name"},
+            {"id":"source","label":"Source"}, 
+            {"id":"ability","label":"Ability"},
+            {"id":"prerequisite","label":"Prerequisite","cssClass":"hidden-mobile-down"}
+          ]'
+        >
+        </dnd-selection-list>
+    `}}customElements.define("dnd-feats-view",t)}}]);
 //# sourceMappingURL=13.bundle.js.map

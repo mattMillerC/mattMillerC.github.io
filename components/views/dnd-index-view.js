@@ -10,78 +10,78 @@ class DndIndexView extends PolymerElement {
       <h1 class="mdc-typography--headline2 margin-bottom_large margin-top_large typography_mono">5e Tools</h1>
 
       <h2 class="mdc-typography--headline5 margin-bottom_small margin-top_med">Rules</h2>
-      <div class="class-list-container">
-        <a class="class-grid-item" href="#/rules">
+      <div class="grid-container">
+        <a class="grid-item" href="#/rules">
           <i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">library_books</i>
-          <span class="class-grid-item--text">Rules</span>
+          <span class="grid-item--text">Rules</span>
         </a>
-        <a class="class-grid-item" href="#/variantrules">
+        <a class="grid-item" href="#/variantrules">
           <i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">description</i>
-          <span class="class-grid-item--text">Variant Rules</span>
+          <span class="grid-item--text">Variant Rules</span>
         </a>
       </div>
 
       <h2 class="mdc-typography--headline5 margin-bottom_small margin-top_med">Player Options</h2>
-      <div class="class-list-container">
-        <a class="class-grid-item" href="#/classes">
+      <div class="grid-container">
+        <a class="grid-item" href="#/classes">
           <i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">class</i>
-          <span class="class-grid-item--text">Classes</span>
+          <span class="grid-item--text">Classes</span>
         </a>
-        <a class="class-grid-item" href="#/backgrounds">
+        <a class="grid-item" href="#/backgrounds">
           <i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">public</i>
-          <span class="class-grid-item--text">Backgrounds</span>
+          <span class="grid-item--text">Backgrounds</span>
         </a>
-        <a class="class-grid-item" href="#/feats">
+        <a class="grid-item" href="#/feats">
           <i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">fitness_center</i>
-          <span class="class-grid-item--text">Feats</span>
+          <span class="grid-item--text">Feats</span>
         </a>
-        <a class="class-grid-item" href="#/races">
+        <a class="grid-item" href="#/races">
           <i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">face</i>
-          <span class="class-grid-item--text">Races</span>
+          <span class="grid-item--text">Races</span>
         </a>
       </div>
 
       <h2 class="mdc-typography--headline5 margin-bottom_small margin-top_med">References</h2>
-      <div class="class-list-container">
-        <a class="class-grid-item" href="#/spells">
+      <div class="grid-container">
+        <a class="grid-item" href="#/spells">
           <i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">flash_on</i>
-          <span class="class-grid-item--text">Spells</span>
+          <span class="grid-item--text">Spells</span>
         </a>
-        <a class="class-grid-item" href="#/conditions">
+        <a class="grid-item" href="#/conditions">
           <i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true"
             >sentiment_very_dissatisfied</i
           >
-          <span class="class-grid-item--text">Conditions</span>
+          <span class="grid-item--text">Conditions</span>
         </a>
-        <a class="class-grid-item" href="#/items">
+        <a class="grid-item" href="#/items">
           <i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">restaurant</i>
-          <span class="class-grid-item--text">Items</span>
+          <span class="grid-item--text">Items</span>
         </a>
-        <a class="class-grid-item" href="#/rewards">
+        <a class="grid-item" href="#/rewards">
           <i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">toll</i>
-          <span class="class-grid-item--text">Other Rewards</span>
+          <span class="grid-item--text">Other Rewards</span>
         </a>
-        <a class="class-grid-item" href="#/bestiary">
+        <a class="grid-item" href="#/bestiary">
           <i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">warning</i>
-          <span class="class-grid-item--text">Bestiary</span>
+          <span class="grid-item--text">Bestiary</span>
         </a>
-        <a class="class-grid-item" href="#/psionics">
+        <a class="grid-item" href="#/psionics">
           <i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true"
             >record_voice_over</i
           >
-          <span class="class-grid-item--text">Psionics</span>
+          <span class="grid-item--text">Psionics</span>
         </a>
-        <a class="class-grid-item" href="#/cults">
+        <a class="grid-item" href="#/cults">
           <i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">group</i>
-          <span class="class-grid-item--text">Cults</span>
+          <span class="grid-item--text">Cults</span>
         </a>
       </div>
 
       <h2 class="mdc-typography--headline5 margin-bottom_small margin-top_med">Tools</h2>
-      <div class="class-list-container">
-        <a class="class-grid-item" href="#/dice">
+      <div class="grid-container">
+        <a class="grid-item" href="#/dice">
           <i class="material-icons mdc-theme--on-surface link-grid-item--image" aria-hidden="true">casino</i>
-          <span class="class-grid-item--text">Dice Roller</span>
+          <span class="grid-item--text">Dice Roller</span>
         </a>
       </div>
     `;

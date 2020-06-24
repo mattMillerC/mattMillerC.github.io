@@ -1,7 +1,7 @@
 import {PolymerElement, html} from '@polymer/polymer';
+import {} from '@polymer/polymer/lib/elements/dom-if.js';
 import { MDCRipple } from "@material/ripple";
 import { MDCDrawer } from "@material/drawer";
-import { MDCList } from "@material/list";
 import { MDCSwitch } from "@material/switch";
 import "./styles/material-styles.js";
 import "./styles/my-styles.js";
@@ -81,13 +81,13 @@ class DndLayout extends PolymerElement {
    */
   _initSwipe() {
     registerSwipe(document.body, "left", () => {
-      if (drawer.open) {
-        drawer.open = false;
+      if (this.drawer.open) {
+        this.drawer.open = false;
       }
     });
     registerSwipe(document.body, "right", () => {
-      if (!drawer.open) {
-        drawer.open = true;
+      if (!this.drawer.open) {
+        this.drawer.open = true;
       }
     });
   }
@@ -162,10 +162,6 @@ class DndLayout extends PolymerElement {
     return a || b;
   }
 
-  _centerBreadcrumbCssClass(selectedTitle) {
-    return selectedTitle ? "breadcrumbs__crumb" : "breadcrumbs__crumb breadcrumbs__no_caret";
-  }
-
   static get template() {
     return html`
       <style include="material-styles my-styles">
@@ -181,12 +177,10 @@ class DndLayout extends PolymerElement {
         <div class="mdc-top-app-bar__row">
           <div class="breadcrumbs mdc-theme--on-primary">
             <div class="container breadcrumbs__list">
-              <div class$="[[_centerBreadcrumbCssClass(selectedTitle)]]">
+              <div class="breadcrumbs__crumb">
                 <a on-click="_resetHashClickHandler">[[header]]</a>
               </div>
-              <div class="breadcrumbs__crumb breadcrumbs__last" hidden$="[[!selectedTitle]]">
-                [[selectedTitle]]
-              </div>
+              <div class="breadcrumbs__crumb" hidden$="[[!selectedTitle]]">[[selectedTitle]]</div>
             </div>
           </div>
           <div class="nav-button">
@@ -325,7 +319,9 @@ class DndLayout extends PolymerElement {
         class="main mdc-top-app-bar--fixed-adjust mdc-typography--body1 mdc-theme--background mdc-theme--text-primary-on-background"
       >
         <div class="container">
-          <h1 class="page-title mdc-typography--headline2">[[_or(selectedTitle, header)]]</h1>
+          <h1 class="page-title mdc-typography--headline2">[[_or(selectedTitle, header)]]
+            <dnd-svg id$="[[_or(selectedTitle, header)]]"></dnd-svg>
+          </h1>
 
           <slot></slot>
         </div>

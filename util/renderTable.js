@@ -46,10 +46,12 @@ import { readRouteSelection } from "./routing.js";
 function renderTable(data, rootEl, columns) {
   const filters = {};
 
+  // Generates html and filter settings for each item by each column
 	for (let i = 0; i < data.length; i++) {
 		const curItem = data[i];
     const name = curItem.name;
-		let columnsHtmlString = '';
+    let columnsHtmlString = '';
+  
 		for (let col of columns) {
 			switch (col.id) {
         case "ability":
@@ -334,8 +336,8 @@ function renderTable(data, rootEl, columns) {
           curItem._fAttunement = attunement;
           columnsHtmlString += `<td class='table-cell item-rarity ${col.cssClass}'>${curItem.rarity}</td>`;
           break;
-      }
-    }
+      } // End Column Switch
+    } // End Column Loop
     let linkData = [curItem.name];
     if (curItem.source) {
       linkData.push(curItem.source);
@@ -348,13 +350,15 @@ function renderTable(data, rootEl, columns) {
 
 		const rowEl = parseHTML(tempString, true);
 		rootEl.querySelector(".list").append(rowEl);
-  }
+  } // End Item (row) Loop
   
+  // Initialize search
 	const list = search({
 		valueNames: columns.map(col => col.id),
 		listClass: "list"
   }, rootEl);
 
+  // Initialize filters for table sorting
   if (Object.keys(filters).length > 0) {
     Object.values(filters).forEach(filter => {
       filter.items.sort(ascSort);
@@ -365,6 +369,7 @@ function renderTable(data, rootEl, columns) {
     );
 
     filterBox.render();
+    // Debounce this as it runs waayyy too often....TODO
     let handleFilterChange = debounce(() => {
       list.filter(function(item) {
         const f = filterBox.getValues();
@@ -408,6 +413,13 @@ function renderTable(data, rootEl, columns) {
   }
 }
 
+/**
+ * Breaks the hash apart and finds the matching item in 
+ * data, compairing "name" and sometimes "source"
+ * @param {Array} data - List of items to search
+ * @param {String} hash - hash used to ID the selected item
+ * @returns The found item based on hash or undefined.
+ */
 function resolveHash(data, hash) {
   let parts = decodeForHash(hash),
     name = parts[0],

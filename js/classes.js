@@ -2,7 +2,6 @@ const HASH_SUBCLASS = "sub:";
 const HASH_FEATURE = "f:";
 const HASH_HIDE_FEATURES = "hideclassfs:";
 const HASH_ALL_SOURCES = "allsrc:";
-const HASH_SUB_LIST_SEP = "~";
 
 const CLSS_FEATURE_LINK = "feature-link";
 const CLSS_ACTIVE = "mdc-chip--selected";
@@ -48,44 +47,17 @@ import {
 import EntryRenderer from '../util/entryrender.js';
 import Parser from '../util/Parser.js';
 import { setRouteSelection, readRouteSelection } from "../util/routing.js";
+import { scrollToTop } from "../util/animateScroll.js";
+import renderGrid from "../util/renderGrid.js";
+import renderList from "../util/renderList.js";
 
 const renderer = new EntryRenderer();
-export { onLoad, onDataLoad, onHashChange, onSubChange };
+export { onDataLoad, onClassChange, onSubChange };
 
 function renderStr(string) {
   let renderStack = []
   renderer.recursiveEntryRender(string, renderStack, 0);
   return renderStack.join(" ");
-}
-function setSubclassFixation(rootEl) {
-  if (jqOffset(rootEl.querySelector("#subclassHeight")).top - document.body.scrollTop < 34) {
-    if (!rootEl.querySelector("#subclasses").classList.contains("fixed")) {
-      rootEl.querySelector("#subclasses").classList.add("fixed");
-      rootEl.querySelector("#subclassHeight").style.height =
-        jqHeight(rootEl.querySelector("#subclasses")) + 40 + "px";
-    }
-  } else {
-    rootEl.querySelector("#subclasses").classList.remove("fixed");
-    rootEl.querySelector("#subclassHeight").style.height = "0";
-  }
-}
-
-function onLoad(rootEl) {
-  let backToTop = rootEl.querySelector(".back-to-top");
-  backToTop.addEventListener("click", () => {
-    window.scrollTo(0, 0);
-  });
-  window.addEventListener(
-    "scroll",
-    throttle(() => {
-      if (document.body.scrollTop > 850) {
-        backToTop.classList.remove("hidden");
-      } else {
-        backToTop.classList.add("hidden");
-      }
-      setSubclassFixation(rootEl);
-    }, 100)
-  );
 }
 
 function onDataLoad(classes, rootEl) {
@@ -96,46 +68,17 @@ function onDataLoad(classes, rootEl) {
     }
 	}
 
-	window.classTableDefault = rootEl.querySelector("#classtable").innerHTML;
-
-	//const classLinkList = rootEl.querySelector(".classes");
-	//let tempString = "";
-	let gridString = "";
-	for (let i = 0; i < classes.length; i++) {
-		const curClass = classes[i];
-		// tempString +=
-		// 	`<div id='${i}' class='class-item mdc-list-item mdc-theme--on-surface history-link' data-link='${getClassHash(curClass)}' data-title='${curClass.name}'>
-		// 		${curClass.name}
-		// 	</div>`;
-
-		let svg = curClass.name.replace(/(\s|\(|\))/g, "");
-
-		gridString += 
-			`<div class='class-grid-item history-link class-grid-item__${curClass.name.replace(/(\s|\(|\))/g,'')}'
-				data-link='${encodeForHash(curClass.name, curClass.source)}' data-title='${curClass.name}'>
-				<span class='class-grid-item--text'>${curClass.name}</span>
-				<dnd-svg id='${svg}' class='class-grid-item--image class-grid-item__${svg}'></dnd-svg>
-			</div>`
-	}
-	//classLinkList.append(parseHTML(tempString));
-	let newClasses = parseHTML(gridString);
-	while (newClasses.length > 0) {
-		newClasses[0].addEventListener("click", (e) => {
-			let tar = e.target.closest(".class-grid-item");
-      setRouteSelection(tar.getAttribute("data-link"));
-    });
-		rootEl.querySelector(".class-list-container").appendChild(newClasses[0]);
-	}
+  // store classTable template from inital dom
+  window.classTableDefault = rootEl.querySelector("#classtable").innerHTML;
+  
+  renderList(rootEl, classes);
 }
 
-function onHashChange(curClass, rootEl) {
+function onClassChange(curClass, rootEl) {
   rootEl.querySelector("#classtable").innerHTML = window.classTableDefault;
   rootEl.querySelector("#subclasses").classList.remove("fixed");
   rootEl.querySelector("#subclasses").classList.remove("closed");
   rootEl.querySelector(".mobile-clone-spells") && rootEl.querySelector(".mobile-clone-spells").remove();
-
-  let svgName = curClass.name.replace(/(\s|\(|\))/g, "");
-  rootEl.querySelector(".class-icon.stand-alone-icon").id = svgName;
 
   // SUMMARY SIDEBAR =================================================================================================
   // hit dice and HP
@@ -292,6 +235,7 @@ function onHashChange(curClass, rootEl) {
 
   rootEl.querySelector("#classtable").classList.remove("mobile-clone-features");
   
+  // Add second feature table for mobile
   if (spellsFlag) {
     rootEl.querySelector("#classtable").classList.add("mobile-clone-features");
 		let mobileClone = parseHTML('<div class="mobile-clone-spells"></div>');
@@ -414,14 +358,16 @@ function onHashChange(curClass, rootEl) {
   toggleUAFeatures(true);
 
   // CLASS FEATURE/UA/SUBCLASS PILL BUTTONS ==========================================================================
-  const subclassPillWrapper = rootEl.querySelector("div#subclasses");
+  let subclassPillWrapper = rootEl.querySelector("div#subclasses");
   // remove any from previous class
   jqEmpty(subclassPillWrapper);
   subclassPillWrapper.append(parseHTML(`<div class='title'>Subclasses</div>`));
+  subclassPillWrapper.append(parseHTML(`<div class='subclass-wrapper'></div>`));
+  subclassPillWrapper = subclassPillWrapper.querySelector('.subclass-wrapper');
 
   // show/hide UA/other sources
   const allSourcesToggle = makeGenericTogglePill(
-    "Show UA Sources",
+    "Show UA",
     CLSS_OTHER_SOURCES_ACTIVE,
     ID_OTHER_SOURCES_TOGGLE,
     HASH_ALL_SOURCES,
@@ -492,7 +438,7 @@ function onHashChange(curClass, rootEl) {
       // enable UA features
       if (isUA) {
         toggleUAFeatures(active);
-        pill.querySelector('.mdc-chip__text').innerHTML = active ? "Hide UA Sources" : "Show UA Sources";
+        pill.querySelector('.mdc-chip__text').innerHTML = active ? "Hide UA" : "Show UA";
       }
     });
     return pill;
@@ -575,7 +521,6 @@ function onHashChange(curClass, rootEl) {
 }
 
 function onSubChange(sub, curHash, rootEl) {
-  setSubclassFixation(rootEl);
 	let subclasses = null;
 	let feature = null;
 	let hideClassFeatures = null;

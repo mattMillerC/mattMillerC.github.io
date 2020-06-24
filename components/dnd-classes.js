@@ -4,8 +4,10 @@ import "./styles/my-styles.js";
 import './dnd-svg.js';
 import loadModel from '../util/data.js';
 import { resolveHash } from '../util/renderTable.js';
-import { onLoad, onDataLoad, onHashChange, onSubChange } from "../js/classes.js";
+import { onDataLoad, onClassChange, onSubChange } from "../js/classes.js";
 import { readRouteSelection, routeEventChannel, clearRouteSelection } from '../util/routing.js';
+import { scrollToTop } from '../util/animateScroll.js';
+import { jqOffset, jqHeight, throttle } from '../js/utils.js';
 
 
 class DndClasses extends PolymerElement {
@@ -46,22 +48,12 @@ class DndClasses extends PolymerElement {
   connectedCallback() {
     super.connectedCallback();
 
-    this.selectionChangeEventHandler = (e) => {
-      let selection = e ? e.detail.selection : readRouteSelection();
-      if (selection) {
-        this.set("hash", selection);
-      }
-    };
-    this.deselectionChangeEventHandler = () => {
-      this.set("hash", "");
-    }
-
-    this.selectionChangeEventHandler();
+    this.populateHandlers();
 
     routeEventChannel().addEventListener("selection-change", this.selectionChangeEventHandler);
     routeEventChannel().addEventListener("selection-deselected", this.deselectionChangeEventHandler);
-
-    onLoad(this.shadowRoot);
+    this.$.backToTop.addEventListener("click", this.backToTopEventHandler);
+    window.addEventListener("scroll", this.scrollEventHandler);
   }
 
   disconnectedCallback() {
@@ -70,6 +62,43 @@ class DndClasses extends PolymerElement {
     this.deselectionChangeEventHandler();
     routeEventChannel().removeEventListener("selection-change", this.selectionChangeEventHandler);
     routeEventChannel().removeEventListener("selection-deselected", this.deselectionChangeEventHandler);
+    this.$.backToTop.removeEventListener("click", this.backToTopEventHandler);
+    window.removeEventListener("scroll", this.scrollEventHandler);
+  }
+
+  populateHandlers() {
+    this.selectionChangeEventHandler = (e) => {
+      let selection = e ? e.detail.selection : readRouteSelection();
+      if (selection) {
+        this.set("hash", selection);
+      }
+    };
+    this.selectionChangeEventHandler();
+    this.deselectionChangeEventHandler = () => {
+      this.set("hash", "");
+    }
+
+    this.backToTopEventHandler = () => {
+      scrollToTop(400);
+    };
+    this.scrollEventHandler = throttle(() => {
+      if (window.scrollY > 850) {
+        this.$.backToTop.classList.remove("hidden");
+      } else {
+        this.$.backToTop.classList.add("hidden");
+      }
+      // setSubclassFixation
+      if (jqOffset(this.shadowRoot.querySelector("#subclassHeight")).top - document.body.scrollTop < 34) {
+        if (!this.shadowRoot.querySelector("#subclasses").classList.contains("fixed")) {
+          this.shadowRoot.querySelector("#subclasses").classList.add("fixed");
+          this.shadowRoot.querySelector("#subclassHeight").style.height =
+            jqHeight(this.shadowRoot.querySelector("#subclasses")) + 40 + "px";
+        }
+      } else {
+        this.shadowRoot.querySelector("#subclasses").classList.remove("fixed");
+        this.shadowRoot.querySelector("#subclassHeight").style.height = "0";
+      }
+    }, 100);
   }
 
   _loadingChange() {
@@ -104,8 +133,10 @@ class DndClasses extends PolymerElement {
         let isNewClass = selectedClass !== this.prevClass;
         this.prevClass = selectedClass;
 
+        // Only reload the Class
         if (isNewClass) {
-          onHashChange(selectedClass, this.shadowRoot);
+          window.scrollTo(0,0);
+          onClassChange(selectedClass, this.shadowRoot);
         }
         if (selectedSubclass) {
           onSubChange(selectedSubclass, this.hash, this.shadowRoot);
@@ -115,9 +146,6 @@ class DndClasses extends PolymerElement {
           composed: true,
           detail: { title: selectedClass.name }
         }));
-        if (isNewClass) {
-          window.scrollTo(0,0);
-        }
       } else {
         clearRouteSelection(true);
       }
@@ -140,12 +168,10 @@ class DndClasses extends PolymerElement {
       <style include="material-styles my-styles"></style>
       <div class$="[[_mainClass(itemOpened)]]">
 
-        <dnd-svg class="class-icon stand-alone-icon"></dnd-svg>
-
         <button class="mdc-icon-button close-item material-icons" on-click="_clearSelectionHandler">close</button>
-        <button class="mdc-icon-button mdc-button--raised back-to-top material-icons hidden">arrow_upward</button>
+        <button id="backToTop" class="mdc-icon-button mdc-button--raised back-to-top material-icons hidden">arrow_upward</button>
 
-        <div class="class-list-container"></div>
+        <div class="class-container"></div>
 
         <div class="class-page--class-container">
           <div id="classtable">
