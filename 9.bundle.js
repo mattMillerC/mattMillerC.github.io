@@ -1,4 +1,4 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[9],{36:function(a,t,s){"use strict";s.r(t);var n=s(11),c=s(82);s(26),s(27);class e extends n.a{static get properties(){return{}}connectedCallback(){super.connectedCallback();new c.a(this.shadowRoot.querySelector(".mdc-tab-bar"))}static get template(){return n.b`
+(window.webpackJsonp=window.webpackJsonp||[]).push([[9],{36:function(a,t,s){"use strict";s.r(t);var n=s(11),c=s(81);s(26),s(27);class e extends n.a{static get properties(){return{}}connectedCallback(){super.connectedCallback();new c.a(this.shadowRoot.querySelector(".mdc-tab-bar"))}static get template(){return n.b`
       <style include="material-styles my-styles"></style>
 
       <div class="mdc-tab-bar class-tabs" role="tablist">
