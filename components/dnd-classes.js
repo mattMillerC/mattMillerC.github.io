@@ -53,7 +53,7 @@ class DndClasses extends PolymerElement {
     routeEventChannel().addEventListener("selection-change", this.selectionChangeEventHandler);
     routeEventChannel().addEventListener("selection-deselected", this.deselectionChangeEventHandler);
     this.$.backToTop.addEventListener("click", this.backToTopEventHandler);
-    window.addEventListener("scroll", this.scrollEventHandler);
+    window.addEventListener("scroll", this.subclassScrollRepositionHandler);
   }
 
   disconnectedCallback() {
@@ -63,7 +63,7 @@ class DndClasses extends PolymerElement {
     routeEventChannel().removeEventListener("selection-change", this.selectionChangeEventHandler);
     routeEventChannel().removeEventListener("selection-deselected", this.deselectionChangeEventHandler);
     this.$.backToTop.removeEventListener("click", this.backToTopEventHandler);
-    window.removeEventListener("scroll", this.scrollEventHandler);
+    window.removeEventListener("scroll", this.subclassScrollRepositionHandler, {passive: true});
   }
 
   populateHandlers() {
@@ -81,24 +81,32 @@ class DndClasses extends PolymerElement {
     this.backToTopEventHandler = () => {
       scrollToTop(400);
     };
-    this.scrollEventHandler = throttle(() => {
+    this.subclassScrollRepositionHandler = () => {
       if (window.scrollY > 850) {
         this.$.backToTop.classList.remove("hidden");
       } else {
         this.$.backToTop.classList.add("hidden");
       }
       // setSubclassFixation
-      if (jqOffset(this.shadowRoot.querySelector("#subclassHeight")).top - document.body.scrollTop < 34) {
-        if (!this.shadowRoot.querySelector("#subclasses").classList.contains("fixed")) {
-          this.shadowRoot.querySelector("#subclasses").classList.add("fixed");
-          this.shadowRoot.querySelector("#subclassHeight").style.height =
-            jqHeight(this.shadowRoot.querySelector("#subclasses")) + 40 + "px";
+      const subclassEl = this.shadowRoot.querySelector("#subclasses"),
+        subclassOffsetEl = this.shadowRoot.querySelector("#subclassHeight");
+
+      // Stores non-closed height
+      if (!subclassEl.classList.contains("closed") || !subclassEl.classList.contains("fixed")) {
+        this.subclassOffsetHeight = jqHeight(subclassEl) + 55 + "px";
+      }
+
+      // When we scroll past the subclasses, sets fixed. otherwise removes it.
+      if (jqOffset(subclassOffsetEl).top - document.body.scrollTop < 64) {
+        if (!subclassEl.classList.contains("fixed")) {
+          subclassEl.classList.add("fixed");
+          subclassOffsetEl.style.height = this.subclassOffsetHeight;
         }
       } else {
-        this.shadowRoot.querySelector("#subclasses").classList.remove("fixed");
-        this.shadowRoot.querySelector("#subclassHeight").style.height = "0";
+        subclassEl.classList.remove("fixed");
+        subclassOffsetEl.style.height = "0";
       }
-    }, 100);
+    };
   }
 
   _loadingChange() {
@@ -174,6 +182,10 @@ class DndClasses extends PolymerElement {
         <div class="class-container"></div>
 
         <div class="class-page--class-container">
+
+          <div id="subclassHeight"></div>
+          <div id="subclasses"></div>
+
           <div id="classtable">
             <table class="table">
               <tr id="groupHeaders" class="table-row table-row--header">
@@ -337,8 +349,6 @@ class DndClasses extends PolymerElement {
             </div>
           </div>
 
-          <div id="subclassHeight"></div>
-          <div id="subclasses"></div>
           <div id="stats" class="stats">
             <!-- populate with JS -->
           </div>

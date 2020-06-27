@@ -47,7 +47,6 @@ import {
 import EntryRenderer from '../util/entryrender.js';
 import Parser from '../util/Parser.js';
 import { setRouteSelection, readRouteSelection } from "../util/routing.js";
-import { scrollToTop } from "../util/animateScroll.js";
 import renderGrid from "../util/renderGrid.js";
 import renderList from "../util/renderList.js";
 

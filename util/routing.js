@@ -1,12 +1,25 @@
 const routingChannel = document.createElement('div');
+let isBacking = false,
+	prevScrollHeight;
 
 function routeEventChannel() {
 	return routingChannel;
 }
 
 function initRouting() {
+	if (!window.historyScrollHeight) {
+		window.historyScrollHeight = [];
+	}
 	window.addEventListener("hashchange", (e) => {
 		hashChangeHandler(e);
+	});
+	window.addEventListener("popstate", (e) => {
+		if (isBacking) {
+			isBacking = false;
+			window.setTimeout(() => {
+				document.scrollingElement.scrollTo(0, prevScrollHeight);
+			}, 10);
+		}
 	});
 }
 
@@ -18,6 +31,7 @@ function hashChangeHandler(e) {
 		eventDetail = {}
 
 	if (newHashView !== oldHashView) {
+		window.historyScrollHeight.push(document.scrollingElement.scrollTop);
 		let viewChangeEvent = new CustomEvent("view-change", {
 			bubbles: true,
 			composed: true,
@@ -99,11 +113,9 @@ function readRouteSelection(newURL) {
 function clearRouteSelection(noHistory) {
 	let hashView = readRouteView();
 	if (noHistory) {
-		let oldURL = window.location.href,
-			urlSansHash = window.location.href.substring(0, window.location.href.lastIndexOf("#")),
-			newURL = urlSansHash + "#/" + hashView;
-		window.history.replaceState(null, "", newURL);
-		hashChangeHandler({oldURL, newURL});
+		isBacking = true;
+		prevScrollHeight =  window.historyScrollHeight.pop();
+		window.history.back();
 	} else {
 		window.location.hash = "#/" + hashView;
 	}

@@ -287,6 +287,7 @@ styleElement.innerHTML = `
         margin-top: 16px;
         position: relative;
         max-width: 100%;
+        width: 100%;
       }
       .table-wrap:before {
         content: '';
@@ -307,11 +308,12 @@ styleElement.innerHTML = `
       .table {
         font-size: 14px;
         background-color: var(--mdc-theme-surface);
+        width: 100%;
       }
       .table--scroll {
         max-height: calc(100vh - 379px);
-        overflow-x: scroll;
-        overflow-y: scroll;
+        overflow-x: auto;
+        overflow-y: auto;
         padding-top: 44px;
         border-radius: 4px;
         box-shadow: 0 0 0 1px var(--mdc-theme-text-divider-on-background);
@@ -622,7 +624,6 @@ styleElement.innerHTML = `
       /* Statblocks */
       .main {
         max-width: 100vw;
-        overflow-x: hidden;
       }
       .main.item-opened .class-container {
         display: none;
@@ -951,7 +952,7 @@ styleElement.innerHTML = `
       }
       #rulescontent .table-scroll-wrap {
         max-width: 100%;
-        overflow-x: scroll;
+        overflow-x: auto;
         padding: 1px;
       }
       #rulescontent table {
@@ -1136,8 +1137,8 @@ styleElement.innerHTML = `
         font-weight: bold;
       }
       .dice-field-container #output {
-        max-height: calc(100vh - 239px);
-        overflow-y: scroll;
+        max-height: calc(100vh - 340px);
+        overflow-y: auto;
         width: 100%;
       }
       .dice-field-container #output > div {
@@ -1191,6 +1192,9 @@ styleElement.innerHTML = `
       }
       #colHeaders .features {
         text-align: center;
+      }
+      #classtable {
+        margin-top: 40px;
       }
       #classtable .table {
         border-radius: 4px;
@@ -1270,11 +1274,13 @@ styleElement.innerHTML = `
         position: relative;
         margin-top: 16px;
         padding-top: 24px;
+        padding-bottom: 26px;
         border-top: 1px solid var(--mdc-theme-text-divider-on-background, rgba(0, 0, 0, 0.12));
       }
       #subclasses .title {
         text-align: center;
-        font-weight: 20px;
+        font-weight: normal;
+        font-size: 20px;
         margin-bottom: 16px;
       }
       #subclasses .mdc-chip {
@@ -1302,6 +1308,8 @@ styleElement.innerHTML = `
         overflow: hidden;
         padding: 16px 16px 24px;
         width: calc(100% - 32px);
+        left: -8px;
+        padding-top: 28px;
       }
       #subclasses.fixed .tab {
         display: block;
@@ -1327,7 +1335,7 @@ styleElement.innerHTML = `
         max-height: 60vh;
       }
       #subclasses.fixed:not(.closed) {
-        padding-bottom: 32px;
+        padding-bottom: 28px;
       }
       #subclasses #os-toggle {
         position: absolute;
@@ -1585,9 +1593,6 @@ styleElement.innerHTML = `
           height: 64px;
           padding: 0;
         }
-        .main {
-          overflow-x: auto;
-        }
         .main.item-opened #listcontainer {
           display: block !important;
         }
@@ -1672,7 +1677,7 @@ styleElement.innerHTML = `
           margin-top: 16px;
         }
         .dice-field-container #output {
-          max-height: calc(100vh - 316px);
+          max-height: calc(100vh - 340px);
         }
         .main.item-opened .class-icon {
           height: 64px;

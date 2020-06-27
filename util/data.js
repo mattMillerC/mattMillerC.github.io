@@ -264,6 +264,7 @@ function mergeItemsData(itemData, basicItemData, variantData) {
 				itemList[i].entries = pushObject(itemList[i].entries,"A cleric or paladin can use a holy symbol as a spellcasting focus, using it in place of any material components which do not list a cost. To use the symbol in this way, the caster must hold it in hand, wear it visibly, or bear it on a shield.");
 			}
 		}
-  }
+	}
+	window.itemPropertyList = propertyList;
   return itemList;
 }
