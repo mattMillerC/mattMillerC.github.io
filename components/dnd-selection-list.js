@@ -43,6 +43,10 @@ class DndSelectionList extends PolymerElement {
         type: Boolean,
         value: true,
         observer: '_loadingChange'
+      },
+      characterOption: {
+        type: Boolean,
+        value: false
       }
     };
   }
@@ -153,7 +157,7 @@ class DndSelectionList extends PolymerElement {
           }
         }
       </style>
-      <dnd-selected-item model-id="[[modelId]]" selected-item="[[_selectedItem]]"></dnd-selected-item>
+      <dnd-selected-item model-id="[[modelId]]" selected-item="[[_selectedItem]]" character-option="[[characterOption]]"></dnd-selected-item>
       <dnd-list data="[[_data]]" columns="[[columns]]"></dnd-list>
     `;
   }

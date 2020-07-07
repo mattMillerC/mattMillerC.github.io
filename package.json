@@ -19,6 +19,7 @@
     "@polymer/polymer": "^3.0.0-pre.12",
     "@vaadin/vaadin-dialog": "^2.2.1",
     "@vaadin/vaadin-grid": "^5.5.2",
+    "@vaadin/vaadin-select": "^2.3.0-alpha4",
     "@vaadin/vaadin-text-field": "^2.5.4"
   },
   "devDependencies": {

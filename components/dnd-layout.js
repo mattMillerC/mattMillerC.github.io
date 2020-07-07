@@ -1,10 +1,10 @@
 import {PolymerElement, html} from '@polymer/polymer';
-import {} from '@polymer/polymer/lib/elements/dom-if.js';
 import { MDCRipple } from "@material/ripple";
 import { MDCDrawer } from "@material/drawer";
 import { MDCSwitch } from "@material/switch";
 import "./styles/material-styles.js";
 import "./styles/my-styles.js";
+import "./dnd-character-popup.js";
 import registerSwipe from '../util/swipe.js';
 import setDarkmode from "../util/darkmode.js";
 import { clearRouteSelection, routeEventChannel, readRouteView } from '../util/routing.js';
@@ -19,6 +19,10 @@ class DndLayout extends PolymerElement {
         type: String,
         value: "",
         observer: 'selectedTitleChange'
+      },
+      hideCharacterPopup: {
+        type: Boolean,
+        value: true
       }
     };
   }
@@ -30,7 +34,7 @@ class DndLayout extends PolymerElement {
     this._initNavDrawer();
     this._initSelectionEvents();
 
-    this._resetActiveLink();
+    this._resetActiveLink({detail: { view: readRouteView()}});
     routeEventChannel().addEventListener("view-change", this._resetActiveLink.bind(this));
   }
 
@@ -130,7 +134,7 @@ class DndLayout extends PolymerElement {
   /**
    * Finds and adds CSS class to the Active Link in the nav
    */
-  _resetActiveLink() {
+  _resetActiveLink(e) {
     this.drawer.open = false;
     
     const activeLink = this.shadowRoot.querySelector("a.list-item--activated");
@@ -143,6 +147,19 @@ class DndLayout extends PolymerElement {
     for (let link of links) {
       if (link.getAttribute("href") === `#/${view}`) {
         link.classList.add("list-item--activated");
+      }
+    }
+
+    if (e && e.detail) {
+      switch (e.detail.view) {
+        case "feats":
+        case "races":
+        case "backgrounds":
+        case "classes":
+          this.hideCharacterPopup = false;
+          break;
+        default:
+          this.hideCharacterPopup = true;
       }
     }
   }
@@ -169,7 +186,7 @@ class DndLayout extends PolymerElement {
           min-height: calc(100vh - 64px);
         }
         .container {
-          padding-bottom: 32px;
+          padding-bottom: 92px;
         }
       </style>
 
@@ -304,10 +321,10 @@ class DndLayout extends PolymerElement {
               <i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">casino</i>
               <span class="mdc-list-item__text">Dice Roller</span>
             </a>
-            <!--<a class="mdc-list-item mdc-theme--on-surface" href="#/character-builder">
+            <a class="mdc-list-item mdc-theme--on-surface" href="#/character-builder">
               <i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">build</i>
               <span class="mdc-list-item__text">Character Builder</span>
-            </a>-->
+            </a>
             <span class="version mdc-typography--caption">v2.0.0</span>
           </nav>
         </div>
@@ -325,6 +342,8 @@ class DndLayout extends PolymerElement {
 
           <slot></slot>
         </div>
+
+        <dnd-character-popup hidden$=[[hideCharacterPopup]]></dnd-character-popup>
       </div>
     `;
   }

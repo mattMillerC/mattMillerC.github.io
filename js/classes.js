@@ -77,6 +77,7 @@ function onClassChange(curClass, rootEl) {
   rootEl.querySelector("#classtable").innerHTML = window.classTableDefault;
   rootEl.querySelector("#subclasses").classList.remove("fixed");
   rootEl.querySelector("#subclasses").classList.remove("closed");
+  rootEl.querySelector("#subclasses").classList.remove("hidden");
   rootEl.querySelector(".mobile-clone-spells") && rootEl.querySelector(".mobile-clone-spells").remove();
 
   // SUMMARY SIDEBAR =================================================================================================
@@ -347,7 +348,6 @@ function onClassChange(curClass, rootEl) {
     else {
       for (let j = 0; j < featureNames.length; j++) {
         tblLvlFeatures.append(featureNames[j]);
-        if (j < featureNames.length - 1) tblLvlFeatures.append(", ");
       }
     }
   }

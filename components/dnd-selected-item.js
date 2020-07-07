@@ -4,6 +4,7 @@ import "./styles/my-styles.js";
 import "./dnd-spinner.js";
 import {initCollapseToggles} from '../js/utils.js';
 import { clearRouteSelection } from '../util/routing.js';
+import { addFeature } from '../util/charBuilder.js';
 
 class DndSelectedItem extends PolymerElement {
   static get properties() {
@@ -22,6 +23,10 @@ class DndSelectedItem extends PolymerElement {
       },
       _modelsRenderSelection: {
         type: Function
+      },
+      characterOption: {
+        type: Boolean,
+        value: false
       }
     };
   }

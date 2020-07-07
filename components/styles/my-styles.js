@@ -1150,7 +1150,7 @@ styleElement.innerHTML = `
 
       .back-to-top {
         position: fixed;
-        bottom: 24px;
+        bottom: 84px;
         right: 24px;
         border-radius: 32px;
         z-index: 2;
@@ -1173,6 +1173,11 @@ styleElement.innerHTML = `
       .feature-link {
         color: var(--mdc-theme-secondary, '#018786');
         font-weight: bold;
+      }
+      .feature-link + .feature-link:before {
+        content: ', ';
+        display: inline-block;
+        margin-right: 4px;
       }
       .mobile-clone-spells {
         margin-top: 24px;
