@@ -1,5 +1,5 @@
 const path = require("path");
-const CleanWebpackPlugin = require("clean-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = {
@@ -7,9 +7,9 @@ module.exports = {
     index: "./components/dnd-base-routing-view.js",
   },
   plugins: [
-    new CleanWebpackPlugin(["dist"]),
-    new CopyWebpackPlugin(
-      [
+    new CleanWebpackPlugin(),
+    new CopyWebpackPlugin({
+      patterns: [
         {
           from: "img/*",
           to: ".",
@@ -48,9 +48,8 @@ module.exports = {
           from: path.resolve(__dirname, "node_modules/@webcomponents/webcomponentsjs/*.js"),
           to: "node_modules/@webcomponents/webcomponentsjs/[name].[ext]"
         }
-      ],
-      {}
-    )
+      ]
+    })
   ],
   output: {
     filename: "[name].bundle.js",

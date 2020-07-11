@@ -3,6 +3,7 @@ import './dnd-layout.js';
 import './dnd-spinner.js';
 import { jqEmpty, util_capitalize } from '../js/utils.js';
 import { initRouting, routeEventChannel, readRouteView } from '../util/routing.js';
+import "./styles/vaadin-theme";
 
 class DndBaseRoutingView extends PolymerElement {
   static get properties() {

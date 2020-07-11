@@ -31,13 +31,13 @@ class DndTabs extends PolymerElement {
   }
 
   handleTabChange(index) {
-    this.dispatchEvent(new CustomEvent("tabChange"),  {
+    this.dispatchEvent(new CustomEvent("tabChange",  {
       bubbles: true,
       composed: true,
       detail: {
         index
       }
-    })
+    }));
   }
   
   static get template() {

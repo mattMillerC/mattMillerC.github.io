@@ -1,74 +1,66 @@
 import {PolymerElement, html} from '@polymer/polymer';
 import "./styles/material-styles.js";
-import { getCharacterChannel, initCharacter, getClassString, getFeatureString, selectCharacterFromIndex, findCharacterIndex, addFeatureById } from '../util/charBuilder';
-import { routeEventChannel, readRouteView } from '../util/routing';
-import "@vaadin/vaadin-select";
-import { jqEmpty } from "../js/utils.js";
+import { getCharacterChannel, initSelectedCharacter, getClassString, getFeatureString, addFeatureById } from '../util/charBuilder';
+import { routeEventChannel, readRouteView, readRouteSelection } from '../util/routing';
+import "./dnd-character-select";
+import { util_capitalize } from '../js/utils.js';
 
 class DndCharacterPopup extends PolymerElement {
   static get properties() {
     return {
-      name: {
+      view: {
         type: String,
         value: ''
       },
-      view: {
+      selection: {
         type: String,
         value: ''
       },
       selectedCharacter: {
         type: Object,
-      },
-      characterOptions: {
-        type: Array
       }
     }
   }
 
-  constructor() {
-    super();
+  connectedCallback() {
+    super.connectedCallback();
 
-    getCharacterChannel().addEventListener("character-selected", (e) => {
+    this.characterChangeHandler = (e) => {
       this.selectedCharacter = JSON.parse(JSON.stringify(e.detail.character));
-      this.characterOptions = e.detail.characters;
-    });
-    initCharacter();
+    };
 
-    routeEventChannel().addEventListener("view-change", (e) => {
+    getCharacterChannel().addEventListener("character-selected", this.characterChangeHandler);
+    initSelectedCharacter();
+
+    this.viewChangeHandler = (e) => {
       if (e && e.detail) {
         this.view = e.detail.view;
       }
-    });
+    };
+    routeEventChannel().addEventListener("view-change", this.viewChangeHandler);
     this.view = readRouteView();
+
+    this.selectionChangeHandler = (e) => {
+      if (e && e.detail) {
+        this.selection = e.detail.selection;
+      }
+    };
+    routeEventChannel().addEventListener("selection-change", this.selectionChangeHandler);
+    this.selection = readRouteSelection();
+
+    this.deselectionHandler = () => {
+      this.selection = '';
+    }
+    routeEventChannel().addEventListener("selection-deselected", this.deselectionHandler);
   }
 
-  ready() {
-    super.ready();
+  disconnectedCallback() {
+    super.disconnectedCallback();
 
-    this.$.select.addEventListener("change", () => {
-      selectCharacterFromIndex(this.$.select.value);
-    });
-
-    this.$.select.renderer = (root, select) => {
-      if (root.firstChild) {
-        return;
-      }
-      const listBox = document.createElement('vaadin-list-box');
-
-      for (let i = 0; i < this.characterOptions.length; i ++) {
-        let char = this.characterOptions[i];
-        const item = document.createElement('vaadin-item');
-        item.textContent = char.name;
-        item.setAttribute("value", i);
-        listBox.appendChild(item);
-      }
-
-      // update the content
-      jqEmpty(root);
-      root.appendChild(listBox);
-    };
-
-    this.$.select.value = findCharacterIndex(this.selectedCharacter) + "";
+    getCharacterChannel().removeEventListener("character-selected", this.characterChangeHandler);
+    routeEventChannel().removeEventListener("view-change", this.viewChangeHandler);
+    routeEventChannel().removeEventListener("selection-change", this.selectionChangeHandler);
+    routeEventChannel().removeEventListener("selection-deselected", this.deselectionHandler);
   }
 
   classString(selectedCharacter) {
@@ -81,6 +73,23 @@ class DndCharacterPopup extends PolymerElement {
   
   addFeatureToCharacter() {
     addFeatureById();
+  }
+
+  _viewString(view) {
+    switch (view) {
+      case "classes":
+        return "Class";
+      default:
+        return util_capitalize(view.substring(0, view.length - 1));
+    }
+  }
+
+  _exists(a) {
+    return !!a;
+  }
+
+  _equal(a, b) {
+    return a === b;
   }
   
   static get template() {
@@ -110,20 +119,43 @@ class DndCharacterPopup extends PolymerElement {
         }
         .wrapper {
           display: flex;
-          justify-content: space-around;
+          justify-content: space-between;
           align-items: center;
           height: 100%;
+          margin: 0 32px;
+        }
+        .name {
+          display: flex;
+          align-items: center;
+        }
+        .name .mdc-icon-button {
+          margin-right: 16px;
+        }
+        .feature-button {
+          display: flex;
+          align-items: center;
+        }
+        .add-character-option {
+          margin-left: 24px;
+        }
+        [hidden] {
+          display: none !important;
         }
       </style>
       <div class="wrapper">
         <div class="name">
-          <vaadin-select id="select">
-          </vaadin-select>
+          <a class="mdc-icon-button material-icons" href="#/character-builder">launch</a>
+          <dnd-character-select></dnd-character-select>
         </div>
-        <div class="class">[[classString(selectedCharacter)]]</div>
-        <div class="feature">[[featureString(view, selectedCharacter)]]</div>
-        <button class="mdc-icon-button add-character-option material-icons"
-          on-click="addFeatureToCharacter">person_add</button>
+        <div class="feature-button">
+          <div class="class" hidden$="[[!_equal(view, 'classes')]]">[[classString(selectedCharacter)]]</div>
+          <div class="feature" hidden$="[[_equal(view, 'classes')]]">[[featureString(view, selectedCharacter)]]</div>
+          <button class="mdc-button add-character-option" on-click="addFeatureToCharacter" hidden$="[[!_exists(selection)]]">
+            <div class="mdc-button__ripple"></div>
+            <i class="material-icons mdc-button__icon" aria-hidden="true">person_add</i>
+            <span class="mdc-button__label">Add [[_viewString(view)]]</span>
+          </button>
+        </div>
       </div>
     `;
   }

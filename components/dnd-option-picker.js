@@ -1,5 +1,4 @@
 import {PolymerElement, html} from '@polymer/polymer';
-import '@vaadin/dialog'
 
 class DndOptionPicker extends PolymerElement {
   
