@@ -45,8 +45,8 @@ module.exports = {
           to: "favicon.ico"
         },
         {
-          from: path.resolve(__dirname, "node_modules/@webcomponents/webcomponentsjs/*.js"),
-          to: "node_modules/@webcomponents/webcomponentsjs/[name].[ext]"
+          from: path.resolve(__dirname, "node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js"),
+          to: "node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js"
         }
       ]
     })

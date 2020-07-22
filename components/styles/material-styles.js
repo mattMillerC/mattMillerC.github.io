@@ -7659,11 +7659,11 @@ styleElement.innerHTML = `
       }
 
       .mdc-tab .mdc-tab__text-label {
-          color: rgba(0, 0, 0, .6)
+          color: var(--mdc-theme-text-primary-on-background);
       }
 
       .mdc-tab .mdc-tab__icon {
-          color: rgba(0, 0, 0, .54);
+          color: var(--mdc-theme-text-primary-on-background);
           fill: currentColor
       }
 

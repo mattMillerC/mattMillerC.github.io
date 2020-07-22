@@ -67,6 +67,13 @@ class DndCharacterBuilderView extends PolymerElement {
       this.setStateFromCharacter(e.detail.character);
     };
     getCharacterChannel().addEventListener("character-selected", this.characterChangeHandler);
+
+    this.nameFieldFocusHandler = (e) => {
+      if (this.$.name.value === "New Character") {
+        this.$.name.inputElement.select();
+      }
+    }
+    this.$.name.addEventListener("focus", this.nameFieldFocusHandler)
   }
 
   disconnectedCallback() {
@@ -74,6 +81,7 @@ class DndCharacterBuilderView extends PolymerElement {
 
     this.removeEventListener("tabChange", this.tabChangeHandler);
     getCharacterChannel().removeEventListener("character-selected", this.characterChangeHandler);
+    this.$.name.removeEventListener("focus", this.nameFieldFocusHandler)
   }
 
   updateView(el) {
@@ -126,7 +134,7 @@ class DndCharacterBuilderView extends PolymerElement {
 
       <div class="head-wrap">
         <div class="char-change">
-          <vaadin-text-field class="name" value="{{characterName}}"></vaadin-text-field>
+          <vaadin-text-field id="name" class="name" value="{{characterName}}"></vaadin-text-field>
           <dnd-character-select mini></dnd-character-select>
           <button class="mdc-icon-button material-icons" on-click="newCharacter">person_add</button>
           <button class="mdc-icon-button material-icons" on-click="removeCharacter">delete</button>

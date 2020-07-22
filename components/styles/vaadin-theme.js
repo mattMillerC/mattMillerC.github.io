@@ -15,6 +15,21 @@ registerStyles('vaadin-select', css`
     :host([add]) [part="toggle-button"]::before {
       content: var(--lumo-icons-plus);
     }
+    :host([no-animate]) {
+      animation-duration: 0s !important;
+    }
+`);
+
+registerStyles('vaadin-select-overlay', css`
+    :host {
+      animation-duration: 0s !important;
+    }
+`);
+
+registerStyles('vaadin-list-box', css`
+    [part="items"] ::slotted([focus-ring]:not([disabled])) {
+      box-shadow: unset !important;
+    }
 `);
 
 registerStyles('vaadin-integer-field', css`

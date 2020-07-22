@@ -857,6 +857,12 @@ function initCollapseToggles(rootEl) {
 	}
 }
 
+function dashToCaplital(string) {
+	return string.replace( /-([a-z])/ig, function( all, letter ) {
+			return " " + letter.toUpperCase();
+	});
+}
+
 export {
   throttle,
   debounce,
@@ -925,5 +931,6 @@ export {
   getRuleSearchStackNames,
   cloneDeep,
   getFromPath,
-  initCollapseToggles
+	initCollapseToggles,
+	dashToCaplital
 };

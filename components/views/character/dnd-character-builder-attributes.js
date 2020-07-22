@@ -1,6 +1,22 @@
 import {PolymerElement, html} from "@polymer/polymer";
 import "@vaadin/vaadin-text-field/vaadin-integer-field";
-import { getCharacterChannel, getSelectedCharacter, updateAttr, getClassSaves } from "../../../util/charBuilder";
+import "../../dnd-select-add";
+import { 
+  getCharacterChannel,
+  getSelectedCharacter,
+  updateAttr,
+  getClassSaves,
+  getClassSkillProfOptions,
+  setClassSkillProficiencies,
+  getBackgroundSkillProfOptions,
+  setBackgroundSkillProficiencies,
+  getBackgroundSkillProfDefaults,
+  getSkillProfs,
+  getRaceAttributeOptions,
+  getRaceAttributeDefaults,
+  setRaceAttributes
+} from "../../../util/charBuilder";
+import { util_capitalizeAll } from "../../../js/utils";
 
 class DndCharacterBuilderAttributes extends PolymerElement {
   
@@ -51,6 +67,46 @@ class DndCharacterBuilderAttributes extends PolymerElement {
       saves: {
         type: Array,
         value: []
+      },
+      classSkillProfOptions: {
+        type: Object,
+        value: {}
+      },
+      backgroundSkillProfOptions: {
+        type: Object,
+        value: []
+      },
+      defaultBackgroundSkillProf: {
+        type: String,
+        value: ""
+      },
+      raceAttributeOptions: {
+        type: Object,
+        value: []
+      },
+      defaultRaceAttribute: {
+        type: String,
+        value: ""
+      },
+      strProfs: {
+        type: String,
+        value: ""
+      },
+      dexProfs: {
+        type: String,
+        value: ""
+      },
+      intProfs: {
+        type: String,
+        value: ""
+      },
+      wisProfs: {
+        type: String,
+        value: ""
+      },
+      chaProfs: {
+        type: String,
+        value: ""
       }
     };
   }
@@ -99,6 +155,52 @@ class DndCharacterBuilderAttributes extends PolymerElement {
       }
 
       this.saves = await getClassSaves();
+
+      // Skills from Class
+      this.classSkillProfOptions = await getClassSkillProfOptions();
+      this.classSkillProfSelections = character.classSkillProficiencies;
+
+      // Skills from Background
+      let backgroundSkills = await getBackgroundSkillProfOptions();
+      if (backgroundSkills && backgroundSkills.choose) {
+        this.backgroundSkillProfOptions = backgroundSkills.choose.from;
+        this.backgroundSkillProfChoices = backgroundSkills.choose.count || 1;
+        this.backgroundSkillProfSelections = character.backgroundSkillProficiencies;
+      } else {
+        this.backgroundSkillProfOptions = undefined;
+        this.backgroundSkillProfChoices = undefined;
+        this.backgroundSkillProfSelections = undefined;
+      }
+      let defaultBackgroundSkillProf = await getBackgroundSkillProfDefaults(backgroundSkills);
+      this.defaultBackgroundSkillProf = defaultBackgroundSkillProf.map(e => { return util_capitalizeAll(e) }).join(', ');
+
+      // Attributes from Race
+      let raceAttributes = await getRaceAttributeOptions();
+      if (raceAttributes && raceAttributes.choose) {
+        this.raceAttributeOptions = raceAttributes.choose.from.map(i => { return i.toUpperCase() });
+        this.raceAttributeChoices = raceAttributes.choose.count || 1;
+        this.raceAttributeSelections = character.raceAttributes;
+      } else {
+        this.raceAttributeOptions = undefined;
+        this.raceAttributeChoices = undefined;
+        this.raceAttributeSelections = undefined;
+      }
+      let defaultRaceAttribute = await getRaceAttributeDefaults(raceAttributes);
+      this.defaultRaceAttribute = defaultRaceAttribute.map(e => { return e[0].toUpperCase() + ' ' + this._absInt(e[1]) }).join(', ');
+
+      // todo = Attributes from Feats
+
+      let strProfs = await getSkillProfs('str')
+      this.strProfs = strProfs.map(s => {return util_capitalizeAll(s)}).join(', ');
+      let dexProfs = await getSkillProfs('dex')
+      this.dexProfs = dexProfs.map(s => {return util_capitalizeAll(s)}).join(', ');
+      let intProfs = await getSkillProfs('int')
+      this.intProfs = intProfs.map(s => {return util_capitalizeAll(s)}).join(', ');
+      let wisProfs = await getSkillProfs('wis')
+      this.wisProfs = wisProfs.map(s => {return util_capitalizeAll(s)}).join(', ');
+      let chaProfs = await getSkillProfs('cha')
+      this.chaProfs = chaProfs.map(s => {return util_capitalizeAll(s)}).join(', ');
+
     }
   }
 
@@ -131,9 +233,44 @@ class DndCharacterBuilderAttributes extends PolymerElement {
     return saves.indexOf(str) > -1;
   }
 
+  _exists() {
+    for (let arg of arguments) {
+      if (!!arg && (arg.constructor !== Object || Object.entries(arg).length > 0) && (!Array.isArray(arg) || arg.length > 0)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  _classSkillAddCallback(skills) {
+    setClassSkillProficiencies(skills);
+  }
+
+  _backgroundSkillAddCallback(skills) {
+    setBackgroundSkillProficiencies(skills);
+  }
+
+  _raceAttributeAddCallback(attr) {
+    setRaceAttributes(attr);
+  }
+
   static get template() {
     return html`
       <style include="material-styles">
+        :host {
+          background: var(--mdc-theme-surface);
+          display: block;
+          padding: 24px;
+          border: 1px solid var(--lumo-contrast-20pct);
+        }
+        .attr-choice-wrap,
+        .prof-choice-wrap {
+          display: flex;
+          flex-direction: row;
+          width: 100%;
+          justify-content: space-between;
+        }
+
         .table-wrap {
           display: flex;
           flex-wrap: wrap;
@@ -150,24 +287,32 @@ class DndCharacterBuilderAttributes extends PolymerElement {
         .data {
           margin-top: 32px;
           font-size: 18px;
-          padding: 16px;
+          padding: 8px;
           display: flex;
           justify-content: center;
         }
 
         .mod {
-          border: 1px solid black;
+          background: var(--lumo-contrast-10pct);
           border-radius: 4px;
           width: 32px;
           margin: 32px auto 0;
         }
 
+        .prof {
+          justify-content: flex-start;
+        }
+
+        .mobile-label .data {
+          justify-content: flex-start;
+        }
+
         vaadin-integer-field {
           width: 100px;
         }
-
-        th {
-          font-weight: normal;
+        
+        .save {
+          width: 24px;
         }
 
         .save-icon {
@@ -187,6 +332,33 @@ class DndCharacterBuilderAttributes extends PolymerElement {
           }
         }
       </style>
+  
+      <div class="prof-choice-wrap">
+        <div>
+          <div hidden$="[[_exists(classSkillProfOptions)]]">Select 1st Level to add Skill Proficiencies</div>
+          <div hidden$="[[!_exists(classSkillProfOptions)]]">Skill Proficiencies from Class</div>
+          <dnd-select-add hidden$="[[!_exists(classSkillProfOptions)]]" choices="[[classSkillProfOptions.count]]" placeholder="<Choose Skills>"
+            options="[[classSkillProfOptions.from]]" value="[[classSkillProfSelections]]" add-callback="[[_classSkillAddCallback]]"></dnd-select-add>
+        </div>
+
+        <div>
+          <div hidden$="[[_exists(backgroundSkillProfOptions, defaultBackgroundSkillProf)]]">Select Background to add Skill Proficiencies</div>
+          <div hidden$="[[!_exists(backgroundSkillProfOptions, defaultBackgroundSkillProf)]]">Skill Proficiencies from Background</div>
+          <div hidden$="[[!_exists(defaultBackgroundSkillProf)]]">Default: [[defaultBackgroundSkillProf]]</div>
+          <dnd-select-add hidden$="[[!_exists(backgroundSkillProfOptions)]]" choices="[[backgroundSkillProfChoices]]" placeholder="<Choose Skills>"
+            options="[[backgroundSkillProfOptions]]" value="[[backgroundSkillProfSelections]]" add-callback="[[_backgroundSkillAddCallback]]"></dnd-select-add>
+        </div>
+      </div>
+
+      <div class="attr-choice-wrap">
+        <div>
+          <div hidden$="[[_exists(raceAttributeOptions, defaultRaceAttribute)]]">Select Race to add Attribute Bonuses</div>
+          <div hidden$="[[!_exists(raceAttributeOptions, defaultRaceAttribute)]]">Attribute Bonuses from Race</div>
+          <div hidden$="[[!_exists(defaultRaceAttribute)]]">Default: [[defaultRaceAttribute]]</div>
+          <dnd-select-add hidden$="[[!_exists(raceAttributeOptions)]]" choices="[[raceAttributeChoices]]" placeholder="<Choose Attribute>"
+            options="[[raceAttributeOptions]]" value="[[raceAttributeSelections]]" add-callback="[[_raceAttributeAddCallback]]"></dnd-select-add>
+        </div>
+      </div>
 
       <div class="table-wrap">
         <table class="stats">
@@ -242,52 +414,52 @@ class DndCharacterBuilderAttributes extends PolymerElement {
           <thead>
             <tr>
               <th class="mobile-label">Attribute</th>
-              <th>Save</th>
-              <th>Proficiencies</th>
+              <th><div class="save">Save</div></th>
+              <th><div class="prof">Proficiencies</div></th>
             </tr>
           </thead>
           <tbody>
             <tr class="row">
-              <td class="mobile-label"><div class="data">Strength</div></td>
+              <td class="mobile-label"><div class="data">STR</div></td>
               <td><div class="save data">
                 <span hidden$="[[!_contains(saves, 'str')]]" class="save-icon material-icons">done</span>
               </div></td>
-              <td><div class="prof data">Athletics</div></td>
+              <td><div class="prof data">[[strProfs]]</div></td>
             </tr>
             <tr class="row">
-              <td class="mobile-label"><div class="data">Dexterity</div></td>
+              <td class="mobile-label"><div class="data">DEX</div></td>
               <td><div class="save data">
                 <span hidden$="[[!_contains(saves, 'dex')]]" class="save-icon material-icons">done</span>
               </div></td>
-              <td><div class="prof data"></div></td>
+              <td><div class="prof data">[[dexProfs]]</div></td>
             </tr>
             <tr class="row">
-              <td class="mobile-label"><div class="data">Constitution</div></td>
+              <td class="mobile-label"><div class="data">CON</div></td>
               <td><div class="save data">
                 <span hidden$="[[!_contains(saves, 'con')]]" class="save-icon material-icons">done</span>
               </div></td>
               <td><div class="prof data"></div></td>
             </tr>
             <tr class="row">
-              <td class="mobile-label"><div class="data">Intellegence</div></td>
+              <td class="mobile-label"><div class="data">INT</div></td>
               <td><div class="save data">
                 <span hidden$="[[!_contains(saves, 'int')]]" class="save-icon material-icons">done</span>
               </div></td>
-              <td><div class="prof data"></div></td>
+              <td><div class="prof data">[[intProfs]]</div></td>
             </tr>
             <tr class="row">
-              <td class="mobile-label"><div class="data">Wisdom</div></td>
+              <td class="mobile-label"><div class="data">WIS</div></td>
               <td><div class="save data">
                 <span hidden$="[[!_contains(saves, 'wis')]]" class="save-icon material-icons">done</span>
               </div></td>
-              <td><div class="prof data"></div></td>
+              <td><div class="prof data">[[wisProfs]]</div></td>
             </tr>
             <tr class="row">
-              <td class="mobile-label"><div class="data">Charisma</div></td>
+              <td class="mobile-label"><div class="data">CHA</div></td>
               <td><div class="save data">
                 <span hidden$="[[!_contains(saves, 'cha')]]" class="save-icon material-icons">done</span>
               </div></td>
-              <td><div class="prof data"></div></td>
+              <td><div class="prof data">[[chaProfs]]</div></td>
             </tr>
           </tbody>
         </table>

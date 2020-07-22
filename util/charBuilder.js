@@ -17,7 +17,12 @@ let schema = {
   },
   background: {
   },
-  levels: []
+  levels: [],
+  subclasses: {},
+  classSkillProficiencies: [],
+  backgroundSkillProficiencies: [],
+  raceAttributes: [],
+  asi: []
 }
 
 const channel = document.createElement('div');
@@ -177,12 +182,18 @@ async function addFeatureById(type = readRouteView(), id = readRouteSelection(),
   }
 }
 
-function mergeFeature(character, selectedItem, type) {
+function mergeFeature(character = selectedCharacter, selectedItem, type) {
   if (type === "classes") {
-    mergeClass(selectedItem, character);
+    mergeClass(character, selectedItem);
   } else {
+    if (type === "backgrounds") {
+      character.backgroundSkillProficiencies = []
+    }
+    if (type === "races") {
+      character.raceAttributes = [];
+    }
     // backgrounds, feats, and races, currently just have to remove the 's'
-    let featureKey = type.substring(0, type.length - 1);
+    let featureKey = transformTypeToFeatureKey(type);
 
     if (character[featureKey] === undefined) {
       character[featureKey] = {};
@@ -195,15 +206,31 @@ function mergeFeature(character, selectedItem, type) {
   saveCharacter(character);
 }
 
+function transformTypeToFeatureKey(type) {
+  return type.substring(0, type.length - 1);
+}
+
 function mergeClass(character, selectedItem) {
-  // todo
   if (character.levels === undefined) {
     character.levels = [];
+  }
+  if (character.levels.length === 0) {
+    character.classSkillProficiencies = [];
   }
   character.levels.push({
     name: selectedItem.name,
     id: selectedItem.name + '_' + selectedItem.source
   });
+}
+
+function mergeSubclass(character = selectedCharacter, className, subclass) {
+  if (character) {
+    if (!character.subclasses) {
+      character.subclasses = {}
+    }
+    character.subclasses[className] = subclass.name;
+    saveCharacter(character);
+  }
 }
 
 function addClassLevel(classLevel, character = selectedCharacter) {
@@ -294,23 +321,45 @@ function getFeatureString(featureId, selectedCharacter, short = false) {
   }
 }
 
-async function getClassReferences(char = selectedCharacter) {
+async function getClassReferences(char = selectedCharacter, index) {
+  let classReferences = {};
+
   if (char.levels && char.levels.length) {
     let classData = await loadModel("classes");
 
-    let classReferences = selectedCharacter.levels.reduce((obj, level) => {
-      if (level.name) {
-        if (!obj.hasOwnProperty(level.name)) {
-          obj[level.name] = resolveHash(classData, level.name);
+    if (index === undefined) {
+      classReferences = char.levels.reduce((obj, level) => {
+        if (level.name) {
+          if (!obj.hasOwnProperty(level.name)) {
+            obj[level.name] = resolveHash(classData, level.name);
+          }
         }
-      }
-      return obj;
-    }, {});
-
-    return classReferences;
+        return obj;
+      }, {});
+    } else if (char.levels.length > index) {
+      classReferences = resolveHash(classData, char.levels[index].name);
+    }
   }
-  return {};
+  return classReferences;
 }
+
+async function getTypeReference(type, char = selectedCharacter) {
+  let feature = transformTypeToFeatureKey(type);
+
+  if (char && char[feature] && char[feature].name) {
+    let data = await loadModel(type);
+    return resolveHash(data, char[feature].name);
+  }
+}
+
+async function getBackgroundReference(char = selectedCharacter) {
+  return await getTypeReference("backgrounds", char);
+}
+
+async function getRaceReference(char = selectedCharacter) {
+  return await getTypeReference("races", char);
+}
+
 
 async function getClassSaves(char = selectedCharacter) {
   if (char.levels && char.levels.length) {
@@ -322,6 +371,221 @@ async function getClassSaves(char = selectedCharacter) {
     }
   }
   return [];
+}
+
+
+function getSubclassChoiceLevel(classDef) {
+  let subclassTitle = classDef.subclassTitle,
+    subclassChoiceLevel;
+
+  if (subclassTitle) {
+    for (let i = 0; i < classDef.classFeatures.length; i++) {
+      let levelFeatures = classDef.classFeatures[i];
+
+      for (let feature of levelFeatures) {
+        if (feature.name.toLowerCase() === subclassTitle.toLowerCase()) {
+          subclassChoiceLevel = i + 1;
+          break;
+        }
+      }
+      if (subclassChoiceLevel !== undefined) {
+        break;
+      }
+    }
+    return subclassChoiceLevel;
+  }
+}
+
+async function getClassSkillProfOptions(character = selectedCharacter) {
+  let firstClass = await getClassReferences(character, 0)
+  
+  if (firstClass && firstClass.startingProficiencies) {
+    return firstClass.startingProficiencies.skills[0].choose;
+  }
+}
+
+async function getBackgroundSkillProfOptions(character = selectedCharacter) {
+  let background = await getBackgroundReference(character);
+  
+  if (background && background.skillProficiencies) {
+    return background.skillProficiencies[0];
+  }
+}
+
+async function getRaceAttributeOptions(character = selectedCharacter) {
+  let race = await getRaceReference(character);
+
+  if (race && race.ability) {
+    return race.ability[0];
+  }
+}
+
+async function getBackgroundSkillProfDefaults(backgroundSkills) {
+  let backgroundSkillz = backgroundSkills || await getBackgroundSkillProfOptions();
+  if (backgroundSkillz) {
+    return Object.entries(backgroundSkillz).filter(e => {return e[0] !== 'choose'}).map(e => {return e[0]});
+  } else {
+    return [];
+  }
+}
+
+async function getRaceAttributeDefaults(raceAttr) {
+  let raceAttrs = raceAttr || await getRaceAttributeOptions();
+  if (raceAttrs) {
+    return Object.entries(raceAttrs).filter(e => {return e[0] !== 'choose'});
+  } else {
+    return [];
+  }
+}
+
+function setClassSkillProficiencies(skills, character = selectedCharacter) {
+  if (character) {
+    character.classSkillProficiencies = skills;
+    saveCharacter(character);
+  }
+}
+
+function setBackgroundSkillProficiencies(skills, character = selectedCharacter) {
+  if (character) {
+    character.backgroundSkillProficiencies = skills;
+    saveCharacter(character);
+  }
+}
+
+function setRaceAttributes(attr, character = selectedCharacter) {
+  if (character) {
+    character.raceAttributes = attr;
+    saveCharacter(character);
+  }
+}
+
+async function getASIForLevel(level, character = selectedCharacter) {
+  const asiArray = character.asi,
+    classData = await loadModel("classes");
+  let asiIndex = -1
+
+  for (let i = 0; i <= level && i < character.levels.length; i ++) {
+    const curLevel = character.levels[i],
+      classLevelData = resolveHash(classData, curLevel.name);
+
+    for (let feature of classLevelData.classFeatures[i]) {
+      if (feature.name === "Ability Score Improvement") {
+        asiIndex ++;
+        break;
+      }
+    }
+  }
+  if (asiIndex === -1) {
+    console.error("ASI not found at level");
+    return { asi: undefined, index: undefined };
+  }
+  if (asiArray && asiArray.length > asiIndex) {
+    return { asi: asiArray[asiIndex], index: asiIndex };
+  }
+  return { asi: undefined, index: asiIndex };
+}
+
+function setASI(asiObj, index, character = selectedCharacter) {
+  if (!character.asi) {
+    character.asi = [];
+  } 
+  
+  if (character.asi.length > index) {
+    character.asi[index] = asiObj;
+  } else {
+    let currentLength = character.asi.length
+    for (let i = currentLength; i <= index - 1; i++) {
+      character.asi.push({
+        ability1: '',
+        ability2: '',
+        feat: { name: '', source: '' },
+        isFeat: false
+      });
+    }
+    character.asi.push(asiObj);
+  }
+
+  saveCharacter(character);
+}
+
+async function getSkillProfs(attr, character = selectedCharacter) {
+  let classSkills = character.classSkillProficiencies || [],
+    choosenBackgroundSkills = character.backgroundSkillProficiencies || [],
+    defaultBackgroundSkills = await getBackgroundSkillProfDefaults(),
+    allSkills = classSkills.concat(choosenBackgroundSkills).concat(defaultBackgroundSkills);
+  
+  if (attr) {
+    let skillsForAttr = [];
+    switch(attr) {
+      case 'str':
+        if (allSkills.includes('athletics')) {
+          skillsForAttr.push('athletics');
+        }
+        break;
+      case 'dex':
+        if (allSkills.includes('acrobatics')) {
+          skillsForAttr.push('acrobatics');
+        }
+        if (allSkills.includes('sleight of hand')) {
+          skillsForAttr.push('sleight of hand');
+        }
+        if (allSkills.includes('stealth')) {
+          skillsForAttr.push('stealth');
+        }
+        break;
+      case 'int':
+        if (allSkills.includes('arcana')) {
+          skillsForAttr.push('arcana');
+        }
+        if (allSkills.includes('history')) {
+          skillsForAttr.push('history');
+        }
+        if (allSkills.includes('investigation')) {
+          skillsForAttr.push('investigation');
+        }
+        if (allSkills.includes('nature')) {
+          skillsForAttr.push('nature');
+        }
+        if (allSkills.includes('religion')) {
+          skillsForAttr.push('religion');
+        }
+        break;
+      case 'wis':
+        if (allSkills.includes('animal handling')) {
+          skillsForAttr.push('animal handling');
+        }
+        if (allSkills.includes('insight')) {
+          skillsForAttr.push('insight');
+        }
+        if (allSkills.includes('medicine')) {
+          skillsForAttr.push('medicine');
+        }
+        if (allSkills.includes('perception')) {
+          skillsForAttr.push('perception');
+        }
+        if (allSkills.includes('survival')) {
+          skillsForAttr.push('survival');
+        }
+        break;
+      case 'cha':
+        if (allSkills.includes('deception')) {
+          skillsForAttr.push('deception');
+        }
+        if (allSkills.includes('intimidation')) {
+          skillsForAttr.push('intimidation');
+        }
+        if (allSkills.includes('performance')) {
+          skillsForAttr.push('performance');
+        }
+        if (allSkills.includes('persuasion')) {
+          skillsForAttr.push('persuasion');
+        }
+        break
+    }
+    return skillsForAttr;
+  } else {
+    return allSkills;
+  }
 }
 
 export {
@@ -337,6 +601,20 @@ export {
   getSelectedCharacter,
   setClassLevels,
   addClassLevel,
+  mergeFeature,
+  mergeSubclass,
+  getSubclassChoiceLevel,
+  getClassSkillProfOptions,
+  getBackgroundSkillProfOptions,
+  setClassSkillProficiencies,
+  setBackgroundSkillProficiencies,
+  getBackgroundSkillProfDefaults,
+  getRaceAttributeOptions,
+  getRaceAttributeDefaults,
+  setRaceAttributes,
+  getASIForLevel,
+  setASI,
+  getSkillProfs,
   initSelectedCharacter,
   getClassReferences,
   getClassString,
