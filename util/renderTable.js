@@ -87,7 +87,7 @@ function renderTable(data, rootEl, columns) {
         case "prerequisite":
           let prereqText = utils_makePrerequisite(curItem.prerequisite, true);
           if (!prereqText) {
-            prereqText = STR_NONE;
+            prereqText = '--';
           }
           columnsHtmlString += `<td class='table-cell prerequisite ${
             prereqText === STR_NONE ? "list-entry-none " : ""
@@ -335,6 +335,20 @@ function renderTable(data, rootEl, columns) {
           curItem._fTier = tierTags;
           curItem._fAttunement = attunement;
           columnsHtmlString += `<td class='table-cell item-rarity ${col.cssClass}'>${curItem.rarity}</td>`;
+          break;
+
+        case "feature-type":
+          if (!filters[col.id]) {
+            let typeFilter = new Filter({ header: "Type" });
+            typeFilter.metric = "_fType";
+            filters[col.id] = typeFilter;
+          }
+          let typeArray = curItem.featureType ? Array.isArray(curItem.featureType) ? curItem.featureType : [curItem.featureType] : [];
+          curItem._fType = typeArray.map(t => Parser.featureJsonToAbv(t));
+		      curItem._fType.forEach(t => filters[col.id].addIfAbsent(t));
+          columnsHtmlString += `<td class='table-cell feature-type ${col.cssClass}'>
+              ${typeArray.map(t => { return `<span title="${Parser.featureJsonToAbv(t)}">${t}</span>` }).join(' ')}
+            </td>`;
           break;
       } // End Column Switch
     } // End Column Loop

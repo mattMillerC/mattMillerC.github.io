@@ -214,6 +214,10 @@ Parser.sourceJsonToAbv = function(source) {
   return Parser._parse_aToB(Parser.SOURCE_JSON_TO_ABV, source);
 };
 
+Parser.featureJsonToAbv = function(source) {
+  return Parser._parse_aToB(Parser.OPT_FEATURE_TYPE_TO_FULL, source);
+};
+
 Parser.stringToSlug = function(str) {
   return str
     .toLowerCase()
@@ -775,6 +779,36 @@ Parser.ITEM_TYPE_JSON_TO_ABV = {
   VEH: "Vehicle",
   WD: "Wand"
 };
+
+Parser.OPT_FEATURE_TYPE_TO_FULL = {
+  AI: "Artificer Infusion",
+  ED: "Elemental Discipline",
+  EI: "Eldritch Invocation",
+  MM: "Metamagic",
+  MV: "Maneuver",
+  "MV:B": "Maneuver: Battle Master",
+  "MV:C2-UA": "Maneuver: Cavalier V2 (UA)",
+  "AS:V1-UA": "Arcane Shot: V1 (UA)",
+  "AS:V2-UA": "Arcane Shot: V2 (UA)",
+  AS: "Arcane Shot",
+  OTH: "Other",
+  "FS:F": "Fighting Style: Fighter",
+  "FS:B": "Fighting Style: Bard",
+  "FS:P": "Fighting Style: Paladin",
+  "FS:R": "Fighting Style: Ranger",
+  PB: "Pact Boon",
+  "SHP:H": "Ship Upgrade: Hull",
+  "SHP:M": "Ship Upgrade: Movement",
+  "SHP:W": "Ship Upgrade: Weapon",
+  "SHP:F": "Ship Upgrade: Figurehead",
+  "SHP:O": "Ship Upgrade: Miscellaneous",
+  "IWM:W": "Infernal War Machine Variant: Weapon",
+  "IWM:A": "Infernal War Machine Upgrade: Armor",
+  "IWM:G": "Infernal War Machine Upgrade: Gadget",
+  OR: "Onomancy Resonant",
+  RN: "Rune Knight Rune",
+  AF: "Alchemical Formula"
+},
 
 Parser.DMGTYPE_JSON_TO_FULL = {
   B: "bludgeoning",

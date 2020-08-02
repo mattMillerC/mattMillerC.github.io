@@ -22,9 +22,7 @@ const ATB_DATA_SC_LIST = "data-subclass-list";
 
 import {
   jqHeight,
-  jqOffset,
   parseHTML,
-  throttle,
   ascSort,
   encodeForHash,
   jqAfter,
@@ -169,11 +167,16 @@ function onClassChange(curClass, rootEl) {
   }
 
   // FEATURE TABLE ===================================================================================================
-  const tData = curClass.classTableGroups;
+  let tData = curClass.classTableGroups || [];
   const groupHeaders = rootEl.querySelector("#groupHeaders");
   const colHeaders = rootEl.querySelector("#colHeaders");
   const levelTrs = [];
   let spellsFlag = false;
+  for (let subclassDef of curClass.subclasses) {
+    if (subclassDef.subclassTableGroups) {
+      tData = tData.concat(subclassDef.subclassTableGroups);
+    }
+  }
   if (tData) {
     for (let i = 0; i < tData.length; i++) {
       const tGroup = tData[i];
@@ -592,7 +595,6 @@ function onSubChange(sub, curHash, rootEl) {
 
       const asInTable = v.getAttribute(ATB_DATA_SC) + ATB_DATA_PART_SEP + v.getAttribute(ATB_DATA_SRC);
       shownInTable.push(asInTable);
-      handleTableGroups(shownInTable, asInTable, true);
     }
 
     for (let v of $toHide) {
@@ -610,9 +612,9 @@ function onSubChange(sub, curHash, rootEl) {
         }
       }
       v.getAttribute(ATB_DATA_SC);
-      const asInTable = v.getAttribute(ATB_DATA_SC) + ATB_DATA_PART_SEP + v.getAttribute(ATB_DATA_SRC);
-      handleTableGroups(shownInTable, asInTable, false);
-    };
+    }
+    
+    handleTableGroups(shownInTable);
 
     if (hideOtherSources) {
       for (let otherSrcSubFeat of otherSrcSubFeats) {
@@ -691,31 +693,19 @@ function onSubChange(sub, curHash, rootEl) {
 
 	updateClassTableLinks();
 
-	function handleTableGroups(shownInTable, tableDataTag, show) {
-		let listEls = rootEl.querySelectorAll(`[data-subclass-list]`);
-		for (let el of listEls) {
-			const $this = el;
-			const scs = $this.getAttribute(ATB_DATA_SC_LIST).split(ATB_DATA_LIST_SEP);
+  function handleTableGroups(toShow) {
+    let listEls = rootEl.querySelectorAll(`[${ATB_DATA_SC_LIST}]`);
+    for (let el of listEls) {
+      const scs = el.getAttribute(ATB_DATA_SC_LIST).split(ATB_DATA_LIST_SEP);
 
-			// if another class has shown this item, don't hide it
-			if (!show) {
-				for (let i = 0; i < scs.length; i++) {
-					const sc = scs[i];
-					if (sc.indexOf(shownInTable) > -1) {
-						return;
-					}
-				}
-			}
-
-			for (let i = 0; i < scs.length; i++) {
-				const sc = scs[i];
-				if (sc === tableDataTag) {
-					if (show) $this.style.display = null;
-					else $this.style.display = 'none';
-					break;
-				}
-			}
-		}
+      for (let shown of toShow) {
+        if (scs.includes(shown)) {
+          el.style.display = null;
+          break;
+        }
+          el.style.display = 'none';
+        }
+      }
 	}
 
 	function updateClassTableLinks () {

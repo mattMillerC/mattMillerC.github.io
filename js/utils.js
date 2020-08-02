@@ -337,6 +337,56 @@ function utils_makePrerequisite(prereqList, shorthand, makeAsArray) {
 				}
 			}
 		}
+		if (pre.spell !== undefined) {
+			for (let spell of pre.spell) {
+				const spellArray = spell.split("#");
+				const spellStr = spellArray[0];
+				if (shorthand) {
+					outStack.push(`<a href="#/spells/${spellStr}">${util_capitalizeAll(spellStr)}</a>`);
+				} else {
+					if (spellStr.toLowerCase() === 'hex/curse') {
+						outStack.push(`<a href="#/spells/hex">Hex</a> or a warlock feature that curses`);
+					} else {
+						outStack.push(`<a href="#/spells/${spellStr}">${util_capitalizeAll(spellStr)}</a>`);
+					}
+				}
+			}
+		}
+		if (pre.pact !== undefined) {
+			if (shorthand) {
+				outStack.push(pre.pact + " Pact");
+			} else {
+				outStack.push("Pact of the " + pre.pact);
+			}
+		}
+		if (pre.level !== undefined) {
+			if (shorthand) {
+				outStack.push('Level ' + pre.level.level);
+			} else {
+				outStack.push(`Level ${pre.level.level} ${pre.level.class.name}`);
+			}
+		}
+		if (pre.patron !== undefined) {
+			if (shorthand) {
+				outStack.push(pre.patron + " Patron");
+			} else {
+				outStack.push(pre.patron + " Patron");
+			}
+		}
+		if (pre.item !== undefined) {
+			for (let item of pre.item) {
+				if (!shorthand) {
+					outStack.push(item);
+				}
+			}
+		}
+		if (pre.otherSummary !== undefined) {
+			if (shorthand) {
+				outStack.push(pre.otherSummary);
+			} else {
+				outStack.push(pre.otherSummary);
+			}
+		}
 		if (pre.spellcasting === "YES") {
 			if (shorthand) {
 				outStack.push("Spellcasting");
@@ -348,8 +398,8 @@ function utils_makePrerequisite(prereqList, shorthand, makeAsArray) {
 	if (makeAsArray) {
 		return outStack;
 	} else {
-		if (shorthand) return outStack.join("/");
-		else return utils_joinPhraseArray(outStack, ", ", " or ");
+		if (shorthand) return outStack.join(" / ") || "--";
+		else return utils_joinPhraseArray(outStack, ", ", ", ");
 	}
 }
 

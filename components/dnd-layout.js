@@ -279,6 +279,10 @@ class DndLayout extends PolymerElement {
               <i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">face</i>
               <span class="mdc-list-item__text">Races</span>
             </a>
+            <a class="mdc-list-item mdc-theme--on-surface" href="#/features">
+              <i class="material-icons mdc-list-item__graphic mdc-theme--on-surface" aria-hidden="true">build</i>
+              <span class="mdc-list-item__text">Class Features</span>
+            </a>
 
             <hr class="mdc-list-divider" />
             <h6 class="mdc-list-group__subheader mdc-theme--on-surface">References</h6>

@@ -14,7 +14,8 @@ import {
   getSkillProfs,
   getRaceAttributeOptions,
   getRaceAttributeDefaults,
-  setRaceAttributes
+  setRaceAttributes,
+  getASIAndFeatAttributeData
 } from "../../../util/charBuilder";
 import { util_capitalizeAll } from "../../../js/utils";
 
@@ -175,20 +176,62 @@ class DndCharacterBuilderAttributes extends PolymerElement {
       this.defaultBackgroundSkillProf = defaultBackgroundSkillProf.map(e => { return util_capitalizeAll(e) }).join(', ');
 
       // Attributes from Race
+      let attributeAdj = {
+        str: 0,
+        dex: 0,
+        con: 0,
+        int: 0,
+        wis: 0,
+        cha: 0
+      };
       let raceAttributes = await getRaceAttributeOptions();
       if (raceAttributes && raceAttributes.choose) {
         this.raceAttributeOptions = raceAttributes.choose.from.map(i => { return i.toUpperCase() });
         this.raceAttributeChoices = raceAttributes.choose.count || 1;
         this.raceAttributeSelections = character.raceAttributes;
+        character.raceAttributes.forEach(a => {
+          attributeAdj[a.toLowerCase()] ++;
+        });
       } else {
         this.raceAttributeOptions = undefined;
         this.raceAttributeChoices = undefined;
         this.raceAttributeSelections = undefined;
       }
       let defaultRaceAttribute = await getRaceAttributeDefaults(raceAttributes);
-      this.defaultRaceAttribute = defaultRaceAttribute.map(e => { return e[0].toUpperCase() + ' ' + this._absInt(e[1]) }).join(', ');
+      this.defaultRaceAttribute = defaultRaceAttribute
+        .map(e => {
+          let attribute = e[0].toLowerCase(),
+            mod = e[1];
+          attributeAdj[attribute] += mod;
+          return attribute.toUpperCase() + ' ' + this._absInt(mod);
+        }).join(', ');
 
-      // todo = Attributes from Feats
+      let asiData = await getASIAndFeatAttributeData();
+      for (let asi of asiData) {
+        if (asi.featSelections) {
+          attributeAdj[asi.featSelections.toLowerCase()] += 1;
+        }
+        if (asi.featAttribute) {
+          Object.entries(asi.featAttribute).filter(e => { return e[0] !== 'choose'}).forEach(e => {
+            let attribute = e[0].toLowerCase(),
+            mod = e[1];
+            attributeAdj[attribute] += mod;
+          });
+        }
+        if (asi.asiAttributes) {
+          Object.entries(asi.asiAttributes).forEach(e => {
+            let attribute = e[0].toLowerCase(),
+            mod = e[1];
+            attributeAdj[attribute] += mod;
+          });
+        }
+      }
+      this.strAdj = attributeAdj.str;
+      this.dexAdj = attributeAdj.dex;
+      this.conAdj = attributeAdj.con;
+      this.intAdj = attributeAdj.int;
+      this.wisAdj = attributeAdj.wis;
+      this.chaAdj = attributeAdj.cha;
 
       let strProfs = await getSkillProfs('str')
       this.strProfs = strProfs.map(s => {return util_capitalizeAll(s)}).join(', ');
@@ -200,7 +243,6 @@ class DndCharacterBuilderAttributes extends PolymerElement {
       this.wisProfs = wisProfs.map(s => {return util_capitalizeAll(s)}).join(', ');
       let chaProfs = await getSkillProfs('cha')
       this.chaProfs = chaProfs.map(s => {return util_capitalizeAll(s)}).join(', ');
-
     }
   }
 
@@ -266,9 +308,22 @@ class DndCharacterBuilderAttributes extends PolymerElement {
         .attr-choice-wrap,
         .prof-choice-wrap {
           display: flex;
-          flex-direction: row;
+          flex-direction: column;
           width: 100%;
           justify-content: space-between;
+        }
+        .attr-choice-wrap dnd-select-add,
+        .prof-choice-wrap dnd-select-add {
+          width: 100%;
+        }
+        
+        .attr-choice-wrap > div,
+        .prof-choice-wrap > div {
+          margin-bottom: 24px;
+        }
+
+        .default-selection {
+          font-style: italic;
         }
 
         .table-wrap {
@@ -330,6 +385,10 @@ class DndCharacterBuilderAttributes extends PolymerElement {
           .mobile-label {
             display: none;
           }
+          .attr-choice-wrap,
+          .prof-choice-wrap {
+            flex-direction: row;
+          }
         }
       </style>
   
@@ -344,7 +403,7 @@ class DndCharacterBuilderAttributes extends PolymerElement {
         <div>
           <div hidden$="[[_exists(backgroundSkillProfOptions, defaultBackgroundSkillProf)]]">Select Background to add Skill Proficiencies</div>
           <div hidden$="[[!_exists(backgroundSkillProfOptions, defaultBackgroundSkillProf)]]">Skill Proficiencies from Background</div>
-          <div hidden$="[[!_exists(defaultBackgroundSkillProf)]]">Default: [[defaultBackgroundSkillProf]]</div>
+          <div hidden$="[[!_exists(defaultBackgroundSkillProf)]]" class="default-selection">Default: [[defaultBackgroundSkillProf]]</div>
           <dnd-select-add hidden$="[[!_exists(backgroundSkillProfOptions)]]" choices="[[backgroundSkillProfChoices]]" placeholder="<Choose Skills>"
             options="[[backgroundSkillProfOptions]]" value="[[backgroundSkillProfSelections]]" add-callback="[[_backgroundSkillAddCallback]]"></dnd-select-add>
         </div>
@@ -354,7 +413,7 @@ class DndCharacterBuilderAttributes extends PolymerElement {
         <div>
           <div hidden$="[[_exists(raceAttributeOptions, defaultRaceAttribute)]]">Select Race to add Attribute Bonuses</div>
           <div hidden$="[[!_exists(raceAttributeOptions, defaultRaceAttribute)]]">Attribute Bonuses from Race</div>
-          <div hidden$="[[!_exists(defaultRaceAttribute)]]">Default: [[defaultRaceAttribute]]</div>
+          <div hidden$="[[!_exists(defaultRaceAttribute)]]" class="default-selection">Default: [[defaultRaceAttribute]]</div>
           <dnd-select-add hidden$="[[!_exists(raceAttributeOptions)]]" choices="[[raceAttributeChoices]]" placeholder="<Choose Attribute>"
             options="[[raceAttributeOptions]]" value="[[raceAttributeSelections]]" add-callback="[[_raceAttributeAddCallback]]"></dnd-select-add>
         </div>

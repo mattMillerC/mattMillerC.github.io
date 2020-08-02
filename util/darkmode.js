@@ -7,8 +7,8 @@ export default function setDarkmode(isDark) {
         root.style.setProperty("--mdc-theme-background", "#121212");
         root.style.setProperty("--mdc-theme-surface", "#1f1f1f");
         root.style.setProperty("--mdc-theme-error", "#cf6679");
-        root.style.setProperty("--mdc-theme-on-primary", "hsla(214, 96%, 96%, 0.9)");
-        root.style.setProperty("--mdc-theme-on-secondary", "hsla(214, 96%, 96%, 0.9)");
+        root.style.setProperty("--mdc-theme-on-primary", "#000");
+        root.style.setProperty("--mdc-theme-on-secondary", "#000");
         root.style.setProperty("--mdc-theme-on-surface", "hsla(214, 96%, 96%, 0.9)");
         root.style.setProperty("--mdc-theme-on-error", "#000");
         root.style.setProperty("--mdc-theme-text-primary-on-background", "#fff");

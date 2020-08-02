@@ -99,11 +99,9 @@ class DndCharacterPopup extends PolymerElement {
         :host {
           position: fixed;
           width: 100%;
-          height: 60px;
           bottom: 0;
-          background: white;
+          background: var(--mdc-theme-surface);
           right: 0;
-          border-top: 1px solid lightgray;
           z-index: 2;
         }
         
@@ -121,8 +119,9 @@ class DndCharacterPopup extends PolymerElement {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          height: 100%;
-          margin: 0 32px;
+          flex-wrap: wrap;
+          border-top: 1px solid var(--mdc-theme-text-divider-on-background);
+          padding: 10px 32px;
         }
         .name {
           display: flex;
@@ -142,7 +141,7 @@ class DndCharacterPopup extends PolymerElement {
           display: none !important;
         }
       </style>
-      <div class="wrapper">
+      <div class="wrapper" hidden$="[[!_exists(selection)]]">
         <div class="name">
           <a class="mdc-icon-button material-icons" href="#/character-builder">launch</a>
           <dnd-character-select></dnd-character-select>
@@ -150,7 +149,7 @@ class DndCharacterPopup extends PolymerElement {
         <div class="feature-button">
           <div class="class" hidden$="[[!_equal(view, 'classes')]]">[[classString(selectedCharacter)]]</div>
           <div class="feature" hidden$="[[_equal(view, 'classes')]]">[[featureString(view, selectedCharacter)]]</div>
-          <button class="mdc-button add-character-option" on-click="addFeatureToCharacter" hidden$="[[!_exists(selection)]]">
+          <button class="mdc-button add-character-option" on-click="addFeatureToCharacter">
             <div class="mdc-button__ripple"></div>
             <i class="material-icons mdc-button__icon" aria-hidden="true">person_add</i>
             <span class="mdc-button__label">Add [[_viewString(view)]]</span>

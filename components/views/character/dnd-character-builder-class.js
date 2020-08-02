@@ -222,6 +222,10 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
     return levels.indexOf(level);
   }
 
+  _isMobile() {
+    return window.innerWidth < 921;
+  }
+
   static get template() {
     return html`
       <style include="material-styles my-styles">
@@ -263,10 +267,12 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
 
         <vaadin-grid-column flex-grow="0" header="Class" path="name"></vaadin-grid-column>
 
-        <vaadin-grid-column flex-grow="4">
-          <template class="header">Features</template>
-          <template><div class="features-col"><span>[[_getClassLevelFeatureString(levels, index, classes)]]</span></div></template>
-        </vaadin-grid-column>
+        <template is="dom-if" if="[[!_isMobile()]]">
+          <vaadin-grid-column flex-grow="4">
+            <template class="header">Features</template>
+            <template><div class="features-col"><span>[[_getClassLevelFeatureString(levels, index, classes)]]</span></div></template>
+          </vaadin-grid-column>
+        </template>
 
         <vaadin-grid-column width="140px">
           <template>
