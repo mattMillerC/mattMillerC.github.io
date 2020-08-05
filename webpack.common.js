@@ -36,9 +36,9 @@ module.exports = {
           toType: "dir"
         },
         {
-          from: "static/",
-          to: ".",
-          toType: "dir"
+          from: "index.html",
+          to: "index.html",
+          toType: "file"
         },
         {
           from: "img/favicon.ico",

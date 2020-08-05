@@ -4,7 +4,8 @@
   "description": "",
   "scripts": {
     "start": "webpack-dev-server --config webpack.dev.js",
-    "build": "webpack --config webpack.prod.js"
+    "build": "webpack --config webpack.prod.js",
+    "prod": "http-server dist/"
   },
   "author": "",
   "license": "ISC",
@@ -21,7 +22,8 @@
     "@vaadin/vaadin-grid": "*",
     "@vaadin/vaadin-material-styles": "*",
     "@vaadin/vaadin-select": "*",
-    "@vaadin/vaadin-text-field": "*"
+    "@vaadin/vaadin-text-field": "*",
+    "http-server": "^0.12.3"
   },
   "devDependencies": {
     "@webcomponents/webcomponentsjs": "^2.4.3",

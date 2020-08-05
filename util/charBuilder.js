@@ -660,6 +660,103 @@ async function getSkillProfs(attr, character = selectedCharacter) {
   }
 }
 
+function getClassOptions() {
+
+}
+
+const classOptionsMap = {
+  artificer: {
+    class: {
+      2: {
+        count: 4,
+        type: "AI"
+      },
+      6: {
+        count: 2,
+        type: "AI"
+      },
+      10: {
+        count: 2,
+        type: "AI"
+      },
+      14: {
+        count: 2,
+        type: "AI"
+      },
+      18: {
+        count: 2,
+        type: "AI"
+      }
+    }
+  },
+  barbarian: {
+    subclasses: {
+      "Path of the Totem Warrior": {
+        3: {
+          name: "Totem Spirit",
+          count: 1,
+          options: ["Bear", "Eagle", "Elk", "Tiger", "Wolf"]
+        },
+        6: {
+          name: "Aspect of the Beast",
+          count: 1,
+          options: ["Bear", "Eagle", "Elk", "Tiger", "Wolf"]
+        },
+        14: {
+          name: "Totemic Attunement",
+          count: 1,
+          options: ["Bear", "Eagle", "Elk", "Tiger", "Wolf"]
+        }
+      }
+    }
+  },
+  bard: {
+    subclasses: {
+      "College of Swords": {
+        3: {
+          name: "Fighting Style",
+          count: 1,
+          type: "fs:b"
+        }
+      }
+    }
+  }
+}
+
+const expertiseClasses = {
+  "bard": {
+    3: 2,
+    10: 2
+  }
+}
+
+const magicalSecretsClasses = {
+  "bard": {
+    subclasses: {
+      "College of Lore": {
+        6: {
+          count: 2,
+          list: "any"
+        },
+      }
+    },
+    class: {
+      10: {
+        count: 2,
+        list: "any"
+      },
+      14: {
+        count: 2,
+        list: "any"
+      },
+      18: {
+        count: 2,
+        list: "any"
+      }
+    }
+  }
+}
+
 export {
   addCharacter,
   addFeature,
