@@ -1,16 +1,16 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[13],{39:function(e,s,i){"use strict";i.r(s);var l=i(11);i(26),i(27),i(54);class t extends l.a{static get template(){return l.b`
+(window.webpackJsonp=window.webpackJsonp||[]).push([[13],{83:function(e,s,t){"use strict";t.r(s);var l=t(7);t(62),t(68),t(73),t(103);class i extends l.a{static get template(){return l.b`
       <style include="material-styles my-styles"></style>
-
-        <dnd-selection-list
-          enable-hash-routing
-          model-id="feats"
-          columns='[
-            {"id":"name","label":"Name"},
-            {"id":"source","label":"Source"}, 
-            {"id":"ability","label":"Ability"},
-            {"id":"prerequisite","label":"Prerequisite","cssClass":"hidden-mobile-down"}
-          ]'
-        >
-        </dnd-selection-list>
-    `}}customElements.define("dnd-feats-view",t)}}]);
+      
+      <dnd-selection-list
+        enable-hash-routing
+        model-id="bestiary"
+        columns='[
+          {"id":"name","label":"Name"},
+          {"id":"source","label":"Source"}, 
+          {"id":"monster-type","label":"Type"},
+          {"id":"cr","label":"CR"}
+        ]'
+      >
+      </dnd-selection-list>
+    `}}customElements.define("dnd-bestiary-view",i)}}]);
 //# sourceMappingURL=13.bundle.js.map

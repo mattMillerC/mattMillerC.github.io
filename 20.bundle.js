@@ -1,15 +1,16 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[20],{46:function(e,s,l){"use strict";l.r(s);var t=l(11);l(26),l(27),l(54);class n extends t.a{static get template(){return t.b`
+(window.webpackJsonp=window.webpackJsonp||[]).push([[20],{89:function(e,s,i){"use strict";i.r(s);var t=i(7);i(62),i(68),i(103);class l extends t.a{static get template(){return t.b`
       <style include="material-styles my-styles"></style>
 
       <dnd-selection-list
         enable-hash-routing
-        model-id="variantrules"
+        model-id="items"
         columns='[
           {"id":"name","label":"Name"},
-          {"id":"source","label":"Source"},
-          {"id":"rules-search","label":"Rules","cssClass":"hidden"}
+          {"id":"item-type","label":"Type"}, 
+          {"id":"source","label":"Source","cssClass":"hidden-mobile-down"},
+          {"id":"item-rarity","label":"Rarity","cssClass":"hidden-mobile-down"}
         ]'
       >
       </dnd-selection-list>
-    `}}customElements.define("dnd-variantrules-view",n)}}]);
+    `}}customElements.define("dnd-items-view",l)}}]);
 //# sourceMappingURL=20.bundle.js.map

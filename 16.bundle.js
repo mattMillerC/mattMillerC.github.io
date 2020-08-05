@@ -1,17 +1,13 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[16],{42:function(e,s,l){"use strict";l.r(s);var i=l(11);l(26),l(27),l(54);class d extends i.a{static get template(){return i.b`
+(window.webpackJsonp=window.webpackJsonp||[]).push([[16],{85:function(e,s,t){"use strict";t.r(s);var l=t(7);t(62),t(68),t(103);class n extends l.a{static get template(){return l.b`
       <style include="material-styles my-styles"></style>
 
       <dnd-selection-list
         enable-hash-routing
-        model-id="psionics"
+        model-id="cults"
         columns='[
-          {"id":"name","label":"Name"},
-          {"id":"source","label":"Source"}, 
-          {"id":"psy-type","label":"Type"},
-          {"id":"psy-order","label":"Order","cssClass":"hidden-mobile-down"},
-          {"id":"psy-mode-list","label":"Mode List","cssClass":"hidden"}
+          {"id":"name","label":"Name"}
         ]'
       >
       </dnd-selection-list>
-    `}}customElements.define("dnd-psionics-view",d)}}]);
+    `}}customElements.define("dnd-cults-view",n)}}]);
 //# sourceMappingURL=16.bundle.js.map

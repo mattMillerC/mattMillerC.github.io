@@ -1,13 +1,15 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[12],{38:function(e,s,t){"use strict";t.r(s);var l=t(11);t(26),t(27),t(54);class n extends l.a{static get template(){return l.b`
+(window.webpackJsonp=window.webpackJsonp||[]).push([[12],{82:function(e,s,i){"use strict";i.r(s);var n=i(7);i(62),i(68),i(103);class l extends n.a{static get template(){return n.b`
       <style include="material-styles my-styles"></style>
 
       <dnd-selection-list
         enable-hash-routing
-        model-id="cults"
+        model-id="backgrounds"
         columns='[
-          {"id":"name","label":"Name"}
+          {"id":"name","label":"Name"},
+          {"id":"source","label":"Source","cssClass":"hidden-mobile-down"},
+          {"id":"proficiencies","label":"Proficiencies"}
         ]'
       >
       </dnd-selection-list>
-    `}}customElements.define("dnd-cults-view",n)}}]);
+    `}}customElements.define("dnd-backgrounds-view",l)}}]);
 //# sourceMappingURL=12.bundle.js.map

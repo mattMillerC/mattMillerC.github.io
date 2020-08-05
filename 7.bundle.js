@@ -1,15 +1,14 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[7],{34:function(e,s,i){"use strict";i.r(s);var n=i(11);i(26),i(27),i(54);class l extends n.a{static get template(){return n.b`
-      <style include="material-styles my-styles"></style>
+(window.webpackJsonp=window.webpackJsonp||[]).push([[7],{112:function(e,t,a){"use strict";a.r(t);var c=a(7),r=a(18);class n extends c.a{static get properties(){return{}}connectedCallback(){super.connectedCallback(),this.characterChangeHandler=e=>{let t=e.detail.character;this.updateFromCharacter(t)},this.updateFromCharacter(Object(r.p)()),Object(r.g)().addEventListener("character-selected",this.characterChangeHandler)}disconnectedCallback(){super.disconnectedCallback(),Object(r.g)().removeEventListener("character-selected",this.characterChangeHandler)}updateFromCharacter(e){}static get template(){return c.b`
+      <style>
+        .row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+      </style>
 
-      <dnd-selection-list
-        enable-hash-routing
-        model-id="backgrounds"
-        columns='[
-          {"id":"name","label":"Name"},
-          {"id":"source","label":"Source","cssClass":"hidden-mobile-down"},
-          {"id":"proficiencies","label":"Proficiencies"}
-        ]'
-      >
-      </dnd-selection-list>
-    `}}customElements.define("dnd-backgrounds-view",l)}}]);
+      <div class="row">
+        Equipment
+      </div>
+    `}}customElements.define("dnd-character-builder-equipment",n)}}]);
 //# sourceMappingURL=7.bundle.js.map
