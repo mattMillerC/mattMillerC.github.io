@@ -40,3 +40,21 @@ registerStyles('vaadin-integer-field', css`
       -webkit-mask-image: none;
     }
 `);
+
+registerStyles('vaadin-grid', css`
+  :host([theme~="no-border"]) {
+    border-top: 1px solid var(--mdc-theme-text-divider-on-background);
+  }
+  [part~="cell"]:not([part~="details-cell"]) {
+    align-items: flex-start;
+  }
+  :host([height-by-rows]) #table {
+    overflow-y: hidden;
+  }
+  // /* Below Tablet */
+  // @media(max-width: 920px) {
+  //   [no-scrollbars]:not([safari]):not([firefox]) #outerscroller, [no-scrollbars][safari] #table, [no-scrollbars][firefox] #table {
+  //     overflow: auto;
+  //   }
+  // }
+`);

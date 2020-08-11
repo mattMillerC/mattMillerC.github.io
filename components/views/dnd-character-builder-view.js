@@ -31,8 +31,8 @@ class DndCharacterBuilderView extends PolymerElement {
     super();
 
     this.tabs = [
-      { label: "Attributes & Proficiencies", icon: "favorite", viewId: "attributes" },
       { label: "Class Levels", icon: "class", viewId: "class" },
+      { label: "Attributes & Proficiencies", icon: "favorite", viewId: "attributes" },
       { label: "Background & Race", icon: "face", viewId: "background-race" },
       { label: "Equipment", icon: "local_grocery_store", viewId: "equipment" },
     ]
@@ -130,6 +130,10 @@ class DndCharacterBuilderView extends PolymerElement {
           line-height: 1.5;
           margin-left: 8px;
         }
+        #tabTarget {
+          background-color: var(--mdc-theme-surface);
+          border: 1px solid var(--mdc-theme-text-divider-on-background);
+        }
       </style>
 
       <div class="head-wrap">
@@ -146,7 +150,7 @@ class DndCharacterBuilderView extends PolymerElement {
         </div>
       </div>
 
-      <dnd-tabs tabs="[[tabs]]" initial-selected-index="1"></dnd-tabs>
+      <dnd-tabs tabs="[[tabs]]" initial-selected-index="0"></dnd-tabs>
 
       <div id="tabTarget"></div>
     `;

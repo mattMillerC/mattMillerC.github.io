@@ -1,12 +1,15 @@
 import { PolymerElement, html } from "@polymer/polymer";
 import { MutableData } from '@polymer/polymer/lib/mixins/mutable-data.js';
-import { getCharacterChannel, getSelectedCharacter, getClassReferences, setClassLevels, mergeSubclass, addFeature, getSubclassChoiceLevel} from "../../../util/charBuilder";
+import { getCharacterChannel, getSelectedCharacter, getClassReferences, setClassLevels, mergeSubclass, addFeature, getSubclassChoiceLevel, mergeFeature} from "../../../util/charBuilder";
 import "@vaadin/vaadin-grid";
 import "../../dnd-select-add";
 import "../../dnd-switch";
+import "../../dnd-button";
 import "../../dnd-asi-select";
-import { jqEmpty } from "../../../js/utils";
+import { jqEmpty, getEntryName } from "../../../js/utils";
 import EntryRenderer from "../../../util/entryrender";
+import { } from '@polymer/polymer/lib/elements/dom-if.js';
+import { } from '@polymer/polymer/lib/elements/dom-repeat.js';
 
 class DndCharacterBuilderClass extends MutableData(PolymerElement) {
   
@@ -59,7 +62,7 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
           '<div class="details" id="stats"></div>';
         }
         let renderStack = [],
-          features = this._getClassLevelFeatures(this.levels, rowData.index, this.classes);
+          features = this._getClassLevelFeatures(this.levels, rowData.index, this.classes, this.subclasses);
         
         for (let feature of features) {
           renderer.recursiveEntryRender(
@@ -109,35 +112,52 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
     this.$.classGrid.clearCache();
   }
 
-  _getClassLevelFeatures(levels, index, classes) {
+  _getClassLevelFeatures(levels, index, classes, subclasses) {
     if (classes && levels[index]) {
-      const name = levels[index].name;
-      const classRef = classes[name];
+      const className = levels[index].name;
+      const classRef = classes[className];
 
       if (classRef) {
         const classFeatures = classRef.classFeatures;
         let levelsInClass = 0;
+        let levelsInSubclass = -1;
 
         if (levels.length >= index + 1) {
           for (let i = 0; i < index; i ++) {
-            if (levels[i].name === name) {
+            if (levels[i].name === className) {
               levelsInClass ++;
+
+              const classFeaturesForLevel = classFeatures[levelsInClass];
+              if (classFeaturesForLevel) {
+                const hasSubclassFeature = classFeaturesForLevel.find(i => i.gainSubclassFeature);
+                if (hasSubclassFeature) {
+                  levelsInSubclass ++;
+                }
+              }
             }
           }
 
-          if (classFeatures[levelsInClass]) {
-            return classFeatures[levelsInClass];
+          const classFeaturesForLevel = classFeatures[levelsInClass];
+          if (classFeaturesForLevel) {
+            const hasSubclassFeature = classFeaturesForLevel.find(i => i.gainSubclassFeature);
+            if (hasSubclassFeature && subclasses && subclasses[className] && classRef.subclasses && classRef.subclasses.length) {
+              const subclassDef = classRef.subclasses.find(i => subclasses[className] === i.name);
+              if (subclassDef.subclassFeatures[levelsInSubclass]) {
+                return [...classFeaturesForLevel].concat(subclassDef.subclassFeatures[levelsInSubclass]);
+              }
+            }
+            return classFeaturesForLevel;
           }
         }
       }
     }
   }
 
-  _getClassLevelFeatureString(levels, index, classes) {
-    const classLevelFeatures = this._getClassLevelFeatures(levels, index, classes);
+  _getClassLevelFeatureString(levels, index, classes, subclasses) {
+    const classLevelFeatures = this._getClassLevelFeatures(levels, index, classes, subclasses);
 
     if (classLevelFeatures) {
-      return classLevelFeatures.map(f => {return f.name}).join(', ');
+      return classLevelFeatures.map(f => {return getEntryName(f)}).join(', ');
     }
   }
 
@@ -226,75 +246,142 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
     return window.innerWidth < 921;
   }
 
+  _objArray(obj) {
+    return Object.values(obj);
+  }
+
+  _addClassLevel(e) {
+    mergeFeature(undefined, e.model.item, "classes");
+  }
+
   static get template() {
     return html`
       <style include="material-styles my-styles">
-        .row {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
+        vaadin-grid {
+          border-top: 1px solid var(--mdc-theme-text-divider-on-background);
         }
-
         #stats {
           margin-top: 0px;
         }
         .details {
           padding: 0 24px;
         }
-        .remove-btn {
+
+        .button-wrap {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          padding: 10px;
+        }
+        .button-wrap > * {
+          margin: 4px;
+        }
+
+
+        .row {
+          margin: 10px;
+          position: relative;
+        }
+        .row:after {
+          content: "";
+          display: table;
+          clear: both;
+        }
+
+        .open-details {
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+        }
+        .open-details:hover {
+          color: var(--mdc-theme-secondary);
+        }
+
+        .level-col {
+          width: 200px;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+        }
+        .level-col__level {
+          margin-right: 10px;
+        }
+        .level-col__class {
+          font-size: 20px;
+        }
+
+        .features-col {
+          text-overflow: ellipsis;
+          overflow: hidden;
+          margin: 0 30px 0 12px;
+        }
+
+        .choices-col {
+          display: flex;
+          float: left;
+        }
+        .choices-col__choice {
+          margin-top: 10px;
+        }
+        .choices-col__subclass-choice {
+          display: block;
+        }
+
+        .delete-col {
+          position: absolute;
+          right: 0;
+          top: 0;
+        }
+        .delete-btn {
           height: 24px;
           width: 24px;
           font-size: 18px;
           padding: 0;
         }
-        .subclass-add {
-          display: block;
-        }
-        .features-col {
-          width: 100%;
-          height: 48px;
-          white-space: break-spaces;
-          display: flex;
-          align-items: center;
+        .delete-btn:hover {
+          color: var(--mdc-theme-secondary);
         }
       </style>
 
-      <vaadin-grid id="classGrid" rows-draggable items=[[levels]]>
-        <vaadin-grid-column width="42px" flex-grow="0">
-          <template class="header">#</template>
-          <template><div on-click="_expandDetails">[[_level(index)]]</div></template>
-        </vaadin-grid-column>
-
-        <vaadin-grid-column flex-grow="0" header="Class" path="name"></vaadin-grid-column>
-
-        <template is="dom-if" if="[[!_isMobile()]]">
-          <vaadin-grid-column flex-grow="4">
-            <template class="header">Features</template>
-            <template><div class="features-col"><span>[[_getClassLevelFeatureString(levels, index, classes)]]</span></div></template>
-          </vaadin-grid-column>
+      <div class="button-wrap">
+        <dnd-select-add model="classes" placeholder="Add a Level"></dnd-select-add>
+        <template is="dom-repeat" items="[[_objArray(classes)]]">
+          <dnd-button icon="add" label="[[item.name]]" on-click="_addClassLevel"></dnd-button>
         </template>
+      </div>
 
-        <vaadin-grid-column width="140px">
+      <vaadin-grid id="classGrid" rows-draggable height-by-rows items=[[levels]] theme="no-border">
+        <vaadin-grid-column flex-grow="1">
           <template>
-            <template is="dom-repeat" items="[[_findChoices(levels, item.name, index, classes)]]" as="choice">
-              <template is="dom-if" if="[[_equal(choice, 'subclass')]]">
-                <dnd-select-add class="subclass-add" label="Subclass" add-callback="[[_genSubclassCallback(item)]]" options="[[_genSubclassOptions(item)]]" value="[[_getSubclassSelection(item, subclasses, character)]]" placeholder="<Choose Subclass>"></dnd-select-add>
-              </template>
-              <template is="dom-if" if="[[_equal(choice, 'asi')]]">
-                <dnd-asi-select level-index="[[_indexOfLevel(item, levels)]]" character="[[character]]"></dnd-asi-select>
-              </template>
-            </template>
-          </template>
-        </vaadin-grid-column>
+            <div class="row">
+              <div class="open-details" on-click="_expandDetails">
+                <div class="level-col">
+                  <span class="level-col__level">[[_level(index)]]</span>
+                  <span class="level-col__class">[[item.name]]</span>
+                </div>
+                <span class="features-col hidden-mobile-down">[[_getClassLevelFeatureString(levels, index, classes, subclasses)]]</span>
+              </div>
 
-        <vaadin-grid-column width="56px" flex-grow="0">
-          <template>
-            <button class="mdc-icon-button material-icons remove-btn" on-click="_deleteLevel">close</button>
+              <div class="choices-col">
+                <template is="dom-repeat" items="[[_findChoices(levels, item.name, index, classes)]]" as="choice">
+                  <div class="choices-col__choice">
+                    <template is="dom-if" if="[[_equal(choice, 'subclass')]]">
+                      <dnd-select-add class="choices-col__subclass-choice" label="Subclass" add-callback="[[_genSubclassCallback(item)]]" options="[[_genSubclassOptions(item)]]" value="[[_getSubclassSelection(item, subclasses, character)]]" placeholder="<Choose Subclass>"></dnd-select-add>
+                    </template>
+                    <template is="dom-if" if="[[_equal(choice, 'asi')]]">
+                      <dnd-asi-select level-index="[[_indexOfLevel(item, levels)]]" character="[[character]]"></dnd-asi-select>
+                    </template>
+                  </div>
+                </template>
+              </div>
+
+              <div class="delete-col">
+                <button class="mdc-icon-button material-icons delete-btn" on-click="_deleteLevel">close</button>
+              </div>
+            </div>
           </template>
         </vaadin-grid-column>
       </vaadin-grid>
-
-      <dnd-select-add model="classes" placeholder="Add a Level"></dnd-select-add>
     `;
   }
 }

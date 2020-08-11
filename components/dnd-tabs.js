@@ -45,6 +45,9 @@ class DndTabs extends PolymerElement {
       <style include="material-styles">
         .mdc-tab-scroller__scroll-area--scroll {
           overflow-x: auto;
+          background-color: var(--mdc-theme-surface);
+          border: 1px solid var(--mdc-theme-text-divider-on-background);
+          border-bottom: none;
         }
       </style>
 

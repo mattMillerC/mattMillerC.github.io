@@ -730,30 +730,43 @@ const expertiseClasses = {
   }
 }
 
-const magicalSecretsClasses = {
-  "bard": {
-    subclasses: {
-      "College of Lore": {
-        6: {
+const proficiencyGains = {
+
+}
+
+const spellGains = {
+  classes: {
+    bard: {
+      subclasses: {
+        "College of Lore": {
+          6: {
+            name: "",
+            count: 2,
+            list: "any"
+          },
+        }
+      },
+      class: {
+        10: {
+          name: "Magical Secrets",
           count: 2,
           list: "any"
         },
+        14: {
+          name: "",
+          count: 2,
+          list: "any"
+        },
+        18: {
+          name: "",
+          count: 2,
+          list: "any"
+        }
       }
     },
-    class: {
-      10: {
-        count: 2,
-        list: "any"
-      },
-      14: {
-        count: 2,
-        list: "any"
-      },
-      18: {
-        count: 2,
-        list: "any"
-      }
-    }
+  },
+  feats: {
+    "": ""
   }
 }
 

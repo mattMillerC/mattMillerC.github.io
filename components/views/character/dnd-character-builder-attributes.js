@@ -17,7 +17,7 @@ import {
   setRaceAttributes,
   getASIAndFeatAttributeData
 } from "../../../util/charBuilder";
-import { util_capitalizeAll } from "../../../js/utils";
+import { util_capitalizeAll, absInt } from "../../../js/utils";
 
 class DndCharacterBuilderAttributes extends PolymerElement {
   
@@ -161,20 +161,6 @@ class DndCharacterBuilderAttributes extends PolymerElement {
       this.classSkillProfOptions = await getClassSkillProfOptions();
       this.classSkillProfSelections = character.classSkillProficiencies;
 
-      // Skills from Background
-      let backgroundSkills = await getBackgroundSkillProfOptions();
-      if (backgroundSkills && backgroundSkills.choose) {
-        this.backgroundSkillProfOptions = backgroundSkills.choose.from;
-        this.backgroundSkillProfChoices = backgroundSkills.choose.count || 1;
-        this.backgroundSkillProfSelections = character.backgroundSkillProficiencies;
-      } else {
-        this.backgroundSkillProfOptions = undefined;
-        this.backgroundSkillProfChoices = undefined;
-        this.backgroundSkillProfSelections = undefined;
-      }
-      let defaultBackgroundSkillProf = await getBackgroundSkillProfDefaults(backgroundSkills);
-      this.defaultBackgroundSkillProf = defaultBackgroundSkillProf.map(e => { return util_capitalizeAll(e) }).join(', ');
-
       // Attributes from Race
       let attributeAdj = {
         str: 0,
@@ -203,7 +189,7 @@ class DndCharacterBuilderAttributes extends PolymerElement {
           let attribute = e[0].toLowerCase(),
             mod = e[1];
           attributeAdj[attribute] += mod;
-          return attribute.toUpperCase() + ' ' + this._absInt(mod);
+          return attribute.toUpperCase() + ' ' + absInt(mod);
         }).join(', ');
 
       let asiData = await getASIAndFeatAttributeData();
@@ -248,7 +234,7 @@ class DndCharacterBuilderAttributes extends PolymerElement {
 
   _adjustString(adj) {
     if (adj !== 0 && adj !== undefined) {
-      return this._absInt(adj);
+      return absInt(adj);
     }
     return "";
   }
@@ -264,11 +250,7 @@ class DndCharacterBuilderAttributes extends PolymerElement {
   }
 
   _mod(base, adj) {
-    return this._absInt(Math.floor((this._total(base, adj) - 10) / 2));
-  }
-
-  _absInt(int) {
-    return int > 0 ? "+" + int : int;
+    return absInt(Math.floor((this._total(base, adj) - 10) / 2));
   }
 
   _contains(saves, str) {
@@ -300,24 +282,19 @@ class DndCharacterBuilderAttributes extends PolymerElement {
     return html`
       <style include="material-styles">
         :host {
-          background: var(--mdc-theme-surface);
           display: block;
-          padding: 24px;
-          border: 1px solid var(--lumo-contrast-20pct);
+          padding: 14px;
         }
-        .attr-choice-wrap,
         .prof-choice-wrap {
           display: flex;
           flex-direction: column;
           width: 100%;
           justify-content: space-between;
         }
-        .attr-choice-wrap dnd-select-add,
         .prof-choice-wrap dnd-select-add {
           width: 100%;
         }
-        
-        .attr-choice-wrap > div,
+
         .prof-choice-wrap > div {
           margin-bottom: 24px;
         }
@@ -342,7 +319,7 @@ class DndCharacterBuilderAttributes extends PolymerElement {
         .data {
           margin-top: 32px;
           font-size: 18px;
-          padding: 8px;
+          padding: 10px 8px 8px;
           display: flex;
           justify-content: center;
         }
@@ -398,24 +375,6 @@ class DndCharacterBuilderAttributes extends PolymerElement {
           <div hidden$="[[!_exists(classSkillProfOptions)]]">Skill Proficiencies from Class</div>
           <dnd-select-add hidden$="[[!_exists(classSkillProfOptions)]]" choices="[[classSkillProfOptions.count]]" placeholder="<Choose Skills>"
             options="[[classSkillProfOptions.from]]" value="[[classSkillProfSelections]]" add-callback="[[_classSkillAddCallback]]"></dnd-select-add>
-        </div>
-
-        <div>
-          <div hidden$="[[_exists(backgroundSkillProfOptions, defaultBackgroundSkillProf)]]">Select Background to add Skill Proficiencies</div>
-          <div hidden$="[[!_exists(backgroundSkillProfOptions, defaultBackgroundSkillProf)]]">Skill Proficiencies from Background</div>
-          <div hidden$="[[!_exists(defaultBackgroundSkillProf)]]" class="default-selection">Default: [[defaultBackgroundSkillProf]]</div>
-          <dnd-select-add hidden$="[[!_exists(backgroundSkillProfOptions)]]" choices="[[backgroundSkillProfChoices]]" placeholder="<Choose Skills>"
-            options="[[backgroundSkillProfOptions]]" value="[[backgroundSkillProfSelections]]" add-callback="[[_backgroundSkillAddCallback]]"></dnd-select-add>
-        </div>
-      </div>
-
-      <div class="attr-choice-wrap">
-        <div>
-          <div hidden$="[[_exists(raceAttributeOptions, defaultRaceAttribute)]]">Select Race to add Attribute Bonuses</div>
-          <div hidden$="[[!_exists(raceAttributeOptions, defaultRaceAttribute)]]">Attribute Bonuses from Race</div>
-          <div hidden$="[[!_exists(defaultRaceAttribute)]]" class="default-selection">Default: [[defaultRaceAttribute]]</div>
-          <dnd-select-add hidden$="[[!_exists(raceAttributeOptions)]]" choices="[[raceAttributeChoices]]" placeholder="<Choose Attribute>"
-            options="[[raceAttributeOptions]]" value="[[raceAttributeSelections]]" add-callback="[[_raceAttributeAddCallback]]"></dnd-select-add>
         </div>
       </div>
 

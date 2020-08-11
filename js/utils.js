@@ -597,6 +597,16 @@ function compareNames(a, b) {
 	else if (b._values.name.toLowerCase() < a._values.name.toLowerCase()) return -1;
 }
 
+function getEntryName(entry) {
+	if (entry.name) {
+		return entry.name;
+	} else if (entry[0]) {
+		return getEntryName(entry[0]);
+	} else if (entry.entry) {
+		return getEntryName(entry.entry);
+	}
+}
+
 function joinConjunct(arr, joinWith, conjunctWith) {
 	return arr.length === 1 ? String(arr[0]) : arr.length === 2 ? arr.join(conjunctWith) : arr.slice(0, -1).join(joinWith) + conjunctWith + arr.slice(-1);
 }
@@ -913,6 +923,11 @@ function dashToCaplital(string) {
 	});
 }
 
+
+function absInt(int) {
+	return int > 0 ? "+" + int : int;
+}
+
 export {
   throttle,
   debounce,
@@ -982,5 +997,7 @@ export {
   cloneDeep,
   getFromPath,
 	initCollapseToggles,
-	dashToCaplital
+	dashToCaplital,
+	getEntryName,
+	absInt
 };
