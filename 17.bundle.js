@@ -1,4 +1,4 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[17],{86:function(e,s,i){"use strict";i.r(s);var l=i(7);i(62),i(68),i(103);class t extends l.a{static get template(){return l.b`
+(window.webpackJsonp=window.webpackJsonp||[]).push([[17],{87:function(e,s,i){"use strict";i.r(s);var l=i(7);i(62),i(68),i(103);class t extends l.a{static get template(){return l.b`
       <style include="material-styles my-styles"></style>
 
         <dnd-selection-list
