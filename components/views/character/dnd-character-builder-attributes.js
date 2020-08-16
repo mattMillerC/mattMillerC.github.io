@@ -6,15 +6,10 @@ import {
   getSelectedCharacter,
   updateAttr,
   getClassSaves,
-  getClassSkillProfOptions,
   setClassSkillProficiencies,
-  getBackgroundSkillProfOptions,
-  setBackgroundSkillProficiencies,
-  getBackgroundSkillProfDefaults,
   getSkillProfs,
   getRaceAttributeOptions,
   getRaceAttributeDefaults,
-  setRaceAttributes,
   getASIAndFeatAttributeData
 } from "../../../util/charBuilder";
 import { util_capitalizeAll, absInt } from "../../../js/utils";
@@ -65,6 +60,27 @@ class DndCharacterBuilderAttributes extends PolymerElement {
         type: Number,
         value: 0
       },
+      strProfs: {
+        type: String,
+        value: ""
+      },
+      dexProfs: {
+        type: String,
+        value: ""
+      },
+      intProfs: {
+        type: String,
+        value: ""
+      },
+      wisProfs: {
+        type: String,
+        value: ""
+      },
+      chaProfs: {
+        type: String,
+        value: ""
+      },
+
       saves: {
         type: Array,
         value: []
@@ -86,26 +102,6 @@ class DndCharacterBuilderAttributes extends PolymerElement {
         value: []
       },
       defaultRaceAttribute: {
-        type: String,
-        value: ""
-      },
-      strProfs: {
-        type: String,
-        value: ""
-      },
-      dexProfs: {
-        type: String,
-        value: ""
-      },
-      intProfs: {
-        type: String,
-        value: ""
-      },
-      wisProfs: {
-        type: String,
-        value: ""
-      },
-      chaProfs: {
         type: String,
         value: ""
       }
@@ -156,10 +152,6 @@ class DndCharacterBuilderAttributes extends PolymerElement {
       }
 
       this.saves = await getClassSaves();
-
-      // Skills from Class
-      this.classSkillProfOptions = await getClassSkillProfOptions();
-      this.classSkillProfSelections = character.classSkillProficiencies;
 
       // Attributes from Race
       let attributeAdj = {
@@ -266,37 +258,12 @@ class DndCharacterBuilderAttributes extends PolymerElement {
     return false;
   }
 
-  _classSkillAddCallback(skills) {
-    setClassSkillProficiencies(skills);
-  }
-
-  _backgroundSkillAddCallback(skills) {
-    setBackgroundSkillProficiencies(skills);
-  }
-
-  _raceAttributeAddCallback(attr) {
-    setRaceAttributes(attr);
-  }
-
   static get template() {
     return html`
       <style include="material-styles">
         :host {
           display: block;
           padding: 14px;
-        }
-        .prof-choice-wrap {
-          display: flex;
-          flex-direction: column;
-          width: 100%;
-          justify-content: space-between;
-        }
-        .prof-choice-wrap dnd-select-add {
-          width: 100%;
-        }
-
-        .prof-choice-wrap > div {
-          margin-bottom: 24px;
         }
 
         .default-selection {
@@ -309,7 +276,6 @@ class DndCharacterBuilderAttributes extends PolymerElement {
         }
         .stats {
           width: 100%;
-          margin-top: 32px;
         }
 
         .row {
@@ -368,15 +334,6 @@ class DndCharacterBuilderAttributes extends PolymerElement {
           }
         }
       </style>
-  
-      <div class="prof-choice-wrap">
-        <div>
-          <div hidden$="[[_exists(classSkillProfOptions)]]">Select 1st Level to add Skill Proficiencies</div>
-          <div hidden$="[[!_exists(classSkillProfOptions)]]">Skill Proficiencies from Class</div>
-          <dnd-select-add hidden$="[[!_exists(classSkillProfOptions)]]" choices="[[classSkillProfOptions.count]]" placeholder="<Choose Skills>"
-            options="[[classSkillProfOptions.from]]" value="[[classSkillProfSelections]]" add-callback="[[_classSkillAddCallback]]"></dnd-select-add>
-        </div>
-      </div>
 
       <div class="table-wrap">
         <table class="stats">

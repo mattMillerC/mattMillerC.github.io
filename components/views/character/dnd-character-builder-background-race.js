@@ -1,5 +1,14 @@
 import { PolymerElement, html } from "@polymer/polymer";
-import { getCharacterChannel, getSelectedCharacter, getRaceAttributeOptions, getRaceAttributeDefaults, getBackgroundSkillProfOptions, getBackgroundSkillProfDefaults, mergeFeature } from "../../../util/charBuilder";
+import {
+  getCharacterChannel,
+  getSelectedCharacter,
+  getRaceAttributeOptions,
+  getRaceAttributeDefaults,
+  setRaceAttributes,
+  getBackgroundSkillProfOptions,
+  getBackgroundSkillProfDefaults,
+  setBackgroundSkillProficiencies,
+} from "../../../util/charBuilder";
 import { util_capitalizeAll, absInt } from "../../../js/utils"; 
 
 class DndCharacterBuilderBackgroundRace extends PolymerElement {
@@ -88,6 +97,14 @@ class DndCharacterBuilderBackgroundRace extends PolymerElement {
       }).join(', ');
   }
 
+  _backgroundSkillAddCallback(skills) {
+    setBackgroundSkillProficiencies(skills);
+  }
+
+  _raceAttributeAddCallback(attr) {
+    setRaceAttributes(attr);
+  }
+
   _exists() {
     for (let arg of arguments) {
       if (!!arg && (arg.constructor !== Object || Object.entries(arg).length > 0) && (!Array.isArray(arg) || arg.length > 0)) {
@@ -107,34 +124,61 @@ class DndCharacterBuilderBackgroundRace extends PolymerElement {
         [hidden] {
           display: none !important;
         }
-        .row {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
+
         .col-wrap {
-          display: flex;
+          display: flex; 
+          justify-content: space-between;
+          flex-wrap: wrap;
+        }
+
+        .row-wrap {
+          width: 100%;
+        }
+        .row-wrap:first-child {
+          margin-bottom: 24px;
+        }
+
+        .row-wrap > *:not(h2):not(:last-child) {
+          margin-bottom: 10px;
+        }
+
+        .default-selection {
+          font-size: 14px;
+          margin-bottom: 0 !important;
+        }
+
+        .default-selection span {
+          color: var(--mdc-theme-secondary)
+        }
+
+        @media(min-width: 921px) {
+          .row-wrap {
+            width: calc(50% - 10px);
+          }
+          .row-wrap:first-child {
+            margin-bottom: 0;
+          }
         }
       </style>
 
       <div class="col-wrap">
-
-        <div>
+        <div class="row-wrap">
+          <h2>Background</h2>
           <dnd-select-add model="backgrounds" value="[[selectedBackground]]"></dnd-select-add>
           <div hidden$="[[_exists(backgroundSkillProfOptions, defaultBackgroundSkillProf)]]">Select Background to add Skill Proficiencies</div>
-          <div hidden$="[[!_exists(backgroundSkillProfOptions, defaultBackgroundSkillProf)]]">Skill Proficiencies from Background</div>
-          <div hidden$="[[!_exists(defaultBackgroundSkillProf)]]" class="default-selection">Default: [[defaultBackgroundSkillProf]]</div>
-          <dnd-select-add hidden$="[[!_exists(backgroundSkillProfOptions)]]" choices="[[backgroundSkillProfChoices]]" placeholder="<Choose Skills>"
+          <div hidden$="[[!_exists(backgroundSkillProfOptions, defaultBackgroundSkillProf)]]">Skill Proficiencies from Background:</div>
+          <div hidden$="[[!_exists(defaultBackgroundSkillProf)]]" class="default-selection">Default Skills: <span>[[defaultBackgroundSkillProf]]</span></div>
+          <dnd-select-add hidden$="[[!_exists(backgroundSkillProfOptions)]]" choices="[[backgroundSkillProfChoices]]" placeholder="<Choose Skills>" label="Choosen Skill(s)"
             options="[[backgroundSkillProfOptions]]" value="[[backgroundSkillProfSelections]]" add-callback="[[_backgroundSkillAddCallback]]"></dnd-select-add>
         </div>
 
-
-        <div>
+        <div class="row-wrap">
+          <h2>Race</h2>
           <dnd-select-add model="races" value="[[selectedRace]]"></dnd-select-add>
           <div hidden$="[[_exists(raceAttributeOptions, defaultRaceAttribute)]]">Select Race to add Attribute Bonuses</div>
-          <div hidden$="[[!_exists(raceAttributeOptions, defaultRaceAttribute)]]">Attribute Bonuses from Race</div>
-          <div hidden$="[[!_exists(defaultRaceAttribute)]]" class="default-selection">Default: [[defaultRaceAttribute]]</div>
-          <dnd-select-add hidden$="[[!_exists(raceAttributeOptions)]]" choices="[[raceAttributeChoices]]" placeholder="<Choose Attribute>"
+          <div hidden$="[[!_exists(raceAttributeOptions, defaultRaceAttribute)]]">Attribute Bonuses from Race:</div>
+          <div hidden$="[[!_exists(defaultRaceAttribute)]]" class="default-selection">Default Attributes: <span>[[defaultRaceAttribute]]</span></div>
+          <dnd-select-add hidden$="[[!_exists(raceAttributeOptions)]]" choices="[[raceAttributeChoices]]" placeholder="<Choose Attribute>" label="Choosen Attribute(s)"
             options="[[raceAttributeOptions]]" value="[[raceAttributeSelections]]" add-callback="[[_raceAttributeAddCallback]]"></dnd-select-add>
         </div>
       </div>

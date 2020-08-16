@@ -1,6 +1,6 @@
 import { PolymerElement, html } from "@polymer/polymer";
 import { MutableData } from '@polymer/polymer/lib/mixins/mutable-data.js';
-import { getCharacterChannel, getSelectedCharacter, getClassReferences, setClassLevels, mergeSubclass, addFeature, getSubclassChoiceLevel, mergeFeature} from "../../../util/charBuilder";
+import { getCharacterChannel, getSelectedCharacter, getClassReferences, setClassLevels, mergeSubclass, setClassSkillProficiencies, getSubclassChoiceLevel, mergeFeature} from "../../../util/charBuilder";
 import "@vaadin/vaadin-grid";
 import "../../dnd-select-add";
 import "../../dnd-switch";
@@ -143,6 +143,7 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
             if (hasSubclassFeature && subclasses && subclasses[className] && classRef.subclasses && classRef.subclasses.length) {
               const subclassDef = classRef.subclasses.find(i => subclasses[className] === i.name);
               if (subclassDef.subclassFeatures[levelsInSubclass]) {
+                subclassDef.subclassFeatures[levelsInSubclass].map((i) => { i.isSubclass = true; return i; })
                 return [...classFeaturesForLevel].concat(subclassDef.subclassFeatures[levelsInSubclass]);
               }
             }
@@ -153,11 +154,15 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
     }
   }
 
-  _getClassLevelFeatureString(levels, index, classes, subclasses) {
-    const classLevelFeatures = this._getClassLevelFeatures(levels, index, classes, subclasses);
+  _getClassLevelFeatureStringArray(levels, index, classes, subclasses) {
+    if (levels && index !== undefined && classes && subclasses) {
+      const classLevelFeatures = this._getClassLevelFeatures(levels, index, classes, subclasses);
 
-    if (classLevelFeatures) {
-      return classLevelFeatures.map(f => {return getEntryName(f)}).join(', ');
+      if (classLevelFeatures) {
+        return classLevelFeatures.map(f => {
+          return { name: getEntryName(f), isSubclass: f.isSubclass };
+        });
+      }
     }
   }
 
@@ -204,14 +209,24 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
           }
 
           if (classLevelCount === subclassChoiceLevel) {
-            choices.push("subclass");
+            choices.push({id: "subclass"});
           }
         }
 
         let features = this._getClassLevelFeatures(levels, index, classes);
         if (features && features.length
             && features.find((f) => { return f.name === "Ability Score Improvement"; })) {
-          choices.push("asi");
+          choices.push({id: "asi"});
+        }
+
+        if (index === 0) {
+          const classSkillOptions = classDef.startingProficiencies.skills[0].choose;
+          choices.push({
+            id: "profs",
+            count: classSkillOptions.count,
+            from: classSkillOptions.from,
+            selections: this.character.classSkillProficiencies
+          });
         }
 
         return choices;
@@ -252,6 +267,10 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
 
   _addClassLevel(e) {
     mergeFeature(undefined, e.model.item, "classes");
+  }
+
+  _classSkillAddCallback(skills) {
+    setClassSkillProficiencies(skills);
   }
 
   static get template() {
@@ -305,6 +324,8 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
         }
         .level-col__level {
           margin-right: 10px;
+          position: relative;
+          top: -2px;
         }
         .level-col__class {
           font-size: 20px;
@@ -315,6 +336,12 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
           overflow: hidden;
           margin: 0 30px 0 12px;
         }
+        .class-feature:not(:last-of-type)::after {
+          content: ', ';
+        }
+        .class-feature[subclass] {
+          color: var(--mdc-theme-secondary);
+        }
 
         .choices-col {
           display: flex;
@@ -322,6 +349,7 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
         }
         .choices-col__choice {
           margin-top: 10px;
+          margin-right: 16px;
         }
         .choices-col__subclass-choice {
           display: block;
@@ -359,17 +387,26 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
                   <span class="level-col__level">[[_level(index)]]</span>
                   <span class="level-col__class">[[item.name]]</span>
                 </div>
-                <span class="features-col hidden-mobile-down">[[_getClassLevelFeatureString(levels, index, classes, subclasses)]]</span>
+
+                <div class="features-col hidden-mobile-down">
+                  <template is="dom-repeat" items="[[_getClassLevelFeatureStringArray(levels, index, classes, subclasses)]]">
+                    <span class="class-feature" subclass$="[[item.isSubclass]]">[[item.name]]</span>
+                  </template>
+                </div>
               </div>
 
               <div class="choices-col">
                 <template is="dom-repeat" items="[[_findChoices(levels, item.name, index, classes)]]" as="choice">
                   <div class="choices-col__choice">
-                    <template is="dom-if" if="[[_equal(choice, 'subclass')]]">
+                    <template is="dom-if" if="[[_equal(choice.id, 'subclass')]]">
                       <dnd-select-add class="choices-col__subclass-choice" label="Subclass" add-callback="[[_genSubclassCallback(item)]]" options="[[_genSubclassOptions(item)]]" value="[[_getSubclassSelection(item, subclasses, character)]]" placeholder="<Choose Subclass>"></dnd-select-add>
                     </template>
-                    <template is="dom-if" if="[[_equal(choice, 'asi')]]">
+                    <template is="dom-if" if="[[_equal(choice.id, 'asi')]]">
                       <dnd-asi-select level-index="[[_indexOfLevel(item, levels)]]" character="[[character]]"></dnd-asi-select>
+                    </template>
+                    <template is="dom-if" if="[[_equal(choice.id, 'profs')]]">
+                      <dnd-select-add choices="[[choice.count]]" label="Skill Proficiency" placeholder="<Choose Skills>"
+                        options="[[choice.from]]" value="[[choice.selections]]" add-callback="[[_classSkillAddCallback]]"></dnd-select-add>
                     </template>
                   </div>
                 </template>

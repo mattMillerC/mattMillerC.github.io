@@ -62,7 +62,7 @@ class DndSwitch extends PolymerElement {
           color: var(--lumo-body-text-color);
         }
         label {
-          color: var(--lumo-secondary-text-color);
+          color: var(--mdc-theme-primary);
           font-weight: 500;
           font-size: var(--lumo-font-size-s);
           margin-right: 16px;

@@ -602,8 +602,8 @@ function getEntryName(entry) {
 		return entry.name;
 	} else if (entry[0]) {
 		return getEntryName(entry[0]);
-	} else if (entry.entry) {
-		return getEntryName(entry.entry);
+	} else if (entry.entries) {
+		return getEntryName(entry.entries);
 	}
 }
 

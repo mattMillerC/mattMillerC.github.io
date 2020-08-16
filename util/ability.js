@@ -11,7 +11,6 @@ function parse_abilityLong(abilityObj) {
 	const TO_MAX_OF_TWENTY = ", to a maximum of 20.";
 	const abbArr = [];
 	if (abilityObj) {
-		// Theres only ever one of these right now
 		for (const abilityItem of abilityObj) {
 			for (let [key, value] of Object.entries(abilityItem)) {
 				if (key !== "choose" && key !== "hidden") {
@@ -49,7 +48,6 @@ function parse_abilityLong(abilityObj) {
 function parse_abilityShort(abilityObj) {
 	const abbArr = [];
 	if (abilityObj) {
-		// Theres only ever one of these right now
 		for (const abilityItem of abilityObj) {
 			for (let [key, value] of Object.entries(abilityItem)) {
 				if (key !== "choose" && key !== "hidden") {
@@ -87,7 +85,6 @@ function parse_abilityShort(abilityObj) {
 function parse_abilityCollection(abilityObj) {
 	const abbArr = [];
 	if (abilityObj) {
-		// Theres only ever one of these right now
 		for (const abilityItem of abilityObj) {
 			if (abilityItem.choose) {
 				const options = abilityItem.choose.from;

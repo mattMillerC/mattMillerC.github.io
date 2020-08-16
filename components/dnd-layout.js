@@ -155,7 +155,6 @@ class DndLayout extends PolymerElement {
         case "feats":
         case "races":
         case "backgrounds":
-        case "classes":
           this.hideCharacterPopup = false;
           break;
         default:
@@ -234,7 +233,7 @@ class DndLayout extends PolymerElement {
               >
             </div>
 
-            <a class="mdc-list-item mdc-theme--on-surface" href="#">
+            <a class="mdc-list-item mdc-theme--on-surface">
               <label class="darkmode-label" for="dark-mode-switch">Dark Mode</label>
               <div class="mdc-switch mdc-list-item__meta">
                 <div class="mdc-switch__track"></div>

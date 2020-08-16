@@ -20,6 +20,12 @@ registerStyles('vaadin-select', css`
     }
 `);
 
+registerStyles('vaadin-select-text-field', css`
+  [part="label"] {
+    color: var(--mdc-theme-primary);
+  }
+`);
+
 registerStyles('vaadin-select-overlay', css`
     :host {
       animation-duration: 0s !important;
@@ -34,6 +40,9 @@ registerStyles('vaadin-list-box', css`
 
 registerStyles('vaadin-integer-field', css`
     :host([focused]:not([readonly])) [part="label"] {
+      color: var(--mdc-theme-primary);
+    }
+    [part="label"] {
       color: var(--mdc-theme-primary);
     }
     [part="value"] {
@@ -51,10 +60,10 @@ registerStyles('vaadin-grid', css`
   :host([height-by-rows]) #table {
     overflow-y: hidden;
   }
-  // /* Below Tablet */
-  // @media(max-width: 920px) {
-  //   [no-scrollbars]:not([safari]):not([firefox]) #outerscroller, [no-scrollbars][safari] #table, [no-scrollbars][firefox] #table {
-  //     overflow: auto;
-  //   }
-  // }
+  /* Below Tablet */
+  @media(max-width: 920px) {
+    [no-scrollbars]:not([safari]):not([firefox]) #outerscroller, [no-scrollbars][safari] #table, [no-scrollbars][firefox] #table {
+      overflow: auto;
+    }
+  }
 `);

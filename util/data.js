@@ -26,6 +26,10 @@ export default async function loadModel(modelId) {
 					cache[modelId] = await loadModelFromIndex(modelId);
 					break;
 
+				case "races":
+					cache[modelId] = await loadRaceData();
+					break;
+
 				default:
 					cache[modelId] = await loadModelFromSingleJSON(modelId);
 			}
@@ -116,6 +120,16 @@ function parseLegendaryMonsters(monsterData, legendaryGroupData) {
     }
   }
   return monsterData;
+}
+
+async function loadRaceData() {
+	let raceData = await loadModelFromSingleJSON("races");
+	let newRaces = [];
+
+	for (let race of raceData) {
+		newRaces = newRaces.concat(parseSubraces(race));		
+	}
+	return newRaces;
 }
 
 /**
@@ -267,4 +281,65 @@ function mergeItemsData(itemData, basicItemData, variantData) {
 	}
 	window.itemPropertyList = propertyList;
   return itemList;
+}
+
+function parseSubraces(race) {
+	if (race.subraces) {
+		const srCopy = JSON.parse(JSON.stringify(race.subraces));
+		const out = [];
+
+		srCopy.forEach(s => {
+			const cpy = JSON.parse(JSON.stringify(race));
+			cpy._baseName = cpy.name;
+			cpy._baseSource = cpy.source;
+			delete cpy.subraces;
+
+			// merge names, abilities, entries, tags
+			if (s.name) {
+				cpy.name = `${cpy.name} (${s.name})`;
+				delete s.name;
+			}
+			if (s.ability) {
+				if (s.ability.overwrite || !cpy.ability) cpy.ability = [];
+				let abilityItem;
+				if (Array.isArray(s.ability)) {
+					abilityItem = s.ability[0];
+				} else {
+					abilityItem = s.ability;
+				}
+				cpy.ability.push(abilityItem);
+				delete cpy.ability.overwrite;
+				delete s.ability;
+			}
+			if (s.entries) {
+				s.entries.forEach(e => {
+					if (e.data && e.data.overwrite) {
+						const toOverwrite = cpy.entries.findIndex(it => it.name.toLowerCase().trim() === e.data.overwrite.toLowerCase().trim());
+						if (~toOverwrite) cpy.entries[toOverwrite] = e;
+						else cpy.entries.push(e);
+					} else {
+						cpy.entries.push(e);
+					}
+				});
+				delete s.entries;
+			}
+			// TODO needs a mechanism to allow subraces to override unwanted tags
+			if (s.traitTags) {
+				cpy.traitTags = (cpy.traitTags || []).concat(s.traitTags);
+				delete s.traitTags;
+			}
+			if (s.languageTags) {
+				cpy.languageTags = (cpy.languageTags || []).concat(s.languageTags);
+				delete s.languageTags;
+			}
+
+			// overwrite everything else
+			Object.assign(cpy, s);
+
+			out.push(cpy);
+		});
+		return out;
+	} else {
+		return [race];
+	}
 }

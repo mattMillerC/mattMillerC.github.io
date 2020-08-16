@@ -173,6 +173,16 @@ class DndSelectAdd extends PolymerElement {
   _exists(a) {
     return !!a;
   }
+
+  _label(label, choices) {
+    if (label) {
+      if (choices) {
+        return `${label} (${choices})`;
+      } else {
+        return label;
+      }
+    }
+  }
   
   static get template() {
     return html`
@@ -188,10 +198,14 @@ class DndSelectAdd extends PolymerElement {
         vaadin-select {
           width: 100%;
         }
+        .prefix {
+          white-space: normal;
+          color: var(--lumo-body-text-color);
+        }
       </style>
-      <vaadin-select test$="[[test]]" theme="dark" add id="select" label="[[label]]" placeholder="[[placeholder]]">
+      <vaadin-select test$="[[test]]" theme="dark" add id="select" label="[[_label(label, choices)]]" placeholder="[[placeholder]]">
         <div hidden$="[[!_exists(multiValue)]]" slot="prefix">
-          [[multiValue]]
+          <span class="prefix">[[multiValue]]</span>
         </div>
       </vaadin-select>
     `;

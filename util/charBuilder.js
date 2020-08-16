@@ -2,7 +2,6 @@ import { readRouteView, readRouteSelection } from "./routing";
 import loadModel from "./data";
 import { resolveHash } from './renderTable.js';
 
-
 let schema = {
   name: '',
   attr: {
@@ -78,11 +77,11 @@ function emitChangeEvent(character = selectedCharacter, characters = getCharacte
 }
 
 function getCharacters() {
-  return JSON.parse(window.sessionStorage.getItem("characters")) || [];
+  return JSON.parse(window.localStorage.getItem("characters")) || [];
 }
 
 function saveCharacters(characters) {
-  window.sessionStorage.setItem("characters", JSON.stringify(characters));
+  window.localStorage.setItem("characters", JSON.stringify(characters));
   emitChangeEvent(selectedCharacter, characters);
 }
 
