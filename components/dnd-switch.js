@@ -10,7 +10,16 @@ class DndSwitch extends PolymerElement {
         value: false,
         observer: 'initValueChange'
       },
+      checked: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true
+      },
       label: {
+        type: String,
+        value: ''
+      },
+      secondaryLabel: {
         type: String,
         value: ''
       }
@@ -20,6 +29,7 @@ class DndSwitch extends PolymerElement {
   initValueChange() {
     if (this.switchEl) {
       this.switchEl.checked = this.initialValue;
+      this.checked = this.initialValue;
     }
   }
 
@@ -29,12 +39,14 @@ class DndSwitch extends PolymerElement {
     this.switchEl = new MDCSwitch(this.shadowRoot.querySelector(".mdc-switch"));
 
     this.switchEl.checked = this.initialValue;
+    this.checked = this.initialValue;
   }
 
   connectedCallback() {
     super.connectedCallback();
 
     this.switchEventHandler = () => {
+      this.checked = this.switchEl.checked;
       this.dispatchEvent(new CustomEvent("switch-change", {
         detail: {
           checked: this.switchEl.checked
@@ -58,8 +70,11 @@ class DndSwitch extends PolymerElement {
         :host {
           display: inline-block;
         }
-        :host(:hover) label {
-          color: var(--lumo-body-text-color);
+        :host([checked]) label.secondary {
+          color: var(--mdc-theme-primary);
+        }
+        :host([checked]) label:not(.secondary) {
+          color: var(--lumo-secondary-text-color);
         }
         label {
           color: var(--mdc-theme-primary);
@@ -67,6 +82,11 @@ class DndSwitch extends PolymerElement {
           font-size: var(--lumo-font-size-s);
           margin-right: 16px;
           transition: color 0.2s;
+        }
+        label.secondary {
+          color: var(--lumo-secondary-text-color);
+          margin-right: 0;
+          margin-left: 16px;
         }
       </style>
       
@@ -79,6 +99,7 @@ class DndSwitch extends PolymerElement {
           </div>
         </div>
       </div>
+      <label class="secondary">[[secondaryLabel]]</label>
     `;
   }
 }

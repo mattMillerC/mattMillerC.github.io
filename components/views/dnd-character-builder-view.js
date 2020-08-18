@@ -5,7 +5,7 @@ import "../dnd-tabs.js";
 import "../dnd-character-select";
 import { jqEmpty } from "../../js/utils.js";
 import { getCharacterChannel, getSelectedCharacter, updateName, getClassString, getFeatureString, addCharacter, removeSelectedCharacter } from '../../util/charBuilder.js';
-
+import registerSwipe from '../../util/swipe.js';
 
 class DndCharacterBuilderView extends PolymerElement {
   static get properties() {
@@ -13,6 +13,14 @@ class DndCharacterBuilderView extends PolymerElement {
       characterName: {
         type: String,
         value: ''
+      },
+      initialSelectedTab: {
+        type: Number,
+        value: 0
+      },
+      tabIndex: {
+        type: Number,
+        value: 0
       }
     }
   }
@@ -32,8 +40,9 @@ class DndCharacterBuilderView extends PolymerElement {
 
     this.tabs = [
       { label: "Class Levels", icon: "class", viewId: "class" },
-      { label: "Attributes & Proficiencies", icon: "favorite", viewId: "attributes" },
       { label: "Background & Race", icon: "face", viewId: "background-race" },
+      { label: "Attributes & Proficiencies", icon: "favorite", viewId: "attributes" },
+      { label: "Spells", icon: "flash_on", viewId: "spells" },
       { label: "Equipment", icon: "local_grocery_store", viewId: "equipment" },
     ]
   }
@@ -47,6 +56,7 @@ class DndCharacterBuilderView extends PolymerElement {
       let newTabIndex = e.detail.index,
         newViewId = this.tabs[newTabIndex].viewId;
 
+      this.tabIndex = newTabIndex;
       if (newViewId !== undefined) {
        
         if (this.views[newViewId]) {
@@ -74,6 +84,24 @@ class DndCharacterBuilderView extends PolymerElement {
       }
     }
     this.$.name.addEventListener("focus", this.nameFieldFocusHandler)
+
+    if (!this.isLoaded) {
+      this.isLoaded = true;
+      registerSwipe(this.$.tabTarget, "right", () => {
+        if (this.tabIndex > 0) {
+          const index = this.tabIndex - 1;
+          this.tabIndex = index;
+          this.shadowRoot.querySelector('dnd-tabs').shadowRoot.querySelectorAll('.mdc-tab')[index].click();
+        }
+      });
+      registerSwipe(this.$.tabTarget, "left", () => {
+        if (this.tabIndex < this.tabs.length - 1) {
+          const index = this.tabIndex + 1;
+          this.tabIndex = index;
+          this.shadowRoot.querySelector('dnd-tabs').shadowRoot.querySelectorAll('.mdc-tab')[index].click();
+        }
+      });
+    }
   }
 
   disconnectedCallback() {
@@ -150,7 +178,7 @@ class DndCharacterBuilderView extends PolymerElement {
         </div>
       </div>
 
-      <dnd-tabs tabs="[[tabs]]" initial-selected-index="0"></dnd-tabs>
+      <dnd-tabs tabs="[[tabs]]" initial-selected-index="[[initialSelectedTab]]"></dnd-tabs>
 
       <div id="tabTarget"></div>
     `;

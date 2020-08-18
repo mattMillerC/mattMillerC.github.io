@@ -84,16 +84,16 @@ class DndLayout extends PolymerElement {
    * Adds eventing to open nav on swipe.
    */
   _initSwipe() {
-    registerSwipe(document.body, "left", () => {
+    registerSwipe(document.body, "right", () => {
       if (this.drawer.open) {
         this.drawer.open = false;
       }
-    });
-    registerSwipe(document.body, "right", () => {
+    }, null, "dnd-character-builder-view");
+    registerSwipe(document.body, "left", () => {
       if (!this.drawer.open) {
         this.drawer.open = true;
       }
-    });
+    }, null, "dnd-character-builder-view");
   }
 
   /**

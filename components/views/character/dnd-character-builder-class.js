@@ -346,6 +346,7 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
         .choices-col {
           display: flex;
           float: left;
+          flex-wrap: wrap;
         }
         .choices-col__choice {
           margin-top: 10px;

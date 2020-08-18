@@ -294,7 +294,8 @@ class DndCharacterBuilderAttributes extends PolymerElement {
           background: var(--lumo-contrast-10pct);
           border-radius: 4px;
           width: 32px;
-          margin: 32px auto 0;
+          margin-left: auto;
+          margin-right: auto;
         }
 
         .prof {

@@ -150,7 +150,7 @@ class DndAsiSelect extends PolymerElement {
         }
       </style>
 
-      <dnd-switch initial-value=[[checked]] label="Use Feat"></dnd-switch>
+      <dnd-switch initial-value=[[checked]] label="ASI" secondary-label="Feat"></dnd-switch>
       <div class="abilities" hidden$=[[checked]]>
         <dnd-select-add add-callback="[[_genASICallback('ability1')]]" value="[[selectedAbility1]]" options="[[attributeOptions]]" placeholder="<ASI>"></dnd-select-add>
         <dnd-select-add add-callback="[[_genASICallback('ability2')]]" value="[[selectedAbility2]]" options="[[attributeOptions]]" placeholder="<ASI>"></dnd-select-add>

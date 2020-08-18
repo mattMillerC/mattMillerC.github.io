@@ -135,7 +135,10 @@ function EntryRenderer() {
 					textStack.push(`<li><b>${entry.name}: </b>`);
 					this.recursiveEntryRender(entry.entry, textStack, depth);
 					textStack.push('</li>');
-					break;					
+					break;
+				case "print":
+					textStack.push(renderString(entry.entry));
+					break;
 			}
 		} else if (typeof entry === "string") { // block
 			renderPrefix();

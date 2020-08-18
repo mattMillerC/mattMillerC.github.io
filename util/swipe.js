@@ -1,5 +1,9 @@
-export default function registerSwipe(element, direction, handler) {
+export default function registerSwipe(element, direction, handler, mustBeInEl, cantBeInEl, test) {
     const TOUCH_DISTANCE_DELTA = 50;
+
+
+    // Prevents TouchMove
+    var hardStop = false;
 
     var xDown = null;
     var yDown = null;
@@ -9,17 +13,39 @@ export default function registerSwipe(element, direction, handler) {
     element.addEventListener("touchend", handleTouchEnd, false);
 
     function handleTouchStart(evt) {
+        if (mustBeInEl) {
+            let isInEl = evt.path.find(el => {
+                return el.matches && el.matches(mustBeInEl);
+            });
+            if (!isInEl) {
+                hardStop = true;
+                return;
+            }
+        }
+        if (cantBeInEl) {
+            let isInEl = evt.path.find(el => {
+                return el.matches && el.matches(cantBeInEl);
+            });
+            if (isInEl) {
+                hardStop = true;
+                return;
+            }
+        }
         xDown = evt.touches[0].clientX;
         yDown = evt.touches[0].clientY;
     }
 
-    function handleTouchEnd() {
+    function handleTouchEnd(evt) {
+        if (hardStop) {
+            hardStop = false
+        }
+
         xDown = null;
         yDown = null;
     }
 
     function handleTouchMove(evt) {
-        if (!xDown || !yDown) {
+        if (hardStop || !xDown || !yDown) {
             return;
         }
         var xUp = evt.touches[0].clientX;

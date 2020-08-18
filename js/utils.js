@@ -928,6 +928,20 @@ function absInt(int) {
 	return int > 0 ? "+" + int : int;
 }
 
+function entrySearch(searchStr, entries) {
+	if (Array.isArray(entries)) {
+		for (const entry of entries) {
+			if (entry.name === searchStr) {
+				return entry;
+			} else if (entry.type === "list") {
+				return entrySearch(searchStr, entry.items);
+			} else if (entry.entries) {
+				return entrySearch(searchStr, entry.entries);
+			}
+		}
+	}
+}
+
 export {
   throttle,
   debounce,
@@ -999,5 +1013,6 @@ export {
 	initCollapseToggles,
 	dashToCaplital,
 	getEntryName,
-	absInt
+	absInt,
+	entrySearch
 };

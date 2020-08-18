@@ -2,6 +2,12 @@ import { readRouteView, readRouteSelection } from "./routing";
 import loadModel from "./data";
 import { resolveHash } from './renderTable.js';
 
+
+// Possibile improvements:
+//    Maintain class, background, race, and feat references between character switches.
+//    getCharacters() is duplicating character memory every time its called!!! 
+//    
+
 let schema = {
   name: '',
   attr: {
@@ -27,6 +33,7 @@ let schema = {
 
 const channel = document.createElement('div');
 let selectedCharacter;
+let characters;
 
 function getSelectedCharacter() {
   return selectedCharacter;
@@ -77,11 +84,12 @@ function emitChangeEvent(character = selectedCharacter, characters = getCharacte
 }
 
 function getCharacters() {
-  return JSON.parse(window.localStorage.getItem("characters")) || [];
+  return characters || JSON.parse(window.localStorage.getItem("characters")) || [];
 }
 
 function saveCharacters(characters) {
   window.localStorage.setItem("characters", JSON.stringify(characters));
+  characters = characters;
   emitChangeEvent(selectedCharacter, characters);
 }
 
@@ -723,7 +731,7 @@ const classOptionsMap = {
 }
 
 const expertiseClasses = {
-  "bard": {
+  bard: {
     3: 2,
     10: 2
   }
@@ -804,5 +812,6 @@ export {
   getClassString,
   getClassSaves,
   getFeatureString,
-  findCharacterIndex
+  findCharacterIndex,
+  getBackgroundReference
 };
