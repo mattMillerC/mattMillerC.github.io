@@ -588,7 +588,7 @@ class d extends(Object(h.a)(Object(n.a)(Object(l.a)(Object(a.a)(o.a))))){static 
       }
    </style>
   </template>
-</dom-module>`;document.head.appendChild(c.content);var _=i(70),u=i(64),p=i(10),m=i(20),g=i(72),f=i(31);
+</dom-module>`;document.head.appendChild(c.content);var _=i(69),u=i(64),p=i(10),m=i(20),g=i(71),f=i(31);
 /**
 @license
 Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
