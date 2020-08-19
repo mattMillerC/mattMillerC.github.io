@@ -47,6 +47,10 @@ module.exports = {
         {
           from: path.resolve(__dirname, "node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js"),
           to: "node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js"
+        },
+        {
+          from: path.resolve(__dirname, "node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js.map"),
+          to: "node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js.map"
         }
       ]
     })

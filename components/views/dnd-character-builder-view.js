@@ -18,7 +18,7 @@ class DndCharacterBuilderView extends PolymerElement {
         type: Number,
         value: 0
       },
-      tabIndex: {
+      indexForTabs: {
         type: Number,
         value: 0
       }
@@ -56,7 +56,7 @@ class DndCharacterBuilderView extends PolymerElement {
       let newTabIndex = e.detail.index,
         newViewId = this.tabs[newTabIndex].viewId;
 
-      this.tabIndex = newTabIndex;
+      this.indexForTabs = newTabIndex;
       if (newViewId !== undefined) {
        
         if (this.views[newViewId]) {
@@ -88,17 +88,15 @@ class DndCharacterBuilderView extends PolymerElement {
     if (!this.isLoaded) {
       this.isLoaded = true;
       registerSwipe(this.$.tabTarget, "right", () => {
-        if (this.tabIndex > 0) {
-          const index = this.tabIndex - 1;
-          this.tabIndex = index;
-          this.shadowRoot.querySelector('dnd-tabs').shadowRoot.querySelectorAll('.mdc-tab')[index].click();
+        if (this.indexForTabs > 0) {
+          const newIndex = this.indexForTabs - 1;
+          this.$.tabs.tabBar.activateTab(newIndex);
         }
       });
       registerSwipe(this.$.tabTarget, "left", () => {
-        if (this.tabIndex < this.tabs.length - 1) {
-          const index = this.tabIndex + 1;
-          this.tabIndex = index;
-          this.shadowRoot.querySelector('dnd-tabs').shadowRoot.querySelectorAll('.mdc-tab')[index].click();
+        if (this.indexForTabs < this.tabs.length - 1) {
+          const newIndex = this.indexForTabs + 1;
+          this.$.tabs.tabBar.activateTab(newIndex);
         }
       });
     }
@@ -178,7 +176,7 @@ class DndCharacterBuilderView extends PolymerElement {
         </div>
       </div>
 
-      <dnd-tabs tabs="[[tabs]]" initial-selected-index="[[initialSelectedTab]]"></dnd-tabs>
+      <dnd-tabs id="tabs" tabs="[[tabs]]" initial-selected-index="[[initialSelectedTab]]"></dnd-tabs>
 
       <div id="tabTarget"></div>
     `;

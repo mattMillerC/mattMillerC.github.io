@@ -9,6 +9,14 @@ class DndCharacterBuilderEquipment extends PolymerElement {
     return {
       classEquipment: {
         type: String,
+      },
+      hasClass: {
+        type: Boolean,
+        value: false
+      },
+      hasBackground: {
+        type: Boolean,
+        value: false
       }
     };
   }
@@ -38,30 +46,26 @@ class DndCharacterBuilderEquipment extends PolymerElement {
   }
 
   async updateFromCharacter(character) {
+    this.hasClass = false;
+    this.hasBackground = false;
+    this.$.backgroundEquipment.innerHTML = "";
+    this.$.classEquipment.innerHTML = "";
     if (character) {
       let firstClass;
       if (character.levels && character.levels.length > 0) {
         const classRefs = await getClassReferences();
         firstClass = classRefs[character.levels[0].name];
+        this.hasClass = true;
         this.$.classEquipment.innerHTML = this.parseClassEquipment(firstClass.startingEquipment);
-      } else {
-        this.$.classEquipment.innerHTML = "";
       }
 
       if (!firstClass || firstClass.startingEquipment.additionalFromBackground) {
         const background = await getBackgroundReference();
         if (background) {
+          this.hasBackground = true;
           this.$.backgroundEquipment.innerHTML = this.parseBackgroundEquipment(background.entries)
-        } else {
-          this.$.backgroundEquipment.innerHTML = "";
         }
-      } else {
-        this.$.backgroundEquipment.innerHTML = "";
       }
-
-    } else {
-      this.$.backgroundEquipment.innerHTML = "";
-      this.$.classEquipment.innerHTML = "";
     }
   }
 
@@ -106,13 +110,51 @@ class DndCharacterBuilderEquipment extends PolymerElement {
         a {
           color: var(--mdc-theme-secondary);
         }
+
+        .col-wrap {
+          display: flex; 
+          justify-content: space-between;
+          flex-wrap: wrap;
+        }
+
+        .row-wrap {
+          width: 100%;
+        }
+        .row-wrap:first-child {
+          margin-bottom: 24px;
+        }
+
+        .row-wrap > *:not(h2):not(:last-child) {
+          margin-bottom: 10px;
+        }
+
+        span {
+          font-size: 14px;
+          font-style: italic;
+        }
+
+        @media(min-width: 921px) {
+          .row-wrap {
+            width: calc(50% - 10px);
+          }
+          .row-wrap:first-child {
+            margin-bottom: 0;
+          }
+        }
       </style>
 
-      <div>
-        <h2>Class</h2>
-        <div id="classEquipment"></div>
-        <h2>Background</h2>
-        <div id="backgroundEquipment"></div>
+      <div class="col-wrap">
+        <div class="row-wrap">
+          <h2>From Class</h2>
+          <span hidden$=[[hasClass]]>Select a class to see equipment</span>
+          <div id="classEquipment"></div>
+        </div>
+
+        <div class="row-wrap">
+          <h2>From Background</h2>
+          <span hidden$=[[hasBackground]]>Select a background to see equipment</span>
+          <div id="backgroundEquipment"></div>
+        </div>
       </div>
     `;
   }

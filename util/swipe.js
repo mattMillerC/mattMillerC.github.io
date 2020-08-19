@@ -1,6 +1,5 @@
-export default function registerSwipe(element, direction, handler, mustBeInEl, cantBeInEl, test) {
+export default function registerSwipe(element, direction, handler, mustBeInEl, cantBeInEl) {
     const TOUCH_DISTANCE_DELTA = 50;
-
 
     // Prevents TouchMove
     var hardStop = false;
@@ -37,7 +36,7 @@ export default function registerSwipe(element, direction, handler, mustBeInEl, c
 
     function handleTouchEnd(evt) {
         if (hardStop) {
-            hardStop = false
+            hardStop = false;
         }
 
         xDown = null;
