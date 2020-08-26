@@ -2,7 +2,7 @@ import { PolymerElement, html } from '@polymer/polymer';
 import { mergeFeature } from '../util/charBuilder';
 import { jqEmpty, util_capitalizeAll } from "../js/utils";
 import "@vaadin/vaadin-select";
-import loadModel from "../util/data";
+import {loadModel} from "../util/data";
 
 class DndSelectAdd extends PolymerElement {
   static get properties() {
@@ -62,12 +62,26 @@ class DndSelectAdd extends PolymerElement {
 
   valueUpdated() {
     if (this.choices) {
-      if (this.value && this.options) {
-        const choiceArray = this.value.map(v => { return this.options.indexOf(v) }).filter(v => { return v !== -1 });
+      if (Array.isArray(this.value) && this.options) {
+        const choiceArray = this.value
+          .map(v => {
+            if (this.options.indexOf(v) !== -1) {
+              return this.options.indexOf(v);
+            } else {
+              return this.options.findIndex((o) => {
+                return o.name === v.name && o.source === v.source;
+              });
+            }
+          })
+          .filter(v => { return v !== -1 });
+
         if (this.listBox) {
           this.listBox.selectedValues = choiceArray;
         }
-        this.multiValue = choiceArray.map(v => { return util_capitalizeAll(this.options[v]) }).join(", ");
+        this.multiValue = choiceArray.map(i => {
+          let value = this.options[i];
+          return value.name ? value.name : util_capitalizeAll(value) 
+        }).join(", ");
       } else {
         if (this.listBox) {
           this.listBox.selectedValues = [];
@@ -76,7 +90,11 @@ class DndSelectAdd extends PolymerElement {
       }
     } else {
       if (this.value && this.options) {
-        this.$.select.value = this.options.findIndex(i => { return i.name === this.value || i === this.value}) + "";
+        if (this.value.name) {
+          this.$.select.value = this.options.findIndex(i => { return i.name === this.value.name || i === this.value.name }) + "";
+        } else {
+          this.$.select.value = this.options.findIndex(i => { return i.name === this.value || i === this.value }) + "";
+        }
       } else {
         this.$.select.value = "";
       }
@@ -108,7 +126,7 @@ class DndSelectAdd extends PolymerElement {
                   this.listBox.selectedValues.splice(this.listBox.selectedValues.length - 2, 1)
                 }
                 let selectedOptions = this.listBox.selectedValues.map(v => { return this.options[v] });
-                this.multiValue = selectedOptions.map(o => { return util_capitalizeAll(o) }).join(', ');
+                this.multiValue = selectedOptions.map(o => { return o.name ? o.name : util_capitalizeAll(o) }).join(', ');
                 if (this.addCallback) {
                   this.addCallback(selectedOptions);
                 }

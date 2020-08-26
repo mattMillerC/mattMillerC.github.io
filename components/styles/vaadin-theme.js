@@ -52,7 +52,7 @@ registerStyles('vaadin-integer-field', css`
 
 registerStyles('vaadin-grid', css`
   :host([theme~="no-border"]) {
-    border-top: 1px solid var(--mdc-theme-text-divider-on-background);
+    border-top: 3px solid var(--mdc-theme-text-divider-on-background);
   }
   [part~="cell"]:not([part~="details-cell"]) {
     align-items: flex-start;

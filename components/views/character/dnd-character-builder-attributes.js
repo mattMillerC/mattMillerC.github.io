@@ -336,6 +336,7 @@ class DndCharacterBuilderAttributes extends PolymerElement {
         }
       </style>
 
+      <h2>Attributes</h2>
       <div class="table-wrap">
         <table class="stats">
           <thead>

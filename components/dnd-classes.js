@@ -2,7 +2,7 @@ import {PolymerElement, html} from '@polymer/polymer';
 import "./styles/material-styles.js";
 import "./styles/my-styles.js";
 import './dnd-svg.js';
-import loadModel from '../util/data.js';
+import { loadModel } from '../util/data.js';
 import { resolveHash } from '../util/renderTable.js';
 import { onDataLoad, onClassChange, onSubChange } from "../js/classes.js";
 import { readRouteSelection, routeEventChannel, clearRouteSelection } from '../util/routing.js';

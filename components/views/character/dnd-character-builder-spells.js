@@ -42,8 +42,8 @@ class DndCharacterBuilderSpells extends PolymerElement {
         }
       </style>
 
+      <h2>Spells</h2>
       <div>
-        Spells
       </div>
     `;
   }

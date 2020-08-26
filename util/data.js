@@ -7,7 +7,7 @@ let cache = {};
  * Returns model data object, serving the cached version if already requested.
  * @param {String} modelId Model ID for the data being requested.
  */
-export default async function loadModel(modelId) {
+export async function loadModel(modelId) {
 	if (modelId) {
 		// Checks model cache for data
 		if (!cache.hasOwnProperty(modelId)) {
@@ -86,6 +86,43 @@ async function loadModelFromIndex(modelId) {
 		console.error("Model index data not found from model JSON");
 		return [];
 	}
+}
+
+export async function filterModel(modelId, selectorString) {
+	let selectors = selectorString
+		.split('|')
+		.map((selectorStr) => {
+			let selectorKeyValue = selectorStr.split('=');
+			if (selectorKeyValue.length > 1) {
+				return {
+					key: selectorKeyValue[0],
+					value: selectorKeyValue[1]
+				};
+			} else {
+				return null;
+			}
+		})
+		.filter(selector => !!selector);
+
+	if (selectors.length === 0) {
+		selectors = [{key: 'featureType', value: selectorString}];
+	}
+
+	return await loadModel(modelId).then((data) => {
+		return data.filter(item => {
+			return selectors.every(selector => {
+				if (item[selector.key]) {
+					if (Array.isArray(item[selector.key])) {
+						const lowerCased = item[selector.key].map(i => i.toLowerCase());
+						return lowerCased.includes(selector.value.toLowerCase());
+					} else {
+						return item[selector.key].toLowerCase() === selector.value.toLowerCase()
+					}
+				}
+				return false;
+			})
+		});
+	});
 }
 
 function loadAllMonsterData() {

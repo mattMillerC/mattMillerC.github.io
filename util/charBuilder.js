@@ -1,12 +1,6 @@
 import { readRouteView, readRouteSelection } from "./routing";
-import loadModel from "./data";
+import {loadModel} from "./data";
 import { resolveHash } from './renderTable.js';
-
-
-// Possibile improvements:
-//    Maintain class, background, race, and feat references between character switches.
-//    getCharacters() is duplicating character memory every time its called!!! 
-//    
 
 let schema = {
   name: '',
@@ -667,113 +661,61 @@ async function getSkillProfs(attr, character = selectedCharacter) {
   }
 }
 
-function getClassOptions() {
-
-}
-
-const classOptionsMap = {
-  artificer: {
-    class: {
-      2: {
-        count: 4,
-        type: "AI"
-      },
-      6: {
-        count: 2,
-        type: "AI"
-      },
-      10: {
-        count: 2,
-        type: "AI"
-      },
-      14: {
-        count: 2,
-        type: "AI"
-      },
-      18: {
-        count: 2,
-        type: "AI"
-      }
-    }
-  },
-  barbarian: {
-    subclasses: {
-      "Path of the Totem Warrior": {
-        3: {
-          name: "Totem Spirit",
-          count: 1,
-          options: ["Bear", "Eagle", "Elk", "Tiger", "Wolf"]
-        },
-        6: {
-          name: "Aspect of the Beast",
-          count: 1,
-          options: ["Bear", "Eagle", "Elk", "Tiger", "Wolf"]
-        },
-        14: {
-          name: "Totemic Attunement",
-          count: 1,
-          options: ["Bear", "Eagle", "Elk", "Tiger", "Wolf"]
-        }
-      }
-    }
-  },
-  bard: {
-    subclasses: {
-      "College of Swords": {
-        3: {
-          name: "Fighting Style",
-          count: 1,
-          type: "fs:b"
-        }
-      }
-    }
+function getClassChoice(classs, level, feature, character = selectedCharacter) {
+  if (character 
+      && character.classChoices 
+      && character.classChoices[classs]
+      && character.classChoices[classs].class
+      && character.classChoices[classs].class[level]
+      && character.classChoices[classs].class[level][feature]) {
+    return character.classChoices[classs].class[level][feature];
   }
 }
 
-const expertiseClasses = {
-  bard: {
-    3: 2,
-    10: 2
+function setClassChoice(classs, level, feature, choice, character = selectedCharacter) {
+  if (character) {
+    if (!character.classChoices) {
+      character.classChoices = {};
+    }
+    if (!character.classChoices[classs]) {
+      character.classChoices[classs] = { class: {}, subclass: {} };
+    }
+    if (!character.classChoices[classs].class[level]) {
+      character.classChoices[classs].class[level] = {};
+    }
+    character.classChoices[classs].class[level][feature] = choice;
+    saveCharacter(character);
   }
 }
 
-const proficiencyGains = {
-
+function getSubclassChoice(classs, subclass, level, feature, character = selectedCharacter) {
+  if (character 
+      && character.classChoices 
+      && character.classChoices[classs]
+      && character.classChoices[classs].subclass
+      && character.classChoices[classs].subclass[subclass]
+      && character.classChoices[classs].subclass[subclass][level]
+      && character.classChoices[classs].subclass[subclass][level][feature]) {
+    return character.classChoices[classs].subclass[subclass][level][feature];
+  }
 }
 
-const spellGains = {
-  classes: {
-    bard: {
-      subclasses: {
-        "College of Lore": {
-          6: {
-            name: "",
-            count: 2,
-            list: "any"
-          },
-        }
-      },
-      class: {
-        10: {
-          name: "Magical Secrets",
-          count: 2,
-          list: "any"
-        },
-        14: {
-          name: "",
-          count: 2,
-          list: "any"
-        },
-        18: {
-          name: "",
-          count: 2,
-          list: "any"
-        }
-      }
-    },
-  },
-  feats: {
-    "": ""
+function setSubclassChoice(classs, subclass, level, feature, choice, character = selectedCharacter) {
+  if (character) {
+    if (!character.classChoices) {
+      character.classChoices = {};
+    }
+    if (!character.classChoices[classs]) {
+      character.classChoices[classs] = { class: {}, subclass: {} };
+    }
+    if (!character.classChoices[classs].subclass[subclass]) {
+      character.classChoices[classs].subclass[subclass] = {};
+    }
+    if (!character.classChoices[classs].subclass[subclass][level]) {
+      character.classChoices[classs].subclass[subclass][level] = {};
+    }
+    character.classChoices[classs].subclass[subclass][level][feature] = choice;
+    saveCharacter(character);
   }
 }
 
@@ -809,9 +751,13 @@ export {
   setFeatAttributeSelection,
   initSelectedCharacter,
   getClassReferences,
+  getBackgroundReference,
   getClassString,
   getClassSaves,
   getFeatureString,
   findCharacterIndex,
-  getBackgroundReference
+  getClassChoice,
+  getSubclassChoice,
+  setClassChoice,
+  setSubclassChoice
 };

@@ -176,9 +176,11 @@ class DndCharacterBuilderView extends PolymerElement {
         </div>
       </div>
 
-      <dnd-tabs id="tabs" tabs="[[tabs]]" initial-selected-index="[[initialSelectedTab]]"></dnd-tabs>
+      <div class="character-builder--tabs-wrapper">
+        <dnd-tabs id="tabs" tabs="[[tabs]]" initial-selected-index="[[initialSelectedTab]]"></dnd-tabs>
 
-      <div id="tabTarget"></div>
+        <div id="tabTarget"></div>
+      </div>
     `;
   }
 }

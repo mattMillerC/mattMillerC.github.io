@@ -131,6 +131,7 @@ class DndAsiSelect extends PolymerElement {
         :host {
           display: flex;
           flex-direction: column;
+          max-width: 192px;
         }
         [hidden] {
           display: none !important;

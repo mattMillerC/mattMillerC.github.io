@@ -1,7 +1,7 @@
 import {PolymerElement, html} from '@polymer/polymer';
 import "./dnd-list.js";
 import "./dnd-selected-item.js";
-import loadModel from "../util/data.js";
+import {loadModel} from "../util/data.js";
 import { resolveHash } from "../util/renderTable.js";
 import { readRouteSelection, routeEventChannel, clearRouteSelection } from '../util/routing.js';
 

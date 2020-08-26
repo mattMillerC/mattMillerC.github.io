@@ -1,6 +1,6 @@
 import {PolymerElement, html} from '@polymer/polymer';
 import "@polymer/polymer/lib/elements/dom-repeat.js";
-import loadModel from "../util/data.js";
+import {loadModel} from "../util/data.js";
 import "./styles/material-styles.js";
 import "./styles/my-styles.js";
 import { jqWrap, initCollapseToggles, encodeForHash, decodeForHash } from "../js/utils.js";

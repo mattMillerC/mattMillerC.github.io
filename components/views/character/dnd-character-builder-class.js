@@ -1,15 +1,17 @@
 import { PolymerElement, html } from "@polymer/polymer";
 import { MutableData } from '@polymer/polymer/lib/mixins/mutable-data.js';
-import { getCharacterChannel, getSelectedCharacter, getClassReferences, setClassLevels, mergeSubclass, setClassSkillProficiencies, getSubclassChoiceLevel, mergeFeature} from "../../../util/charBuilder";
+import { getCharacterChannel, getSelectedCharacter, getClassReferences, setClassLevels, mergeSubclass, setClassSkillProficiencies, getSubclassChoiceLevel, mergeFeature, setSubclassChoice, setClassChoice, getSubclassChoice, getClassChoice} from "../../../util/charBuilder";
 import "@vaadin/vaadin-grid";
 import "../../dnd-select-add";
 import "../../dnd-switch";
 import "../../dnd-button";
 import "../../dnd-asi-select";
 import { jqEmpty, getEntryName } from "../../../js/utils";
+import { classOptionsMap } from "../../../data/choices";
 import EntryRenderer from "../../../util/entryrender";
 import { } from '@polymer/polymer/lib/elements/dom-if.js';
 import { } from '@polymer/polymer/lib/elements/dom-repeat.js';
+import {filterModel} from "../../../util/data";
 
 class DndCharacterBuilderClass extends MutableData(PolymerElement) {
   
@@ -109,6 +111,9 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
     this.levels = character.levels;
     this.classes = await getClassReferences(character);
     this.subclasses = JSON.parse(JSON.stringify(character.subclasses));
+
+    this.classChoices = await this._findLevelChoices(character, this.classes);
+
     this.$.classGrid.clearCache();
   }
 
@@ -191,42 +196,127 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
     }
   }
 
-  _findChoices(levels, name, index, classes) {
-    if (classes && name && levels && levels.length && index < levels.length) {
-      let classDef = classes[name];
+  async _findLevelChoices(character, classes) {
+    const levelChoices = [];
+    if (character && character.levels && character.levels.length) {
+      for (let i = 0; i < character.levels.length; i++) {
+        levelChoices.push(await this._findChoices(character, classes, i));
+      }
+    }
+    return levelChoices;
+  }
+
+  async _findChoices(character, classes, levelIndex) {
+    if (classes && character.levels && character.levels.length && character.levels.length > levelIndex) {
+      let levels = character.levels,
+        subclasses = character.subclasses,
+        name = levels[levelIndex].name,
+        classDef = classes[name];
 
       if (classDef) {
         let choices = [],
+          classLevelCount = 0,
           subclassChoiceLevel = getSubclassChoiceLevel(classDef);
 
-        if (subclassChoiceLevel !== undefined) {
-          let classLevelCount = 0;
-          for (let i = 0; i <= index; i++) {
-            let level = levels[i]
-            if (level.name === name) {
-              classLevelCount ++;
-            }
-          }
-
-          if (classLevelCount === subclassChoiceLevel) {
-            choices.push({id: "subclass"});
+        for (let i = 0; i <= levelIndex; i++) {
+          let level = levels[i]
+          if (level.name === name) {
+            classLevelCount ++;
           }
         }
 
-        let features = this._getClassLevelFeatures(levels, index, classes);
+        if (subclassChoiceLevel !== undefined && classLevelCount === subclassChoiceLevel) {
+          choices.push({
+            id: "subclass",
+            from: classDef.subclasses,
+            selections: character.subclasses[name]
+          });
+        }
+
+        let features = this._getClassLevelFeatures(levels, levelIndex, classes);
         if (features && features.length
             && features.find((f) => { return f.name === "Ability Score Improvement"; })) {
-          choices.push({id: "asi"});
+          choices.push({
+            id: "asi"
+          });
         }
 
-        if (index === 0) {
+        if (levelIndex === 0) {
           const classSkillOptions = classDef.startingProficiencies.skills[0].choose;
           choices.push({
             id: "profs",
             count: classSkillOptions.count,
             from: classSkillOptions.from,
-            selections: this.character.classSkillProficiencies
+            selections: character.classSkillProficiencies
           });
+        }
+
+        if (classLevelCount) {
+          const classOptions = classOptionsMap[name.toLowerCase()];
+
+          if (classOptions && classOptions.class && classOptions.class[classLevelCount]) {
+            const classLevelOptions = [].concat(classOptions.class[classLevelCount]);
+            
+            for (const classLevelOption of classLevelOptions) {
+              if (classLevelOption.options) {
+                choices.push({
+                  id: "classFeature",
+                  name: classLevelOption.name,
+                  from: classLevelOption.options,
+                  count: classLevelOption.count > 1 ? classLevelOption.count : undefined,
+                  class: name.toLowerCase(),
+                  feature: classLevelOption.name,
+                  level: classLevelCount,
+                  selections: getClassChoice(name.toLowerCase(), classLevelCount, classLevelOption.name)
+                });
+              } else if (classLevelOption.type) {
+                const options = await filterModel("features", classLevelOption.type);
+                choices.push({
+                  id: "classFeature",
+                  name: classLevelOption.name,
+                  from: options,
+                  count: classLevelOption.count > 1 ? classLevelOption.count : undefined,
+                  class: name.toLowerCase(),
+                  feature: classLevelOption.name,
+                  level: classLevelCount,
+                  selections: getClassChoice(name.toLowerCase(), classLevelCount, classLevelOption.name)
+                });
+              }
+            }
+          }
+
+          if (classOptions && classOptions.subclasses && subclasses[name] && classOptions.subclasses[subclasses[name]] && classOptions.subclasses[subclasses[name]][classLevelCount]) {
+            const subclassLevelOptions = [].concat(classOptions.subclasses[subclasses[name]][classLevelCount]);
+            
+            for (const subclassLevelOption of subclassLevelOptions) {
+              if (subclassLevelOption.options) {
+                choices.push({
+                  id: "subclassFeature",
+                  name: subclassLevelOption.name,
+                  from: subclassLevelOption.options,
+                  count: subclassLevelOption.count > 1 ? subclassLevelOption.count : undefined,
+                  class: name.toLowerCase(),
+                  subclass: subclasses[name],
+                  feature: subclassLevelOption.name,
+                  level: classLevelCount,
+                  selections: getSubclassChoice(name.toLowerCase(), subclasses[name], classLevelCount, subclassLevelOption.name)
+                });
+              } else if (subclassLevelOption.type) {
+                const options = await filterModel("features", subclassLevelOption.type);
+                choices.push({
+                  id: "subclassFeature",
+                  name: subclassLevelOption.name,
+                  from: options,
+                  count: subclassLevelOption.count > 1 ? subclassLevelOption.count : undefined,
+                  class: name.toLowerCase(),
+                  subclass: subclasses[name],
+                  feature: subclassLevelOption.name,
+                  level: classLevelCount,
+                  selections: getSubclassChoice(name.toLowerCase(), subclasses[name], classLevelCount, subclassLevelOption.name)
+                });
+              }
+            }
+          }
         }
 
         return choices;
@@ -253,6 +343,46 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
     return subclasses[level.name];
   }
 
+  _classFeatureOptionAddCallback(classs, level, feature) {
+    return (choice) => {
+      let adjChoice;
+      if (Array.isArray(choice)) {
+        adjChoice = choice.map(c => {
+          if (c.name) {
+            return { name: c.name, source: c.source }
+          } else {
+            return c;
+          }
+        });
+      } else if (choice.name) {
+        adjChoice = { name: choice.name, source: choice.source };
+      } else {
+        adjChoice = choice;
+      }
+      setClassChoice(classs, level, feature, adjChoice);
+    };
+  }
+
+  _subclassFeatureOptionAddCallback(classs, subclass, level, feature) {
+    return (choice) => {
+      let adjChoice;
+      if (Array.isArray(choice)) {
+        adjChoice = choice.map(c => {
+          if (c.name) {
+            return { name: c.name, source: c.source }
+          } else {
+            return c;
+          }
+        });
+      } else if (choice.name) {
+        adjChoice = { name: choice.name, source: choice.source };
+      } else {
+        adjChoice = choice;
+      }
+      setSubclassChoice(classs, subclass, level, feature, adjChoice);
+    };
+  }
+
   _indexOfLevel(level, levels) {
     return levels.indexOf(level);
   }
@@ -263,6 +393,10 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
 
   _objArray(obj) {
     return Object.values(obj);
+  }
+
+  _atIndex(data, index) {
+    return data ? data[index] : null;
   }
 
   _addClassLevel(e) {
@@ -276,14 +410,17 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
   static get template() {
     return html`
       <style include="material-styles my-styles">
-        vaadin-grid {
-          border-top: 1px solid var(--mdc-theme-text-divider-on-background);
-        }
         #stats {
           margin-top: 0px;
         }
         .details {
           padding: 0 24px;
+        }
+
+        .heading {
+          margin: 34px 14px 5px;
+          font-size: 24px;
+          font-weight: bold;
         }
 
         .button-wrap {
@@ -372,6 +509,7 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
         }
       </style>
 
+      <h2 class="heading">Class</h2>
       <div class="button-wrap">
         <dnd-select-add model="classes" placeholder="Add a Level"></dnd-select-add>
         <template is="dom-repeat" items="[[_objArray(classes)]]">
@@ -397,10 +535,11 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
               </div>
 
               <div class="choices-col">
-                <template is="dom-repeat" items="[[_findChoices(levels, item.name, index, classes)]]" as="choice">
+                <template is="dom-repeat" items="[[_atIndex(classChoices, index)]]" as="choice">
                   <div class="choices-col__choice">
                     <template is="dom-if" if="[[_equal(choice.id, 'subclass')]]">
-                      <dnd-select-add class="choices-col__subclass-choice" label="Subclass" add-callback="[[_genSubclassCallback(item)]]" options="[[_genSubclassOptions(item)]]" value="[[_getSubclassSelection(item, subclasses, character)]]" placeholder="<Choose Subclass>"></dnd-select-add>
+                      <dnd-select-add class="choices-col__subclass-choice" label="Subclass" placeholder="<Choose Subclass>"
+                        options="[[choice.from]]" value="[[choice.selections]]" add-callback="[[_genSubclassCallback(item)]]"></dnd-select-add>
                     </template>
                     <template is="dom-if" if="[[_equal(choice.id, 'asi')]]">
                       <dnd-asi-select level-index="[[_indexOfLevel(item, levels)]]" character="[[character]]"></dnd-asi-select>
@@ -408,6 +547,14 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
                     <template is="dom-if" if="[[_equal(choice.id, 'profs')]]">
                       <dnd-select-add choices="[[choice.count]]" label="Skill Proficiency" placeholder="<Choose Skills>"
                         options="[[choice.from]]" value="[[choice.selections]]" add-callback="[[_classSkillAddCallback]]"></dnd-select-add>
+                    </template>
+                    <template is="dom-if" if="[[_equal(choice.id, 'classFeature')]]">
+                      <dnd-select-add choices="[[choice.count]]" label="[[choice.name]]" placeholder="<Choose Option>"
+                        options="[[choice.from]]" value="[[choice.selections]]" add-callback="[[_classFeatureOptionAddCallback(choice.class, choice.level, choice.feature)]]"></dnd-select-add>
+                    </template>
+                    <template is="dom-if" if="[[_equal(choice.id, 'subclassFeature')]]">
+                      <dnd-select-add choices="[[choice.count]]" label="[[choice.name]]" placeholder="<Choose Option>"
+                        options="[[choice.from]]" value="[[choice.selections]]" add-callback="[[_subclassFeatureOptionAddCallback(choice.class, choice.subclass, choice.level, choice.feature)]]"></dnd-select-add>
                     </template>
                   </div>
                 </template>
