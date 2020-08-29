@@ -134,7 +134,7 @@ let Parser = {};
 Parser._parse_aToB = function(abMap, a) {
   a = a.trim();
   if (abMap[a] !== undefined) return abMap[a];
-  console.error(a);
+  //console.error(a);
   return a;
 };
 

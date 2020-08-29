@@ -410,15 +410,25 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
   static get template() {
     return html`
       <style include="material-styles my-styles">
+        .something {
+          display: block;
+        }
         #stats {
-          margin-top: 0px;
+          margin-top: 16px;
+          line-height: 1.9;
         }
         .details {
           padding: 0 24px;
         }
 
+        .heading-wrap {
+          display: flex;
+          justify-content: space-between;
+          margin: 22px 14px 5px;
+          align-items: center;
+        }
+
         .heading {
-          margin: 34px 14px 5px;
           font-size: 24px;
           font-weight: bold;
         }
@@ -433,9 +443,7 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
           margin: 4px;
         }
 
-
         .row {
-          margin: 10px;
           position: relative;
         }
         .row:after {
@@ -447,7 +455,8 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
         .open-details {
           cursor: pointer;
           display: flex;
-          align-items: center;
+          align-items: flex-start;
+          flex-wrap: wrap;
         }
         .open-details:hover {
           color: var(--mdc-theme-secondary);
@@ -458,20 +467,25 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;
+          flex-shrink: 0;
+          padding: 6px 0;
         }
         .level-col__level {
           margin-right: 10px;
-          position: relative;
-          top: -2px;
+          font-size: 20px;
+          font-weight: bold;
         }
         .level-col__class {
           font-size: 20px;
+          font-weight: bold;
         }
 
         .features-col {
-          text-overflow: ellipsis;
-          overflow: hidden;
-          margin: 0 30px 0 12px;
+          white-space: normal;
+          margin: 0;
+          padding: 8px 0;
+          width: 100%;
+          font-size: 15px;
         }
         .class-feature:not(:last-of-type)::after {
           content: ', ';
@@ -495,8 +509,8 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
 
         .delete-col {
           position: absolute;
-          right: 0;
-          top: 0;
+          right: -8px;
+          top: 4px;
         }
         .delete-btn {
           height: 24px;
@@ -507,11 +521,26 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
         .delete-btn:hover {
           color: var(--mdc-theme-secondary);
         }
+        .details {
+          padding: 0 6px;
+        }
+        @media(min-width: 921px) {
+          .open-details {
+            flex-wrap: nowrap;
+          }
+          .features-col {
+            margin: 0 30px 0 12px;
+            width: unset;
+            font-size: 16px;
+          }
+        }
       </style>
 
-      <h2 class="heading">Class</h2>
-      <div class="button-wrap">
+      <div class="heading-wrap">
+        <h2 class="heading">Class</h2>
         <dnd-select-add model="classes" placeholder="Add a Level"></dnd-select-add>
+      </div>
+      <div class="button-wrap">
         <template is="dom-repeat" items="[[_objArray(classes)]]">
           <dnd-button icon="add" label="[[item.name]]" on-click="_addClassLevel"></dnd-button>
         </template>
@@ -527,7 +556,7 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
                   <span class="level-col__class">[[item.name]]</span>
                 </div>
 
-                <div class="features-col hidden-mobile-down">
+                <div class="features-col">
                   <template is="dom-repeat" items="[[_getClassLevelFeatureStringArray(levels, index, classes, subclasses)]]">
                     <span class="class-feature" subclass$="[[item.isSubclass]]">[[item.name]]</span>
                   </template>

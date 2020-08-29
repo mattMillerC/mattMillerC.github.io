@@ -16,7 +16,7 @@ class DndCharacterBuilderView extends PolymerElement {
       },
       initialSelectedTab: {
         type: Number,
-        value: 0
+        value: 3
       },
       indexForTabs: {
         type: Number,

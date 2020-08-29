@@ -262,20 +262,28 @@ function findChoices(feature) {
   return {};
 }
 
+function getClassLevelGroups(character = selectedCharacter) {
+  let classLevels = {};
+  if (character && character.levels) {
+    classLevels = selectedCharacter.levels.reduce((obj, level) => {
+      if (level.name) {
+        if (!obj.hasOwnProperty(level.name)) {
+          obj[level.name] = 1;
+        } else {
+          obj[level.name] ++;
+        }
+      }
+      return obj;
+    }, {});
+  }
+  return classLevels;
+}
+
 function getClassString(selectedCharacter) {
   if (selectedCharacter) {
     if (selectedCharacter.levels) {
       // Group all levels by class
-      let classLevels = selectedCharacter.levels.reduce((obj, level) => {
-        if (level.name) {
-          if (!obj.hasOwnProperty(level.name)) {
-            obj[level.name] = 1;
-          } else {
-            obj[level.name] ++;
-          }
-        }
-        return obj;
-      }, {});
+      let classLevels = getClassLevelGroups(selectedCharacter);
 
       let resultStr = "",
         joinStr = " / ";
@@ -752,6 +760,7 @@ export {
   initSelectedCharacter,
   getClassReferences,
   getBackgroundReference,
+  getClassLevelGroups,
   getClassString,
   getClassSaves,
   getFeatureString,

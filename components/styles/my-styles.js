@@ -847,7 +847,6 @@ styleElement.innerHTML = `
         height: 46px;
       }
       .collapse .collapse-list {
-        margin-top: -600px;
         height: auto;
         transition: margin-top 235ms cubic-bezier(.4,0,.2,1);
       }

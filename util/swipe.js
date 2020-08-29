@@ -1,3 +1,5 @@
+import { findInPath } from "../js/utils";
+
 export default function registerSwipe(element, direction, handler, mustBeInEl, cantBeInEl) {
     const TOUCH_DISTANCE_DELTA = 50;
 
@@ -13,18 +15,14 @@ export default function registerSwipe(element, direction, handler, mustBeInEl, c
 
     function handleTouchStart(evt) {
         if (mustBeInEl) {
-            let isInEl = evt.path.find(el => {
-                return el.matches && el.matches(mustBeInEl);
-            });
+            let isInEl = findInPath(mustBeInEl, evt.path);
             if (!isInEl) {
                 hardStop = true;
                 return;
             }
         }
         if (cantBeInEl) {
-            let isInEl = evt.path.find(el => {
-                return el.matches && el.matches(cantBeInEl);
-            });
+            let isInEl = findInPath(cantBeInEl, evt.path);
             if (isInEl) {
                 hardStop = true;
                 return;

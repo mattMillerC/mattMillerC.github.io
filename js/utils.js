@@ -903,10 +903,13 @@ function getFromPath(obj, pathStr) {
 function initCollapseToggles(rootEl) {
 	const toggles = rootEl.querySelectorAll(".collapse .collapse-toggle");
 	for (let toggle of toggles) {
-		toggle.addEventListener("click", e => {
-			let collapse = e.target.closest(".collapse"),
-				list = collapse.querySelector(".collapse-list");
+		
+		let collapse = toggle.parentElement,
+			list = collapse.querySelector(".collapse-list");
 
+		list.style["margin-top"] = "-" + jqHeight(list) + "px";
+
+		toggle.addEventListener("click", e => {
 			if (collapse.classList.contains("open")) {
 				list.style["margin-top"] = "-" + jqHeight(list) + "px";
 			} else {
@@ -915,6 +918,12 @@ function initCollapseToggles(rootEl) {
 			collapse.classList.toggle("open");
 		});
 	}
+}
+
+function findInPath(selector, path) {
+	return path.find(el => {
+		return el.matches && el.matches(selector);
+	});
 }
 
 function dashToCaplital(string) {
@@ -1011,6 +1020,7 @@ export {
   cloneDeep,
   getFromPath,
 	initCollapseToggles,
+	findInPath,
 	dashToCaplital,
 	getEntryName,
 	absInt,

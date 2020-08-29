@@ -89,34 +89,70 @@ async function loadModelFromIndex(modelId) {
 }
 
 export async function filterModel(modelId, selectorString) {
-	let selectors = selectorString
-		.split('|')
-		.map((selectorStr) => {
-			let selectorKeyValue = selectorStr.split('=');
-			if (selectorKeyValue.length > 1) {
-				return {
-					key: selectorKeyValue[0],
-					value: selectorKeyValue[1]
-				};
-			} else {
-				return null;
-			}
-		})
-		.filter(selector => !!selector);
-
-	if (selectors.length === 0) {
-		selectors = [{key: 'featureType', value: selectorString}];
+	let selectors;
+	
+	if (typeof selectorString === "string") {
+		if (selectorString.indexOf('|') > -1) {
+			selectorString
+				.split('|')
+				.map((selectorStr) => {
+					let selectorKeyValue = selectorStr.split('=');
+					if (selectorKeyValue.length > 1) {
+						return {
+							key: selectorKeyValue[0],
+							value: selectorKeyValue[1]
+						};
+					} else {
+						return null;
+					}
+				})
+				.filter(selector => !!selector);
+		} else {
+			selectors = [{key: 'featureType', value: selectorString}];
+		}
+	} else if (Array.isArray(selectorString)) {
+		selectors = selectorString;
+	} else {
+		selectors = [selectorString];
 	}
 
 	return await loadModel(modelId).then((data) => {
 		return data.filter(item => {
 			return selectors.every(selector => {
-				if (item[selector.key]) {
-					if (Array.isArray(item[selector.key])) {
-						const lowerCased = item[selector.key].map(i => i.toLowerCase());
-						return lowerCased.includes(selector.value.toLowerCase());
-					} else {
-						return item[selector.key].toLowerCase() === selector.value.toLowerCase()
+				const valPath = selector.key.split('.');
+				let itemVal = item;
+
+				valPath.forEach((curKey) => {
+					if (itemVal && itemVal[curKey]) {
+						itemVal = itemVal[curKey];
+					}
+				});
+
+				if (itemVal) {
+					if (Array.isArray(selector.value)) {
+						// todo
+
+					} else if (typeof selector.value === "object") {
+
+						if (Array.isArray(itemVal)) {
+							return itemVal.some(i => {
+								return Object.entries(selector.value).every(([ selKey , selVal ]) => {
+									return i[selKey] && i[selKey].toLowerCase() === selVal.toLowerCase();
+								});
+							});
+						} else {
+							return Object.entries(selector.value).every(([ selKey , selVal ]) => {
+								return itemVal[selKey] && itemVal[selKey].toLowerCase() === selVal.toLowerCase();
+							});
+						}
+
+					} else {					
+						if (Array.isArray(itemVal)) {
+							const lowerCased = itemVal.map(i => i.toLowerCase());
+							return lowerCased.includes(selector.value.toLowerCase());
+						} else {
+							return itemVal.toLowerCase() === selector.value.toLowerCase()
+						}
 					}
 				}
 				return false;

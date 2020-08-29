@@ -9,6 +9,12 @@ const stats_wrapper = `
 function renderSelection(spell, rootEl) {
 	rootEl.querySelector(".selection-wrapper").innerHTML = stats_wrapper;
 
+	const spellHtml = spellHtml(spell);
+
+	rootEl.querySelector(".stats-wrapper").innerHTML = spellHtml;
+}
+
+function spellHtml(spell) {
 	const renderStack = [];
 	renderStack.push(`<div class="margin-bottom_med"><span class="stats-source source${spell.source}" title="${Parser.sourceJsonToFull(spell.source)}">${Parser.sourceJsonToAbv(spell.source)}</div>`);
 	renderStack.push(`<div class="margin-bottom_med"><span>${Parser.spLevelSchoolMetaToFull(spell.level, spell.school, spell.meta)}</span></div>`);
@@ -44,7 +50,7 @@ function renderSelection(spell, rootEl) {
 		renderStack.push(`</div>`);
 	}
 
-	rootEl.querySelector(".stats-wrapper").innerHTML = renderStack.join("");
+	return renderStack.join('');
 }
 
-export { renderSelection };
+export { renderSelection, spellHtml };

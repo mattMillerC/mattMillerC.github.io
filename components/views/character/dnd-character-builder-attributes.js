@@ -270,24 +270,34 @@ class DndCharacterBuilderAttributes extends PolymerElement {
           font-style: italic;
         }
 
-        .table-wrap {
+        .row {
           display: flex;
           flex-wrap: wrap;
-        }
-        .stats {
-          width: 100%;
+          align-items: flex-end;
+          margin-bottom: 12px;
         }
 
-        .row {
-          height: 92px;
+        .row.heading {
+          margin-bottom: 0;
         }
 
         .data {
-          margin-top: 32px;
           font-size: 18px;
           padding: 10px 8px 8px;
           display: flex;
           justify-content: center;
+          margin-bottom: 4px;
+          min-width: 44px;
+        }
+
+        .data:last-child {
+          flex-basis: 100%;
+        }
+        
+        .heading .data {
+          font-weight: bold;
+          margin-bottom: 0;
+          padding-bottom: 0;
         }
 
         .mod {
@@ -297,9 +307,17 @@ class DndCharacterBuilderAttributes extends PolymerElement {
           margin-left: auto;
           margin-right: auto;
         }
+        .mod.no-bg {
+          background: none;
+        }
 
         .prof {
           justify-content: flex-start;
+          margin: 0 12px;
+        }
+
+        .heading .prof {
+          display: none;
         }
 
         .mobile-label .data {
@@ -308,6 +326,11 @@ class DndCharacterBuilderAttributes extends PolymerElement {
 
         vaadin-integer-field {
           width: 100px;
+        }
+
+        .input {
+          width: 84px;
+          flex-shrink: 0;
         }
         
         .save {
@@ -323,9 +346,6 @@ class DndCharacterBuilderAttributes extends PolymerElement {
         }
 
         @media(min-width: 921px) {
-          .stats {
-            width: 50%;
-          }
           .mobile-label {
             display: none;
           }
@@ -333,113 +353,90 @@ class DndCharacterBuilderAttributes extends PolymerElement {
           .prof-choice-wrap {
             flex-direction: row;
           }
+          .row {
+            flex-wrap: nowrap;
+          }
+          .heading .prof {
+            display: block;
+          }
         }
       </style>
 
       <h2>Attributes</h2>
-      <div class="table-wrap">
-        <table class="stats">
-          <thead>
-            <tr>
-              <th></th>
-              <th>Adjust.</th>
-              <th>Total</th>
-              <th>Mod.</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="row">
-              <td><vaadin-integer-field value={{str}} min="1" max="20" has-controls label="Strength"></vaadin-integer-field></td>
-              <td><div class="adj data">[[_adjustString(strAdj)]]</div></td>
-              <td><div class="total data">[[_total(strAdj, str)]]</div></td>
-              <td><div class="mod data">[[_mod(strAdj, str)]]</div></td>
-            </tr>
-            <tr class="row">
-              <td><vaadin-integer-field value={{dex}} min="1" max="20" has-controls label="Dexterity"></vaadin-integer-field></td>
-              <td><div class="adj data">[[_adjustString(dexAdj)]]</div></td>
-              <td><div class="total data">[[_total(dexAdj, dex)]]</div></td>
-              <td><div class="mod data">[[_mod(dexAdj, dex)]]</div></td>
-            </tr>
-            <tr class="row">
-              <td><vaadin-integer-field value={{con}} min="1" max="20" has-controls label="Constitution"></vaadin-integer-field></td>
-              <td><div class="adj data">[[_adjustString(conAdj)]]</div></td>
-              <td><div class="total data">[[_total(conAdj, con)]]</div></td>
-              <td><div class="mod data">[[_mod(conAdj, con)]]</div></td>
-            </tr>
-            <tr class="row">
-              <td><vaadin-integer-field value={{int}} min="1" max="20" has-controls label="Intellegence"></vaadin-integer-field></td>
-              <td><div class="adj data">[[_adjustString(intAdj)]]</div></td>
-              <td><div class="total data">[[_total(intAdj, int)]]</div></td>
-              <td><div class="mod data">[[_mod(intAdj, int)]]</div></td>
-            </tr>
-            <tr class="row">
-              <td><vaadin-integer-field value={{wis}} min="1" max="20" has-controls label="Wisdom"></vaadin-integer-field></td>
-              <td><div class="adj data">[[_adjustString(wisAdj)]]</div></td>
-              <td><div class="total data">[[_total(wisAdj, wis)]]</div></td>
-              <td><div class="mod data">[[_mod(wisAdj, wis)]]</div></td>
-            </tr>
-            <tr class="row">
-              <td><vaadin-integer-field value={{cha}} min="1" max="20" has-controls label="Charisma"></vaadin-integer-field></td>
-              <td><div class="adj data">[[_adjustString(chaAdj)]]</div></td>
-              <td><div class="total data">[[_total(chaAdj, cha)]]</div></td>
-              <td><div class="mod data">[[_mod(chaAdj, cha)]]</div></td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="stats">
+        <div class="row heading">
+          <div class="input data"></div>
+          <div class="save data">Save</div>
+          <div class="adj data">Adj.</div>
+          <div class="total data">Total</div>
+          <div class="mod data no-bg">Mod</div>
+          <div class="prof data"></div>
+        </div>
+        <div class="row">
+          <vaadin-integer-field value={{str}} min="1" max="20" has-controls label="Strength"></vaadin-integer-field>
+          <div class="save data">
+            <span hidden$="[[!_contains(saves, 'str')]]" class="save-icon material-icons">done</span>
+          </div>
+          <div class="adj data">[[_adjustString(strAdj)]]</div>
+          <div class="total data">[[_total(strAdj, str)]]</div>
+          <div class="mod data">[[_mod(strAdj, str)]]</div>
+          <div class="prof data">[[strProfs]]</div>
+        </div>
 
-        <table class="stats">
-          <thead>
-            <tr>
-              <th class="mobile-label">Attribute</th>
-              <th><div class="save">Save</div></th>
-              <th><div class="prof">Proficiencies</div></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="row">
-              <td class="mobile-label"><div class="data">STR</div></td>
-              <td><div class="save data">
-                <span hidden$="[[!_contains(saves, 'str')]]" class="save-icon material-icons">done</span>
-              </div></td>
-              <td><div class="prof data">[[strProfs]]</div></td>
-            </tr>
-            <tr class="row">
-              <td class="mobile-label"><div class="data">DEX</div></td>
-              <td><div class="save data">
-                <span hidden$="[[!_contains(saves, 'dex')]]" class="save-icon material-icons">done</span>
-              </div></td>
-              <td><div class="prof data">[[dexProfs]]</div></td>
-            </tr>
-            <tr class="row">
-              <td class="mobile-label"><div class="data">CON</div></td>
-              <td><div class="save data">
-                <span hidden$="[[!_contains(saves, 'con')]]" class="save-icon material-icons">done</span>
-              </div></td>
-              <td><div class="prof data"></div></td>
-            </tr>
-            <tr class="row">
-              <td class="mobile-label"><div class="data">INT</div></td>
-              <td><div class="save data">
-                <span hidden$="[[!_contains(saves, 'int')]]" class="save-icon material-icons">done</span>
-              </div></td>
-              <td><div class="prof data">[[intProfs]]</div></td>
-            </tr>
-            <tr class="row">
-              <td class="mobile-label"><div class="data">WIS</div></td>
-              <td><div class="save data">
-                <span hidden$="[[!_contains(saves, 'wis')]]" class="save-icon material-icons">done</span>
-              </div></td>
-              <td><div class="prof data">[[wisProfs]]</div></td>
-            </tr>
-            <tr class="row">
-              <td class="mobile-label"><div class="data">CHA</div></td>
-              <td><div class="save data">
-                <span hidden$="[[!_contains(saves, 'cha')]]" class="save-icon material-icons">done</span>
-              </div></td>
-              <td><div class="prof data">[[chaProfs]]</div></td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="row">
+          <vaadin-integer-field value={{dex}} min="1" max="20" has-controls label="Dexterity"></vaadin-integer-field>
+          <div class="save data">
+            <span hidden$="[[!_contains(saves, 'dex')]]" class="save-icon material-icons">done</span>
+          </div>
+          <div class="adj data">[[_adjustString(dexAdj)]]</div>
+          <div class="total data">[[_total(dexAdj, dex)]]</div>
+          <div class="mod data">[[_mod(dexAdj, dex)]]</div>
+          <div class="prof data">[[dexProfs]]</div>
+        </div>
+
+        <div class="row">
+          <vaadin-integer-field value={{con}} min="1" max="20" has-controls label="Constitution"></vaadin-integer-field>
+          <div class="save data">
+            <span hidden$="[[!_contains(saves, 'con')]]" class="save-icon material-icons">done</span>
+          </div>
+          <div class="adj data">[[_adjustString(conAdj)]]</div>
+          <div class="total data">[[_total(conAdj, con)]]</div>
+          <div class="mod data">[[_mod(conAdj, con)]]</div>
+          <div class="prof data">[[conProfs]]</div>
+        </div>
+
+        <div class="row">
+          <vaadin-integer-field value={{int}} min="1" max="20" has-controls label="Intellegence"></vaadin-integer-field>
+          <div class="save data">
+            <span hidden$="[[!_contains(saves, 'int')]]" class="save-icon material-icons">done</span>
+          </div>
+          <div class="adj data">[[_adjustString(intAdj)]]</div>
+          <div class="total data">[[_total(intAdj, int)]]</div>
+          <div class="mod data">[[_mod(intAdj, int)]]</div>
+          <div class="prof data">[[intProfs]]</div>
+        </div>
+
+        <div class="row">
+          <vaadin-integer-field value={{wis}} min="1" max="20" has-controls label="Wisdom"></vaadin-integer-field>
+          <div class="save data">
+            <span hidden$="[[!_contains(saves, 'wis')]]" class="save-icon material-icons">done</span>
+          </div>
+          <div class="adj data">[[_adjustString(wisAdj)]]</div>
+          <div class="total data">[[_total(wisAdj, wis)]]</div>
+          <div class="mod data">[[_mod(wisAdj, wis)]]</div>
+          <div class="prof data">[[wisProfs]]</div>
+        </div>
+
+        <div class="row">
+          <vaadin-integer-field value={{cha}} min="1" max="20" has-controls label="Charisma"></vaadin-integer-field>
+          <div class="save data">
+            <span hidden$="[[!_contains(saves, 'cha')]]" class="save-icon material-icons">done</span>
+          </div>
+          <div class="adj data">[[_adjustString(chaAdj)]]</div>
+          <div class="total data">[[_total(chaAdj, cha)]]</div>
+          <div class="mod data">[[_mod(chaAdj, cha)]]</div>
+          <div class="prof data">[[chaProfs]]</div>
+        </div>
       </div>
     `;
   }
