@@ -6,11 +6,10 @@ import {
   getSelectedCharacter,
   updateAttr,
   getClassSaves,
-  setClassSkillProficiencies,
   getSkillProfs,
   getRaceAttributeOptions,
   getRaceAttributeDefaults,
-  getASIAndFeatAttributeData
+  getAttributeScoreModifiers
 } from "../../../util/charBuilder";
 import { util_capitalizeAll, absInt } from "../../../js/utils";
 
@@ -154,22 +153,12 @@ class DndCharacterBuilderAttributes extends PolymerElement {
       this.saves = await getClassSaves();
 
       // Attributes from Race
-      let attributeAdj = {
-        str: 0,
-        dex: 0,
-        con: 0,
-        int: 0,
-        wis: 0,
-        cha: 0
-      };
+      let attributeAdj = await getAttributeScoreModifiers();
       let raceAttributes = await getRaceAttributeOptions();
       if (raceAttributes && raceAttributes.choose) {
         this.raceAttributeOptions = raceAttributes.choose.from.map(i => { return i.toUpperCase() });
         this.raceAttributeChoices = raceAttributes.choose.count || 1;
         this.raceAttributeSelections = character.raceAttributes;
-        character.raceAttributes.forEach(a => {
-          attributeAdj[a.toLowerCase()] ++;
-        });
       } else {
         this.raceAttributeOptions = undefined;
         this.raceAttributeChoices = undefined;
@@ -180,30 +169,9 @@ class DndCharacterBuilderAttributes extends PolymerElement {
         .map(e => {
           let attribute = e[0].toLowerCase(),
             mod = e[1];
-          attributeAdj[attribute] += mod;
           return attribute.toUpperCase() + ' ' + absInt(mod);
         }).join(', ');
 
-      let asiData = await getASIAndFeatAttributeData();
-      for (let asi of asiData) {
-        if (asi.featSelections) {
-          attributeAdj[asi.featSelections.toLowerCase()] += 1;
-        }
-        if (asi.featAttribute) {
-          Object.entries(asi.featAttribute).filter(e => { return e[0] !== 'choose'}).forEach(e => {
-            let attribute = e[0].toLowerCase(),
-            mod = e[1];
-            attributeAdj[attribute] += mod;
-          });
-        }
-        if (asi.asiAttributes) {
-          Object.entries(asi.asiAttributes).forEach(e => {
-            let attribute = e[0].toLowerCase(),
-            mod = e[1];
-            attributeAdj[attribute] += mod;
-          });
-        }
-      }
       this.strAdj = attributeAdj.str;
       this.dexAdj = attributeAdj.dex;
       this.conAdj = attributeAdj.con;
@@ -306,9 +274,11 @@ class DndCharacterBuilderAttributes extends PolymerElement {
           width: 32px;
           margin-left: auto;
           margin-right: auto;
+          border: 2px solid var(--mdc-theme-primary);
         }
         .mod.no-bg {
           background: none;
+          border: none;
         }
 
         .prof {

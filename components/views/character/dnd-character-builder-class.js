@@ -146,7 +146,7 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
           if (classFeaturesForLevel) {
             const hasSubclassFeature = classFeaturesForLevel.find(i => i.gainSubclassFeature);
             if (hasSubclassFeature && subclasses && subclasses[className] && classRef.subclasses && classRef.subclasses.length) {
-              const subclassDef = classRef.subclasses.find(i => subclasses[className] === i.name);
+              const subclassDef = classRef.subclasses.find(i => subclasses[className].name === i.name);
               if (subclassDef.subclassFeatures[levelsInSubclass]) {
                 subclassDef.subclassFeatures[levelsInSubclass].map((i) => { i.isSubclass = true; return i; })
                 return [...classFeaturesForLevel].concat(subclassDef.subclassFeatures[levelsInSubclass]);
@@ -417,6 +417,9 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
           margin-top: 16px;
           line-height: 1.9;
         }
+        vaadin-grid {
+          height: 600px;
+        }
         .details {
           padding: 0 24px;
         }
@@ -546,7 +549,7 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
         </template>
       </div>
 
-      <vaadin-grid id="classGrid" rows-draggable height-by-rows items=[[levels]] theme="no-border">
+      <vaadin-grid id="classGrid" rows-draggable items=[[levels]] theme="no-border" height="600px">
         <vaadin-grid-column flex-grow="1">
           <template>
             <div class="row">

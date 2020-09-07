@@ -9,9 +9,9 @@ const stats_wrapper = `
 function renderSelection(spell, rootEl) {
 	rootEl.querySelector(".selection-wrapper").innerHTML = stats_wrapper;
 
-	const spellHtml = spellHtml(spell);
+	const spellHtmlString = spellHtml(spell);
 
-	rootEl.querySelector(".stats-wrapper").innerHTML = spellHtml;
+	rootEl.querySelector(".stats-wrapper").innerHTML = spellHtmlString;
 }
 
 function spellHtml(spell) {

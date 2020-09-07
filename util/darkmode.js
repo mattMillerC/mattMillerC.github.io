@@ -4,6 +4,7 @@ export default function setDarkmode(isDark) {
         root.style.setProperty("--mdc-theme-primary", "#bb86fc");
         root.style.setProperty("--mdc-theme-primary-darker", "#a359fc");
         root.style.setProperty("--mdc-theme-secondary", "#03dac6");
+        root.style.setProperty("--mdc-theme-secondary-lighter", "#127d73");
         root.style.setProperty("--mdc-theme-background", "#121212");
         root.style.setProperty("--mdc-theme-surface", "#1f1f1f");
         root.style.setProperty("--mdc-theme-error", "#cf6679");
@@ -89,6 +90,7 @@ export default function setDarkmode(isDark) {
         root.style.setProperty("--mdc-theme-primary", "#6200ee");
         root.style.setProperty("--mdc-theme-primary-darker", "#5000c1");
         root.style.setProperty("--mdc-theme-secondary", "#018786");
+        root.style.setProperty("--mdc-theme-secondary-lighter", "#81ede3");
         root.style.setProperty("--mdc-theme-background", "#fff");
         root.style.setProperty("--mdc-theme-surface", "#fff");
         root.style.setProperty("--mdc-theme-error", "#b00020");

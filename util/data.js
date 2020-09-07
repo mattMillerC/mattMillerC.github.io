@@ -88,7 +88,7 @@ async function loadModelFromIndex(modelId) {
 	}
 }
 
-export async function filterModel(modelId, selectorString) {
+export async function filterModel(modelId, selectorString, orOperand = false) {
 	let selectors;
 	
 	if (typeof selectorString === "string") {
@@ -118,15 +118,24 @@ export async function filterModel(modelId, selectorString) {
 
 	return await loadModel(modelId).then((data) => {
 		return data.filter(item => {
-			return selectors.every(selector => {
+			const compareFunc = orOperand ? Array.prototype.some : Array.prototype.every;
+			return compareFunc.apply(selectors, [(selector => {
 				const valPath = selector.key.split('.');
 				let itemVal = item;
+				let failedPathSearch = false;
 
 				valPath.forEach((curKey) => {
 					if (itemVal && itemVal[curKey]) {
 						itemVal = itemVal[curKey];
+					} else {
+						failedPathSearch = true;
+						return -1;
 					}
 				});
+
+				if (failedPathSearch) {
+					return false;
+				}
 
 				if (itemVal) {
 					if (Array.isArray(selector.value)) {
@@ -137,12 +146,26 @@ export async function filterModel(modelId, selectorString) {
 						if (Array.isArray(itemVal)) {
 							return itemVal.some(i => {
 								return Object.entries(selector.value).every(([ selKey , selVal ]) => {
-									return i[selKey] && i[selKey].toLowerCase() === selVal.toLowerCase();
+									const selKeyPath = selKey.split('.');
+									let singleVal = i;
+									selKeyPath.forEach((curKey) => {
+										if (singleVal && singleVal[curKey]) {
+											singleVal = singleVal[curKey];
+										}
+									});
+									return singleVal && singleVal.toLowerCase() === selVal.toLowerCase();
 								});
 							});
 						} else {
 							return Object.entries(selector.value).every(([ selKey , selVal ]) => {
-								return itemVal[selKey] && itemVal[selKey].toLowerCase() === selVal.toLowerCase();
+								const selKeyPath = selKey.split('.');
+								let singleVal = itemVal;
+								selKeyPath.forEach((curKey) => {
+									if (singleVal && singleVal[curKey]) {
+										singleVal = singleVal[curKey];
+									}
+								});
+								return singleVal && singleVal.toLowerCase() === selVal.toLowerCase();
 							});
 						}
 
@@ -156,7 +179,7 @@ export async function filterModel(modelId, selectorString) {
 					}
 				}
 				return false;
-			})
+			})]);
 		});
 	});
 }

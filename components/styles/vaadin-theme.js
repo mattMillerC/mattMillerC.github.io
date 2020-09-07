@@ -57,6 +57,12 @@ registerStyles('vaadin-grid', css`
   [part~="cell"]:not([part~="details-cell"]) {
     align-items: flex-start;
   }
+  :host([theme~="no-row-padding"]) [part~="cell"] ::slotted(vaadin-grid-cell-content) {
+    padding: 0;
+  }
+  :host([theme~="no-row-padding"]) [part~="cell"] {
+    min-height: 2px;
+  }
   :host([height-by-rows]) #table {
     overflow-y: hidden;
   }

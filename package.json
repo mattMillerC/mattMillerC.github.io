@@ -18,12 +18,14 @@
     "@material/tab-bar": "^6.0.0",
     "@material/textfield": "^5.1.0",
     "@polymer/polymer": "^3.0.0-pre.12",
+    "@vaadin/vaadin-checkbox": "^2.5.0",
     "@vaadin/vaadin-combo-box": "*",
     "@vaadin/vaadin-grid": "*",
     "@vaadin/vaadin-material-styles": "*",
     "@vaadin/vaadin-select": "*",
     "@vaadin/vaadin-text-field": "*",
-    "http-server": "^0.12.3"
+    "http-server": "^0.12.3",
+    "vaadin-checkbox": "^1.0.0-alpha5"
   },
   "devDependencies": {
     "@webcomponents/webcomponentsjs": "^2.4.3",

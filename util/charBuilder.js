@@ -22,7 +22,9 @@ let schema = {
   backgroundSkillProficiencies: [],
   raceAttributes: [],
   asi: [],
-  featAttributeSelections: {}
+  featAttributeSelections: {},
+  preparedSpells: {},
+  preparedCantrips: {}
 }
 
 const channel = document.createElement('div');
@@ -232,7 +234,11 @@ function mergeSubclass(character = selectedCharacter, className, subclass) {
     if (!character.subclasses) {
       character.subclasses = {}
     }
-    character.subclasses[className] = subclass.name;
+    character.subclasses[className] = {
+      name: subclass.name,
+      shortName: subclass.shortName,
+      source: subclass.source
+    };
     saveCharacter(character);
   }
 }
@@ -727,6 +733,154 @@ function setSubclassChoice(classs, subclass, level, feature, choice, character =
   }
 }
 
+function toggleSpellPrepared(parentClass, spell, character = selectedCharacter) {
+  if (character) {
+    if (!character.preparedSpells) {
+      character.preparedSpells = {};
+    }
+    if (!character.preparedSpells[parentClass]) {
+      character.preparedSpells[parentClass] = {};
+    }
+
+    if (isSpellPrepared(parentClass, spell, character)) {
+      delete character.preparedSpells[parentClass][spell.name];
+      saveCharacter(character);
+      return false;
+    } else {
+      character.preparedSpells[parentClass][spell.name] = {name: spell.name, source: spell.source};
+      saveCharacter(character);
+      return true;
+    }
+  }
+  return false;
+}
+
+function toggleCantripPrepared(parentClass, spell, character = selectedCharacter) {
+  if (character) {
+    if (!character.preparedCantrips) {
+      character.preparedCantrips = {};
+    }
+    if (!character.preparedCantrips[parentClass]) {
+      character.preparedCantrips[parentClass] = {};
+    }
+
+    if (isCantripPrepared(parentClass, spell, character)) {
+      delete character.preparedCantrips[parentClass][spell.name];
+      saveCharacter(character);
+      return false;
+    } else {
+      character.preparedCantrips[parentClass][spell.name] = {name: spell.name, source: spell.source};
+      saveCharacter(character);
+      return true;
+    }
+  }
+  return false;
+}
+
+function isSpellPrepared(parentClass, spell, character = selectedCharacter) {
+  if (character) {
+    if (!character.preparedSpells) {
+      character.preparedSpells = {};
+    }
+    return isSpellPreparedFromObj(parentClass, spell, character.preparedSpells);
+  }
+  return false;
+}
+
+function isSpellPreparedFromObj(parentClass, spell, obj) {
+  if (obj) {
+    if (!obj[parentClass]) {
+      obj[parentClass] = {}
+    }
+    return !!(obj[parentClass][spell.name]);
+  }
+  return false;
+}
+
+function isCantripPrepared(parentClass, spell, character = selectedCharacter) {
+  if (character) {
+    if (!character.preparedCantrips) {
+      character.preparedCantrips = {};
+    }
+    return isSpellPreparedFromObj(parentClass, spell, character.preparedCantrips);
+  }
+  return false;
+}
+
+async function getAttributeScoreModifiers(character = selectedCharacter) {
+  // Attributes from Race
+  let attributeAdj = {
+    str: 0,
+    dex: 0,
+    con: 0,
+    int: 0,
+    wis: 0,
+    cha: 0
+  };
+  let raceAttributes = await getRaceAttributeOptions();
+  if (raceAttributes && raceAttributes.choose) {
+    character.raceAttributes.forEach(a => {
+      attributeAdj[a.toLowerCase()] ++;
+    });
+  } 
+  let defaultRaceAttribute = await getRaceAttributeDefaults(raceAttributes);
+  defaultRaceAttribute.forEach(e => {
+    let attribute = e[0].toLowerCase(),
+      mod = e[1];
+    attributeAdj[attribute] += mod;
+  });
+
+  let asiData = await getASIAndFeatAttributeData();
+  for (let asi of asiData) {
+    if (asi.featSelections) {
+      attributeAdj[asi.featSelections.toLowerCase()] += 1;
+    }
+    if (asi.featAttribute) {
+      Object.entries(asi.featAttribute).filter(e => { return e[0] !== 'choose'}).forEach(e => {
+        let attribute = e[0].toLowerCase(),
+        mod = e[1];
+        attributeAdj[attribute] += mod;
+      });
+    }
+    if (asi.asiAttributes) {
+      Object.entries(asi.asiAttributes).forEach(e => {
+        let attribute = e[0].toLowerCase(),
+        mod = e[1];
+        attributeAdj[attribute] += mod;
+      });
+    }
+  }
+  return attributeAdj;
+}
+
+async function getAttributeModifier(attribute, character = selectedCharacter) {
+  const attributeModifiers = await getAttributeScoreModifiers();
+  const attributeScore = parseInt(character.attr[attribute]) + attributeModifiers[attribute];
+  const attributeModifier = Math.floor((attributeScore - 10) / 2);
+  return attributeModifier;
+}
+
+function setSpellSlots(className, level, currentSlots, character = selectedCharacter) {
+  if (character) {
+    if (!character.spellSlots) {
+      character.spellSlots = {};
+    }
+    if (!character.spellSlots[className]) {
+      character.spellSlots[className] = {};
+    }
+    
+    character.spellSlots[className][level] = currentSlots;
+    saveCharacter(character);
+  }
+}
+
+function getSpellSlots(className, level, character = selectedCharacter) {
+  if (character && character.spellSlots && character.spellSlots[className] && character.spellSlots[className][level] !== undefined) {
+    return character.spellSlots[className][level];
+  }
+  return 0;
+}
+
 export {
   addCharacter,
   addFeature,
@@ -768,5 +922,14 @@ export {
   getClassChoice,
   getSubclassChoice,
   setClassChoice,
-  setSubclassChoice
+  setSubclassChoice,
+  toggleSpellPrepared,
+  isSpellPrepared,
+  isSpellPreparedFromObj,
+  toggleCantripPrepared,
+  getAttributeScoreModifiers,
+  getAttributeModifier,
+  saveCharacter,
+  setSpellSlots,
+  getSpellSlots
 };
