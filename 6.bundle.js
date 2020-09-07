@@ -102,7 +102,7 @@ const c=document.createElement("template");c.innerHTML='<dom-module id="vaadin-i
           display: flex;
           justify-content: center;
           margin-bottom: 4px;
-          min-width: 44px;
+          min-width: 24px;
         }
 
         .data:last-child {
@@ -113,12 +113,13 @@ const c=document.createElement("template");c.innerHTML='<dom-module id="vaadin-i
           font-weight: bold;
           margin-bottom: 0;
           padding-bottom: 0;
+          font-size: 14px;
         }
 
         .mod {
           background: var(--lumo-contrast-10pct);
           border-radius: 4px;
-          width: 32px;
+          width: 24px;
           margin-left: auto;
           margin-right: auto;
           border: 2px solid var(--mdc-theme-primary);
@@ -161,7 +162,17 @@ const c=document.createElement("template");c.innerHTML='<dom-module id="vaadin-i
         [hidden] {
           visibility: hidden;
         }
-
+        @media(min-width: 420px) {
+          .mod {
+            width: 32px;
+          }
+          .data {
+            min-width: 44px;
+          }
+          .heading .data {
+            font-size: 18px;
+          }
+        }
         @media(min-width: 921px) {
           .mobile-label {
             display: none;
