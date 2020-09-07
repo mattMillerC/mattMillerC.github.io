@@ -19,6 +19,12 @@ class DndCharacterBuilderSpells extends PolymerElement {
       preparedSpells: {
         type: Object,
         value: {}
+      },
+      heightByRows: {
+        type: Boolean,
+        value: () => {
+          return window.innerWidth < 900;
+        }
       }
     };
   }
@@ -114,7 +120,7 @@ class DndCharacterBuilderSpells extends PolymerElement {
 
           const subclassLevel = getSubclassChoiceLevel(classRef);
           if (level >= subclassLevel) {
-            const subclassName = character.subclasses ? character.subclasses[className].shortName : '';
+            const subclassName = character.subclasses && character.subclasses[className] ? character.subclasses[className].shortName : '';
             if (subclassName) {
               let subclassSpellList = await filterModel('spells', { key: 'classes.fromSubclass', value: { 'subclass.name': subclassName, 'class.name': className, 'class.source': classRef.source } } );
               subclassSpellList.forEach(spell => { spell.isSubclassSpell = true });
@@ -654,7 +660,7 @@ class DndCharacterBuilderSpells extends PolymerElement {
 
       <h2>Spells</h2>
       <div>
-        <vaadin-grid id="grid" theme="no-border no-row-borders" expanded-items="[[expandedItems]]">
+        <vaadin-grid id="grid" theme="no-border no-row-borders" expanded-items="[[expandedItems]]" height-by-rows$="[[heightByRows]]">
           <vaadin-grid-column flex-grow="1">
             <template>
                 <template is="dom-if" if="[[_equal(item.id, 'class')]]">
@@ -688,7 +694,7 @@ class DndCharacterBuilderSpells extends PolymerElement {
                 <template is="dom-if" if="[[_equal(item.id, 'spell')]]">
                   <div class="spell-outer-wrap">
                     <vaadin-grid-tree-toggle leaf="[[!item.hasChildren]]" expanded="{{expanded}}" class="spell-wrap">
-                      <span class="spell-inner-wrap">[[item.name]]<span hidden$=[[!item.isSubclassSpell]]>***</span><span class="spell-level" hidden>[[_spellLevel(item)]]</span><span class="rit-ind" title="Ritual" hidden$="[[!_isRitualSpell(item)]]"></span><span class="conc-ind" title="Concentration" hidden$="[[!_isConcentrationSpell(item)]]"></span></span>
+                      <span class="spell-inner-wrap">[[item.name]]<span class="spell-level" hidden>[[_spellLevel(item)]]</span><span class="rit-ind" title="Ritual" hidden$="[[!_isRitualSpell(item)]]"></span><span class="conc-ind" title="Concentration" hidden$="[[!_isConcentrationSpell(item)]]"></span></span>
                     </vaadin-grid-tree-toggle>
                     <button class$="[[_isPreparedClass(spellsKnown, item)]]" on-click="_toggleSpellPrepared">[[_isPreparedText(spellsKnown, item)]]</button>
                   </div>

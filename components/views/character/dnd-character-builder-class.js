@@ -27,6 +27,12 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
       subclasses: {
         type: Object,
         value: undefined
+      },
+      heightByRows: {
+        type: Boolean,
+        value: () => {
+          return window.innerWidth < 900;
+        }
       }
     };
   }
@@ -417,9 +423,6 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
           margin-top: 16px;
           line-height: 1.9;
         }
-        vaadin-grid {
-          height: 600px;
-        }
         .details {
           padding: 0 24px;
         }
@@ -549,7 +552,7 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
         </template>
       </div>
 
-      <vaadin-grid id="classGrid" rows-draggable items=[[levels]] theme="no-border" height="600px">
+      <vaadin-grid id="classGrid" rows-draggable items=[[levels]] theme="no-border" height-by-rows$="[[heightByRows]]">
         <vaadin-grid-column flex-grow="1">
           <template>
             <div class="row">
