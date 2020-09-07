@@ -1,4 +1,4 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[4],{108:function(t,e,i){"use strict";var a=i(7),s=i(18),n=i(2),l=(i(77),i(39));class d extends a.a{static get properties(){return{test:{type:Boolean,reflectToAttribute:!0,value:!1},options:{type:Array,observer:"optionsUpdated"},model:{type:String},addCallback:{type:Function},value:{type:String,value:"",observer:"valueUpdated"},choices:{type:Number,observer:"choicesUpdated"},label:{type:String},placeholder:{type:String},multiValue:{type:String,value:""}}}choicesUpdated(){this.listBox&&(this.listBox.remove(),delete this.listBox),this.$.select.render()}optionsUpdated(){this.listBox&&(this.listBox.remove(),delete this.listBox),this.$.select.render()}valueUpdated(){if(this.choices)if(Array.isArray(this.value)&&this.options){const t=this.value.map(t=>-1!==this.options.indexOf(t)?this.options.indexOf(t):this.options.findIndex(e=>e.name===t.name&&e.source===t.source)).filter(t=>-1!==t);this.listBox&&(this.listBox.selectedValues=t),this.multiValue=t.map(t=>{let e=this.options[t];return e.name?e.name:Object(n.util_capitalizeAll)(e)}).join(", ")}else this.listBox&&(this.listBox.selectedValues=[]),this.multiValue="";else this.value&&this.options?this.value.name?this.$.select.value=this.options.findIndex(t=>t.name===this.value.name||t===this.value.name)+"":this.$.select.value=this.options.findIndex(t=>t.name===this.value||t===this.value)+"":this.$.select.value=""}ready(){super.ready(),setTimeout(async()=>{this.model&&(this.options=await Object(l.b)(this.model)),this.$.select.renderer=(t,e)=>{if(!this.listBox){if(this.listBox=document.createElement("vaadin-list-box"),this.choices&&(this.listBox.setAttribute("multiple",!0),this.listBox.addEventListener("click",t=>{e.opened=!0;let i=null!==t.srcElement.getAttribute("selected");setTimeout(()=>{this.listBox.selectedValues.length>this.choices&&!i&&this.listBox.selectedValues.splice(this.listBox.selectedValues.length-2,1);let t=this.listBox.selectedValues.map(t=>this.options[t]);this.multiValue=t.map(t=>t.name?t.name:Object(n.util_capitalizeAll)(t)).join(", "),this.addCallback&&this.addCallback(t)},0)})),this.options&&this.options.length)for(let t=0;t<this.options.length;t++){const e=this.options[t],i=document.createElement("vaadin-item");e.name?(i.textContent=e.name,i.setAttribute("value",t)):(i.textContent=Object(n.util_capitalizeAll)(e),i.setAttribute("value",t)),this.listBox.appendChild(i)}t.appendChild(this.listBox),this.$.select._assignMenuElement(),this.valueUpdated()}}},0)}connectedCallback(){super.connectedCallback(),this.selectChangeHandler=()=>{const t=this.$.select.value;if(t&&!this.choices){const e=this.options[t];this.addCallback?this.addCallback(e,this.model):Object(s.v)(void 0,e,this.model),this.value||(this.$.select.value="")}},this.$.select.addEventListener("change",this.selectChangeHandler)}disconnectedCallback(){super.disconnectedCallback(),this.$.select.removeEventListener("change",this.selectChangeHandler)}_exists(t){return!!t}_label(t,e){if(t)return e?`${t} (${e})`:t}static get template(){return a.b`
+(window.webpackJsonp=window.webpackJsonp||[]).push([[4],{104:function(e,t,s){"use strict";var i=s(2),a=s(0),l=s(5);function n(){this.wrapperTag="div",this.baseUrl="",this.setWrapperTag=function(e){this.wrapperTag=e},this.setBaseUrl=function(e){this.baseUrl=e},this.recursiveEntryRender=function(e,t,s,c,o,r){if(s=null==s?"section"===e.type?-1:0:s,c=null==c?null:c,o=null==o?null:o,(r=null!=r&&r)&&d(),"object"==typeof e){switch(void 0===e.type||"section"===e.type?"entries":e.type){case"entries":u(this,!0);break;case"options":!function(t){e.entries&&(e.entries=e.entries.sort((e,t)=>e.name&&t.name?Object(i.ascSort)(e.name,t.name):e.name?-1:t.name?1:0),u(t,!1))}(this);break;case"list":if(e.items){t.push(`<ul ${e.style?`class="${e.style}"`:""}>`);for(let l=0;l<e.items.length;l++)this.recursiveEntryRender(e.items[l],t,s+1,`<li ${Object(i.isNonstandardSource)(e.items[l].source)?`class="${a.i}"`:""}>`,"</li>");t.push("</ul>")}break;case"table":!function(i){t.push("<table class='table'>"),void 0!==e.caption&&t.push(`<caption>${e.caption}</caption>`);if(t.push("<thead>"),t.push("<tr class='table-row table-row--header'>"),e.colLabels)for(let s=0;s<e.colLabels.length;++s)t.push(`<th ${a(s)}>${e.colLabels[s]}</th>`);t.push("</tr>"),t.push("</thead>"),t.push("<tbody>");for(let a=0;a<e.rows.length;++a){t.push("<tr class='table-row'>");for(let n=0;n<e.rows[a].length;++n)t.push(`<td ${l(n)}>`),i.recursiveEntryRender(e.rows[a][n],t,s+1),t.push("</td>");t.push("</tr>")}function a(t){return void 0===e.colStyles||t>=e.colStyles.length?"class='table-cell'":`class="table-cell ${e.colStyles[t]}"`}function l(t){return void 0!==e.rowStyles?void 0===e.rowStyles||t>=e.rowStyles.length?"class='table-cell'":`class="table-cell ${e.rowStyles[t]}"`:a(t)}t.push("</tbody>"),t.push("</table>")}(this);break;case"invocation":!function(e){u(e,!0)}(this);break;case"patron":!function(e){u(e,!1)}(this);break;case"abilityDc":d(),t.push(`<span class='spell-ability'><span>${e.name} save DC</span> = 8 + your proficiency bonus + your ${Object(i.utils_makeAttChoose)(e.attributes)}</span>`),h();break;case"abilityAttackMod":null!==c&&t.push(c),t.push(`<span class='spell-ability'><span>${e.name} attack modifier</span> = your proficiency bonus + your ${Object(i.utils_makeAttChoose)(e.attributes)}</span>`),null!==o&&t.push(o);break;case"inline":if(e.entries)for(let i=0;i<e.entries.length;i++)this.recursiveEntryRender(e.entries[i],t,s);break;case"bonus":t.push((e.value<0?"":"+")+e.value);break;case"bonusSpeed":t.push((e.value<0?"":"+")+e.value+"ft.");break;case"dice":t.push(n.getEntryDice(e));break;case"link":!function(e,s){let a;if("internal"===s.href.type){if(a=`${e.baseUrl}${s.href.path}#`,void 0!==s.href.hash&&(a+=s.href.hash,void 0!==s.href.subhashes))for(let e=0;e<s.href.subhashes.length;e++){const t=s.href.subhashes[e];a+=`,${Object(i.encodeForHash)(t.key)}:${Object(i.encodeForHash)(t.value)}`}}else"external"===s.href.type&&(a=s.href.url);t.push(`<a href='${a}'>${s.text}</a>`)}(this,e);break;case"item":t.push(`<li><b>${e.name}: </b>`),this.recursiveEntryRender(e.entry,t,s),t.push("</li>");break;case"print":t.push(p(e.entry))}}else"string"==typeof e?(d(),p(this),h()):(d(),t.push(e),h());function d(){null!==c&&t.push(c)}function h(){null!==o&&t.push(o)}function u(c,o){const r=s>=2,d=o?s+1:s,h=function(){const t=[];Object(i.isNonstandardSource)(e.source)&&t.push(a.i);r&&void 0!==e.name?t.push(n.HEAD_2):t.push(-1===s?n.HEAD_NEG_1:0===s?n.HEAD_0:n.HEAD_1);"invocation"!==e.type&&"patron"!==e.type||void 0===e.subclass||t.push(a.j);return t.length>0?`class="${t.join(" ")}"`:""}(),u=function(){let t="";if("invocation"===e.type||"patron"===e.type){const s=e.source?`title="Source: ${l.a.sourceJsonToFull(e.source)}"`:"";t=void 0!==e.subclass?`${a.f}="${e.subclass.name}" ${a.g}="${e.subclass.source}" ${s}`:`${a.f}="${n.DATA_NONE}" ${a.g}="${n.DATA_NONE}" ${s}`}return t}(),p=e.prerequisite?`<span class="prerequisite">Prerequisite: ${e.prerequisite}</span>`:"",m=void 0!==e.name?`<span class="stat-name">${e.name}${Object(i.isNonstandardSource)(e.source)?" (UA)":""}${r?".":""}</span> `:"";if(e.entries||e.name){if(t.push(`<${c.wrapperTag} ${u} ${h}>${m}${p}`),e.entries)for(let s=0;s<e.entries.length;s++)c.recursiveEntryRender(e.entries[s],t,d,"<p>","</p>");t.push(`</${c.wrapperTag}>`)}}function p(c){const o=function(){let t,s,i=0,a=!1;const l=[];let n="";for(let c=0;c<e.length;++c)switch(t=e.charAt(c),s=c<e.length-1?e.charAt(c+1):null,t){case"{":"@"===s?i++>0?n+=t:(l.push(n),a=!1,n=""):n+=t;break;case"}":0==--i?(l.push(n),n=""):n+=t;break;default:n+=t}n.length>0&&l.push(n);return l}();for(let e=0;e<o.length;e++){const d=o[e];if(null!=d&&""!==d)if("@"===d.charAt(0)){const[e,o]=[(r=d).substr(0,r.indexOf(" ")),r.substr(r.indexOf(" ")+1)];if("@bold"===e||"@b"===e||"@italic"===e||"@i"===e||"@skill"===e||"@action"===e)switch(e){case"@b":case"@bold":t.push("<b>"),c.recursiveEntryRender(o,t,s),t.push("</b>");break;case"@i":case"@italic":t.push("<i>"),c.recursiveEntryRender(o,t,s),t.push("</i>");break;case"@action":t.push(`<span title="${l.a.actionToExplanation(o)}" class="explanation">${o}</span>`);break;case"@skill":t.push(`<span title="${l.a.skillToExplanation(o)}" class="explanation">${o}</span>`)}else{const[l,r,d,...h]=o.split("|"),u=`${l}${r?`${a.n}${r}`:""}`,p={type:"link",href:{type:"internal",path:"",hash:Object(i.encodeForHash)(u)},text:d||l};switch(e){case"@spell":r||(p.href.hash+=a.n+a.hb),p.href.hash="/spells/"+p.href.hash,c.recursiveEntryRender(p,t,s);break;case"@item":r||(p.href.hash+=a.n+a.T),p.href.hash="/items/"+p.href.hash,c.recursiveEntryRender(p,t,s);break;case"@condition":r||(p.href.hash+=a.n+a.hb),p.href.hash="/conditions/"+p.href.hash,c.recursiveEntryRender(p,t,s);break;case"@class":const e=n.RE_INLINE_CLASS.exec(o);e&&(p.href.hash=e[1].trim(),p.href.subhashes=[{key:"sub",value:e[2].trim()+"~phb"}]),r||(p.href.hash+=a.n+a.hb),p.href.hash="/classes/"+p.href.hash,c.recursiveEntryRender(p,t,s);break;case"@creature":r||(p.href.hash+=a.n+a.cb),p.href.hash="/bestiary/"+p.href.hash,c.recursiveEntryRender(p,t,s);break;case"@filter":t.push(l);break;case"@damage":case"@dice":case"@book":t.push(l);break;case"@5etools":r.indexOf(".")>-1?p.href.hash="/"+r.substring(0,r.indexOf(".")):p.href.hash="/"+r,c.recursiveEntryRender(p,t,s)}}}else t.push(d)}var r}r&&h()}}n.getEntryDice=function(e){let t;if(e.number&&e.faces)t=String(e.number)+"d"+e.faces;else if(e.toRoll&&e.toRoll.length){for(let s of e.toRoll)t=String(s.number)+"d"+s.faces+" + ";t=t.substring(0,t.length-3)}return"undefined"!=typeof droll&&!0===e.rollable?`<span class='roller unselectable' onclick="if (this.rolled) { this.innerHTML = this.innerHTML.split('=')[0].trim()+' = '+droll.roll('${t}').total; } else { this.rolled = true; this.innerHTML += ' = '+droll.roll('${t}').total; }">${t}</span>`:t},n.RE_INLINE_CLASS=/(.*?) \((.*?)\)/,n.HEAD_NEG_1="statsBlockSectionHead",n.HEAD_0="statsBlockHead",n.HEAD_1="statsBlockSubHead",n.HEAD_2="statsInlineHead",n.DATA_NONE="data-none",t.a=n},109:function(e,t,s){"use strict";var i=s(7),a=s(18),l=s(2),n=(s(77),s(39));class c extends i.a{static get properties(){return{test:{type:Boolean,reflectToAttribute:!0,value:!1},options:{type:Array,observer:"optionsUpdated"},model:{type:String},addCallback:{type:Function},value:{type:String,value:"",observer:"valueUpdated"},choices:{type:Number,observer:"choicesUpdated"},label:{type:String},placeholder:{type:String},multiValue:{type:String,value:""}}}choicesUpdated(){this.listBox&&(this.listBox.remove(),delete this.listBox),this.$.select.render()}optionsUpdated(){this.listBox&&(this.listBox.remove(),delete this.listBox),this.$.select.render()}valueUpdated(){if(this.choices)if(Array.isArray(this.value)&&this.options){const e=this.value.map(e=>-1!==this.options.indexOf(e)?this.options.indexOf(e):this.options.findIndex(t=>t.name===e.name&&t.source===e.source)).filter(e=>-1!==e);this.listBox&&(this.listBox.selectedValues=e),this.multiValue=e.map(e=>{let t=this.options[e];return t.name?t.name:Object(l.util_capitalizeAll)(t)}).join(", ")}else this.listBox&&(this.listBox.selectedValues=[]),this.multiValue="";else this.value&&this.options?this.value.name?this.$.select.value=this.options.findIndex(e=>e.name===this.value.name||e===this.value.name)+"":this.$.select.value=this.options.findIndex(e=>e.name===this.value||e===this.value)+"":this.$.select.value=""}ready(){super.ready(),setTimeout(async()=>{this.model&&(this.options=await Object(n.b)(this.model)),this.$.select.renderer=(e,t)=>{if(!this.listBox){if(this.listBox=document.createElement("vaadin-list-box"),this.choices&&(this.listBox.setAttribute("multiple",!0),this.listBox.addEventListener("click",e=>{t.opened=!0;let s=null!==e.srcElement.getAttribute("selected");setTimeout(()=>{this.listBox.selectedValues.length>this.choices&&!s&&this.listBox.selectedValues.splice(this.listBox.selectedValues.length-2,1);let e=this.listBox.selectedValues.map(e=>this.options[e]);this.multiValue=e.map(e=>e.name?e.name:Object(l.util_capitalizeAll)(e)).join(", "),this.addCallback&&this.addCallback(e)},0)})),this.options&&this.options.length)for(let e=0;e<this.options.length;e++){const t=this.options[e],s=document.createElement("vaadin-item");t.name?(s.textContent=t.name,s.setAttribute("value",e)):(s.textContent=Object(l.util_capitalizeAll)(t),s.setAttribute("value",e)),this.listBox.appendChild(s)}e.appendChild(this.listBox),this.$.select._assignMenuElement(),this.valueUpdated()}}},0)}connectedCallback(){super.connectedCallback(),this.selectChangeHandler=()=>{const e=this.$.select.value;if(e&&!this.choices){const t=this.options[e];this.addCallback?this.addCallback(t,this.model):Object(a.z)(void 0,t,this.model),this.value||(this.$.select.value="")}},this.$.select.addEventListener("change",this.selectChangeHandler)}disconnectedCallback(){super.disconnectedCallback(),this.$.select.removeEventListener("change",this.selectChangeHandler)}_exists(e){return!!e}_label(e,t){if(e)return t?`${e} (${t})`:e}static get template(){return i.b`
       <style>
         :host {
           display: inline-block;
@@ -21,240 +21,283 @@
           <span class="prefix">[[multiValue]]</span>
         </div>
       </vaadin-select>
-    `}}customElements.define("dnd-select-add",d)},115:function(t,e,i){"use strict";i.r(e);var a=i(7);i(50),i(49),i(71);const s=i(13).a`<dom-module id="lumo-number-field" theme-for="vaadin-number-field">
-  <template>
-    <style include="lumo-field-button">
-      :host {
-        width: 8em;
-      }
-
-      :host([has-controls]:not([theme~="align-right"])) [part="value"] {
-        text-align: center;
-      }
-
-      [part="decrease-button"][disabled],
-      [part="increase-button"][disabled] {
-        opacity: 0.2;
-      }
-
-      :host([has-controls]) [part="input-field"] {
-        padding: 0;
-      }
-
-      [part="decrease-button"],
-      [part="increase-button"] {
-        cursor: pointer;
-        font-size: var(--lumo-icon-size-s);
-        width: 1.6em;
-        height: 1.6em;
-      }
-
-      [part="decrease-button"]::before,
-      [part="increase-button"]::before {
-        margin-top: 0.2em;
-      }
-
-      /* RTL specific styles */
-
-      :host([dir="rtl"]) [part="value"],
-      :host([dir="rtl"]) [part="input-field"] ::slotted(input) {
-        --_lumo-text-field-overflow-mask-image: linear-gradient(to left, transparent, #000 1.25em);
-      }
-    </style>
-  </template>
-</dom-module>`;document.head.appendChild(s.content);i(79),i(30);var n=i(65),l=i(19);
-/**
-@license
-Copyright (c) 2017 Vaadin Ltd.
-This program is available under Apache License Version 2.0, available at https://vaadin.com/license/
-*/
-const d=document.createElement("template");let r;d.innerHTML='<dom-module id="vaadin-number-field-template">\n  <template>\n    <style>\n      :host([readonly]) [part$="button"] {\n        pointer-events: none;\n      }\n\n      [part="decrease-button"]::before {\n        content: "−";\n      }\n\n      [part="increase-button"]::before {\n        content: "+";\n      }\n\n      [part="decrease-button"],\n      [part="increase-button"] {\n        -webkit-user-select: none;\n        -moz-user-select: none;\n        -ms-user-select: none;\n        user-select: none;\n      }\n\n      /* Hide the native arrow icons */\n      [part="value"]::-webkit-outer-spin-button,\n      [part="value"]::-webkit-inner-spin-button {\n        -webkit-appearance: none;\n        margin: 0;\n      }\n\n      [part="value"] {\n        /* Older Firefox versions (v47.0) requires !important */\n        -moz-appearance: textfield !important;\n      }\n\n      :host([dir="rtl"]) [part="input-field"] {\n        direction: ltr;\n      }\n\n      :host([dir="rtl"]) [part="value"]::placeholder {\n        direction: rtl;\n      }\n\n      :host([dir="rtl"]) [part="input-field"] ::slotted(input)::placeholder {\n        direction: rtl;\n      }\n\n      :host([dir="rtl"]) [part="value"]:-ms-input-placeholder,\n      :host([dir="rtl"]) [part="input-field"] ::slotted(input):-ms-input-placeholder {\n        direction: rtl;\n      }\n\n      :host([dir="rtl"]:not([has-controls])) [part="value"]::placeholder {\n        text-align: left;\n      }\n\n      :host([dir="rtl"]:not([has-controls])) [part="input-field"] ::slotted(input)::placeholder {\n        text-align: left;\n      }\n\n      :host([dir="rtl"]:not([has-controls])) [part="value"]:-ms-input-placeholder,\n      :host([dir="rtl"]:not([has-controls])) [part="input-field"] ::slotted(input):-ms-input-placeholder {\n        text-align: left;\n      }\n    </style>\n\n    <div disabled$="[[!_allowed(-1, value, min, max, step)]]" part="decrease-button" on-click="_decreaseValue" on-touchend="_decreaseButtonTouchend" hidden$="[[!hasControls]]">\n    </div>\n\n    <div disabled$="[[!_allowed(1, value, min, max, step)]]" part="increase-button" on-click="_increaseValue" on-touchend="_increaseButtonTouchend" hidden$="[[!hasControls]]">\n    </div>\n  </template>\n\n  \n</dom-module>',document.head.appendChild(d.content);class o extends n.a{static get is(){return"vaadin-number-field"}static get version(){return"2.6.2"}static get properties(){return{hasControls:{type:Boolean,value:!1,reflectToAttribute:!0},min:{type:Number,reflectToAttribute:!0,observer:"_minChanged"},max:{type:Number,reflectToAttribute:!0,observer:"_maxChanged"},step:{type:Number,value:1,observer:"_stepChanged"}}}ready(){super.ready(),this.__previousValidInput=this.value||"",this.inputElement.type="number",this.inputElement.addEventListener("change",this.__onInputChange.bind(this))}_decreaseButtonTouchend(t){t.preventDefault(),this._decreaseValue()}_increaseButtonTouchend(t){t.preventDefault(),this._increaseValue()}static get template(){if(!r){r=super.template.cloneNode(!0);const t=l.a.import(this.is+"-template","template"),e=t.content.querySelector('[part="decrease-button"]'),i=t.content.querySelector('[part="increase-button"]'),a=t.content.querySelector("style"),s=r.content.querySelector('[part="input-field"]'),n=r.content.querySelector('[name="prefix"]');s.insertBefore(e,n),s.appendChild(i),r.content.appendChild(a)}return r}_createConstraintsObserver(){this._createMethodObserver("_constraintsChanged(required, minlength, maxlength, pattern, min, max, step)")}_constraintsChanged(t,e,i,a,s,n,l){if(!this.invalid)return;const d=t=>!t&&0!==t;d(s)&&d(n)?super._constraintsChanged(t,e,i,a):this.validate()}_decreaseValue(){this._incrementValue(-1)}_increaseValue(){this._incrementValue(1)}_incrementValue(t){if(this.disabled||this.readonly)return;let e=parseFloat(this.value);this.value?e<this.min?(t=0,e=this.min):e>this.max&&(t=0,e=this.max):0==this.min&&t<0||0==this.max&&t>0||0==this.max&&0==this.min?(t=0,e=0):(null==this.max||this.max>=0)&&(null==this.min||this.min<=0)?e=0:this.min>0?(e=this.min,this.max<0&&t<0&&(e=this.max),t=0):this.max<0&&(e=this.max,t<0?t=0:this._getIncrement(1,e-this.step)>this.max?e-=2*this.step:e-=this.step);const i=this._getIncrement(t,e);this.value&&0!=t&&!this._incrementIsInsideTheLimits(t,e)||this._setValue(i)}_setValue(t){this.value=this.inputElement.value=String(parseFloat(t)),this.dispatchEvent(new CustomEvent("change",{bubbles:!0}))}_getIncrement(t,e){let i=this.step||1,a=this.min||0;const s=Math.max(this._getMultiplier(e),this._getMultiplier(i),this._getMultiplier(a));i*=s,a*=s;const n=((e=Math.round(e*s))-a)%i;return t>0?(e-n+i)/s:t<0?(e-(n||i))/s:e/s}_getDecimalCount(t){const e=String(t),i=e.indexOf(".");return-1===i?1:e.length-i-1}_getMultiplier(t){if(!isNaN(t))return Math.pow(10,this._getDecimalCount(t))}_incrementIsInsideTheLimits(t,e){return t<0?null==this.min||this._getIncrement(t,e)>=this.min:t>0?null==this.max||this._getIncrement(t,e)<=this.max:this._getIncrement(t,e)<=this.max&&this._getIncrement(t,e)>=this.min}_allowed(t){const e=t*(this.step||1),i=parseFloat(this.value);return!this.value||!this.disabled&&this._incrementIsInsideTheLimits(e,i)}_stepChanged(t){this.__validateByStep=this.__stepChangedCalled||null!==this.getAttribute("step"),this.inputElement.step=this.__validateByStep?t:"any",this.__stepChangedCalled=!0,this.setAttribute("step",t)}_minChanged(t){this.inputElement.min=t}_maxChanged(t){this.inputElement.max=t}_valueChanged(t,e){t&&isNaN(parseFloat(t))?this.value="":"string"!=typeof this.value&&(this.value=String(this.value)),super._valueChanged(this.value,e)}_onKeyDown(t){38==t.keyCode?(t.preventDefault(),this._increaseValue()):40==t.keyCode&&(t.preventDefault(),this._decreaseValue()),super._onKeyDown(t)}__onInputChange(){this.validate()}checkValidity(){return void 0!==this.min||void 0!==this.max||this.__validateByStep?this.inputElement.checkValidity():super.checkValidity()}}window.customElements.define(o.is,o);
-/**
-@license
-Copyright (c) 2019 Vaadin Ltd.
-This program is available under Apache License Version 2.0, available at https://vaadin.com/license/
-*/
-const c=document.createElement("template");c.innerHTML='<dom-module id="vaadin-integer-field-template">\n\n  \n</dom-module>',document.head.appendChild(c.content);class h extends o{static get is(){return"vaadin-integer-field"}static get version(){return"2.6.2"}static get properties(){return{pattern:String,preventInvalidInput:Boolean,minlength:Number,maxlength:Number}}ready(){super.ready(),this._enabledCharPattern="[-+\\d]"}_valueChanged(t,e){if(""!==t&&!this.__isInteger(t))return console.warn(`Trying to set non-integer value "${t}" to <vaadin-integer-field>. Clearing the value.`),void(this.value="");super._valueChanged(t,e)}_stepChanged(t,e){if(!this.__hasOnlyDigits(t))return console.warn(`Trying to set invalid step size "${t}", which is not a positive integer, to <vaadin-integer-field>. Resetting the default value 1.`),void(this.step=1);super._stepChanged(t,e)}__isInteger(t){return/^(-\d)?\d*$/.test(String(t))}__hasOnlyDigits(t){return/^\d*$/.test(String(t))}}window.customElements.define(h.is,h);i(108);var u=i(18),p=i(2);class v extends a.a{static get properties(){return{str:{type:Number},dex:{type:Number},con:{type:Number},int:{type:Number},wis:{type:Number},cha:{type:Number},strAdj:{type:Number,value:0},dexAdj:{type:Number,value:0},conAdj:{type:Number,value:0},intAdj:{type:Number,value:0},wisAdj:{type:Number,value:0},chaAdj:{type:Number,value:0},strProfs:{type:String,value:""},dexProfs:{type:String,value:""},intProfs:{type:String,value:""},wisProfs:{type:String,value:""},chaProfs:{type:String,value:""},saves:{type:Array,value:[]},classSkillProfOptions:{type:Object,value:{}},backgroundSkillProfOptions:{type:Object,value:[]},defaultBackgroundSkillProf:{type:String,value:""},raceAttributeOptions:{type:Object,value:[]},defaultRaceAttribute:{type:String,value:""}}}static get observers(){return["updateCharAttr(str, dex, con, int, wis, cha)"]}updateCharAttr(t,e,i,a,s,n){t&&e&&i&&a&&s&&n&&Object(u.H)({str:t,dex:e,con:i,int:a,wis:s,cha:n})}connectedCallback(){super.connectedCallback(),this.characterChangeHandler=t=>{let e=t.detail.character;this.updateAttributesFromCharacter(e)},this.updateAttributesFromCharacter(Object(u.q)()),Object(u.h)().addEventListener("character-selected",this.characterChangeHandler)}disconnectedCallback(){super.disconnectedCallback(),Object(u.h)().removeEventListener("character-selected",this.characterChangeHandler)}async updateAttributesFromCharacter(t){if(t&&t.attr){const e=t.attr;e.str===this.str&&e.dex===this.dex&&e.con===this.con&&e.int===this.int&&e.wis===this.wis&&e.cha===this.cha||this.setProperties({str:t.attr.str,dex:t.attr.dex,con:t.attr.con,int:t.attr.int,wis:t.attr.wis,cha:t.attr.cha}),this.saves=await Object(u.k)();let i={str:0,dex:0,con:0,int:0,wis:0,cha:0},a=await Object(u.p)();a&&a.choose?(this.raceAttributeOptions=a.choose.from.map(t=>t.toUpperCase()),this.raceAttributeChoices=a.choose.count||1,this.raceAttributeSelections=t.raceAttributes,t.raceAttributes.forEach(t=>{i[t.toLowerCase()]++})):(this.raceAttributeOptions=void 0,this.raceAttributeChoices=void 0,this.raceAttributeSelections=void 0);let s=await Object(u.o)(a);this.defaultRaceAttribute=s.map(t=>{let e=t[0].toLowerCase(),a=t[1];return i[e]+=a,e.toUpperCase()+" "+Object(p.absInt)(a)}).join(", ");let n=await Object(u.c)();for(let t of n)t.featSelections&&(i[t.featSelections.toLowerCase()]+=1),t.featAttribute&&Object.entries(t.featAttribute).filter(t=>"choose"!==t[0]).forEach(t=>{let e=t[0].toLowerCase(),a=t[1];i[e]+=a}),t.asiAttributes&&Object.entries(t.asiAttributes).forEach(t=>{let e=t[0].toLowerCase(),a=t[1];i[e]+=a});this.strAdj=i.str,this.dexAdj=i.dex,this.conAdj=i.con,this.intAdj=i.int,this.wisAdj=i.wis,this.chaAdj=i.cha;let l=await Object(u.r)("str");this.strProfs=l.map(t=>Object(p.util_capitalizeAll)(t)).join(", ");let d=await Object(u.r)("dex");this.dexProfs=d.map(t=>Object(p.util_capitalizeAll)(t)).join(", ");let r=await Object(u.r)("int");this.intProfs=r.map(t=>Object(p.util_capitalizeAll)(t)).join(", ");let o=await Object(u.r)("wis");this.wisProfs=o.map(t=>Object(p.util_capitalizeAll)(t)).join(", ");let c=await Object(u.r)("cha");this.chaProfs=c.map(t=>Object(p.util_capitalizeAll)(t)).join(", ")}}_adjustString(t){return 0!==t&&void 0!==t?Object(p.absInt)(t):""}_total(t,e){let i=parseInt(t),a=parseInt(e);return i=isNaN(i)?0:i,a=isNaN(a)?0:a,i+a}_mod(t,e){return Object(p.absInt)(Math.floor((this._total(t,e)-10)/2))}_contains(t,e){return t.indexOf(e)>-1}_exists(){for(let t of arguments)if(t&&(t.constructor!==Object||Object.entries(t).length>0)&&(!Array.isArray(t)||t.length>0))return!0;return!1}static get template(){return a.b`
+    `}}customElements.define("dnd-select-add",c)},120:function(e,t,s){"use strict";s.r(t);var i=s(7),a=s(27),l=s(18),n=(s(117),s(109),s(103));class c extends i.a{static get properties(){return{initialValue:{type:Boolean,value:!1,observer:"initValueChange"},checked:{type:Boolean,value:!1,reflectToAttribute:!0},label:{type:String,value:""},secondaryLabel:{type:String,value:""}}}initValueChange(){this.switchEl&&(this.switchEl.checked=this.initialValue,this.checked=this.initialValue)}ready(){super.ready(),this.switchEl=new n.a(this.shadowRoot.querySelector(".mdc-switch")),this.switchEl.checked=this.initialValue,this.checked=this.initialValue}connectedCallback(){super.connectedCallback(),this.switchEventHandler=()=>{this.checked=this.switchEl.checked,this.dispatchEvent(new CustomEvent("switch-change",{detail:{checked:this.switchEl.checked},bubbles:!0,composed:!0}))},this.shadowRoot.querySelector(".mdc-switch__native-control").addEventListener("change",this.switchEventHandler)}disconnectedCallback(){super.disconnectedCallback(),this.shadowRoot.querySelector(".mdc-switch__native-control").removeEventListener("change",this.switchEventHandler)}static get template(){return i.b`
       <style include="material-styles">
         :host {
-          display: block;
-          padding: 14px;
+          display: inline-block;
         }
-
-        .default-selection {
-          font-style: italic;
+        :host([checked]) label.secondary {
+          color: var(--mdc-theme-primary);
         }
-
-        .table-wrap {
+        :host([checked]) label:not(.secondary) {
+          color: var(--lumo-secondary-text-color);
+        }
+        label {
+          color: var(--mdc-theme-primary);
+          font-weight: 500;
+          font-size: var(--lumo-font-size-s);
+          margin-right: 16px;
+          transition: color 0.2s;
+        }
+        label.secondary {
+          color: var(--lumo-secondary-text-color);
+          margin-right: 0;
+          margin-left: 16px;
+        }
+      </style>
+      
+      <label for="swich">[[label]]</label>
+      <div class="mdc-switch mdc-list-item__meta">
+        <div class="mdc-switch__track"></div>
+        <div class="mdc-switch__thumb-underlay">
+          <div class="mdc-switch__thumb">
+            <input type="checkbox" id="swich" class="mdc-switch__native-control" role="switch" />
+          </div>
+        </div>
+      </div>
+      <label class="secondary">[[secondaryLabel]]</label>
+    `}}customElements.define("dnd-switch",c);var o=s(67);s(74);class r extends i.a{static get properties(){return{label:{type:String,value:""},icon:{type:String,value:""}}}connectedCallback(){this.button=new o.a(this.$.button)}_exists(e){return!!e}static get template(){return i.b`
+      <style include="material-styles">
+        .mdc-tab-scroller__scroll-area--scroll {
+          overflow-x: auto;
+          background-color: var(--mdc-theme-surface);
+          border: 1px solid var(--mdc-theme-text-divider-on-background);
+          border-bottom: none;
+        }
+      </style>
+      <button id="button" class="mdc-button">
+        <div class="mdc-button__ripple"></div>
+        <span class="mdc-button__label">[[label]]</span>
+        <template is="dom-if" if="[[_exists(icon)]]">
+          <i class="material-icons mdc-button__icon" aria-hidden="true">[[icon]]</i>
+        </template>
+      </button>
+    `}}customElements.define("dnd-button",r);class d extends i.a{static get properties(){return{levelIndex:{type:Number},checked:{type:Boolean,value:!1},selectedFeat:{type:Object},selectedAbility1:{type:String,value:""},selectedAbility2:{type:String,value:""},featHasAttributeChoice:{type:Boolean,value:!1},featAttributeSelection:{type:String,value:""},featAttributeOptions:{type:Array,value:[]}}}constructor(){super(),this.attributeOptions=["STR","DEX","CON","INT","WIS","CHA"]}connectedCallback(){super.connectedCallback(),this.switchChangeHandler=e=>{this.checked=e.detail.checked,this._genASICallback()()},this.addEventListener("switch-change",this.switchChangeHandler),this.characterChangeHandler=e=>{let t=e.detail.character;this.updateFromCharacter(t)},this.updateFromCharacter(Object(l.s)()),Object(l.i)().addEventListener("character-selected",this.characterChangeHandler)}disconnectedCallback(){super.disconnectedCallback(),this.removeEventListener("switch-change",this.switchChangeHandler),Object(l.i)().removeEventListener("character-selected",this.characterChangeHandler)}async updateFromCharacter(e){const{asi:t,index:s}=await Object(l.c)(this.levelIndex,e);if(this.featHasAttributeChoice=!1,t){if(this.selectedFeat=t.feat,this.selectedAbility1=t.ability1,this.selectedAbility2=t.ability2,this.checked=t.isFeat,t.isFeat&&t.feat&&t.feat.name&&t.feat.source){const s=`${t.feat.name}_${t.feat.source}`,i=await Object(l.o)(s);i.ability&&i.ability.length&&i.ability[0].choose&&(this.featHasAttributeChoice=!0,this.featAttributeOptions=i.ability[0].choose.from.map(e=>e.toUpperCase()),this.featAttributeSelection=e.featAttributeSelections&&e.featAttributeSelections[s]?e.featAttributeSelections[s]:"")}}else this.selectedFeat={name:"",source:""},this.selectedAbility1="",this.selectedAbility2="",this.checked=!1;this.asiIndex=s}_genASICallback(e){return t=>{Object(l.E)({feat:"feat"===e?{name:t.name,source:t.source}:this.selectedFeat,ability1:"ability1"===e?t:this.selectedAbility1,ability2:"ability2"===e?t:this.selectedAbility2,isFeat:this.checked},this.asiIndex)}}_genFeatAbilityCallback(){return e=>{if(this.selectedFeat&&this.selectedFeat.name&&this.selectedFeat.source){const t=`${this.selectedFeat.name}_${this.selectedFeat.source}`;Object(l.J)(t,e)}}}static get template(){return i.b`
+      <style>
+        :host {
+          display: flex;
+          flex-direction: column;
+          max-width: 192px;
+        }
+        [hidden] {
+          display: none !important;
+        }
+        .abilities {
           display: flex;
           flex-wrap: wrap;
         }
-        .stats {
-          width: 100%;
+        .abilities dnd-select-add {
+          width: calc(50% - 8px);
+        }
+        dnd-select-add + dnd-select-add {
+          margin-left: 16px;
+        }
+        dnd-select-add {
+          display: block;
+        }
+      </style>
+
+      <dnd-switch initial-value=[[checked]] label="ASI" secondary-label="Feat"></dnd-switch>
+      <div class="abilities" hidden$=[[checked]]>
+        <dnd-select-add add-callback="[[_genASICallback('ability1')]]" value="[[selectedAbility1]]" options="[[attributeOptions]]" placeholder="<ASI>"></dnd-select-add>
+        <dnd-select-add add-callback="[[_genASICallback('ability2')]]" value="[[selectedAbility2]]" options="[[attributeOptions]]" placeholder="<ASI>"></dnd-select-add>
+      </div>
+      <div hidden$=[[!checked]]>
+        <dnd-select-add add-callback="[[_genASICallback('feat')]]" model="feats" value="[[selectedFeat.name]]" placeholder="<Choose Feat>"></dnd-select-add>
+      </div>
+      <div hidden$=[[!featHasAttributeChoice]]>
+        <dnd-select-add test add-callback="[[_genFeatAbilityCallback()]]" value="[[featAttributeSelection]]" options="[[featAttributeOptions]]" placeholder="<Choose Attribute>"></dnd-select-add>
+      </div>
+    `}}customElements.define("dnd-asi-select",d);var h=s(2);const u={"artificer(ua)":{class:{2:{name:"Wonderous Invention",count:1,options:["{@item Bag of holding}","{@item cap of water breathing}","{@item driftglobe}","{@item goggles of night}","{@item sending stones}"]},5:{name:"Wonderous Invention",count:1,options:["{@item Alchemy jug}","{@item helm of comprehending languages}","{@item lantern of revealing}","{@item ring of swimming}","{@item robe of useful items}","{@item rope of climbing}","{@item wand of magic detection}","{@item wand of secrets}","{@item Bag of holding}","{@item cap of water breathing}","{@item driftglobe}","{@item goggles of night}","{@item sending stones}"]},10:{name:"Wonderous Invention",count:1,options:["{@item Bag of beans}","{@item chime of opening}","{@item decanter of endless water}","{@item eyes of minute seeing}","{@item folding boat}","{@item Heward's handy haversack}","{@item Alchemy jug}","{@item helm of comprehending languages}","{@item lantern of revealing}","{@item ring of swimming}","{@item robe of useful items}","{@item rope of climbing}","{@item wand of magic detection}","{@item wand of secrets}","{@item Bag of holding}","{@item cap of water breathing}","{@item driftglobe}","{@item goggles of night}","{@item sending stones}"]},15:{name:"Wonderous Invention",count:1,options:["{@item Boots of striding and springing}","{@item bracers of archery}","{@item brooch of shielding}","{@item broom of flying}","{@item hat of disguise}","{@item slippers of spider climbing}","{@item Bag of beans}","{@item chime of opening}","{@item decanter of endless water}","{@item eyes of minute seeing}","{@item folding boat}","{@item Heward's handy haversack}","{@item Alchemy jug}","{@item helm of comprehending languages}","{@item lantern of revealing}","{@item ring of swimming}","{@item robe of useful items}","{@item rope of climbing}","{@item wand of magic detection}","{@item wand of secrets}","{@item Bag of holding}","{@item cap of water breathing}","{@item driftglobe}","{@item goggles of night}","{@item sending stones}"]},20:{name:"Wonderous Invention",count:1,options:["{@item Eyes of the eagle}","{@item gem of brightness}","{@item gloves of missile snaring}","{@item gloves of swimming and climbing}","{@item ring of jumping}","{@item ring of mind shielding}","{@item wings of flying}","{@item Boots of striding and springing}","{@item bracers of archery}","{@item brooch of shielding}","{@item broom of flying}","{@item hat of disguise}","{@item slippers of spider climbing}","{@item Bag of beans}","{@item chime of opening}","{@item decanter of endless water}","{@item eyes of minute seeing}","{@item folding boat}","{@item Heward's handy haversack}","{@item Alchemy jug}","{@item helm of comprehending languages}","{@item lantern of revealing}","{@item ring of swimming}","{@item robe of useful items}","{@item rope of climbing}","{@item wand of magic detection}","{@item wand of secrets}","{@item Bag of holding}","{@item cap of water breathing}","{@item driftglobe}","{@item goggles of night}","{@item sending stones}"]}}},"artificer (revisited)":{class:{2:{name:"Infuse Item",count:3,type:"featureType=ai|source=UAArtificerRevisited"},4:{name:"Infuse Item",count:1,type:"featureType=ai|source=UAArtificerRevisited"},7:{name:"Infuse Item",count:1,type:"featureType=ai|source=UAArtificerRevisited"},11:{name:"Infuse Item",count:1,type:"featureType=ai|source=UAArtificerRevisited"},15:{name:"Infuse Item",count:1,type:"featureType=ai|source=UAArtificerRevisited"},19:{name:"Infuse Item",count:1,type:"featureType=ai|source=UAArtificerRevisited"}}},artificer:{class:{2:{name:"Infuse Item",count:4,type:"featureType=ai|source=ERLW"},6:{name:"Infuse Item",count:2,type:"featureType=ai|source=ERLW"},10:{name:"Infuse Item",count:2,type:"featureType=ai|source=ERLW"},14:{name:"Infuse Item",count:2,type:"featureType=ai|source=ERLW"},18:{name:"Infuse Item",count:2,type:"featureType=ai|source=ERLW"}}},barbarian:{subclasses:{"Path of the Totem Warrior":{3:{name:"Totem Spirit",count:1,options:["Bear","Eagle","Elk","Wolf","Tiger"]},6:{name:"Aspect of the Beast",count:1,options:["Bear","Eagle","Elk",{name:"Tiger",options:["athletics","acrobatics","stealth","survival"],choose:2,type:"proficiency"},"Wolf"]},14:{name:"Totemic Attunement",count:1,options:["Bear","Eagle","Elk","Tiger","Wolf"]}}}},bard:{subclasses:{"College of Swords":{3:{name:"Fighting Style",count:1,type:"fs:b"}}}}};var p=s(104),m=(s(73),s(39));class b extends(Object(a.a)(i.a)){static get properties(){return{levels:{type:Array,value:[]},classes:{type:Object},subclasses:{type:Object,value:void 0}}}connectedCallback(){super.connectedCallback(),this.characterChangeHandler=e=>{let t=e.detail.character;this.updateFromCharacter(t)},this.updateFromCharacter(Object(l.s)()),Object(l.i)().addEventListener("character-selected",this.characterChangeHandler)}disconnectedCallback(){super.disconnectedCallback(),Object(l.i)().removeEventListener("character-selected",this.characterChangeHandler)}ready(){super.ready();const e=new p.a;setTimeout(()=>{const t=this.$.classGrid;let s;t.rowDetailsRenderer=((t,s,i)=>{t.firstElementChild||(t.innerHTML='<div class="details" id="stats"></div>');let a=[],l=this._getClassLevelFeatures(this.levels,i.index,this.classes,this.subclasses);for(let t of l)e.recursiveEntryRender(t,a,0,void 0,!0);const n=t.querySelector(".details");Object(h.jqEmpty)(n),n.innerHTML=a.join("")}).bind(this),t.addEventListener("grid-dragstart",(function(e){s=e.detail.draggedItems[0],t.dropMode="between"})),t.addEventListener("grid-dragend",(function(e){s=t.dropMode=null})),t.addEventListener("grid-drop",(function(e){const i=e.detail.dropTargetItem;if(s&&s!==i){const a=t.items.filter((function(e){return e!==s})),n=a.indexOf(i)+("below"===e.detail.dropLocation?1:0);a.splice(n,0,s),Object(l.H)(a)}}))},0)}async updateFromCharacter(e){this.character=e,this.levels=e.levels,this.classes=await Object(l.l)(e),this.subclasses=JSON.parse(JSON.stringify(e.subclasses)),this.classChoices=await this._findLevelChoices(e,this.classes),this.$.classGrid.clearCache()}_getClassLevelFeatures(e,t,s,i){if(s&&e[t]){const a=e[t].name,l=s[a];if(l){const s=l.classFeatures;let n=0,c=-1;if(e.length>=t+1){for(let i=0;i<t;i++)if(e[i].name===a){n++;const e=s[n];if(e){e.find(e=>e.gainSubclassFeature)&&c++}}const o=s[n];if(o){if(o.find(e=>e.gainSubclassFeature)&&i&&i[a]&&l.subclasses&&l.subclasses.length){const e=l.subclasses.find(e=>i[a].name===e.name);if(e.subclassFeatures[c])return e.subclassFeatures[c].map(e=>(e.isSubclass=!0,e)),[...o].concat(e.subclassFeatures[c])}return o}}}}}_getClassLevelFeatureStringArray(e,t,s,i){if(e&&void 0!==t&&s&&i){const a=this._getClassLevelFeatures(e,t,s,i);if(a)return a.map(e=>({name:Object(h.getEntryName)(e),isSubclass:e.isSubclass}))}}_level(e){return e+1}_deleteLevel(e){let t=e.model.__data.index;this.levels.splice(t,1),Object(l.H)(this.levels)}_expandDetails(e){let t=e.model.__data.item,s=this.$.classGrid.detailsOpenedItems.indexOf(t)>-1;for(let e of this.$.classGrid.detailsOpenedItems)this.$.classGrid.closeItemDetails(e);s?this.$.classGrid.closeItemDetails(t):this.$.classGrid.openItemDetails(t)}async _findLevelChoices(e,t){const s=[];if(e&&e.levels&&e.levels.length)for(let i=0;i<e.levels.length;i++)s.push(await this._findChoices(e,t,i));return s}async _findChoices(e,t,s){if(t&&e.levels&&e.levels.length&&e.levels.length>s){let i=e.levels,a=e.subclasses,n=i[s].name,c=t[n];if(c){let o=[],r=0,d=Object(l.w)(c);for(let e=0;e<=s;e++){i[e].name===n&&r++}void 0!==d&&r===d&&o.push({id:"subclass",from:c.subclasses,selections:e.subclasses[n]});let h=this._getClassLevelFeatures(i,s,t);if(h&&h.length&&h.find(e=>"Ability Score Improvement"===e.name)&&o.push({id:"asi"}),0===s){const t=c.startingProficiencies.skills[0].choose;o.push({id:"profs",count:t.count,from:t.from,selections:e.classSkillProficiencies})}if(r){const e=u[n.toLowerCase()];if(e&&e.class&&e.class[r]){const t=[].concat(e.class[r]);for(const e of t)if(e.options)o.push({id:"classFeature",name:e.name,from:e.options,count:e.count>1?e.count:void 0,class:n.toLowerCase(),feature:e.name,level:r,selections:Object(l.j)(n.toLowerCase(),r,e.name)});else if(e.type){const t=await Object(m.a)("features",e.type);o.push({id:"classFeature",name:e.name,from:t,count:e.count>1?e.count:void 0,class:n.toLowerCase(),feature:e.name,level:r,selections:Object(l.j)(n.toLowerCase(),r,e.name)})}}if(e&&e.subclasses&&a[n]&&e.subclasses[a[n]]&&e.subclasses[a[n]][r]){const t=[].concat(e.subclasses[a[n]][r]);for(const e of t)if(e.options)o.push({id:"subclassFeature",name:e.name,from:e.options,count:e.count>1?e.count:void 0,class:n.toLowerCase(),subclass:a[n],feature:e.name,level:r,selections:Object(l.v)(n.toLowerCase(),a[n],r,e.name)});else if(e.type){const t=await Object(m.a)("features",e.type);o.push({id:"subclassFeature",name:e.name,from:t,count:e.count>1?e.count:void 0,class:n.toLowerCase(),subclass:a[n],feature:e.name,level:r,selections:Object(l.v)(n.toLowerCase(),a[n],r,e.name)})}}}return o}}return[]}_equal(e,t){return e===t}_genSubclassCallback(e){return t=>{Object(l.A)(void 0,e.name,t)}}_genSubclassOptions(e){return this.classes[e.name].subclasses}_getSubclassSelection(e,t){return t[e.name]}_classFeatureOptionAddCallback(e,t,s){return i=>{let a;a=Array.isArray(i)?i.map(e=>e.name?{name:e.name,source:e.source}:e):i.name?{name:i.name,source:i.source}:i,Object(l.G)(e,t,s,a)}}_subclassFeatureOptionAddCallback(e,t,s,i){return a=>{let n;n=Array.isArray(a)?a.map(e=>e.name?{name:e.name,source:e.source}:e):a.name?{name:a.name,source:a.source}:a,Object(l.M)(e,t,s,i,n)}}_indexOfLevel(e,t){return t.indexOf(e)}_isMobile(){return window.innerWidth<921}_objArray(e){return Object.values(e)}_atIndex(e,t){return e?e[t]:null}_addClassLevel(e){Object(l.z)(void 0,e.model.item,"classes")}_classSkillAddCallback(e){Object(l.I)(e)}static get template(){return i.b`
+      <style include="material-styles my-styles">
+        .something {
+          display: block;
+        }
+        #stats {
+          margin-top: 16px;
+          line-height: 1.9;
+        }
+        vaadin-grid {
+          height: 600px;
+        }
+        .details {
+          padding: 0 24px;
+        }
+
+        .heading-wrap {
+          display: flex;
+          justify-content: space-between;
+          margin: 22px 14px 5px;
+          align-items: center;
+        }
+
+        .heading {
+          font-size: 24px;
+          font-weight: bold;
+        }
+
+        .button-wrap {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          padding: 10px;
+        }
+        .button-wrap > * {
+          margin: 4px;
         }
 
         .row {
-          height: 92px;
+          position: relative;
+        }
+        .row:after {
+          content: "";
+          display: table;
+          clear: both;
         }
 
-        .data {
-          margin-top: 32px;
-          font-size: 18px;
-          padding: 10px 8px 8px;
+        .open-details {
+          cursor: pointer;
           display: flex;
-          justify-content: center;
+          align-items: flex-start;
+          flex-wrap: wrap;
+        }
+        .open-details:hover {
+          color: var(--mdc-theme-secondary);
         }
 
-        .mod {
-          background: var(--lumo-contrast-10pct);
-          border-radius: 4px;
-          width: 32px;
-          margin-left: auto;
-          margin-right: auto;
+        .level-col {
+          width: 200px;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+          flex-shrink: 0;
+          padding: 6px 0;
+        }
+        .level-col__level {
+          margin-right: 10px;
+          font-size: 20px;
+          font-weight: bold;
+        }
+        .level-col__class {
+          font-size: 20px;
+          font-weight: bold;
         }
 
-        .prof {
-          justify-content: flex-start;
+        .features-col {
+          white-space: normal;
+          margin: 0;
+          padding: 8px 0;
+          width: 100%;
+          font-size: 15px;
+        }
+        .class-feature:not(:last-of-type)::after {
+          content: ', ';
+        }
+        .class-feature[subclass] {
+          color: var(--mdc-theme-secondary);
         }
 
-        .mobile-label .data {
-          justify-content: flex-start;
+        .choices-col {
+          display: flex;
+          float: left;
+          flex-wrap: wrap;
+        }
+        .choices-col__choice {
+          margin-top: 10px;
+          margin-right: 16px;
+        }
+        .choices-col__subclass-choice {
+          display: block;
         }
 
-        vaadin-integer-field {
-          width: 100px;
+        .delete-col {
+          position: absolute;
+          right: -8px;
+          top: 4px;
         }
-        
-        .save {
+        .delete-btn {
+          height: 24px;
           width: 24px;
+          font-size: 18px;
+          padding: 0;
         }
-
-        .save-icon {
-          width: 24px;
+        .delete-btn:hover {
+          color: var(--mdc-theme-secondary);
         }
-
-        [hidden] {
-          visibility: hidden;
+        .details {
+          padding: 0 6px;
         }
-
         @media(min-width: 921px) {
-          .stats {
-            width: 50%;
+          .open-details {
+            flex-wrap: nowrap;
           }
-          .mobile-label {
-            display: none;
-          }
-          .attr-choice-wrap,
-          .prof-choice-wrap {
-            flex-direction: row;
+          .features-col {
+            margin: 0 30px 0 12px;
+            width: unset;
+            font-size: 16px;
           }
         }
       </style>
 
-      <h2>Attributes</h2>
-      <div class="table-wrap">
-        <table class="stats">
-          <thead>
-            <tr>
-              <th></th>
-              <th>Adjust.</th>
-              <th>Total</th>
-              <th>Mod.</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="row">
-              <td><vaadin-integer-field value={{str}} min="1" max="20" has-controls label="Strength"></vaadin-integer-field></td>
-              <td><div class="adj data">[[_adjustString(strAdj)]]</div></td>
-              <td><div class="total data">[[_total(strAdj, str)]]</div></td>
-              <td><div class="mod data">[[_mod(strAdj, str)]]</div></td>
-            </tr>
-            <tr class="row">
-              <td><vaadin-integer-field value={{dex}} min="1" max="20" has-controls label="Dexterity"></vaadin-integer-field></td>
-              <td><div class="adj data">[[_adjustString(dexAdj)]]</div></td>
-              <td><div class="total data">[[_total(dexAdj, dex)]]</div></td>
-              <td><div class="mod data">[[_mod(dexAdj, dex)]]</div></td>
-            </tr>
-            <tr class="row">
-              <td><vaadin-integer-field value={{con}} min="1" max="20" has-controls label="Constitution"></vaadin-integer-field></td>
-              <td><div class="adj data">[[_adjustString(conAdj)]]</div></td>
-              <td><div class="total data">[[_total(conAdj, con)]]</div></td>
-              <td><div class="mod data">[[_mod(conAdj, con)]]</div></td>
-            </tr>
-            <tr class="row">
-              <td><vaadin-integer-field value={{int}} min="1" max="20" has-controls label="Intellegence"></vaadin-integer-field></td>
-              <td><div class="adj data">[[_adjustString(intAdj)]]</div></td>
-              <td><div class="total data">[[_total(intAdj, int)]]</div></td>
-              <td><div class="mod data">[[_mod(intAdj, int)]]</div></td>
-            </tr>
-            <tr class="row">
-              <td><vaadin-integer-field value={{wis}} min="1" max="20" has-controls label="Wisdom"></vaadin-integer-field></td>
-              <td><div class="adj data">[[_adjustString(wisAdj)]]</div></td>
-              <td><div class="total data">[[_total(wisAdj, wis)]]</div></td>
-              <td><div class="mod data">[[_mod(wisAdj, wis)]]</div></td>
-            </tr>
-            <tr class="row">
-              <td><vaadin-integer-field value={{cha}} min="1" max="20" has-controls label="Charisma"></vaadin-integer-field></td>
-              <td><div class="adj data">[[_adjustString(chaAdj)]]</div></td>
-              <td><div class="total data">[[_total(chaAdj, cha)]]</div></td>
-              <td><div class="mod data">[[_mod(chaAdj, cha)]]</div></td>
-            </tr>
-          </tbody>
-        </table>
-
-        <table class="stats">
-          <thead>
-            <tr>
-              <th class="mobile-label">Attribute</th>
-              <th><div class="save">Save</div></th>
-              <th><div class="prof">Proficiencies</div></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="row">
-              <td class="mobile-label"><div class="data">STR</div></td>
-              <td><div class="save data">
-                <span hidden$="[[!_contains(saves, 'str')]]" class="save-icon material-icons">done</span>
-              </div></td>
-              <td><div class="prof data">[[strProfs]]</div></td>
-            </tr>
-            <tr class="row">
-              <td class="mobile-label"><div class="data">DEX</div></td>
-              <td><div class="save data">
-                <span hidden$="[[!_contains(saves, 'dex')]]" class="save-icon material-icons">done</span>
-              </div></td>
-              <td><div class="prof data">[[dexProfs]]</div></td>
-            </tr>
-            <tr class="row">
-              <td class="mobile-label"><div class="data">CON</div></td>
-              <td><div class="save data">
-                <span hidden$="[[!_contains(saves, 'con')]]" class="save-icon material-icons">done</span>
-              </div></td>
-              <td><div class="prof data"></div></td>
-            </tr>
-            <tr class="row">
-              <td class="mobile-label"><div class="data">INT</div></td>
-              <td><div class="save data">
-                <span hidden$="[[!_contains(saves, 'int')]]" class="save-icon material-icons">done</span>
-              </div></td>
-              <td><div class="prof data">[[intProfs]]</div></td>
-            </tr>
-            <tr class="row">
-              <td class="mobile-label"><div class="data">WIS</div></td>
-              <td><div class="save data">
-                <span hidden$="[[!_contains(saves, 'wis')]]" class="save-icon material-icons">done</span>
-              </div></td>
-              <td><div class="prof data">[[wisProfs]]</div></td>
-            </tr>
-            <tr class="row">
-              <td class="mobile-label"><div class="data">CHA</div></td>
-              <td><div class="save data">
-                <span hidden$="[[!_contains(saves, 'cha')]]" class="save-icon material-icons">done</span>
-              </div></td>
-              <td><div class="prof data">[[chaProfs]]</div></td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="heading-wrap">
+        <h2 class="heading">Class</h2>
+        <dnd-select-add model="classes" placeholder="Add a Level"></dnd-select-add>
       </div>
-    `}}customElements.define("dnd-character-builder-attributes",v)}}]);
+      <div class="button-wrap">
+        <template is="dom-repeat" items="[[_objArray(classes)]]">
+          <dnd-button icon="add" label="[[item.name]]" on-click="_addClassLevel"></dnd-button>
+        </template>
+      </div>
+
+      <vaadin-grid id="classGrid" rows-draggable items=[[levels]] theme="no-border" height="600px">
+        <vaadin-grid-column flex-grow="1">
+          <template>
+            <div class="row">
+              <div class="open-details" on-click="_expandDetails">
+                <div class="level-col">
+                  <span class="level-col__level">[[_level(index)]]</span>
+                  <span class="level-col__class">[[item.name]]</span>
+                </div>
+
+                <div class="features-col">
+                  <template is="dom-repeat" items="[[_getClassLevelFeatureStringArray(levels, index, classes, subclasses)]]">
+                    <span class="class-feature" subclass$="[[item.isSubclass]]">[[item.name]]</span>
+                  </template>
+                </div>
+              </div>
+
+              <div class="choices-col">
+                <template is="dom-repeat" items="[[_atIndex(classChoices, index)]]" as="choice">
+                  <div class="choices-col__choice">
+                    <template is="dom-if" if="[[_equal(choice.id, 'subclass')]]">
+                      <dnd-select-add class="choices-col__subclass-choice" label="Subclass" placeholder="<Choose Subclass>"
+                        options="[[choice.from]]" value="[[choice.selections]]" add-callback="[[_genSubclassCallback(item)]]"></dnd-select-add>
+                    </template>
+                    <template is="dom-if" if="[[_equal(choice.id, 'asi')]]">
+                      <dnd-asi-select level-index="[[_indexOfLevel(item, levels)]]" character="[[character]]"></dnd-asi-select>
+                    </template>
+                    <template is="dom-if" if="[[_equal(choice.id, 'profs')]]">
+                      <dnd-select-add choices="[[choice.count]]" label="Skill Proficiency" placeholder="<Choose Skills>"
+                        options="[[choice.from]]" value="[[choice.selections]]" add-callback="[[_classSkillAddCallback]]"></dnd-select-add>
+                    </template>
+                    <template is="dom-if" if="[[_equal(choice.id, 'classFeature')]]">
+                      <dnd-select-add choices="[[choice.count]]" label="[[choice.name]]" placeholder="<Choose Option>"
+                        options="[[choice.from]]" value="[[choice.selections]]" add-callback="[[_classFeatureOptionAddCallback(choice.class, choice.level, choice.feature)]]"></dnd-select-add>
+                    </template>
+                    <template is="dom-if" if="[[_equal(choice.id, 'subclassFeature')]]">
+                      <dnd-select-add choices="[[choice.count]]" label="[[choice.name]]" placeholder="<Choose Option>"
+                        options="[[choice.from]]" value="[[choice.selections]]" add-callback="[[_subclassFeatureOptionAddCallback(choice.class, choice.subclass, choice.level, choice.feature)]]"></dnd-select-add>
+                    </template>
+                  </div>
+                </template>
+              </div>
+
+              <div class="delete-col">
+                <button class="mdc-icon-button material-icons delete-btn" on-click="_deleteLevel">close</button>
+              </div>
+            </div>
+          </template>
+        </vaadin-grid-column>
+      </vaadin-grid>
+    `}}customElements.define("dnd-character-builder-class",b)}}]);
 //# sourceMappingURL=4.bundle.js.map
