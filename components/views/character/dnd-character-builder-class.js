@@ -6,6 +6,7 @@ import "../../dnd-select-add";
 import "../../dnd-switch";
 import "../../dnd-button";
 import "../../dnd-asi-select";
+import "../../dnd-svg";
 import { jqEmpty, getEntryName } from "../../../js/utils";
 import { classOptionsMap } from "../../../data/choices";
 import EntryRenderer from "../../../util/entryrender";
@@ -114,12 +115,14 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
 
   async updateFromCharacter(character) {
     this.character = character;
-    this.levels = character.levels;
     this.classes = await getClassReferences(character);
     this.subclasses = JSON.parse(JSON.stringify(character.subclasses));
 
     this.classChoices = await this._findLevelChoices(character, this.classes);
 
+    this.dispatchEvent(new CustomEvent("loadingChange", { bubbles: true, composed: true }));
+
+    this.levels = character.levels;
     this.$.classGrid.clearCache();
   }
 
@@ -405,6 +408,10 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
     return data ? data[index] : null;
   }
 
+  _svgFromClass(className) {
+    return className ? className.replace(/(\s|\(|\))/g, "") : '';
+  }
+
   _addClassLevel(e) {
     mergeFeature(undefined, e.model.item, "classes");
   }
@@ -480,6 +487,19 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
           margin-right: 10px;
           font-size: 20px;
           font-weight: bold;
+        }
+        .level-col__image-wrap {
+          width: 30px;
+          position: relative;
+          height: 21px;
+          display: inline-block;
+        }
+        .level-col__image {
+          width: 30px;
+          height: 30px;
+          display: block;
+          position: absolute;
+          top: -1px;
         }
         .level-col__class {
           font-size: 20px;
@@ -559,6 +579,7 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
               <div class="open-details" on-click="_expandDetails">
                 <div class="level-col">
                   <span class="level-col__level">[[_level(index)]]</span>
+                  <span class="level-col__image-wrap" ><dnd-svg class="level-col__image" id="[[_svgFromClass(item.name)]]"></dnd-svg></span>
                   <span class="level-col__class">[[item.name]]</span>
                 </div>
 

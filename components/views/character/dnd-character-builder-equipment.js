@@ -66,6 +66,7 @@ class DndCharacterBuilderEquipment extends PolymerElement {
           this.$.backgroundEquipment.innerHTML = this.parseBackgroundEquipment(background.entries)
         }
       }
+      this.dispatchEvent(new CustomEvent("loadingChange", { bubbles: true, composed: true }));
     }
   }
 

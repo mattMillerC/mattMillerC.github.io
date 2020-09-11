@@ -3,6 +3,7 @@ import "../styles/material-styles.js";
 import "../styles/my-styles.js";
 import "../dnd-tabs.js";
 import "../dnd-character-select";
+import "../dnd-spinner";
 import { jqEmpty } from "../../js/utils.js";
 import { getCharacterChannel, getSelectedCharacter, updateName, getClassString, getFeatureString, addCharacter, removeSelectedCharacter } from '../../util/charBuilder.js';
 import registerSwipe from '../../util/swipe.js';
@@ -10,6 +11,10 @@ import registerSwipe from '../../util/swipe.js';
 class DndCharacterBuilderView extends PolymerElement {
   static get properties() {
     return {
+      loading: {
+        type: Boolean,
+        value: true
+      },
       characterName: {
         type: String,
         value: ''
@@ -50,27 +55,27 @@ class DndCharacterBuilderView extends PolymerElement {
   connectedCallback() {
     super.connectedCallback();
 
-    this.views = {};
-
     this.tabChangeHandler = (e) => {
       let newTabIndex = e.detail.index,
         newViewId = this.tabs[newTabIndex].viewId;
 
       this.indexForTabs = newTabIndex;
       if (newViewId !== undefined) {
-       
-        if (this.views[newViewId]) {
-          this.updateView(this.views[newViewId]);
-        } else {
-          import(`./character/dnd-character-builder-${newViewId}`)
-            .then(() => {
-              this.views[newViewId] = document.createElement(`dnd-character-builder-${newViewId}`);
-              this.updateView(this.views[newViewId]);
-            });
-        } 
+        this.loading = true;
+        import(`./character/dnd-character-builder-${newViewId}`)
+          .then(() => {
+            this.updateView(document.createElement(`dnd-character-builder-${newViewId}`));
+          });
       }
-    }
+    };
     this.addEventListener("tabChange", this.tabChangeHandler);
+
+    this.loadingHandler = () => {
+      setTimeout(() => {
+        this.loading = false;
+      }, 0);
+    };
+    this.addEventListener("loadingChange", this.loadingHandler);
 
     this.setStateFromCharacter(getSelectedCharacter());
     this.characterChangeHandler = (e) => {
@@ -106,6 +111,7 @@ class DndCharacterBuilderView extends PolymerElement {
     super.disconnectedCallback();
 
     this.removeEventListener("tabChange", this.tabChangeHandler);
+    this.removeEventListener("loadingChange", this.loadingHandler);
     getCharacterChannel().removeEventListener("character-selected", this.characterChangeHandler);
     this.$.name.removeEventListener("focus", this.nameFieldFocusHandler)
   }
@@ -137,7 +143,7 @@ class DndCharacterBuilderView extends PolymerElement {
         .head-wrap {
           display: flex;
           flex-direction: column;
-          margin-bottom: 40px;
+          margin-bottom: 16px;
         }
 
         .char-change {
@@ -179,9 +185,11 @@ class DndCharacterBuilderView extends PolymerElement {
       <div class="character-builder--tabs-wrapper">
         <dnd-tabs id="tabs" tabs="[[tabs]]" initial-selected-index="[[initialSelectedTab]]"></dnd-tabs>
 
-        <div id="tabTarget"></div>
+        <div id="tabTarget" hidden$="[[loading]]"></div>
+        <dnd-spinner loading$="[[loading]]"></dnd-spinner>
       </div>
     `;
   }
 }
 customElements.define('dnd-character-builder-view', DndCharacterBuilderView);
+console.error('defined character-builder-view');

@@ -184,6 +184,18 @@ class DndLayout extends PolymerElement {
   static get template() {
     return html`
       <style include="material-styles my-styles">
+        :host {}
+        .page-title {
+          display: none;
+        }
+        .content-wrap {
+          margin-top: 30px;
+        }
+        @media(min-width: 921px) {
+          .page-title {
+            display: block;
+          }
+        }
         .main {
           min-height: calc(100vh - 64px);
         }
@@ -341,7 +353,7 @@ class DndLayout extends PolymerElement {
       <div
         class="main mdc-top-app-bar--fixed-adjust mdc-typography--body1 mdc-theme--background mdc-theme--text-primary-on-background"
       >
-        <div class="container">
+        <div class="container content-wrap">
           <h1 class="page-title mdc-typography--headline2">[[_or(selectedTitle, header)]]
             <dnd-svg id$="[[_or(selectedTitle, header)]]"></dnd-svg>
           </h1>

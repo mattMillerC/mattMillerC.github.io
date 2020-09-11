@@ -311,7 +311,7 @@ styleElement.innerHTML = `
         width: 100%;
       }
       .table--scroll {
-        max-height: calc(100vh - 379px);
+        max-height: calc(100vh - 330px);
         overflow-x: auto;
         overflow-y: auto;
         padding-top: 44px;

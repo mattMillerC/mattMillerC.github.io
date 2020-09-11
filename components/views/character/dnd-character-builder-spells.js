@@ -223,6 +223,7 @@ class DndCharacterBuilderSpells extends PolymerElement {
       this.spellsKnown = spellsKnownObj;
       this.spellDisplay = spellDisplay;
       this.expandedItems = expandedItems;
+      this.dispatchEvent(new CustomEvent("loadingChange", { bubbles: true, composed: true }));
       this.$.grid.clearCache();
     }
     const later = Date.now();

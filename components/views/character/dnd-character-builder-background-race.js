@@ -95,6 +95,8 @@ class DndCharacterBuilderBackgroundRace extends PolymerElement {
           mod = e[1];
         return attribute.toUpperCase() + ' ' + absInt(mod);
       }).join(', ');
+    
+    this.dispatchEvent(new CustomEvent("loadingChange", { bubbles: true, composed: true }));
   }
 
   _backgroundSkillAddCallback(skills) {

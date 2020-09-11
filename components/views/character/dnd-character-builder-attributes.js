@@ -189,6 +189,8 @@ class DndCharacterBuilderAttributes extends PolymerElement {
       this.wisProfs = wisProfs.map(s => {return util_capitalizeAll(s)}).join(', ');
       let chaProfs = await getSkillProfs('cha')
       this.chaProfs = chaProfs.map(s => {return util_capitalizeAll(s)}).join(', ');
+
+      this.dispatchEvent(new CustomEvent("loadingChange", { bubbles: true, composed: true }));
     }
   }
 

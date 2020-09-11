@@ -44,8 +44,6 @@ class DndBaseRoutingView extends PolymerElement {
   ready() {
     super.ready();
 
-    this.routeComps = {};
-
     initRouting(this.shadowRoot);
     let initialView = readRouteView();
     if (initialView) {
@@ -87,13 +85,10 @@ class DndBaseRoutingView extends PolymerElement {
     jqEmpty(this.$.routeTarget);
 
     await import(`./views/dnd-${this.viewId}-view.js`);
+
+    jqEmpty(this.$.routeTarget);
+    this.$.routeTarget.appendChild(document.createElement(`dnd-${this.viewId}-view`));
     this.loadingView = false;
-    
-    if (!this.routeComps[this.viewId]) {
-      this.routeComps[this.viewId] = document.createElement(`dnd-${this.viewId}-view`);
-    }
-    
-    this.$.routeTarget.appendChild(this.routeComps[this.viewId]);
     window.scrollTo(0,0);
   }
 
