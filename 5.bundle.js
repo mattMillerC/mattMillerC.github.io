@@ -1,411 +1,314 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[5],{104:function(e,t,s){"use strict";var n=s(2),l=s(0),r=s(5);function a(){this.wrapperTag="div",this.baseUrl="",this.setWrapperTag=function(e){this.wrapperTag=e},this.setBaseUrl=function(e){this.baseUrl=e},this.recursiveEntryRender=function(e,t,s,o,i,c){if(s=null==s?"section"===e.type?-1:0:s,o=null==o?null:o,i=null==i?null:i,(c=null!=c&&c)&&p(),"object"==typeof e){switch(void 0===e.type||"section"===e.type?"entries":e.type){case"entries":h(this,!0);break;case"options":!function(t){e.entries&&(e.entries=e.entries.sort((e,t)=>e.name&&t.name?Object(n.ascSort)(e.name,t.name):e.name?-1:t.name?1:0),h(t,!1))}(this);break;case"list":if(e.items){t.push(`<ul ${e.style?`class="${e.style}"`:""}>`);for(let r=0;r<e.items.length;r++)this.recursiveEntryRender(e.items[r],t,s+1,`<li ${Object(n.isNonstandardSource)(e.items[r].source)?`class="${l.i}"`:""}>`,"</li>");t.push("</ul>")}break;case"table":!function(n){t.push("<table class='table'>"),void 0!==e.caption&&t.push(`<caption>${e.caption}</caption>`);if(t.push("<thead>"),t.push("<tr class='table-row table-row--header'>"),e.colLabels)for(let s=0;s<e.colLabels.length;++s)t.push(`<th ${l(s)}>${e.colLabels[s]}</th>`);t.push("</tr>"),t.push("</thead>"),t.push("<tbody>");for(let l=0;l<e.rows.length;++l){t.push("<tr class='table-row'>");for(let a=0;a<e.rows[l].length;++a)t.push(`<td ${r(a)}>`),n.recursiveEntryRender(e.rows[l][a],t,s+1),t.push("</td>");t.push("</tr>")}function l(t){return void 0===e.colStyles||t>=e.colStyles.length?"class='table-cell'":`class="table-cell ${e.colStyles[t]}"`}function r(t){return void 0!==e.rowStyles?void 0===e.rowStyles||t>=e.rowStyles.length?"class='table-cell'":`class="table-cell ${e.rowStyles[t]}"`:l(t)}t.push("</tbody>"),t.push("</table>")}(this);break;case"invocation":!function(e){h(e,!0)}(this);break;case"patron":!function(e){h(e,!1)}(this);break;case"abilityDc":p(),t.push(`<span class='spell-ability'><span>${e.name} save DC</span> = 8 + your proficiency bonus + your ${Object(n.utils_makeAttChoose)(e.attributes)}</span>`),d();break;case"abilityAttackMod":null!==o&&t.push(o),t.push(`<span class='spell-ability'><span>${e.name} attack modifier</span> = your proficiency bonus + your ${Object(n.utils_makeAttChoose)(e.attributes)}</span>`),null!==i&&t.push(i);break;case"inline":if(e.entries)for(let n=0;n<e.entries.length;n++)this.recursiveEntryRender(e.entries[n],t,s);break;case"bonus":t.push((e.value<0?"":"+")+e.value);break;case"bonusSpeed":t.push((e.value<0?"":"+")+e.value+"ft.");break;case"dice":t.push(a.getEntryDice(e));break;case"link":!function(e,s){let l;if("internal"===s.href.type){if(l=`${e.baseUrl}${s.href.path}#`,void 0!==s.href.hash&&(l+=s.href.hash,void 0!==s.href.subhashes))for(let e=0;e<s.href.subhashes.length;e++){const t=s.href.subhashes[e];l+=`,${Object(n.encodeForHash)(t.key)}:${Object(n.encodeForHash)(t.value)}`}}else"external"===s.href.type&&(l=s.href.url);t.push(`<a href='${l}'>${s.text}</a>`)}(this,e);break;case"item":t.push(`<li><b>${e.name}: </b>`),this.recursiveEntryRender(e.entry,t,s),t.push("</li>");break;case"print":t.push(u(e.entry))}}else"string"==typeof e?(p(),u(this),d()):(p(),t.push(e),d());function p(){null!==o&&t.push(o)}function d(){null!==i&&t.push(i)}function h(o,i){const c=s>=2,p=i?s+1:s,d=function(){const t=[];Object(n.isNonstandardSource)(e.source)&&t.push(l.i);c&&void 0!==e.name?t.push(a.HEAD_2):t.push(-1===s?a.HEAD_NEG_1:0===s?a.HEAD_0:a.HEAD_1);"invocation"!==e.type&&"patron"!==e.type||void 0===e.subclass||t.push(l.j);return t.length>0?`class="${t.join(" ")}"`:""}(),h=function(){let t="";if("invocation"===e.type||"patron"===e.type){const s=e.source?`title="Source: ${r.a.sourceJsonToFull(e.source)}"`:"";t=void 0!==e.subclass?`${l.f}="${e.subclass.name}" ${l.g}="${e.subclass.source}" ${s}`:`${l.f}="${a.DATA_NONE}" ${l.g}="${a.DATA_NONE}" ${s}`}return t}(),u=e.prerequisite?`<span class="prerequisite">Prerequisite: ${e.prerequisite}</span>`:"",m=void 0!==e.name?`<span class="stat-name">${e.name}${Object(n.isNonstandardSource)(e.source)?" (UA)":""}${c?".":""}</span> `:"";if(e.entries||e.name){if(t.push(`<${o.wrapperTag} ${h} ${d}>${m}${u}`),e.entries)for(let s=0;s<e.entries.length;s++)o.recursiveEntryRender(e.entries[s],t,p,"<p>","</p>");t.push(`</${o.wrapperTag}>`)}}function u(o){const i=function(){let t,s,n=0,l=!1;const r=[];let a="";for(let o=0;o<e.length;++o)switch(t=e.charAt(o),s=o<e.length-1?e.charAt(o+1):null,t){case"{":"@"===s?n++>0?a+=t:(r.push(a),l=!1,a=""):a+=t;break;case"}":0==--n?(r.push(a),a=""):a+=t;break;default:a+=t}a.length>0&&r.push(a);return r}();for(let e=0;e<i.length;e++){const p=i[e];if(null!=p&&""!==p)if("@"===p.charAt(0)){const[e,i]=[(c=p).substr(0,c.indexOf(" ")),c.substr(c.indexOf(" ")+1)];if("@bold"===e||"@b"===e||"@italic"===e||"@i"===e||"@skill"===e||"@action"===e)switch(e){case"@b":case"@bold":t.push("<b>"),o.recursiveEntryRender(i,t,s),t.push("</b>");break;case"@i":case"@italic":t.push("<i>"),o.recursiveEntryRender(i,t,s),t.push("</i>");break;case"@action":t.push(`<span title="${r.a.actionToExplanation(i)}" class="explanation">${i}</span>`);break;case"@skill":t.push(`<span title="${r.a.skillToExplanation(i)}" class="explanation">${i}</span>`)}else{const[r,c,p,...d]=i.split("|"),h=`${r}${c?`${l.n}${c}`:""}`,u={type:"link",href:{type:"internal",path:"",hash:Object(n.encodeForHash)(h)},text:p||r};switch(e){case"@spell":c||(u.href.hash+=l.n+l.hb),u.href.hash="/spells/"+u.href.hash,o.recursiveEntryRender(u,t,s);break;case"@item":c||(u.href.hash+=l.n+l.T),u.href.hash="/items/"+u.href.hash,o.recursiveEntryRender(u,t,s);break;case"@condition":c||(u.href.hash+=l.n+l.hb),u.href.hash="/conditions/"+u.href.hash,o.recursiveEntryRender(u,t,s);break;case"@class":const e=a.RE_INLINE_CLASS.exec(i);e&&(u.href.hash=e[1].trim(),u.href.subhashes=[{key:"sub",value:e[2].trim()+"~phb"}]),c||(u.href.hash+=l.n+l.hb),u.href.hash="/classes/"+u.href.hash,o.recursiveEntryRender(u,t,s);break;case"@creature":c||(u.href.hash+=l.n+l.cb),u.href.hash="/bestiary/"+u.href.hash,o.recursiveEntryRender(u,t,s);break;case"@filter":t.push(r);break;case"@damage":case"@dice":case"@book":t.push(r);break;case"@5etools":c.indexOf(".")>-1?u.href.hash="/"+c.substring(0,c.indexOf(".")):u.href.hash="/"+c,o.recursiveEntryRender(u,t,s)}}}else t.push(p)}var c}c&&d()}}a.getEntryDice=function(e){let t;if(e.number&&e.faces)t=String(e.number)+"d"+e.faces;else if(e.toRoll&&e.toRoll.length){for(let s of e.toRoll)t=String(s.number)+"d"+s.faces+" + ";t=t.substring(0,t.length-3)}return"undefined"!=typeof droll&&!0===e.rollable?`<span class='roller unselectable' onclick="if (this.rolled) { this.innerHTML = this.innerHTML.split('=')[0].trim()+' = '+droll.roll('${t}').total; } else { this.rolled = true; this.innerHTML += ' = '+droll.roll('${t}').total; }">${t}</span>`:t},a.RE_INLINE_CLASS=/(.*?) \((.*?)\)/,a.HEAD_NEG_1="statsBlockSectionHead",a.HEAD_0="statsBlockHead",a.HEAD_1="statsBlockSubHead",a.HEAD_2="statsInlineHead",a.DATA_NONE="data-none",t.a=a},108:function(e,t,s){"use strict";s.r(t),s.d(t,"renderSelection",(function(){return a})),s.d(t,"spellHtml",(function(){return o}));var n=s(104),l=s(5);const r=new n.a;function a(e,t){t.querySelector(".selection-wrapper").innerHTML='\n\t<div class="stats-wrapper margin-bottom_large">\n\t</div>';const s=o(e);t.querySelector(".stats-wrapper").innerHTML=s}function o(e){const t=[];if(t.push(`<div class="margin-bottom_med"><span class="stats-source source${e.source}" title="${l.a.sourceJsonToFull(e.source)}">${l.a.sourceJsonToAbv(e.source)}</div>`),t.push(`<div class="margin-bottom_med"><span>${l.a.spLevelSchoolMetaToFull(e.level,e.school,e.meta)}</span></div>`),t.push(`<div class="margin-bottom_med"><span class="stat-name">Casting Time: </span>${l.a.spTimeListToFull(e.time)}</div>`),t.push(`<div class="margin-bottom_med"><span class="stat-name">Range: </span>${l.a.spRangeToFull(e.range)}</div>`),t.push(`<div class="margin-bottom_med"><span class="stat-name">Components: </span>${l.a.spComponentsToFull(e.components)}</div>`),t.push(`<div class="margin-bottom_med"><span class="stat-name">Duration: </span>${l.a.spDurationToFull(e.duration)}</div>`),t.push("<div class='text'>"),r.recursiveEntryRender({type:"entries",entries:e.entries},t,1),e.entriesHigherLevel){const s={type:"entries",entries:e.entriesHigherLevel};r.recursiveEntryRender(s,t,2)}if(t.push("</div>"),t.push(`<div class="margin-bottom_med"><span class="stat-name">Classes: </span>${l.a.spMainClassesToFull(e.classes)}</div>`),e.classes.fromSubclass){const s=l.a.spSubclassesToCurrentAndLegacyFull(e.classes);t.push(`<div class="margin-bottom_med"><span class="stat-name">Subclasses: </span>${s[0]}</div>`),s[1]&&t.push(`<div class="mdc-theme--text-disabled-on-background margin-bottom_med"><span class="stat-name">Subclasses (legacy): </span>${s[1]}</div>`)}return e.scrollNote&&(t.push('<div class="mdc-theme--text-disabled-on-background">'),r.recursiveEntryRender("{@italic Note: Both the {@class Fighter (Eldritch Knight)} and the {@class Rogue (Arcane Trickster)} spell lists include all {@class Wizard} spells. Spells of 5th level or higher may be cast with the aid of a spell scroll or similar.}",t,2),t.push("</div>")),t.join("")}},119:function(e,t,s){"use strict";s.r(t);var n=s(7),l=(s(117),s(44),s(36),s(13));const r=l.a`<dom-module id="lumo-grid-tree-toggle" theme-for="vaadin-grid-tree-toggle">
-  <template>
-    <style>
-      :host {
-        --vaadin-grid-tree-toggle-level-offset: 2em;
-        align-items: center;
-        vertical-align: middle;
-        margin-left: calc(var(--lumo-space-s) * -1);
-        -webkit-tap-highlight-color: transparent;
-      }
-
-      :host(:not([leaf])) {
-        cursor: default;
-      }
-
-      [part="toggle"] {
-        display: inline-block;
-        font-size: 1.5em;
-        line-height: 1;
-        width: 1em;
-        height: 1em;
-        text-align: center;
-        color: var(--lumo-contrast-50pct);
-        /* Increase touch target area */
-        padding: calc(1em / 3);
-        margin: calc(1em / -3);
-      }
-
-      :host(:not([dir="rtl"])) [part="toggle"] {
-        margin-right: 0;
-      }
-
-      @media (hover: hover) {
-        :host(:hover) [part="toggle"] {
-          color: var(--lumo-contrast-80pct);
-        }
-      }
-
-      [part="toggle"]::before {
-        font-family: "lumo-icons";
-        display: inline-block;
-        height: 100%;
-      }
-
-      :host(:not([expanded])) [part="toggle"]::before {
-        content: var(--lumo-icons-angle-right);
-      }
-
-      :host([expanded]) [part="toggle"]::before {
-        content: var(--lumo-icons-angle-right);
-        transform: rotate(90deg);
-      }
-
-      /* Experimental support for hierarchy connectors, using an unsupported selector */
-      :host([theme~="connectors"]) #level-spacer {
-        position: relative;
-        z-index: -1;
-        font-size: 1em;
-        height: 1.5em;
-      }
-
-      :host([theme~="connectors"]) #level-spacer::before {
-        display: block;
-        content: "";
-        margin-top: calc(var(--lumo-space-m) * -1);
-        height: calc(var(--lumo-space-m) + 3em);
-        background-image: linear-gradient(to right, transparent calc(var(--vaadin-grid-tree-toggle-level-offset) - 1px), var(--lumo-contrast-10pct) calc(var(--vaadin-grid-tree-toggle-level-offset) - 1px));
-        background-size: var(--vaadin-grid-tree-toggle-level-offset) var(--vaadin-grid-tree-toggle-level-offset);
-        background-position: calc(var(--vaadin-grid-tree-toggle-level-offset) / 2 - 2px) 0;
-      }
-
-      /* RTL specific styles */
-
-      :host([dir="rtl"]) {
-        margin-left: 0;
-        margin-right: calc(var(--lumo-space-s) * -1);
-      }
-
-      :host([dir="rtl"]) [part="toggle"] {
-        margin-left: 0;
-      }
-
-      :host([dir="rtl"][expanded]) [part="toggle"]::before {
-        transform: rotate(-90deg);
-      }
-
-      :host([dir="rtl"][theme~="connectors"]) #level-spacer::before {
-        background-image: linear-gradient(to left, transparent calc(var(--vaadin-grid-tree-toggle-level-offset) - 1px), var(--lumo-contrast-10pct) calc(var(--vaadin-grid-tree-toggle-level-offset) - 1px));
-        background-position: calc(100% - (var(--vaadin-grid-tree-toggle-level-offset) / 2 - 2px)) 0;
-      }
-
-      :host([dir="rtl"]:not([expanded])) [part="toggle"]::before,
-      :host([dir="rtl"][expanded]) [part="toggle"]::before {
-        content: var(--lumo-icons-angle-left);
-      }
-    </style>
-  </template>
-</dom-module>`;document.head.appendChild(r.content);s(30);var a=s(15),o=s(20),i=s(41),c=s(10);
-/**
-@license
-Copyright (c) 2017 Vaadin Ltd.
-This program is available under Apache License Version 2.0, available at https://vaadin.com/license/
-*/
-const p=document.createElement("template");p.innerHTML="<custom-style>\n  <style>\n    @font-face {\n      font-family: \"vaadin-grid-tree-icons\";\n      src: url(data:application/font-woff;charset=utf-8;base64,d09GRgABAAAAAAQkAA0AAAAABrwAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAABGRlRNAAAECAAAABoAAAAcgHwa6EdERUYAAAPsAAAAHAAAAB4AJwAOT1MvMgAAAZQAAAA/AAAAYA8TBIJjbWFwAAAB8AAAAFUAAAFeGJvXWmdhc3AAAAPkAAAACAAAAAgAAAAQZ2x5ZgAAAlwAAABLAAAAhIrPOhFoZWFkAAABMAAAACsAAAA2DsJI02hoZWEAAAFcAAAAHQAAACQHAgPHaG10eAAAAdQAAAAZAAAAHAxVAgBsb2NhAAACSAAAABIAAAASAIAAVG1heHAAAAF8AAAAGAAAACAACgAFbmFtZQAAAqgAAAECAAACTwflzbdwb3N0AAADrAAAADYAAABZQ7Ajh3icY2BkYGAA4twv3Vfi+W2+MnCzMIDANSOmbGSa2YEZRHEwMIEoAAoiB6sAeJxjYGRgYD7w/wADAwsDCDA7MDAyoAI2AFEEAtIAAAB4nGNgZGBg4GBgZgDRDAxMDGgAAAGbABB4nGNgZp7JOIGBlYGBaSbTGQYGhn4IzfiawZiRkwEVMAqgCTA4MDA+38d84P8BBgdmIAapQZJVYGAEAGc/C54AeJxjYYAAxlAIzQTELAwMBxgZGB0ACy0BYwAAAHicY2BgYGaAYBkGRgYQiADyGMF8FgYbIM3FwMHABISMDArP9/3/+/8/WJXC8z0Q9v8nEp5gHVwMMMAIMo+RDYiZoQJMQIKJARUA7WBhGN4AACFKDtoAAAAAAAAAAAgACAAQABgAJgA0AEIAAHichYvBEYBADAKBVHBjBT4swl9KS2k05o0XHd/yW1hAfBFwCv9sIlJu3nZaNS3PXAaXXHI8Lge7DlzF7C1RgXc7xkK6+gvcD2URmQB4nK2RQWoCMRiFX3RUqtCli65yADModOMBLLgQSqHddRFnQghIAnEUvEA3vUUP0LP0Fj1G+yb8R5iEhO9/ef/7FwFwj28o9EthiVp4hBlehcfUP4Ur8o/wBAv8CU+xVFvhOR7UB7tUdUdlVRJ6HnHWTnhM/V24In8JT5j/KzzFSi2E53hUz7jCcrcIiDDwyKSW1JEct2HdIPH1DFytbUM0PofWdNk5E5oUqb/Q6HHBiVGZpfOXkyUMEj5IyBuNmYZQjBobfsuassvnkKLe1OuBBj0VQ8cRni2xjLWsHaM0jrjx3peYA0/vrdmUYqe9iy7bzrX6eNP7Jh1SijX+AaUVbB8AAHicY2BiwA84GBgYmRiYGJkZmBlZGFkZ2djScyoLMgzZS/MyDQwMwLSruZMzlHaB0q4A76kLlwAAAAEAAf//AA94nGNgZGBg4AFiMSBmYmAEQnYgZgHzGAAD6wA2eJxjYGBgZACCKxJigiD6mhFTNowGACmcA/8AAA==) format('woff');\n      font-weight: normal;\n      font-style: normal;\n    }\n  </style>\n</custom-style>",document.head.appendChild(p.content);class d extends(Object(o.a)(Object(i.a)(n.a))){static get template(){return l.a`
-    <style>
-      :host {
-        display: inline-flex;
-        align-items: baseline;
-
-        /* CSS API for :host */
-        --vaadin-grid-tree-toggle-level-offset: 1em;
-
-        /*
-          ShadyCSS seems to polyfill :dir(rtl) only for :host, thus using
-          a host custom CSS property for ltr/rtl toggle icon choice.
-         */
-        ---collapsed-icon: "\\e7be\\00a0";
-      }
-
-      :host(:dir(rtl)) {
-        ---collapsed-icon: "\\e7bd\\00a0";
-      }
-
-      :host([hidden]) {
-        display: none !important;
-      }
-
-      :host(:not([leaf])) {
-        cursor: pointer;
-      }
-
-      #level-spacer,
-      [part="toggle"] {
-        flex: none;
-      }
-
-      #level-spacer {
-        display: inline-block;
-        width: calc(var(---level, '0') * var(--vaadin-grid-tree-toggle-level-offset));
-      }
-
-      [part="toggle"]::before {
-        font-family: "vaadin-grid-tree-icons";
-        line-height: 1em; /* make icon font metrics not affect baseline */
-      }
-
-      :host(:not([expanded])) [part="toggle"]::before {
-        content: var(---collapsed-icon);
-      }
-
-      :host([expanded]) [part="toggle"]::before {
-        content: "\\e7bc\\00a0"; /* icon glyph + single non-breaking space */
-      }
-
-      :host([leaf]) [part="toggle"] {
-        visibility: hidden;
-      }
-    </style>
-
-    <span id="level-spacer"></span>
-    <span part="toggle"></span>
-    <slot></slot>
-`}static get is(){return"vaadin-grid-tree-toggle"}static get properties(){return{level:{type:Number,value:0,observer:"_levelChanged"},leaf:{type:Boolean,value:!1,reflectToAttribute:!0},expanded:{type:Boolean,value:!1,reflectToAttribute:!0,notify:!0}}}ready(){super.ready(),this.addEventListener("click",e=>this._onClick(e))}_onClick(e){this.leaf||(e.preventDefault(),this.expanded=!this.expanded)}_levelChanged(e){const t=Number(e).toString();this.style["---level"]=t,this._debouncerUpdateLevel=a.a.debounce(this._debouncerUpdateLevel,c.c,()=>this.updateStyles({"---level":t}))}}customElements.define(d.is,d);var h=s(18),u=s(39),m=s(108),g=s(2),A=s(5);s(111),s(110);class f extends n.a{static get properties(){return{spellsKnown:{type:Object,value:{}},preparedSpells:{type:Object,value:{}},heightByRows:{type:Boolean,value:()=>window.innerWidth<900}}}connectedCallback(){super.connectedCallback(),this.characterChangeHandler=e=>{let t=e.detail.character;this.updateFromCharacter(t)},this.refresh=!0,this.updateFromCharacter(Object(h.s)()),Object(h.i)().addEventListener("character-selected",this.characterChangeHandler)}disconnectedCallback(){super.disconnectedCallback(),Object(h.i)().removeEventListener("character-selected",this.characterChangeHandler)}ready(){super.ready(),setTimeout(()=>{this.$.grid.dataProvider=((e,t)=>{const s=e.page*e.pageSize,n=e.parentItem?e.parentItem.children:this.spellDisplay;if(n&&n.length){t(n.slice(s,s+e.pageSize),n.length)}}).bind(this)},0)}async updateFromCharacter(e){const t=Date.now();if(e&&this.refresh){const t=await Object(h.l)(e),s=Object(h.k)(e),n=[],l=[],r={};for(const[a,o]of Object.entries(s)){const s=t[a];if(s.casterProgression){let t,i,c,p,d="known";if(s.classTableGroups.forEach(e=>{if(e.colLabels&&e.colLabels.length){const s=e.colLabels.findIndex(e=>e.toLowerCase().indexOf("spells known")>-1);s>-1&&e.rows&&e.rows.length>o-1&&(t=e.rows[o][s]);const n=e.colLabels.findIndex(e=>e.toLowerCase().indexOf("cantrips known")>-1);n>-1&&e.rows&&e.rows.length>o-1&&(i=e.rows[o][n]);const l=e.colLabels.findIndex(e=>e.toLowerCase().indexOf("slot level")>-1);if(l>-1&&e.rows&&e.rows.length>o-1){const t=e.rows[o][l].match(/(\d+)/g);t&&t.length&&(c=parseInt(t[0]))}const r=e.colLabels.findIndex(e=>e.toLowerCase().indexOf("spell slots")>-1);r>-1&&e.rows&&e.rows.length>o-1&&(p=e.rows[o][r])}}),void 0===t){d="prepared";const e="full"===s.casterProgression?1:.5,n=await Object(h.d)(s.spellcastingAbility);t=Math.floor(o*e)+n,t=t<1?1:t}let m=await Object(u.a)("spells",{key:"classes.fromClassList",value:{name:a,source:s.source}});const g=Object(h.w)(s);if(o>=g){const t=e.subclasses&&e.subclasses[a]?e.subclasses[a].shortName:"";if(t){let e=await Object(u.a)("spells",{key:"classes.fromSubclass",value:{"subclass.name":t,"class.name":a,"class.source":s.source}});e.forEach(e=>{e.isSubclassSpell=!0}),m=[...new Set(m.concat(e))]}}const A=s.classTableGroups.find(e=>"Spell Slots per Spell Level"===e.title);let f;if(A)f=A.rows[o-1].filter(e=>0!==e);else{f=[];for(let e=0;e<c;e++)e===c-1?f.push(p):f.push(0)}const b=i?0:1;i&&(f=[0].concat(f));let v=JSON.parse(JSON.stringify(e.preparedSpells));e.preparedSpells[a]={};const w=f.map((t,s)=>{if(-1!==t){let n=m.filter(e=>e.level===s+b).sort((e,t)=>e.name<t.name?-1:e.name>t.name?1:0).map(t=>(Object(h.y)(a,t,v)&&(e.preparedSpells[a][t.name]={name:t.name,source:t.source}),{id:"spell",name:t.name,children:[{...t,hasChildren:!1,id:"spelldef",parentClass:a,parentLevel:s+b}],hasChildren:!0,parentClass:a,parentLevel:s+b,isCantrip:s+b===0,isSubclassSpell:t.isSubclassSpell,isWarlock:!!c}));return{id:"level",level:s+b,spellSlots:t,currentSlots:Object(h.u)(a,s+b),children:n,hasChildren:n.length>0,parentClass:a}}return null}).filter(e=>null!==e);if(r[a]={current:e.preparedSpells&&e.preparedSpells[a]?Object.keys(e.preparedSpells[a]):[],max:t,type:d,maxCantrips:i,currentCantrips:e.preparedCantrips&&e.preparedCantrips[a]?Object.keys(e.preparedCantrips[a]):[]},w.length){const e={id:"class",className:a,level:o,children:w,spellsKnown:t,hasChildren:w.length>0,spellPrepType:d};l.push(e),n.push(e)}}}this.refresh=!1,Object(h.C)(e),this.spellsKnown=r,this.spellDisplay=n,this.expandedItems=l,this.$.grid.clearCache()}const s=Date.now();console.error("Spells Tab: "+(s-t))}_renderSpell(e){return Object(m.spellHtml)(e)}_toggleSpellPrepared(e){e.preventDefault(),e.stopPropagation();if(!e.model.item.isSubclassSpell){if(e.model.item.isCantrip)this._toggleCantripPrepared(e);else{const t=e.model.item.parentClass,s=e.model.item.children[0],n=this._isPreparedSpell(this.spellsKnown,t,s.name),l=this._currentSpellsKnownCount(t,this.spellsKnown),r=this._maxSpellsKnownCount(t,this.spellsKnown);if((n||l<r)&&"spelldef"===s.id){let e=JSON.parse(JSON.stringify(this.spellsKnown));if(n){const n=e[t].current.indexOf(s.name);e[t].current.splice(n,1)}else e[t].current.push(s.name);this.spellsKnown=e,Object(h.O)(t,s)}else l>=r&&this._flashPreparedButton(Object(g.findInPath)("button",e.path))}}}_toggleCantripPrepared(e){e.preventDefault(),e.stopPropagation();const t=e.model.item.parentClass,s=e.model.item.children[0],n=this._isPreparedCantrip(this.spellsKnown,t,s.name),l=this._currentCantripsKnownCount(t,this.spellsKnown),r=this._maxCantripsKnownCount(t,this.spellsKnown);if((n||l<r)&&"spelldef"===s.id){let e=JSON.parse(JSON.stringify(this.spellsKnown));if(n){const n=e[t].currentCantrips.indexOf(s.name);e[t].currentCantrips.splice(n,1)}else e[t].currentCantrips.push(s.name);this.spellsKnown=e,Object(h.N)(t,s)}else l>=r&&this._flashPreparedButton(Object(g.findInPath)("button",e.path))}_flashPreparedButton(e){e&&(e.classList.add("transition-bg"),e.classList.add("flash-error"),setTimeout(()=>{e.classList.remove("flash-error"),setTimeout(()=>{e.classList.remove("transition-bg")},200)},200))}_toggleSpellSlot(e){e.preventDefault(),e.stopPropagation();const t=Object(g.findInPath)("vaadin-checkbox",e.path),s=e.model.item.currentSlots,n=e.model.item.spellSlots,l=e.model.item.className,r=e.model.item.level;if(t){!!t.checked&&s<n?e.model.item.currentSlots=s+1:s>0&&(e.model.item.currentSlots=s-1)}else s<n?e.model.item.currentSlots=s+1:s>0&&(e.model.item.currentSlots=s-1);this._setSpellSlotsChecked(e.model.item.currentSlots,Object(g.findInPath)(".slot-checkboxes",e.path)),Object(h.L)(l,r,e.model.item.currentSlots)}_setSpellSlotsChecked(e,t){const s=t.querySelectorAll("vaadin-checkbox");for(let t=0;t<s.length;t++)s[t].checked=t<e}_preventDefault(e){e.preventDefault()}_isPreparedClass(e,t){const s=t.parentClass,n=t.name,l=t.isCantrip,r=t.isSubclassSpell;if(r)return"spell-button always-prepared";return(l?this._isPreparedCantrip(e,s,n):this._isPreparedSpell(e,s,n,r))?"spell-prepared spell-button":"spell-button"}_isPreparedSpell(e,t,s,n){return n||e[t]&&e[t].current&&e[t].current.length&&e[t].current.indexOf(s)>-1}_isPreparedCantrip(e,t,s){return e[t]&&e[t].currentCantrips&&e[t].currentCantrips.length&&e[t].currentCantrips.indexOf(s)>-1}_isPreparedText(e,t){const s=t.parentClass,n=t.name,l=t.isCantrip,r=t.isSubclassSpell,a=e[s].type;if(r)return"Always";return(l?this._isPreparedCantrip(e,s,n):this._isPreparedSpell(e,s,n,r))?"known"===a?"Learned":"Prepared":"known"===a?"Learn":"Prepare"}_countToArray(e){const t=[];for(var s=0;s<e;s++)t.push(null);return t}_toLevel(e){return 0===e?A.a.spLevelToFull(e)+"s":A.a.spLevelToFull(e)+" Level"}_currentSpellsKnownCount(e,t){return t&&e&&t[e]&&t[e].current?t[e].current.length:0}_maxSpellsKnownCount(e,t){return t&&e&&t[e]?t[e].max:0}_currentCantripsKnownCount(e,t){return t&&e&&t[e]&&t[e].current?t[e].currentCantrips.length:0}_maxCantripsKnownCount(e,t){return t&&e&&t[e]?t[e].maxCantrips:0}_spellsKnownString(e){return"Spells "+Object(g.util_capitalize)(e)+":"}_isRitualSpell(e){const t=e.children[0];return t&&t.meta&&t.meta.ritual}_isConcentrationSpell(e){return e.children[0].duration.some(e=>e.concentration)}_spellLevel(e){if(e&&e.children&&e.children.length&&e.children[0].level)return A.a.spLevelToFull(e.children[0].level)}_isEmpty(e){return!e||!e.length}_isTruthy(e){return!!e}_equal(e,t){return e===t}static get template(){return n.b`
-      <style include='my-styles'>
-        :host {}
+(window.webpackJsonp=window.webpackJsonp||[]).push([[5],{104:function(e,t,s){"use strict";var i=s(1),a=s(0),l=s(5);function n(){this.wrapperTag="div",this.baseUrl="",this.setWrapperTag=function(e){this.wrapperTag=e},this.setBaseUrl=function(e){this.baseUrl=e},this.recursiveEntryRender=function(e,t,s,c,o,r){if(s=null==s?"section"===e.type?-1:0:s,c=null==c?null:c,o=null==o?null:o,(r=null!=r&&r)&&d(),"object"==typeof e){switch(void 0===e.type||"section"===e.type?"entries":e.type){case"entries":u(this,!0);break;case"options":!function(t){e.entries&&(e.entries=e.entries.sort((e,t)=>e.name&&t.name?Object(i.ascSort)(e.name,t.name):e.name?-1:t.name?1:0),u(t,!1))}(this);break;case"list":if(e.items){t.push(`<ul ${e.style?`class="${e.style}"`:""}>`);for(let l=0;l<e.items.length;l++)this.recursiveEntryRender(e.items[l],t,s+1,`<li ${Object(i.isNonstandardSource)(e.items[l].source)?`class="${a.i}"`:""}>`,"</li>");t.push("</ul>")}break;case"table":!function(i){t.push("<table class='table'>"),void 0!==e.caption&&t.push(`<caption>${e.caption}</caption>`);if(t.push("<thead>"),t.push("<tr class='table-row table-row--header'>"),e.colLabels)for(let s=0;s<e.colLabels.length;++s)t.push(`<th ${a(s)}>${e.colLabels[s]}</th>`);t.push("</tr>"),t.push("</thead>"),t.push("<tbody>");for(let a=0;a<e.rows.length;++a){t.push("<tr class='table-row'>");for(let n=0;n<e.rows[a].length;++n)t.push(`<td ${l(n)}>`),i.recursiveEntryRender(e.rows[a][n],t,s+1),t.push("</td>");t.push("</tr>")}function a(t){return void 0===e.colStyles||t>=e.colStyles.length?"class='table-cell'":`class="table-cell ${e.colStyles[t]}"`}function l(t){return void 0!==e.rowStyles?void 0===e.rowStyles||t>=e.rowStyles.length?"class='table-cell'":`class="table-cell ${e.rowStyles[t]}"`:a(t)}t.push("</tbody>"),t.push("</table>")}(this);break;case"invocation":!function(e){u(e,!0)}(this);break;case"patron":!function(e){u(e,!1)}(this);break;case"abilityDc":d(),t.push(`<span class='spell-ability'><span>${e.name} save DC</span> = 8 + your proficiency bonus + your ${Object(i.utils_makeAttChoose)(e.attributes)}</span>`),h();break;case"abilityAttackMod":null!==c&&t.push(c),t.push(`<span class='spell-ability'><span>${e.name} attack modifier</span> = your proficiency bonus + your ${Object(i.utils_makeAttChoose)(e.attributes)}</span>`),null!==o&&t.push(o);break;case"inline":if(e.entries)for(let i=0;i<e.entries.length;i++)this.recursiveEntryRender(e.entries[i],t,s);break;case"bonus":t.push((e.value<0?"":"+")+e.value);break;case"bonusSpeed":t.push((e.value<0?"":"+")+e.value+"ft.");break;case"dice":t.push(n.getEntryDice(e));break;case"link":!function(e,s){let a;if("internal"===s.href.type){if(a=`${e.baseUrl}${s.href.path}#`,void 0!==s.href.hash&&(a+=s.href.hash,void 0!==s.href.subhashes))for(let e=0;e<s.href.subhashes.length;e++){const t=s.href.subhashes[e];a+=`,${Object(i.encodeForHash)(t.key)}:${Object(i.encodeForHash)(t.value)}`}}else"external"===s.href.type&&(a=s.href.url);t.push(`<a href='${a}'>${s.text}</a>`)}(this,e);break;case"item":t.push(`<li><b>${e.name}: </b>`),this.recursiveEntryRender(e.entry,t,s),t.push("</li>");break;case"print":t.push(p(e.entry))}}else"string"==typeof e?(d(),p(this),h()):(d(),t.push(e),h());function d(){null!==c&&t.push(c)}function h(){null!==o&&t.push(o)}function u(c,o){const r=s>=2,d=o?s+1:s,h=function(){const t=[];Object(i.isNonstandardSource)(e.source)&&t.push(a.i);r&&void 0!==e.name?t.push(n.HEAD_2):t.push(-1===s?n.HEAD_NEG_1:0===s?n.HEAD_0:n.HEAD_1);"invocation"!==e.type&&"patron"!==e.type||void 0===e.subclass||t.push(a.j);return t.length>0?`class="${t.join(" ")}"`:""}(),u=function(){let t="";if("invocation"===e.type||"patron"===e.type){const s=e.source?`title="Source: ${l.a.sourceJsonToFull(e.source)}"`:"";t=void 0!==e.subclass?`${a.f}="${e.subclass.name}" ${a.g}="${e.subclass.source}" ${s}`:`${a.f}="${n.DATA_NONE}" ${a.g}="${n.DATA_NONE}" ${s}`}return t}(),p=e.prerequisite?`<span class="prerequisite">Prerequisite: ${e.prerequisite}</span>`:"",m=void 0!==e.name?`<span class="stat-name">${e.name}${Object(i.isNonstandardSource)(e.source)?" (UA)":""}${r?".":""}</span> `:"";if(e.entries||e.name){if(t.push(`<${c.wrapperTag} ${u} ${h}>${m}${p}`),e.entries)for(let s=0;s<e.entries.length;s++)c.recursiveEntryRender(e.entries[s],t,d,"<p>","</p>");t.push(`</${c.wrapperTag}>`)}}function p(c){const o=function(){let t,s,i=0,a=!1;const l=[];let n="";for(let c=0;c<e.length;++c)switch(t=e.charAt(c),s=c<e.length-1?e.charAt(c+1):null,t){case"{":"@"===s?i++>0?n+=t:(l.push(n),a=!1,n=""):n+=t;break;case"}":0==--i?(l.push(n),n=""):n+=t;break;default:n+=t}n.length>0&&l.push(n);return l}();for(let e=0;e<o.length;e++){const d=o[e];if(null!=d&&""!==d)if("@"===d.charAt(0)){const[e,o]=[(r=d).substr(0,r.indexOf(" ")),r.substr(r.indexOf(" ")+1)];if("@bold"===e||"@b"===e||"@italic"===e||"@i"===e||"@skill"===e||"@action"===e)switch(e){case"@b":case"@bold":t.push("<b>"),c.recursiveEntryRender(o,t,s),t.push("</b>");break;case"@i":case"@italic":t.push("<i>"),c.recursiveEntryRender(o,t,s),t.push("</i>");break;case"@action":t.push(`<span title="${l.a.actionToExplanation(o)}" class="explanation">${o}</span>`);break;case"@skill":t.push(`<span title="${l.a.skillToExplanation(o)}" class="explanation">${o}</span>`)}else{const[l,r,d,...h]=o.split("|"),u=`${l}${r?`${a.n}${r}`:""}`,p={type:"link",href:{type:"internal",path:"",hash:Object(i.encodeForHash)(u)},text:d||l};switch(e){case"@spell":r||(p.href.hash+=a.n+a.hb),p.href.hash="/spells/"+p.href.hash,c.recursiveEntryRender(p,t,s);break;case"@item":r||(p.href.hash+=a.n+a.T),p.href.hash="/items/"+p.href.hash,c.recursiveEntryRender(p,t,s);break;case"@condition":r||(p.href.hash+=a.n+a.hb),p.href.hash="/conditions/"+p.href.hash,c.recursiveEntryRender(p,t,s);break;case"@class":const e=n.RE_INLINE_CLASS.exec(o);e&&(p.href.hash=e[1].trim(),p.href.subhashes=[{key:"sub",value:e[2].trim()+"~phb"}]),r||(p.href.hash+=a.n+a.hb),p.href.hash="/classes/"+p.href.hash,c.recursiveEntryRender(p,t,s);break;case"@creature":r||(p.href.hash+=a.n+a.cb),p.href.hash="/bestiary/"+p.href.hash,c.recursiveEntryRender(p,t,s);break;case"@filter":t.push(l);break;case"@damage":case"@dice":case"@book":t.push(l);break;case"@5etools":r.indexOf(".")>-1?p.href.hash="/"+r.substring(0,r.indexOf(".")):p.href.hash="/"+r,c.recursiveEntryRender(p,t,s)}}}else t.push(d)}var r}r&&h()}}n.getEntryDice=function(e){let t;if(e.number&&e.faces)t=String(e.number)+"d"+e.faces;else if(e.toRoll&&e.toRoll.length){for(let s of e.toRoll)t=String(s.number)+"d"+s.faces+" + ";t=t.substring(0,t.length-3)}return"undefined"!=typeof droll&&!0===e.rollable?`<span class='roller unselectable' onclick="if (this.rolled) { this.innerHTML = this.innerHTML.split('=')[0].trim()+' = '+droll.roll('${t}').total; } else { this.rolled = true; this.innerHTML += ' = '+droll.roll('${t}').total; }">${t}</span>`:t},n.RE_INLINE_CLASS=/(.*?) \((.*?)\)/,n.HEAD_NEG_1="statsBlockSectionHead",n.HEAD_0="statsBlockHead",n.HEAD_1="statsBlockSubHead",n.HEAD_2="statsInlineHead",n.DATA_NONE="data-none",t.a=n},110:function(e,t,s){"use strict";var i=s(7),a=s(18),l=s(1),n=(s(77),s(39));class c extends i.a{static get properties(){return{test:{type:Boolean,reflectToAttribute:!0,value:!1},options:{type:Array,observer:"optionsUpdated"},model:{type:String},addCallback:{type:Function},value:{type:String,value:"",observer:"valueUpdated"},choices:{type:Number,observer:"choicesUpdated"},label:{type:String},placeholder:{type:String},multiValue:{type:String,value:""}}}choicesUpdated(){this.listBox&&(this.listBox.remove(),delete this.listBox),this.$.select.render()}optionsUpdated(){this.listBox&&(this.listBox.remove(),delete this.listBox),this.$.select.render()}valueUpdated(){if(this.choices)if(Array.isArray(this.value)&&this.options){const e=this.value.map(e=>-1!==this.options.indexOf(e)?this.options.indexOf(e):this.options.findIndex(t=>t.name===e.name&&t.source===e.source)).filter(e=>-1!==e);this.listBox&&(this.listBox.selectedValues=e),this.multiValue=e.map(e=>{let t=this.options[e];return t.name?t.name:Object(l.util_capitalizeAll)(t)}).join(", ")}else this.listBox&&(this.listBox.selectedValues=[]),this.multiValue="";else this.value&&this.options?this.value.name?this.$.select.value=this.options.findIndex(e=>e.name===this.value.name||e===this.value.name)+"":this.$.select.value=this.options.findIndex(e=>e.name===this.value||e===this.value)+"":this.$.select.value=""}ready(){super.ready(),setTimeout(async()=>{this.model&&(this.options=await Object(n.b)(this.model)),this.$.select.renderer=(e,t)=>{if(!this.listBox){if(this.listBox=document.createElement("vaadin-list-box"),this.choices&&(this.listBox.setAttribute("multiple",!0),this.listBox.addEventListener("click",e=>{t.opened=!0;let s=null!==e.srcElement.getAttribute("selected");setTimeout(()=>{this.listBox.selectedValues.length>this.choices&&!s&&this.listBox.selectedValues.splice(this.listBox.selectedValues.length-2,1);let e=this.listBox.selectedValues.map(e=>this.options[e]);this.multiValue=e.map(e=>e.name?e.name:Object(l.util_capitalizeAll)(e)).join(", "),this.addCallback&&this.addCallback(e)},0)})),this.options&&this.options.length)for(let e=0;e<this.options.length;e++){const t=this.options[e],s=document.createElement("vaadin-item");t.name?(s.textContent=t.name,s.setAttribute("value",e)):(s.textContent=Object(l.util_capitalizeAll)(t),s.setAttribute("value",e)),this.listBox.appendChild(s)}e.appendChild(this.listBox),this.$.select._assignMenuElement(),this.valueUpdated()}}},0)}connectedCallback(){super.connectedCallback(),this.selectChangeHandler=()=>{const e=this.$.select.value;if(e&&!this.choices){const t=this.options[e];this.addCallback?this.addCallback(t,this.model):Object(a.z)(void 0,t,this.model),this.value||(this.$.select.value="")}},this.$.select.addEventListener("change",this.selectChangeHandler)}disconnectedCallback(){super.disconnectedCallback(),this.$.select.removeEventListener("change",this.selectChangeHandler)}_exists(e){return!!e}_label(e,t){if(e)return t?`${e} (${t})`:e}static get template(){return i.b`
+      <style>
         :host {
-          display: block;
+          display: inline-block;
+        }
+        [slot="prefix"] {
+          width: calc(100% - 46px);
+          padding: 12px;
+          line-height: 1.4;
+        }
+        vaadin-select {
+          width: 100%;
+        }
+        .prefix {
+          white-space: normal;
+          color: var(--lumo-body-text-color);
+        }
+      </style>
+      <vaadin-select test$="[[test]]" theme="dark" add id="select" label="[[_label(label, choices)]]" placeholder="[[placeholder]]">
+        <div hidden$="[[!_exists(multiValue)]]" slot="prefix">
+          <span class="prefix">[[multiValue]]</span>
+        </div>
+      </vaadin-select>
+    `}}customElements.define("dnd-select-add",c)},120:function(e,t,s){"use strict";s.r(t);var i=s(7),a=s(27),l=s(18),n=(s(117),s(110),s(103));class c extends i.a{static get properties(){return{initialValue:{type:Boolean,value:!1,observer:"initValueChange"},checked:{type:Boolean,value:!1,reflectToAttribute:!0},label:{type:String,value:""},secondaryLabel:{type:String,value:""}}}initValueChange(){this.switchEl&&(this.switchEl.checked=this.initialValue,this.checked=this.initialValue)}ready(){super.ready(),this.switchEl=new n.a(this.shadowRoot.querySelector(".mdc-switch")),this.switchEl.checked=this.initialValue,this.checked=this.initialValue}connectedCallback(){super.connectedCallback(),this.switchEventHandler=()=>{this.checked=this.switchEl.checked,this.dispatchEvent(new CustomEvent("switch-change",{detail:{checked:this.switchEl.checked},bubbles:!0,composed:!0}))},this.shadowRoot.querySelector(".mdc-switch__native-control").addEventListener("change",this.switchEventHandler)}disconnectedCallback(){super.disconnectedCallback(),this.shadowRoot.querySelector(".mdc-switch__native-control").removeEventListener("change",this.switchEventHandler)}static get template(){return i.b`
+      <style include="material-styles">
+        :host {
+          display: inline-block;
+        }
+        :host([checked]) label.secondary {
+          color: var(--mdc-theme-primary);
+        }
+        :host([checked]) label:not(.secondary) {
+          color: var(--lumo-secondary-text-color);
+        }
+        label {
+          color: var(--mdc-theme-primary);
+          font-weight: 500;
+          font-size: var(--lumo-font-size-s);
+          margin-right: 16px;
+          transition: color 0.2s;
+        }
+        label.secondary {
+          color: var(--lumo-secondary-text-color);
+          margin-right: 0;
+          margin-left: 16px;
+        }
+      </style>
+      
+      <label for="swich">[[label]]</label>
+      <div class="mdc-switch mdc-list-item__meta">
+        <div class="mdc-switch__track"></div>
+        <div class="mdc-switch__thumb-underlay">
+          <div class="mdc-switch__thumb">
+            <input type="checkbox" id="swich" class="mdc-switch__native-control" role="switch" />
+          </div>
+        </div>
+      </div>
+      <label class="secondary">[[secondaryLabel]]</label>
+    `}}customElements.define("dnd-switch",c);var o=s(67);s(74);class r extends i.a{static get properties(){return{label:{type:String,value:""},icon:{type:String,value:""}}}connectedCallback(){this.button=new o.a(this.$.button)}_exists(e){return!!e}static get template(){return i.b`
+      <style include="material-styles">
+        .mdc-tab-scroller__scroll-area--scroll {
+          overflow-x: auto;
+          background-color: var(--mdc-theme-surface);
+          border: 1px solid var(--mdc-theme-text-divider-on-background);
+          border-bottom: none;
+        }
+      </style>
+      <button id="button" class="mdc-button">
+        <div class="mdc-button__ripple"></div>
+        <span class="mdc-button__label">[[label]]</span>
+        <template is="dom-if" if="[[_exists(icon)]]">
+          <i class="material-icons mdc-button__icon" aria-hidden="true">[[icon]]</i>
+        </template>
+      </button>
+    `}}customElements.define("dnd-button",r);class d extends i.a{static get properties(){return{levelIndex:{type:Number},checked:{type:Boolean,value:!1},selectedFeat:{type:Object},selectedAbility1:{type:String,value:""},selectedAbility2:{type:String,value:""},featHasAttributeChoice:{type:Boolean,value:!1},featAttributeSelection:{type:String,value:""},featAttributeOptions:{type:Array,value:[]}}}constructor(){super(),this.attributeOptions=["STR","DEX","CON","INT","WIS","CHA"]}connectedCallback(){super.connectedCallback(),this.switchChangeHandler=e=>{this.checked=e.detail.checked,this._genASICallback()()},this.addEventListener("switch-change",this.switchChangeHandler),this.characterChangeHandler=e=>{let t=e.detail.character;this.updateFromCharacter(t)},this.updateFromCharacter(Object(l.s)()),Object(l.i)().addEventListener("character-selected",this.characterChangeHandler)}disconnectedCallback(){super.disconnectedCallback(),this.removeEventListener("switch-change",this.switchChangeHandler),Object(l.i)().removeEventListener("character-selected",this.characterChangeHandler)}async updateFromCharacter(e){const{asi:t,index:s}=await Object(l.c)(this.levelIndex,e);if(this.featHasAttributeChoice=!1,t){if(this.selectedFeat=t.feat,this.selectedAbility1=t.ability1,this.selectedAbility2=t.ability2,this.checked=t.isFeat,t.isFeat&&t.feat&&t.feat.name&&t.feat.source){const s=`${t.feat.name}_${t.feat.source}`,i=await Object(l.o)(s);i.ability&&i.ability.length&&i.ability[0].choose&&(this.featHasAttributeChoice=!0,this.featAttributeOptions=i.ability[0].choose.from.map(e=>e.toUpperCase()),this.featAttributeSelection=e.featAttributeSelections&&e.featAttributeSelections[s]?e.featAttributeSelections[s]:"")}}else this.selectedFeat={name:"",source:""},this.selectedAbility1="",this.selectedAbility2="",this.checked=!1;this.asiIndex=s}_genASICallback(e){return t=>{Object(l.E)({feat:"feat"===e?{name:t.name,source:t.source}:this.selectedFeat,ability1:"ability1"===e?t:this.selectedAbility1,ability2:"ability2"===e?t:this.selectedAbility2,isFeat:this.checked},this.asiIndex)}}_genFeatAbilityCallback(){return e=>{if(this.selectedFeat&&this.selectedFeat.name&&this.selectedFeat.source){const t=`${this.selectedFeat.name}_${this.selectedFeat.source}`;Object(l.J)(t,e)}}}static get template(){return i.b`
+      <style>
+        :host {
+          display: flex;
+          flex-direction: column;
+          max-width: 192px;
         }
         [hidden] {
           display: none !important;
         }
-
-        h2 {
-          font-size: 24px;
-          font-weight: bold;
-          margin: 34px 14px 24px;
-        }
-
-        vaadin-grid-tree-toggle { 
-          width: 100%;
-          cursor: pointer;
-        }
-
-        .class-wrap {
-          width: 100%;
+        .abilities {
           display: flex;
-          justify-content: space-between;
           flex-wrap: wrap;
-          align-items: center;
-          padding-top: 4px;
-          /* padding-top: 34px;
-          padding-bottom: 8px; */
-          -youbkit-touch-callout: none;
-          -youbkit-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
         }
-        .class-wrap h3 {
-          font-size: 22px;
-          font-weight: bold;
+        .abilities dnd-select-add {
+          width: calc(50% - 8px);
         }
-
-        .spells-prepared-text {
-          margin-right: 6px;
-          margin-left: auto;
+        dnd-select-add + dnd-select-add {
+          margin-left: 16px;
         }
-        .prepared-count {
-          color: var(--mdc-theme-secondary);
-          font-weight: bold;
-        }
-        .cantrips-prepared {
-          margin-right: 0;
-        }
-
-        .level-outer-wrap {
-          border-bottom: 1px solid var(--_lumo-grid-secondary-border-color);
-          padding-bottom: 8px;
-          display: flex;
-        }
-
-        .level-wrap {
-          width: 100%;
-          -youbkit-touch-callout: none;
-          -youbkit-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
-        }
-
-        .slot-checkboxes {
-          cursor: pointer;
-          display: flex;
-          padding: 4px;
-        }
-
-        .slot-checkboxes span {
-          -youbkit-touch-callout: none;
-          -youbkit-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
-          margin-left: 4px;
-        }
-
-        .checkbox {
-          width: 18px;
-          height: 18px;
-          margin: 4px;
-          background-color: var(--mdc-theme-text-disabled-on-background);
-        }
-        .checkbox[checked] {
-          background-color: var(--mdc-theme-secondary);
-        }
-
-        .spell-wrap {
-          width: calc(100% - 100px);
-          margin-left: 24px;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-
-        .spell-inner-wrap {
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          -youbkit-touch-callout: none;
-          -youbkit-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
-        }
-
-        .spell-level {
-          color: var(--mdc-theme-text-disabled-on-background);
-          margin-left: 8px;
-          margin-right: 4px;
-          font-size: 12px;
-        }
-
-        .rit-ind,
-        .conc-ind {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 13px;
-          height: 13px;
-          border-radius: 50%;
-          color: var(--mdc-theme-on-secondary);
-          background-color: var(--mdc-theme-secondary);
-          font-size: 10px;
-          position: relative;
-          bottom: 1px;
-          margin-left: 4px;
-        }
-
-        .rit-ind::before {
-          content: 'R';
-        }
-
-        .conc-ind::before {
-          content: 'C';
-        }
-
-        .spell-def-wrap {
-          font-size: 14px;
-          width: calc(100% - 20px);
-          margin: 0 auto;
-          background: var(--lumo-contrast-10pct);
-          border-radius: 4px;
-          white-space: pre-line;
-        }
-
-        .spell-def-wrap .margin-bottom_med {
-          margin-bottom: 0px !important;
-        }
-
-        .spell-def-wrap .text {
-          margin-top: 16px;
-        }
-
-        .spell-def-wrap p {
-          margin-bottom: 16px;
-        }
-
-        .stats-wrapper {
-          margin: 0 14px;
-        }
-
-        .spell-button {
-          background-color: var(--mdc-theme-text-disabled-on-background);
-          color: var(--mdc-theme-on-secondary);
-          border: none;
-          border-radius: 4px;
-          outline: none;
-          cursor: pointer;
-          width: 60px;
-          display: inline-flex;
-          justify-content: center;
-          white-space: normal;
-        }
-        .spell-button.always-prepared {
-          background-color: var(--mdc-theme-secondary-lighter);
-          cursor: not-allowed;
-        }
-        .spell-button.spell-prepared {
-          background-color: var(--mdc-theme-secondary);
-        }
-        .spell-button.flash-error {
-          background-color: var(--mdc-theme-error);
-          transition: background-color 0.2s ease-out;
-        }
-        .spell-button.transition-bg {
-          transition: background-color 0.2s ease-in;
+        dnd-select-add {
+          display: block;
         }
       </style>
 
-      <h2>Spells</h2>
-      <div>
-        <vaadin-grid id="grid" theme="no-border no-row-borders" expanded-items="[[expandedItems]]" height-by-rows$="[[heightByRows]]">
-          <vaadin-grid-column flex-grow="1">
-            <template>
-                <template is="dom-if" if="[[_equal(item.id, 'class')]]">
-                  <div class="class-wrap">
-                    <h3>[[item.className]]</h3>
-                    <div class='spells-prepared-text'>
-                      <span>[[_spellsKnownString(item.spellPrepType)]]</span>
-                      <span class='prepared-count'>[[_currentSpellsKnownCount(item.className, spellsKnown)]] / [[_maxSpellsKnownCount(item.className, spellsKnown)]]</span>
-                    </div>
-                  </div>
-                </template>
-    
-                <template is="dom-if" if="[[_equal(item.id, 'level')]]">
-                  <div class="level-outer-wrap">
-                    <vaadin-grid-tree-toggle leaf="[[!item.hasChildren]]" expanded="{{expanded}}">
-                      <h4 class="level-wrap">[[_toLevel(item.level)]]</h4>
-                      <div class="cantrips-prepared spells-prepared-text" hidden$="[[!_equal(item.level, 0)]]">
-                        <span>Cantrips Known:</span>
-                        <span class='prepared-count'>[[_currentCantripsKnownCount(item.parentClass, spellsKnown)]] / [[_maxCantripsKnownCount(item.parentClass, spellsKnown)]]</span>
-                      </div>
-                    </vaadin-grid-tree-toggle>
-                    <div class="slot-checkboxes" hidden$="[[!_isTruthy(item.spellSlots)]]" on-click="_toggleSpellSlot">
-                      <template is='dom-repeat' items='[[_countToArray(item.spellSlots)]]'>
-                        <vaadin-checkbox on-click="_preventDefault"></vaadin-checkbox>
-                      </template>
-                      <span>Slots</span>
-                    </div>
-                  </div>
-                </template>
-
-                <template is="dom-if" if="[[_equal(item.id, 'spell')]]">
-                  <div class="spell-outer-wrap">
-                    <vaadin-grid-tree-toggle leaf="[[!item.hasChildren]]" expanded="{{expanded}}" class="spell-wrap">
-                      <span class="spell-inner-wrap">[[item.name]]<span class="spell-level" hidden>[[_spellLevel(item)]]</span><span class="rit-ind" title="Ritual" hidden$="[[!_isRitualSpell(item)]]"></span><span class="conc-ind" title="Concentration" hidden$="[[!_isConcentrationSpell(item)]]"></span></span>
-                    </vaadin-grid-tree-toggle>
-                    <button class$="[[_isPreparedClass(spellsKnown, item)]]" on-click="_toggleSpellPrepared">[[_isPreparedText(spellsKnown, item)]]</button>
-                  </div>
-                </template>
-
-                <template is="dom-if" if="[[_equal(item.id, 'spelldef')]]">
-                  <div class="spell-def-wrap">
-                    <div class= "stats-wrapper" inner-h-t-m-l="[[_renderSpell(item)]]"></div>
-                  </div>
-                </template>
-            </template>
-          </vaadin-grid-column>
-        </vaadin-grid>
+      <dnd-switch initial-value=[[checked]] label="ASI" secondary-label="Feat"></dnd-switch>
+      <div class="abilities" hidden$=[[checked]]>
+        <dnd-select-add add-callback="[[_genASICallback('ability1')]]" value="[[selectedAbility1]]" options="[[attributeOptions]]" placeholder="<ASI>"></dnd-select-add>
+        <dnd-select-add add-callback="[[_genASICallback('ability2')]]" value="[[selectedAbility2]]" options="[[attributeOptions]]" placeholder="<ASI>"></dnd-select-add>
       </div>
-    `}}customElements.define("dnd-character-builder-spells",f)}}]);
+      <div hidden$=[[!checked]]>
+        <dnd-select-add add-callback="[[_genASICallback('feat')]]" model="feats" value="[[selectedFeat.name]]" placeholder="<Choose Feat>"></dnd-select-add>
+      </div>
+      <div hidden$=[[!featHasAttributeChoice]]>
+        <dnd-select-add test add-callback="[[_genFeatAbilityCallback()]]" value="[[featAttributeSelection]]" options="[[featAttributeOptions]]" placeholder="<Choose Attribute>"></dnd-select-add>
+      </div>
+    `}}customElements.define("dnd-asi-select",d);s(109);var h=s(1);const u={"artificer(ua)":{class:{2:{name:"Wonderous Invention",count:1,options:["{@item Bag of holding}","{@item cap of water breathing}","{@item driftglobe}","{@item goggles of night}","{@item sending stones}"]},5:{name:"Wonderous Invention",count:1,options:["{@item Alchemy jug}","{@item helm of comprehending languages}","{@item lantern of revealing}","{@item ring of swimming}","{@item robe of useful items}","{@item rope of climbing}","{@item wand of magic detection}","{@item wand of secrets}","{@item Bag of holding}","{@item cap of water breathing}","{@item driftglobe}","{@item goggles of night}","{@item sending stones}"]},10:{name:"Wonderous Invention",count:1,options:["{@item Bag of beans}","{@item chime of opening}","{@item decanter of endless water}","{@item eyes of minute seeing}","{@item folding boat}","{@item Heward's handy haversack}","{@item Alchemy jug}","{@item helm of comprehending languages}","{@item lantern of revealing}","{@item ring of swimming}","{@item robe of useful items}","{@item rope of climbing}","{@item wand of magic detection}","{@item wand of secrets}","{@item Bag of holding}","{@item cap of water breathing}","{@item driftglobe}","{@item goggles of night}","{@item sending stones}"]},15:{name:"Wonderous Invention",count:1,options:["{@item Boots of striding and springing}","{@item bracers of archery}","{@item brooch of shielding}","{@item broom of flying}","{@item hat of disguise}","{@item slippers of spider climbing}","{@item Bag of beans}","{@item chime of opening}","{@item decanter of endless water}","{@item eyes of minute seeing}","{@item folding boat}","{@item Heward's handy haversack}","{@item Alchemy jug}","{@item helm of comprehending languages}","{@item lantern of revealing}","{@item ring of swimming}","{@item robe of useful items}","{@item rope of climbing}","{@item wand of magic detection}","{@item wand of secrets}","{@item Bag of holding}","{@item cap of water breathing}","{@item driftglobe}","{@item goggles of night}","{@item sending stones}"]},20:{name:"Wonderous Invention",count:1,options:["{@item Eyes of the eagle}","{@item gem of brightness}","{@item gloves of missile snaring}","{@item gloves of swimming and climbing}","{@item ring of jumping}","{@item ring of mind shielding}","{@item wings of flying}","{@item Boots of striding and springing}","{@item bracers of archery}","{@item brooch of shielding}","{@item broom of flying}","{@item hat of disguise}","{@item slippers of spider climbing}","{@item Bag of beans}","{@item chime of opening}","{@item decanter of endless water}","{@item eyes of minute seeing}","{@item folding boat}","{@item Heward's handy haversack}","{@item Alchemy jug}","{@item helm of comprehending languages}","{@item lantern of revealing}","{@item ring of swimming}","{@item robe of useful items}","{@item rope of climbing}","{@item wand of magic detection}","{@item wand of secrets}","{@item Bag of holding}","{@item cap of water breathing}","{@item driftglobe}","{@item goggles of night}","{@item sending stones}"]}}},"artificer (revisited)":{class:{2:{name:"Infuse Item",count:3,type:"featureType=ai|source=UAArtificerRevisited"},4:{name:"Infuse Item",count:1,type:"featureType=ai|source=UAArtificerRevisited"},7:{name:"Infuse Item",count:1,type:"featureType=ai|source=UAArtificerRevisited"},11:{name:"Infuse Item",count:1,type:"featureType=ai|source=UAArtificerRevisited"},15:{name:"Infuse Item",count:1,type:"featureType=ai|source=UAArtificerRevisited"},19:{name:"Infuse Item",count:1,type:"featureType=ai|source=UAArtificerRevisited"}}},artificer:{class:{2:{name:"Infuse Item",count:4,type:"featureType=ai|source=ERLW"},6:{name:"Infuse Item",count:2,type:"featureType=ai|source=ERLW"},10:{name:"Infuse Item",count:2,type:"featureType=ai|source=ERLW"},14:{name:"Infuse Item",count:2,type:"featureType=ai|source=ERLW"},18:{name:"Infuse Item",count:2,type:"featureType=ai|source=ERLW"}}},barbarian:{subclasses:{"Path of the Totem Warrior":{3:{name:"Totem Spirit",count:1,options:["Bear","Eagle","Elk","Wolf","Tiger"]},6:{name:"Aspect of the Beast",count:1,options:["Bear","Eagle","Elk",{name:"Tiger",options:["athletics","acrobatics","stealth","survival"],choose:2,type:"proficiency"},"Wolf"]},14:{name:"Totemic Attunement",count:1,options:["Bear","Eagle","Elk","Tiger","Wolf"]}}}},bard:{subclasses:{"College of Swords":{3:{name:"Fighting Style",count:1,type:"fs:b"}}}}};var p=s(104),m=(s(73),s(39));class b extends(Object(a.a)(i.a)){static get properties(){return{levels:{type:Array,value:[]},classes:{type:Object},subclasses:{type:Object,value:void 0},heightByRows:{type:Boolean,value:()=>window.innerWidth<900}}}connectedCallback(){super.connectedCallback(),this.characterChangeHandler=e=>{let t=e.detail.character;this.updateFromCharacter(t)},this.updateFromCharacter(Object(l.s)()),Object(l.i)().addEventListener("character-selected",this.characterChangeHandler)}disconnectedCallback(){super.disconnectedCallback(),Object(l.i)().removeEventListener("character-selected",this.characterChangeHandler)}ready(){super.ready();const e=new p.a;setTimeout(()=>{const t=this.$.classGrid;let s;t.rowDetailsRenderer=((t,s,i)=>{t.firstElementChild||(t.innerHTML='<div class="details" id="stats"></div>');let a=[],l=this._getClassLevelFeatures(this.levels,i.index,this.classes,this.subclasses);for(let t of l)e.recursiveEntryRender(t,a,0,void 0,!0);const n=t.querySelector(".details");Object(h.jqEmpty)(n),n.innerHTML=a.join("")}).bind(this),t.addEventListener("grid-dragstart",(function(e){s=e.detail.draggedItems[0],t.dropMode="between"})),t.addEventListener("grid-dragend",(function(e){s=t.dropMode=null})),t.addEventListener("grid-drop",(function(e){const i=e.detail.dropTargetItem;if(s&&s!==i){const a=t.items.filter((function(e){return e!==s})),n=a.indexOf(i)+("below"===e.detail.dropLocation?1:0);a.splice(n,0,s),Object(l.H)(a)}}))},0)}async updateFromCharacter(e){this.character=e,this.classes=await Object(l.l)(e),this.subclasses=JSON.parse(JSON.stringify(e.subclasses)),this.classChoices=await this._findLevelChoices(e,this.classes),this.dispatchEvent(new CustomEvent("loadingChange",{bubbles:!0,composed:!0})),this.levels=e.levels,this.$.classGrid.clearCache()}_getClassLevelFeatures(e,t,s,i){if(s&&e[t]){const a=e[t].name,l=s[a];if(l){const s=l.classFeatures;let n=0,c=-1;if(e.length>=t+1){for(let i=0;i<t;i++)if(e[i].name===a){n++;const e=s[n];if(e){e.find(e=>e.gainSubclassFeature)&&c++}}const o=s[n];if(o){if(o.find(e=>e.gainSubclassFeature)&&i&&i[a]&&l.subclasses&&l.subclasses.length){const e=l.subclasses.find(e=>i[a].name===e.name);if(e.subclassFeatures[c])return e.subclassFeatures[c].map(e=>(e.isSubclass=!0,e)),[...o].concat(e.subclassFeatures[c])}return o}}}}}_getClassLevelFeatureStringArray(e,t,s,i){if(e&&void 0!==t&&s&&i){const a=this._getClassLevelFeatures(e,t,s,i);if(a)return a.map(e=>({name:Object(h.getEntryName)(e),isSubclass:e.isSubclass}))}}_level(e){return e+1}_deleteLevel(e){let t=e.model.__data.index;this.levels.splice(t,1),Object(l.H)(this.levels)}_expandDetails(e){let t=e.model.__data.item,s=this.$.classGrid.detailsOpenedItems.indexOf(t)>-1;for(let e of this.$.classGrid.detailsOpenedItems)this.$.classGrid.closeItemDetails(e);s?this.$.classGrid.closeItemDetails(t):this.$.classGrid.openItemDetails(t)}async _findLevelChoices(e,t){const s=[];if(e&&e.levels&&e.levels.length)for(let i=0;i<e.levels.length;i++)s.push(await this._findChoices(e,t,i));return s}async _findChoices(e,t,s){if(t&&e.levels&&e.levels.length&&e.levels.length>s){let i=e.levels,a=e.subclasses,n=i[s].name,c=t[n];if(c){let o=[],r=0,d=Object(l.w)(c);for(let e=0;e<=s;e++){i[e].name===n&&r++}void 0!==d&&r===d&&o.push({id:"subclass",from:c.subclasses,selections:e.subclasses[n]});let h=this._getClassLevelFeatures(i,s,t);if(h&&h.length&&h.find(e=>"Ability Score Improvement"===e.name)&&o.push({id:"asi"}),0===s){const t=c.startingProficiencies.skills[0].choose;o.push({id:"profs",count:t.count,from:t.from,selections:e.classSkillProficiencies})}if(r){const e=u[n.toLowerCase()];if(e&&e.class&&e.class[r]){const t=[].concat(e.class[r]);for(const e of t)if(e.options)o.push({id:"classFeature",name:e.name,from:e.options,count:e.count>1?e.count:void 0,class:n.toLowerCase(),feature:e.name,level:r,selections:Object(l.j)(n.toLowerCase(),r,e.name)});else if(e.type){const t=await Object(m.a)("features",e.type);o.push({id:"classFeature",name:e.name,from:t,count:e.count>1?e.count:void 0,class:n.toLowerCase(),feature:e.name,level:r,selections:Object(l.j)(n.toLowerCase(),r,e.name)})}}if(e&&e.subclasses&&a[n]&&e.subclasses[a[n]]&&e.subclasses[a[n]][r]){const t=[].concat(e.subclasses[a[n]][r]);for(const e of t)if(e.options)o.push({id:"subclassFeature",name:e.name,from:e.options,count:e.count>1?e.count:void 0,class:n.toLowerCase(),subclass:a[n],feature:e.name,level:r,selections:Object(l.v)(n.toLowerCase(),a[n],r,e.name)});else if(e.type){const t=await Object(m.a)("features",e.type);o.push({id:"subclassFeature",name:e.name,from:t,count:e.count>1?e.count:void 0,class:n.toLowerCase(),subclass:a[n],feature:e.name,level:r,selections:Object(l.v)(n.toLowerCase(),a[n],r,e.name)})}}}return o}}return[]}_equal(e,t){return e===t}_genSubclassCallback(e){return t=>{Object(l.A)(void 0,e.name,t)}}_genSubclassOptions(e){return this.classes[e.name].subclasses}_getSubclassSelection(e,t){return t[e.name]}_classFeatureOptionAddCallback(e,t,s){return i=>{let a;a=Array.isArray(i)?i.map(e=>e.name?{name:e.name,source:e.source}:e):i.name?{name:i.name,source:i.source}:i,Object(l.G)(e,t,s,a)}}_subclassFeatureOptionAddCallback(e,t,s,i){return a=>{let n;n=Array.isArray(a)?a.map(e=>e.name?{name:e.name,source:e.source}:e):a.name?{name:a.name,source:a.source}:a,Object(l.M)(e,t,s,i,n)}}_indexOfLevel(e,t){return t.indexOf(e)}_isMobile(){return window.innerWidth<921}_objArray(e){return Object.values(e)}_atIndex(e,t){return e?e[t]:null}_svgFromClass(e){return e?e.replace(/(\s|\(|\))/g,""):""}_addClassLevel(e){Object(l.z)(void 0,e.model.item,"classes")}_classSkillAddCallback(e){Object(l.I)(e)}static get template(){return i.b`
+      <style include="material-styles my-styles">
+        .something {
+          display: block;
+        }
+        #stats {
+          margin-top: 16px;
+          line-height: 1.9;
+        }
+        .details {
+          padding: 0 24px;
+        }
+
+        .heading-wrap {
+          display: flex;
+          justify-content: space-between;
+          margin: 22px 14px 5px;
+          align-items: center;
+        }
+
+        .heading {
+          font-size: 24px;
+          font-weight: bold;
+        }
+
+        .button-wrap {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          padding: 10px;
+        }
+        .button-wrap > * {
+          margin: 4px;
+        }
+
+        .row {
+          position: relative;
+        }
+        .row:after {
+          content: "";
+          display: table;
+          clear: both;
+        }
+
+        .open-details {
+          cursor: pointer;
+          display: flex;
+          align-items: flex-start;
+          flex-wrap: wrap;
+        }
+        .open-details:hover {
+          color: var(--mdc-theme-secondary);
+        }
+
+        .level-col {
+          width: 200px;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+          flex-shrink: 0;
+          padding: 6px 0;
+        }
+        .level-col__level {
+          margin-right: 10px;
+          font-size: 20px;
+          font-weight: bold;
+        }
+        .level-col__image-wrap {
+          width: 30px;
+          position: relative;
+          height: 21px;
+          display: inline-block;
+        }
+        .level-col__image {
+          width: 30px;
+          height: 30px;
+          display: block;
+          position: absolute;
+          top: -1px;
+        }
+        .level-col__class {
+          font-size: 20px;
+          font-weight: bold;
+        }
+
+        .features-col {
+          white-space: normal;
+          margin: 0;
+          padding: 8px 0;
+          width: 100%;
+          font-size: 15px;
+        }
+        .class-feature:not(:last-of-type)::after {
+          content: ', ';
+        }
+        .class-feature[subclass] {
+          color: var(--mdc-theme-secondary);
+        }
+
+        .choices-col {
+          display: flex;
+          float: left;
+          flex-wrap: wrap;
+        }
+        .choices-col__choice {
+          margin-top: 10px;
+          margin-right: 16px;
+        }
+        .choices-col__subclass-choice {
+          display: block;
+        }
+
+        .delete-col {
+          position: absolute;
+          right: -8px;
+          top: 4px;
+        }
+        .delete-btn {
+          height: 24px;
+          width: 24px;
+          font-size: 18px;
+          padding: 0;
+        }
+        .delete-btn:hover {
+          color: var(--mdc-theme-secondary);
+        }
+        .details {
+          padding: 0 6px;
+        }
+        @media(min-width: 921px) {
+          .open-details {
+            flex-wrap: nowrap;
+          }
+          .features-col {
+            margin: 0 30px 0 12px;
+            width: unset;
+            font-size: 16px;
+          }
+        }
+      </style>
+
+      <div class="heading-wrap">
+        <h2 class="heading">Class</h2>
+        <dnd-select-add model="classes" placeholder="Add a Level"></dnd-select-add>
+      </div>
+      <div class="button-wrap">
+        <template is="dom-repeat" items="[[_objArray(classes)]]">
+          <dnd-button icon="add" label="[[item.name]]" on-click="_addClassLevel"></dnd-button>
+        </template>
+      </div>
+
+      <vaadin-grid id="classGrid" rows-draggable items=[[levels]] theme="no-border" height-by-rows$="[[heightByRows]]">
+        <vaadin-grid-column flex-grow="1">
+          <template>
+            <div class="row">
+              <div class="open-details" on-click="_expandDetails">
+                <div class="level-col">
+                  <span class="level-col__level">[[_level(index)]]</span>
+                  <span class="level-col__image-wrap" ><dnd-svg class="level-col__image" id="[[_svgFromClass(item.name)]]"></dnd-svg></span>
+                  <span class="level-col__class">[[item.name]]</span>
+                </div>
+
+                <div class="features-col">
+                  <template is="dom-repeat" items="[[_getClassLevelFeatureStringArray(levels, index, classes, subclasses)]]">
+                    <span class="class-feature" subclass$="[[item.isSubclass]]">[[item.name]]</span>
+                  </template>
+                </div>
+              </div>
+
+              <div class="choices-col">
+                <template is="dom-repeat" items="[[_atIndex(classChoices, index)]]" as="choice">
+                  <div class="choices-col__choice">
+                    <template is="dom-if" if="[[_equal(choice.id, 'subclass')]]">
+                      <dnd-select-add class="choices-col__subclass-choice" label="Subclass" placeholder="<Choose Subclass>"
+                        options="[[choice.from]]" value="[[choice.selections]]" add-callback="[[_genSubclassCallback(item)]]"></dnd-select-add>
+                    </template>
+                    <template is="dom-if" if="[[_equal(choice.id, 'asi')]]">
+                      <dnd-asi-select level-index="[[_indexOfLevel(item, levels)]]" character="[[character]]"></dnd-asi-select>
+                    </template>
+                    <template is="dom-if" if="[[_equal(choice.id, 'profs')]]">
+                      <dnd-select-add choices="[[choice.count]]" label="Skill Proficiency" placeholder="<Choose Skills>"
+                        options="[[choice.from]]" value="[[choice.selections]]" add-callback="[[_classSkillAddCallback]]"></dnd-select-add>
+                    </template>
+                    <template is="dom-if" if="[[_equal(choice.id, 'classFeature')]]">
+                      <dnd-select-add choices="[[choice.count]]" label="[[choice.name]]" placeholder="<Choose Option>"
+                        options="[[choice.from]]" value="[[choice.selections]]" add-callback="[[_classFeatureOptionAddCallback(choice.class, choice.level, choice.feature)]]"></dnd-select-add>
+                    </template>
+                    <template is="dom-if" if="[[_equal(choice.id, 'subclassFeature')]]">
+                      <dnd-select-add choices="[[choice.count]]" label="[[choice.name]]" placeholder="<Choose Option>"
+                        options="[[choice.from]]" value="[[choice.selections]]" add-callback="[[_subclassFeatureOptionAddCallback(choice.class, choice.subclass, choice.level, choice.feature)]]"></dnd-select-add>
+                    </template>
+                  </div>
+                </template>
+              </div>
+
+              <div class="delete-col">
+                <button class="mdc-icon-button material-icons delete-btn" on-click="_deleteLevel">close</button>
+              </div>
+            </div>
+          </template>
+        </vaadin-grid-column>
+      </vaadin-grid>
+    `}}customElements.define("dnd-character-builder-class",b)}}]);
 //# sourceMappingURL=5.bundle.js.map

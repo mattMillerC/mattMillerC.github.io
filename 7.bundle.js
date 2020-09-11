@@ -1,60 +1,270 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[7],{104:function(e,s,t){"use strict";var a=t(2),r=t(0),n=t(5);function i(){this.wrapperTag="div",this.baseUrl="",this.setWrapperTag=function(e){this.wrapperTag=e},this.setBaseUrl=function(e){this.baseUrl=e},this.recursiveEntryRender=function(e,s,t,l,c,o){if(t=null==t?"section"===e.type?-1:0:t,l=null==l?null:l,c=null==c?null:c,(o=null!=o&&o)&&h(),"object"==typeof e){switch(void 0===e.type||"section"===e.type?"entries":e.type){case"entries":p(this,!0);break;case"options":!function(s){e.entries&&(e.entries=e.entries.sort((e,s)=>e.name&&s.name?Object(a.ascSort)(e.name,s.name):e.name?-1:s.name?1:0),p(s,!1))}(this);break;case"list":if(e.items){s.push(`<ul ${e.style?`class="${e.style}"`:""}>`);for(let n=0;n<e.items.length;n++)this.recursiveEntryRender(e.items[n],s,t+1,`<li ${Object(a.isNonstandardSource)(e.items[n].source)?`class="${r.i}"`:""}>`,"</li>");s.push("</ul>")}break;case"table":!function(a){s.push("<table class='table'>"),void 0!==e.caption&&s.push(`<caption>${e.caption}</caption>`);if(s.push("<thead>"),s.push("<tr class='table-row table-row--header'>"),e.colLabels)for(let t=0;t<e.colLabels.length;++t)s.push(`<th ${r(t)}>${e.colLabels[t]}</th>`);s.push("</tr>"),s.push("</thead>"),s.push("<tbody>");for(let r=0;r<e.rows.length;++r){s.push("<tr class='table-row'>");for(let i=0;i<e.rows[r].length;++i)s.push(`<td ${n(i)}>`),a.recursiveEntryRender(e.rows[r][i],s,t+1),s.push("</td>");s.push("</tr>")}function r(s){return void 0===e.colStyles||s>=e.colStyles.length?"class='table-cell'":`class="table-cell ${e.colStyles[s]}"`}function n(s){return void 0!==e.rowStyles?void 0===e.rowStyles||s>=e.rowStyles.length?"class='table-cell'":`class="table-cell ${e.rowStyles[s]}"`:r(s)}s.push("</tbody>"),s.push("</table>")}(this);break;case"invocation":!function(e){p(e,!0)}(this);break;case"patron":!function(e){p(e,!1)}(this);break;case"abilityDc":h(),s.push(`<span class='spell-ability'><span>${e.name} save DC</span> = 8 + your proficiency bonus + your ${Object(a.utils_makeAttChoose)(e.attributes)}</span>`),u();break;case"abilityAttackMod":null!==l&&s.push(l),s.push(`<span class='spell-ability'><span>${e.name} attack modifier</span> = your proficiency bonus + your ${Object(a.utils_makeAttChoose)(e.attributes)}</span>`),null!==c&&s.push(c);break;case"inline":if(e.entries)for(let a=0;a<e.entries.length;a++)this.recursiveEntryRender(e.entries[a],s,t);break;case"bonus":s.push((e.value<0?"":"+")+e.value);break;case"bonusSpeed":s.push((e.value<0?"":"+")+e.value+"ft.");break;case"dice":s.push(i.getEntryDice(e));break;case"link":!function(e,t){let r;if("internal"===t.href.type){if(r=`${e.baseUrl}${t.href.path}#`,void 0!==t.href.hash&&(r+=t.href.hash,void 0!==t.href.subhashes))for(let e=0;e<t.href.subhashes.length;e++){const s=t.href.subhashes[e];r+=`,${Object(a.encodeForHash)(s.key)}:${Object(a.encodeForHash)(s.value)}`}}else"external"===t.href.type&&(r=t.href.url);s.push(`<a href='${r}'>${t.text}</a>`)}(this,e);break;case"item":s.push(`<li><b>${e.name}: </b>`),this.recursiveEntryRender(e.entry,s,t),s.push("</li>");break;case"print":s.push(d(e.entry))}}else"string"==typeof e?(h(),d(this),u()):(h(),s.push(e),u());function h(){null!==l&&s.push(l)}function u(){null!==c&&s.push(c)}function p(l,c){const o=t>=2,h=c?t+1:t,u=function(){const s=[];Object(a.isNonstandardSource)(e.source)&&s.push(r.i);o&&void 0!==e.name?s.push(i.HEAD_2):s.push(-1===t?i.HEAD_NEG_1:0===t?i.HEAD_0:i.HEAD_1);"invocation"!==e.type&&"patron"!==e.type||void 0===e.subclass||s.push(r.j);return s.length>0?`class="${s.join(" ")}"`:""}(),p=function(){let s="";if("invocation"===e.type||"patron"===e.type){const t=e.source?`title="Source: ${n.a.sourceJsonToFull(e.source)}"`:"";s=void 0!==e.subclass?`${r.f}="${e.subclass.name}" ${r.g}="${e.subclass.source}" ${t}`:`${r.f}="${i.DATA_NONE}" ${r.g}="${i.DATA_NONE}" ${t}`}return s}(),d=e.prerequisite?`<span class="prerequisite">Prerequisite: ${e.prerequisite}</span>`:"",b=void 0!==e.name?`<span class="stat-name">${e.name}${Object(a.isNonstandardSource)(e.source)?" (UA)":""}${o?".":""}</span> `:"";if(e.entries||e.name){if(s.push(`<${l.wrapperTag} ${p} ${u}>${b}${d}`),e.entries)for(let t=0;t<e.entries.length;t++)l.recursiveEntryRender(e.entries[t],s,h,"<p>","</p>");s.push(`</${l.wrapperTag}>`)}}function d(l){const c=function(){let s,t,a=0,r=!1;const n=[];let i="";for(let l=0;l<e.length;++l)switch(s=e.charAt(l),t=l<e.length-1?e.charAt(l+1):null,s){case"{":"@"===t?a++>0?i+=s:(n.push(i),r=!1,i=""):i+=s;break;case"}":0==--a?(n.push(i),i=""):i+=s;break;default:i+=s}i.length>0&&n.push(i);return n}();for(let e=0;e<c.length;e++){const h=c[e];if(null!=h&&""!==h)if("@"===h.charAt(0)){const[e,c]=[(o=h).substr(0,o.indexOf(" ")),o.substr(o.indexOf(" ")+1)];if("@bold"===e||"@b"===e||"@italic"===e||"@i"===e||"@skill"===e||"@action"===e)switch(e){case"@b":case"@bold":s.push("<b>"),l.recursiveEntryRender(c,s,t),s.push("</b>");break;case"@i":case"@italic":s.push("<i>"),l.recursiveEntryRender(c,s,t),s.push("</i>");break;case"@action":s.push(`<span title="${n.a.actionToExplanation(c)}" class="explanation">${c}</span>`);break;case"@skill":s.push(`<span title="${n.a.skillToExplanation(c)}" class="explanation">${c}</span>`)}else{const[n,o,h,...u]=c.split("|"),p=`${n}${o?`${r.n}${o}`:""}`,d={type:"link",href:{type:"internal",path:"",hash:Object(a.encodeForHash)(p)},text:h||n};switch(e){case"@spell":o||(d.href.hash+=r.n+r.hb),d.href.hash="/spells/"+d.href.hash,l.recursiveEntryRender(d,s,t);break;case"@item":o||(d.href.hash+=r.n+r.T),d.href.hash="/items/"+d.href.hash,l.recursiveEntryRender(d,s,t);break;case"@condition":o||(d.href.hash+=r.n+r.hb),d.href.hash="/conditions/"+d.href.hash,l.recursiveEntryRender(d,s,t);break;case"@class":const e=i.RE_INLINE_CLASS.exec(c);e&&(d.href.hash=e[1].trim(),d.href.subhashes=[{key:"sub",value:e[2].trim()+"~phb"}]),o||(d.href.hash+=r.n+r.hb),d.href.hash="/classes/"+d.href.hash,l.recursiveEntryRender(d,s,t);break;case"@creature":o||(d.href.hash+=r.n+r.cb),d.href.hash="/bestiary/"+d.href.hash,l.recursiveEntryRender(d,s,t);break;case"@filter":s.push(n);break;case"@damage":case"@dice":case"@book":s.push(n);break;case"@5etools":o.indexOf(".")>-1?d.href.hash="/"+o.substring(0,o.indexOf(".")):d.href.hash="/"+o,l.recursiveEntryRender(d,s,t)}}}else s.push(h)}var o}o&&u()}}i.getEntryDice=function(e){let s;if(e.number&&e.faces)s=String(e.number)+"d"+e.faces;else if(e.toRoll&&e.toRoll.length){for(let t of e.toRoll)s=String(t.number)+"d"+t.faces+" + ";s=s.substring(0,s.length-3)}return"undefined"!=typeof droll&&!0===e.rollable?`<span class='roller unselectable' onclick="if (this.rolled) { this.innerHTML = this.innerHTML.split('=')[0].trim()+' = '+droll.roll('${s}').total; } else { this.rolled = true; this.innerHTML += ' = '+droll.roll('${s}').total; }">${s}</span>`:s},i.RE_INLINE_CLASS=/(.*?) \((.*?)\)/,i.HEAD_NEG_1="statsBlockSectionHead",i.HEAD_0="statsBlockHead",i.HEAD_1="statsBlockSubHead",i.HEAD_2="statsInlineHead",i.DATA_NONE="data-none",s.a=i},116:function(e,s,t){"use strict";t.r(s);var a=t(7),r=t(18),n=t(104),i=t(2);class l extends a.a{static get properties(){return{classEquipment:{type:String},hasClass:{type:Boolean,value:!1},hasBackground:{type:Boolean,value:!1}}}constructor(){super(),this.renderer=new n.a}connectedCallback(){super.connectedCallback(),this.characterChangeHandler=e=>{let s=e.detail.character;this.updateFromCharacter(s)},this.updateFromCharacter(Object(r.s)()),Object(r.i)().addEventListener("character-selected",this.characterChangeHandler)}disconnectedCallback(){super.disconnectedCallback(),Object(r.i)().removeEventListener("character-selected",this.characterChangeHandler)}async updateFromCharacter(e){if(this.hasClass=!1,this.hasBackground=!1,this.$.backgroundEquipment.innerHTML="",this.$.classEquipment.innerHTML="",e){let s;if(e.levels&&e.levels.length>0){s=(await Object(r.l)())[e.levels[0].name],this.hasClass=!0,this.$.classEquipment.innerHTML=this.parseClassEquipment(s.startingEquipment)}if(!s||s.startingEquipment.additionalFromBackground){const e=await Object(r.f)();e&&(this.hasBackground=!0,this.$.backgroundEquipment.innerHTML=this.parseBackgroundEquipment(e.entries))}}}parseClassEquipment(e){if(e){return`${e.additionalFromBackground?"<p>You start with the following items, plus anything provided by your background.</p>":""}${0===e.default.length?"":`<ul><li>${e.default.map(e=>this.renderStr(e)).join("</li><li>")}</ul>`}${void 0===e.goldAlternative?"":`<p>Alternatively, you may start with ${this.renderStr(e.goldAlternative)} gp to buy your own equipment.</p>`}`}}parseBackgroundEquipment(e){if(e){const s=Object(i.entrySearch)("Equipment",e);return`<p>${this.renderStr(s.entry)}</p>`}}renderStr(e){let s=[];return this.renderer.recursiveEntryRender(e,s,0),s.join(" ")}static get template(){return a.b`
+(window.webpackJsonp=window.webpackJsonp||[]).push([[7],{110:function(t,e,i){"use strict";var a=i(7),s=i(18),n=i(1),l=(i(77),i(39));class r extends a.a{static get properties(){return{test:{type:Boolean,reflectToAttribute:!0,value:!1},options:{type:Array,observer:"optionsUpdated"},model:{type:String},addCallback:{type:Function},value:{type:String,value:"",observer:"valueUpdated"},choices:{type:Number,observer:"choicesUpdated"},label:{type:String},placeholder:{type:String},multiValue:{type:String,value:""}}}choicesUpdated(){this.listBox&&(this.listBox.remove(),delete this.listBox),this.$.select.render()}optionsUpdated(){this.listBox&&(this.listBox.remove(),delete this.listBox),this.$.select.render()}valueUpdated(){if(this.choices)if(Array.isArray(this.value)&&this.options){const t=this.value.map(t=>-1!==this.options.indexOf(t)?this.options.indexOf(t):this.options.findIndex(e=>e.name===t.name&&e.source===t.source)).filter(t=>-1!==t);this.listBox&&(this.listBox.selectedValues=t),this.multiValue=t.map(t=>{let e=this.options[t];return e.name?e.name:Object(n.util_capitalizeAll)(e)}).join(", ")}else this.listBox&&(this.listBox.selectedValues=[]),this.multiValue="";else this.value&&this.options?this.value.name?this.$.select.value=this.options.findIndex(t=>t.name===this.value.name||t===this.value.name)+"":this.$.select.value=this.options.findIndex(t=>t.name===this.value||t===this.value)+"":this.$.select.value=""}ready(){super.ready(),setTimeout(async()=>{this.model&&(this.options=await Object(l.b)(this.model)),this.$.select.renderer=(t,e)=>{if(!this.listBox){if(this.listBox=document.createElement("vaadin-list-box"),this.choices&&(this.listBox.setAttribute("multiple",!0),this.listBox.addEventListener("click",t=>{e.opened=!0;let i=null!==t.srcElement.getAttribute("selected");setTimeout(()=>{this.listBox.selectedValues.length>this.choices&&!i&&this.listBox.selectedValues.splice(this.listBox.selectedValues.length-2,1);let t=this.listBox.selectedValues.map(t=>this.options[t]);this.multiValue=t.map(t=>t.name?t.name:Object(n.util_capitalizeAll)(t)).join(", "),this.addCallback&&this.addCallback(t)},0)})),this.options&&this.options.length)for(let t=0;t<this.options.length;t++){const e=this.options[t],i=document.createElement("vaadin-item");e.name?(i.textContent=e.name,i.setAttribute("value",t)):(i.textContent=Object(n.util_capitalizeAll)(e),i.setAttribute("value",t)),this.listBox.appendChild(i)}t.appendChild(this.listBox),this.$.select._assignMenuElement(),this.valueUpdated()}}},0)}connectedCallback(){super.connectedCallback(),this.selectChangeHandler=()=>{const t=this.$.select.value;if(t&&!this.choices){const e=this.options[t];this.addCallback?this.addCallback(e,this.model):Object(s.z)(void 0,e,this.model),this.value||(this.$.select.value="")}},this.$.select.addEventListener("change",this.selectChangeHandler)}disconnectedCallback(){super.disconnectedCallback(),this.$.select.removeEventListener("change",this.selectChangeHandler)}_exists(t){return!!t}_label(t,e){if(t)return e?`${t} (${e})`:t}static get template(){return a.b`
       <style>
+        :host {
+          display: inline-block;
+        }
+        [slot="prefix"] {
+          width: calc(100% - 46px);
+          padding: 12px;
+          line-height: 1.4;
+        }
+        vaadin-select {
+          width: 100%;
+        }
+        .prefix {
+          white-space: normal;
+          color: var(--lumo-body-text-color);
+        }
+      </style>
+      <vaadin-select test$="[[test]]" theme="dark" add id="select" label="[[_label(label, choices)]]" placeholder="[[placeholder]]">
+        <div hidden$="[[!_exists(multiValue)]]" slot="prefix">
+          <span class="prefix">[[multiValue]]</span>
+        </div>
+      </vaadin-select>
+    `}}customElements.define("dnd-select-add",r)},118:function(t,e,i){"use strict";i.r(e);var a=i(7);i(50),i(49),i(71);const s=i(13).a`<dom-module id="lumo-number-field" theme-for="vaadin-number-field">
+  <template>
+    <style include="lumo-field-button">
+      :host {
+        width: 8em;
+      }
+
+      :host([has-controls]:not([theme~="align-right"])) [part="value"] {
+        text-align: center;
+      }
+
+      [part="decrease-button"][disabled],
+      [part="increase-button"][disabled] {
+        opacity: 0.2;
+      }
+
+      :host([has-controls]) [part="input-field"] {
+        padding: 0;
+      }
+
+      [part="decrease-button"],
+      [part="increase-button"] {
+        cursor: pointer;
+        font-size: var(--lumo-icon-size-s);
+        width: 1.6em;
+        height: 1.6em;
+      }
+
+      [part="decrease-button"]::before,
+      [part="increase-button"]::before {
+        margin-top: 0.2em;
+      }
+
+      /* RTL specific styles */
+
+      :host([dir="rtl"]) [part="value"],
+      :host([dir="rtl"]) [part="input-field"] ::slotted(input) {
+        --_lumo-text-field-overflow-mask-image: linear-gradient(to left, transparent, #000 1.25em);
+      }
+    </style>
+  </template>
+</dom-module>`;document.head.appendChild(s.content);i(79),i(30);var n=i(65),l=i(19);
+/**
+@license
+Copyright (c) 2017 Vaadin Ltd.
+This program is available under Apache License Version 2.0, available at https://vaadin.com/license/
+*/
+const r=document.createElement("template");let d;r.innerHTML='<dom-module id="vaadin-number-field-template">\n  <template>\n    <style>\n      :host([readonly]) [part$="button"] {\n        pointer-events: none;\n      }\n\n      [part="decrease-button"]::before {\n        content: "−";\n      }\n\n      [part="increase-button"]::before {\n        content: "+";\n      }\n\n      [part="decrease-button"],\n      [part="increase-button"] {\n        -webkit-user-select: none;\n        -moz-user-select: none;\n        -ms-user-select: none;\n        user-select: none;\n      }\n\n      /* Hide the native arrow icons */\n      [part="value"]::-webkit-outer-spin-button,\n      [part="value"]::-webkit-inner-spin-button {\n        -webkit-appearance: none;\n        margin: 0;\n      }\n\n      [part="value"] {\n        /* Older Firefox versions (v47.0) requires !important */\n        -moz-appearance: textfield !important;\n      }\n\n      :host([dir="rtl"]) [part="input-field"] {\n        direction: ltr;\n      }\n\n      :host([dir="rtl"]) [part="value"]::placeholder {\n        direction: rtl;\n      }\n\n      :host([dir="rtl"]) [part="input-field"] ::slotted(input)::placeholder {\n        direction: rtl;\n      }\n\n      :host([dir="rtl"]) [part="value"]:-ms-input-placeholder,\n      :host([dir="rtl"]) [part="input-field"] ::slotted(input):-ms-input-placeholder {\n        direction: rtl;\n      }\n\n      :host([dir="rtl"]:not([has-controls])) [part="value"]::placeholder {\n        text-align: left;\n      }\n\n      :host([dir="rtl"]:not([has-controls])) [part="input-field"] ::slotted(input)::placeholder {\n        text-align: left;\n      }\n\n      :host([dir="rtl"]:not([has-controls])) [part="value"]:-ms-input-placeholder,\n      :host([dir="rtl"]:not([has-controls])) [part="input-field"] ::slotted(input):-ms-input-placeholder {\n        text-align: left;\n      }\n    </style>\n\n    <div disabled$="[[!_allowed(-1, value, min, max, step)]]" part="decrease-button" on-click="_decreaseValue" on-touchend="_decreaseButtonTouchend" hidden$="[[!hasControls]]">\n    </div>\n\n    <div disabled$="[[!_allowed(1, value, min, max, step)]]" part="increase-button" on-click="_increaseValue" on-touchend="_increaseButtonTouchend" hidden$="[[!hasControls]]">\n    </div>\n  </template>\n\n  \n</dom-module>',document.head.appendChild(r.content);class o extends n.a{static get is(){return"vaadin-number-field"}static get version(){return"2.6.2"}static get properties(){return{hasControls:{type:Boolean,value:!1,reflectToAttribute:!0},min:{type:Number,reflectToAttribute:!0,observer:"_minChanged"},max:{type:Number,reflectToAttribute:!0,observer:"_maxChanged"},step:{type:Number,value:1,observer:"_stepChanged"}}}ready(){super.ready(),this.__previousValidInput=this.value||"",this.inputElement.type="number",this.inputElement.addEventListener("change",this.__onInputChange.bind(this))}_decreaseButtonTouchend(t){t.preventDefault(),this._decreaseValue()}_increaseButtonTouchend(t){t.preventDefault(),this._increaseValue()}static get template(){if(!d){d=super.template.cloneNode(!0);const t=l.a.import(this.is+"-template","template"),e=t.content.querySelector('[part="decrease-button"]'),i=t.content.querySelector('[part="increase-button"]'),a=t.content.querySelector("style"),s=d.content.querySelector('[part="input-field"]'),n=d.content.querySelector('[name="prefix"]');s.insertBefore(e,n),s.appendChild(i),d.content.appendChild(a)}return d}_createConstraintsObserver(){this._createMethodObserver("_constraintsChanged(required, minlength, maxlength, pattern, min, max, step)")}_constraintsChanged(t,e,i,a,s,n,l){if(!this.invalid)return;const r=t=>!t&&0!==t;r(s)&&r(n)?super._constraintsChanged(t,e,i,a):this.validate()}_decreaseValue(){this._incrementValue(-1)}_increaseValue(){this._incrementValue(1)}_incrementValue(t){if(this.disabled||this.readonly)return;let e=parseFloat(this.value);this.value?e<this.min?(t=0,e=this.min):e>this.max&&(t=0,e=this.max):0==this.min&&t<0||0==this.max&&t>0||0==this.max&&0==this.min?(t=0,e=0):(null==this.max||this.max>=0)&&(null==this.min||this.min<=0)?e=0:this.min>0?(e=this.min,this.max<0&&t<0&&(e=this.max),t=0):this.max<0&&(e=this.max,t<0?t=0:this._getIncrement(1,e-this.step)>this.max?e-=2*this.step:e-=this.step);const i=this._getIncrement(t,e);this.value&&0!=t&&!this._incrementIsInsideTheLimits(t,e)||this._setValue(i)}_setValue(t){this.value=this.inputElement.value=String(parseFloat(t)),this.dispatchEvent(new CustomEvent("change",{bubbles:!0}))}_getIncrement(t,e){let i=this.step||1,a=this.min||0;const s=Math.max(this._getMultiplier(e),this._getMultiplier(i),this._getMultiplier(a));i*=s,a*=s;const n=((e=Math.round(e*s))-a)%i;return t>0?(e-n+i)/s:t<0?(e-(n||i))/s:e/s}_getDecimalCount(t){const e=String(t),i=e.indexOf(".");return-1===i?1:e.length-i-1}_getMultiplier(t){if(!isNaN(t))return Math.pow(10,this._getDecimalCount(t))}_incrementIsInsideTheLimits(t,e){return t<0?null==this.min||this._getIncrement(t,e)>=this.min:t>0?null==this.max||this._getIncrement(t,e)<=this.max:this._getIncrement(t,e)<=this.max&&this._getIncrement(t,e)>=this.min}_allowed(t){const e=t*(this.step||1),i=parseFloat(this.value);return!this.value||!this.disabled&&this._incrementIsInsideTheLimits(e,i)}_stepChanged(t){this.__validateByStep=this.__stepChangedCalled||null!==this.getAttribute("step"),this.inputElement.step=this.__validateByStep?t:"any",this.__stepChangedCalled=!0,this.setAttribute("step",t)}_minChanged(t){this.inputElement.min=t}_maxChanged(t){this.inputElement.max=t}_valueChanged(t,e){t&&isNaN(parseFloat(t))?this.value="":"string"!=typeof this.value&&(this.value=String(this.value)),super._valueChanged(this.value,e)}_onKeyDown(t){38==t.keyCode?(t.preventDefault(),this._increaseValue()):40==t.keyCode&&(t.preventDefault(),this._decreaseValue()),super._onKeyDown(t)}__onInputChange(){this.validate()}checkValidity(){return void 0!==this.min||void 0!==this.max||this.__validateByStep?this.inputElement.checkValidity():super.checkValidity()}}window.customElements.define(o.is,o);
+/**
+@license
+Copyright (c) 2019 Vaadin Ltd.
+This program is available under Apache License Version 2.0, available at https://vaadin.com/license/
+*/
+const c=document.createElement("template");c.innerHTML='<dom-module id="vaadin-integer-field-template">\n\n  \n</dom-module>',document.head.appendChild(c.content);class h extends o{static get is(){return"vaadin-integer-field"}static get version(){return"2.6.2"}static get properties(){return{pattern:String,preventInvalidInput:Boolean,minlength:Number,maxlength:Number}}ready(){super.ready(),this._enabledCharPattern="[-+\\d]"}_valueChanged(t,e){if(""!==t&&!this.__isInteger(t))return console.warn(`Trying to set non-integer value "${t}" to <vaadin-integer-field>. Clearing the value.`),void(this.value="");super._valueChanged(t,e)}_stepChanged(t,e){if(!this.__hasOnlyDigits(t))return console.warn(`Trying to set invalid step size "${t}", which is not a positive integer, to <vaadin-integer-field>. Resetting the default value 1.`),void(this.step=1);super._stepChanged(t,e)}__isInteger(t){return/^(-\d)?\d*$/.test(String(t))}__hasOnlyDigits(t){return/^\d*$/.test(String(t))}}window.customElements.define(h.is,h);i(110);var u=i(18),p=i(1);class v extends a.a{static get properties(){return{str:{type:Number},dex:{type:Number},con:{type:Number},int:{type:Number},wis:{type:Number},cha:{type:Number},strAdj:{type:Number,value:0},dexAdj:{type:Number,value:0},conAdj:{type:Number,value:0},intAdj:{type:Number,value:0},wisAdj:{type:Number,value:0},chaAdj:{type:Number,value:0},strProfs:{type:String,value:""},dexProfs:{type:String,value:""},intProfs:{type:String,value:""},wisProfs:{type:String,value:""},chaProfs:{type:String,value:""},saves:{type:Array,value:[]},classSkillProfOptions:{type:Object,value:{}},backgroundSkillProfOptions:{type:Object,value:[]},defaultBackgroundSkillProf:{type:String,value:""},raceAttributeOptions:{type:Object,value:[]},defaultRaceAttribute:{type:String,value:""}}}static get observers(){return["updateCharAttr(str, dex, con, int, wis, cha)"]}updateCharAttr(t,e,i,a,s,n){t&&e&&i&&a&&s&&n&&Object(u.P)({str:t,dex:e,con:i,int:a,wis:s,cha:n})}connectedCallback(){super.connectedCallback(),this.characterChangeHandler=t=>{let e=t.detail.character;this.updateAttributesFromCharacter(e)},this.updateAttributesFromCharacter(Object(u.s)()),Object(u.i)().addEventListener("character-selected",this.characterChangeHandler)}disconnectedCallback(){super.disconnectedCallback(),Object(u.i)().removeEventListener("character-selected",this.characterChangeHandler)}async updateAttributesFromCharacter(t){if(t&&t.attr){const e=t.attr;e.str===this.str&&e.dex===this.dex&&e.con===this.con&&e.int===this.int&&e.wis===this.wis&&e.cha===this.cha||this.setProperties({str:t.attr.str,dex:t.attr.dex,con:t.attr.con,int:t.attr.int,wis:t.attr.wis,cha:t.attr.cha}),this.saves=await Object(u.m)();let i=await Object(u.e)(),a=await Object(u.r)();a&&a.choose?(this.raceAttributeOptions=a.choose.from.map(t=>t.toUpperCase()),this.raceAttributeChoices=a.choose.count||1,this.raceAttributeSelections=t.raceAttributes):(this.raceAttributeOptions=void 0,this.raceAttributeChoices=void 0,this.raceAttributeSelections=void 0);let s=await Object(u.q)(a);this.defaultRaceAttribute=s.map(t=>{let e=t[0].toLowerCase(),i=t[1];return e.toUpperCase()+" "+Object(p.absInt)(i)}).join(", "),this.strAdj=i.str,this.dexAdj=i.dex,this.conAdj=i.con,this.intAdj=i.int,this.wisAdj=i.wis,this.chaAdj=i.cha;let n=await Object(u.t)("str");this.strProfs=n.map(t=>Object(p.util_capitalizeAll)(t)).join(", ");let l=await Object(u.t)("dex");this.dexProfs=l.map(t=>Object(p.util_capitalizeAll)(t)).join(", ");let r=await Object(u.t)("int");this.intProfs=r.map(t=>Object(p.util_capitalizeAll)(t)).join(", ");let d=await Object(u.t)("wis");this.wisProfs=d.map(t=>Object(p.util_capitalizeAll)(t)).join(", ");let o=await Object(u.t)("cha");this.chaProfs=o.map(t=>Object(p.util_capitalizeAll)(t)).join(", "),this.dispatchEvent(new CustomEvent("loadingChange",{bubbles:!0,composed:!0}))}}_adjustString(t){return 0!==t&&void 0!==t?Object(p.absInt)(t):""}_total(t,e){let i=parseInt(t),a=parseInt(e);return i=isNaN(i)?0:i,a=isNaN(a)?0:a,i+a}_mod(t,e){return Object(p.absInt)(Math.floor((this._total(t,e)-10)/2))}_contains(t,e){return t.indexOf(e)>-1}_exists(){for(let t of arguments)if(t&&(t.constructor!==Object||Object.entries(t).length>0)&&(!Array.isArray(t)||t.length>0))return!0;return!1}static get template(){return a.b`
+      <style include="material-styles">
         :host {
           display: block;
           padding: 14px;
         }
-        [hidden] {
-          display: none !important;
-        }
-        a {
-          color: var(--mdc-theme-secondary);
-        }
 
-        .col-wrap {
-          display: flex; 
-          justify-content: space-between;
-          flex-wrap: wrap;
-        }
-
-        .row-wrap {
-          width: 100%;
-        }
-        .row-wrap:first-child {
-          margin-bottom: 24px;
-        }
-
-        .row-wrap > *:not(h2):not(:last-child) {
-          margin-bottom: 10px;
-        }
-
-        span {
-          font-size: 14px;
+        .default-selection {
           font-style: italic;
         }
 
-        @media(min-width: 921px) {
-          .row-wrap {
-            width: calc(50% - 10px);
+        .row {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: flex-end;
+          margin-bottom: 12px;
+        }
+
+        .row.heading {
+          margin-bottom: 0;
+        }
+
+        .data {
+          font-size: 18px;
+          padding: 10px 8px 8px;
+          display: flex;
+          justify-content: center;
+          margin-bottom: 4px;
+          min-width: 24px;
+        }
+
+        .data:last-child {
+          flex-basis: 100%;
+        }
+        
+        .heading .data {
+          font-weight: bold;
+          margin-bottom: 0;
+          padding-bottom: 0;
+          font-size: 14px;
+        }
+
+        .mod {
+          background: var(--lumo-contrast-10pct);
+          border-radius: 4px;
+          width: 24px;
+          margin-left: auto;
+          margin-right: auto;
+          border: 2px solid var(--mdc-theme-primary);
+        }
+        .mod.no-bg {
+          background: none;
+          border: none;
+        }
+
+        .prof {
+          justify-content: flex-start;
+          margin: 0 12px;
+        }
+
+        .heading .prof {
+          display: none;
+        }
+
+        .mobile-label .data {
+          justify-content: flex-start;
+        }
+
+        vaadin-integer-field {
+          width: 100px;
+        }
+
+        .input {
+          width: 84px;
+          flex-shrink: 0;
+        }
+        
+        .save {
+          width: 24px;
+        }
+
+        .save-icon {
+          width: 24px;
+        }
+
+        [hidden] {
+          visibility: hidden;
+        }
+        @media(min-width: 420px) {
+          .mod {
+            width: 32px;
           }
-          .row-wrap:first-child {
-            margin-bottom: 0;
+          .data {
+            min-width: 44px;
+          }
+          .heading .data {
+            font-size: 18px;
+          }
+        }
+        @media(min-width: 921px) {
+          .mobile-label {
+            display: none;
+          }
+          .attr-choice-wrap,
+          .prof-choice-wrap {
+            flex-direction: row;
+          }
+          .row {
+            flex-wrap: nowrap;
+          }
+          .heading .prof {
+            display: block;
           }
         }
       </style>
 
-      <div class="col-wrap">
-        <div class="row-wrap">
-          <h2>From Class</h2>
-          <span hidden$=[[hasClass]]>Select a class to see equipment</span>
-          <div id="classEquipment"></div>
+      <h2>Attributes</h2>
+      <div class="stats">
+        <div class="row heading">
+          <div class="input data"></div>
+          <div class="save data">Save</div>
+          <div class="adj data">Adj.</div>
+          <div class="total data">Total</div>
+          <div class="mod data no-bg">Mod</div>
+          <div class="prof data"></div>
+        </div>
+        <div class="row">
+          <vaadin-integer-field value={{str}} min="1" max="20" has-controls label="Strength"></vaadin-integer-field>
+          <div class="save data">
+            <span hidden$="[[!_contains(saves, 'str')]]" class="save-icon material-icons">done</span>
+          </div>
+          <div class="adj data">[[_adjustString(strAdj)]]</div>
+          <div class="total data">[[_total(strAdj, str)]]</div>
+          <div class="mod data">[[_mod(strAdj, str)]]</div>
+          <div class="prof data">[[strProfs]]</div>
         </div>
 
-        <div class="row-wrap">
-          <h2>From Background</h2>
-          <span hidden$=[[hasBackground]]>Select a background to see equipment</span>
-          <div id="backgroundEquipment"></div>
+        <div class="row">
+          <vaadin-integer-field value={{dex}} min="1" max="20" has-controls label="Dexterity"></vaadin-integer-field>
+          <div class="save data">
+            <span hidden$="[[!_contains(saves, 'dex')]]" class="save-icon material-icons">done</span>
+          </div>
+          <div class="adj data">[[_adjustString(dexAdj)]]</div>
+          <div class="total data">[[_total(dexAdj, dex)]]</div>
+          <div class="mod data">[[_mod(dexAdj, dex)]]</div>
+          <div class="prof data">[[dexProfs]]</div>
+        </div>
+
+        <div class="row">
+          <vaadin-integer-field value={{con}} min="1" max="20" has-controls label="Constitution"></vaadin-integer-field>
+          <div class="save data">
+            <span hidden$="[[!_contains(saves, 'con')]]" class="save-icon material-icons">done</span>
+          </div>
+          <div class="adj data">[[_adjustString(conAdj)]]</div>
+          <div class="total data">[[_total(conAdj, con)]]</div>
+          <div class="mod data">[[_mod(conAdj, con)]]</div>
+          <div class="prof data">[[conProfs]]</div>
+        </div>
+
+        <div class="row">
+          <vaadin-integer-field value={{int}} min="1" max="20" has-controls label="Intellegence"></vaadin-integer-field>
+          <div class="save data">
+            <span hidden$="[[!_contains(saves, 'int')]]" class="save-icon material-icons">done</span>
+          </div>
+          <div class="adj data">[[_adjustString(intAdj)]]</div>
+          <div class="total data">[[_total(intAdj, int)]]</div>
+          <div class="mod data">[[_mod(intAdj, int)]]</div>
+          <div class="prof data">[[intProfs]]</div>
+        </div>
+
+        <div class="row">
+          <vaadin-integer-field value={{wis}} min="1" max="20" has-controls label="Wisdom"></vaadin-integer-field>
+          <div class="save data">
+            <span hidden$="[[!_contains(saves, 'wis')]]" class="save-icon material-icons">done</span>
+          </div>
+          <div class="adj data">[[_adjustString(wisAdj)]]</div>
+          <div class="total data">[[_total(wisAdj, wis)]]</div>
+          <div class="mod data">[[_mod(wisAdj, wis)]]</div>
+          <div class="prof data">[[wisProfs]]</div>
+        </div>
+
+        <div class="row">
+          <vaadin-integer-field value={{cha}} min="1" max="20" has-controls label="Charisma"></vaadin-integer-field>
+          <div class="save data">
+            <span hidden$="[[!_contains(saves, 'cha')]]" class="save-icon material-icons">done</span>
+          </div>
+          <div class="adj data">[[_adjustString(chaAdj)]]</div>
+          <div class="total data">[[_total(chaAdj, cha)]]</div>
+          <div class="mod data">[[_mod(chaAdj, cha)]]</div>
+          <div class="prof data">[[chaProfs]]</div>
         </div>
       </div>
-    `}}customElements.define("dnd-character-builder-equipment",l)}}]);
+    `}}customElements.define("dnd-character-builder-attributes",v)}}]);
 //# sourceMappingURL=7.bundle.js.map
