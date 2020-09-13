@@ -12,6 +12,7 @@ import { classOptionsMap } from "../../../data/choices";
 import EntryRenderer from "../../../util/entryrender";
 import { } from '@polymer/polymer/lib/elements/dom-if.js';
 import { } from '@polymer/polymer/lib/elements/dom-repeat.js';
+import { getEditModeChannel } from "../../../util/editMode";
 import {filterModel} from "../../../util/data";
 
 class DndCharacterBuilderClass extends MutableData(PolymerElement) {
@@ -34,6 +35,10 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
         value: () => {
           return window.innerWidth < 900;
         }
+      },
+      isEditMode: {
+        type: Boolean,
+        value: false
       }
     };
   }
@@ -48,12 +53,18 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
     
     this.updateFromCharacter(getSelectedCharacter());
     getCharacterChannel().addEventListener("character-selected", this.characterChangeHandler);
+
+    this.editModeHandler = (e) => {
+      this.isEditMode = e.detail.isEditMode;
+    }
+    getEditModeChannel().addEventListener('editModeChange', this.editModeHandler);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
 
     getCharacterChannel().removeEventListener("character-selected", this.characterChangeHandler);
+    getEditModeChannel().removeEventListener('editModeChange', this.editModeHandler);
   }
 
   ready() {
@@ -441,11 +452,6 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
           align-items: center;
         }
 
-        .heading {
-          font-size: 24px;
-          font-weight: bold;
-        }
-
         .button-wrap {
           display: flex;
           flex-wrap: wrap;
@@ -563,7 +569,6 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
       </style>
 
       <div class="heading-wrap">
-        <h2 class="heading">Class</h2>
         <dnd-select-add model="classes" placeholder="Add a Level"></dnd-select-add>
       </div>
       <div class="button-wrap">

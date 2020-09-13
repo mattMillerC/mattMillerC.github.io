@@ -1,6 +1,7 @@
 import { PolymerElement, html } from "@polymer/polymer";
 import { getCharacterChannel, getSelectedCharacter, getClassReferences, getBackgroundReference } from "../../../util/charBuilder";
 import EntryRenderer from '../../../util/entryrender.js'
+import { getEditModeChannel } from "../../../util/editMode";
 import { entrySearch } from '../../../js/utils.js'
 
 class DndCharacterBuilderEquipment extends PolymerElement {
@@ -15,6 +16,10 @@ class DndCharacterBuilderEquipment extends PolymerElement {
         value: false
       },
       hasBackground: {
+        type: Boolean,
+        value: false
+      },
+      isEditMode: {
         type: Boolean,
         value: false
       }
@@ -37,12 +42,18 @@ class DndCharacterBuilderEquipment extends PolymerElement {
     
     this.updateFromCharacter(getSelectedCharacter());
     getCharacterChannel().addEventListener("character-selected", this.characterChangeHandler);
+
+    this.editModeHandler = (e) => {
+      this.isEditMode = e.detail.isEditMode;
+    }
+    getEditModeChannel().addEventListener('editModeChange', this.editModeHandler);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
 
     getCharacterChannel().removeEventListener("character-selected", this.characterChangeHandler);
+    getEditModeChannel().removeEventListener('editModeChange', this.editModeHandler);
   }
 
   async updateFromCharacter(character) {

@@ -9,6 +9,7 @@ import {
   getBackgroundSkillProfDefaults,
   setBackgroundSkillProficiencies,
 } from "../../../util/charBuilder";
+import { getEditModeChannel } from "../../../util/editMode";
 import { util_capitalizeAll, absInt } from "../../../js/utils"; 
 
 class DndCharacterBuilderBackgroundRace extends PolymerElement {
@@ -39,6 +40,10 @@ class DndCharacterBuilderBackgroundRace extends PolymerElement {
         type: String,
         value: ""
       },
+      isEditMode: {
+        type: Boolean,
+        value: false
+      }
     };
   }
 
@@ -52,12 +57,18 @@ class DndCharacterBuilderBackgroundRace extends PolymerElement {
     
     this.updateFromCharacter(getSelectedCharacter());
     getCharacterChannel().addEventListener("character-selected", this.characterChangeHandler);
+
+    this.editModeHandler = (e) => {
+      this.isEditMode = e.detail.isEditMode;
+    }
+    getEditModeChannel().addEventListener('editModeChange', this.editModeHandler);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
 
     getCharacterChannel().removeEventListener("character-selected", this.characterChangeHandler);
+    getEditModeChannel().removeEventListener('editModeChange', this.editModeHandler);
   }
 
   async updateFromCharacter(character) {

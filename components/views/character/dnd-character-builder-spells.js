@@ -3,6 +3,7 @@ import "@vaadin/vaadin-grid";
 import "@vaadin/vaadin-grid/vaadin-grid-tree-toggle";
 import { getCharacterChannel, getSelectedCharacter, getClassReferences, getClassLevelGroups, toggleSpellPrepared, saveCharacter, getAttributeModifier, isSpellPreparedFromObj, setSpellSlots, getSpellSlots, toggleCantripPrepared, getSubclassChoiceLevel } from "../../../util/charBuilder";
 import { filterModel } from "../../../util/data";
+import { getEditModeChannel, isEditMode } from "../../../util/editMode";
 import { spellHtml } from "../../../js/spells";
 import { findInPath, util_capitalize } from "../../../js/utils";
 import Parser from "../../../util/Parser";
@@ -25,6 +26,10 @@ class DndCharacterBuilderSpells extends PolymerElement {
         value: () => {
           return window.innerWidth < 900;
         }
+      },
+      isEditMode: {
+        type: Boolean,
+        value: false
       }
     };
   }
@@ -39,12 +44,21 @@ class DndCharacterBuilderSpells extends PolymerElement {
     this.refresh = true;
     this.updateFromCharacter(getSelectedCharacter());
     getCharacterChannel().addEventListener("character-selected",this.characterChangeHandler);
+
+    this.editModeHandler = (e) => {
+      this.isEditMode = e.detail.isEditMode;
+      this.refresh = true;
+      this.updateFromCharacter(getSelectedCharacter());
+    }
+    getEditModeChannel().addEventListener('editModeChange', this.editModeHandler);
+    this.isEditMode = isEditMode();
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
 
     getCharacterChannel().removeEventListener("character-selected",this.characterChangeHandler);
+    getEditModeChannel().removeEventListener('editModeChange', this.editModeHandler);
   }
 
   ready() {
@@ -163,23 +177,28 @@ class DndCharacterBuilderSpells extends PolymerElement {
                   return 0;
                 })
                 .map(spell => {
-                  const isPrepared = isSpellPreparedFromObj(className, spell, oldSpellsPrepared);
+                  const isCantrip = index + hasCantrips === 0;
+                  const isPrepared = isCantrip ? isSpellPreparedFromObj(className, spell, character.preparedCantrips) : isSpellPreparedFromObj(className, spell, oldSpellsPrepared);
                   if (isPrepared) {
                     character.preparedSpells[className][spell.name] = {name: spell.name, source: spell.source};
                   }
-                  return {
-                    id: 'spell',
-                    name: spell.name, 
-                    children: [{...spell, hasChildren: false, id: 'spelldef', parentClass: className, parentLevel: index + hasCantrips} ],
-                    hasChildren: true,
-                    parentClass: className,
-                    parentLevel: index + hasCantrips,
-                    isCantrip: index + hasCantrips === 0,
-                    isSubclassSpell: spell.isSubclassSpell,
-                    isWarlock: !!warlockSpellLevel
-                  };
-                });
-
+                  if (this.isEditMode || isPrepared || spell.isSubclassSpell) {
+                    return {
+                      id: 'spell',
+                      name: spell.name, 
+                      children: [{...spell, hasChildren: false, id: 'spelldef', parentClass: className, parentLevel: index + hasCantrips} ],
+                      hasChildren: true,
+                      parentClass: className,
+                      parentLevel: index + hasCantrips,
+                      isCantrip,
+                      isSubclassSpell: spell.isSubclassSpell,
+                      isWarlock: !!warlockSpellLevel
+                    };
+                  } else {
+                    return undefined;
+                  }
+                })
+                .filter((spell) => spell !== undefined);
               const levelObj = {
                 id: 'level',
                 level: index + hasCantrips,
@@ -189,6 +208,10 @@ class DndCharacterBuilderSpells extends PolymerElement {
                 hasChildren: spellList.length > 0,
                 parentClass: className
               };
+              const isExpanded = this.$.grid.expandedItems.some(item => item.id === 'level' && item.level === levelObj.level && item.parentClass === levelObj.parentClass);
+              if (isExpanded) {
+                expandedItems.push(levelObj);
+              }
               return levelObj;
             } else {
               return null
@@ -238,7 +261,7 @@ class DndCharacterBuilderSpells extends PolymerElement {
     e.preventDefault();
     e.stopPropagation();
     const isSubclassSpell = e.model.item.isSubclassSpell;
-    if (!isSubclassSpell) {
+    if (!isSubclassSpell && this.isEditMode) {
       const isCantrip = e.model.item.isCantrip;
       if (isCantrip) {
         this._toggleCantripPrepared(e);
@@ -348,16 +371,19 @@ class DndCharacterBuilderSpells extends PolymerElement {
     e.preventDefault();
   }
 
-  _isPreparedClass(spellsKnown, item) {
+  _isPreparedClass(spellsKnown, item, isEditMode) {
     const className = item.parentClass;
     const spellName = item.name;
     const isCantrip = item.isCantrip;
     const isSubclassSpell = item.isSubclassSpell;
     if (isSubclassSpell) {
-      return 'spell-button always-prepared';
+      return isEditMode ? 'spell-button always-prepared edit-mode' : 'spell-button always-prepared';
     }
     let isPrepared = isCantrip ? this._isPreparedCantrip(spellsKnown, className, spellName) : this._isPreparedSpell(spellsKnown, className, spellName, isSubclassSpell);
-    return isPrepared ? 'spell-prepared spell-button' : 'spell-button'
+    if (isPrepared) {
+      return isEditMode ? 'spell-prepared spell-button edit-mode' : 'spell-prepared spell-button';
+    }
+    return isEditMode ? 'spell-button edit-mode' : 'spell-button';
   }
 
   _isPreparedSpell(spellsKnown, className, spellName, isSubclassSpell){
@@ -454,8 +480,8 @@ class DndCharacterBuilderSpells extends PolymerElement {
     return !a || !a.length;
   }
 
-  _isTruthy(a) {
-    return !!a;
+  _hideCheckboxes(spellSlots) {
+    return spellSlots && spellSlots > 0 && this.isEditMode;
   } 
 
   _equal(a, b) {
@@ -520,6 +546,7 @@ class DndCharacterBuilderSpells extends PolymerElement {
           border-bottom: 1px solid var(--_lumo-grid-secondary-border-color);
           padding-bottom: 8px;
           display: flex;
+          height: 32px;
         }
 
         .level-wrap {
@@ -637,11 +664,13 @@ class DndCharacterBuilderSpells extends PolymerElement {
           border: none;
           border-radius: 4px;
           outline: none;
-          cursor: pointer;
           width: 60px;
           display: inline-flex;
           justify-content: center;
           white-space: normal;
+        }
+        .spell-button.edit-mode {
+          cursor: pointer;
         }
         .spell-button.always-prepared {
           background-color: var(--mdc-theme-secondary-lighter);
@@ -683,7 +712,7 @@ class DndCharacterBuilderSpells extends PolymerElement {
                         <span class='prepared-count'>[[_currentCantripsKnownCount(item.parentClass, spellsKnown)]] / [[_maxCantripsKnownCount(item.parentClass, spellsKnown)]]</span>
                       </div>
                     </vaadin-grid-tree-toggle>
-                    <div class="slot-checkboxes" hidden$="[[!_isTruthy(item.spellSlots)]]" on-click="_toggleSpellSlot">
+                    <div class="slot-checkboxes" hidden$="[[_hideCheckboxes(item.spellSlots, isEditMode)]]" on-click="_toggleSpellSlot">
                       <template is='dom-repeat' items='[[_countToArray(item.spellSlots)]]'>
                         <vaadin-checkbox on-click="_preventDefault"></vaadin-checkbox>
                       </template>
@@ -697,7 +726,7 @@ class DndCharacterBuilderSpells extends PolymerElement {
                     <vaadin-grid-tree-toggle leaf="[[!item.hasChildren]]" expanded="{{expanded}}" class="spell-wrap">
                       <span class="spell-inner-wrap">[[item.name]]<span class="spell-level" hidden>[[_spellLevel(item)]]</span><span class="rit-ind" title="Ritual" hidden$="[[!_isRitualSpell(item)]]"></span><span class="conc-ind" title="Concentration" hidden$="[[!_isConcentrationSpell(item)]]"></span></span>
                     </vaadin-grid-tree-toggle>
-                    <button class$="[[_isPreparedClass(spellsKnown, item)]]" on-click="_toggleSpellPrepared">[[_isPreparedText(spellsKnown, item)]]</button>
+                    <button class$="[[_isPreparedClass(spellsKnown, item, isEditMode)]]" on-click="_toggleSpellPrepared">[[_isPreparedText(spellsKnown, item)]]</button>
                   </div>
                 </template>
 

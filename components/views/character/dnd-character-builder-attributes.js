@@ -11,6 +11,7 @@ import {
   getRaceAttributeDefaults,
   getAttributeScoreModifiers
 } from "../../../util/charBuilder";
+import { getEditModeChannel } from "../../../util/editMode";
 import { util_capitalizeAll, absInt } from "../../../js/utils";
 
 class DndCharacterBuilderAttributes extends PolymerElement {
@@ -103,6 +104,10 @@ class DndCharacterBuilderAttributes extends PolymerElement {
       defaultRaceAttribute: {
         type: String,
         value: ""
+      },
+      isEditMode: {
+        type: Boolean,
+        value: false
       }
     };
   }
@@ -127,12 +132,18 @@ class DndCharacterBuilderAttributes extends PolymerElement {
     
     this.updateAttributesFromCharacter(getSelectedCharacter());
     getCharacterChannel().addEventListener("character-selected", this.characterChangeHandler);
+
+    this.editModeHandler = (e) => {
+      this.isEditMode = e.detail.isEditMode;
+    }
+    getEditModeChannel().addEventListener('editModeChange', this.editModeHandler);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
 
     getCharacterChannel().removeEventListener("character-selected", this.characterChangeHandler);
+    getEditModeChannel().removeEventListener('editModeChange', this.editModeHandler);
   }
 
   async updateAttributesFromCharacter(character) {
