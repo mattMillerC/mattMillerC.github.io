@@ -5,9 +5,14 @@ import { getCharacterChannel, getSelectedCharacter, getClassReferences, getClass
 import { filterModel } from "../../../util/data";
 import { getEditModeChannel, isEditMode } from "../../../util/editMode";
 import { spellHtml } from "../../../js/spells";
-import { findInPath, util_capitalize } from "../../../js/utils";
+import { findInPath, util_capitalize, util_capitalizeAll } from "../../../js/utils";
 import Parser from "../../../util/Parser";
 import "@vaadin/vaadin-checkbox";
+
+// todo:
+// compute spell slots for multiclassing, warlock ++
+// add DC / Spell Hit Mod / Spells Prepared to top
+// Make grid non-heightByRows, fix resizing issues, use detail toggle for spells
 
 class DndCharacterBuilderSpells extends PolymerElement {
   
@@ -64,6 +69,29 @@ class DndCharacterBuilderSpells extends PolymerElement {
   ready() {
     super.ready();
 
+    this.multiclassSlotsDef = [
+      [2],
+      [3],
+      [4,2],
+      [4,3],
+      [4,3,2],
+      [4,3,3],
+      [4,3,3,1],
+      [4,3,3,2],
+      [4,3,3,3,1],
+      [4,3,3,3,2],
+      [4,3,3,3,2,1],
+      [4,3,3,3,2,1],
+      [4,3,3,3,2,1,1],
+      [4,3,3,3,2,1,1],
+      [4,3,3,3,2,1,1,1],
+      [4,3,3,3,2,1,1,1],
+      [4,3,3,3,2,1,1,1,1],
+      [4,3,3,3,3,1,1,1,1],
+      [4,3,3,3,3,2,1,1,1],
+      [4,3,3,3,3,2,2,1,1]
+    ];
+
     setTimeout(() => {
       const grid = this.$.grid;
 
@@ -78,15 +106,20 @@ class DndCharacterBuilderSpells extends PolymerElement {
     }, 0);
   }
 
+  updateSpellStats(character, classRefs, classLevels) {
+    
+  }
+
   async updateFromCharacter(character) {
-    const now = Date.now();
     if (character && this.refresh) {
       const classRefs = await getClassReferences(character),
         classLevels = getClassLevelGroups(character),
-        spellDisplay = [],
         expandedItems = [],
         spellsKnownObj = {};
-      
+      let spellDisplay = [];
+
+      this.updateSpellStats(character, classRefs, classLevels);
+
       for (const [ className, level ] of Object.entries(classLevels)) {
         const classRef = classRefs[className];
 
@@ -95,21 +128,22 @@ class DndCharacterBuilderSpells extends PolymerElement {
           let spellsKnowPreparedType = 'known';
           let cantripsKnown;
           let warlockSpellLevel;
-          let warlockSpellSlots
+          let warlockSpellSlots;
 
+          // Getting spells + cantrips known info from table, also getting warlock info from table
           classRef.classTableGroups.forEach((classTableGroup) => {
             if (classTableGroup.colLabels && classTableGroup.colLabels.length) {
               const spellsColIndex = classTableGroup.colLabels.findIndex((label) => label.toLowerCase().indexOf("spells known") > -1);
               if (spellsColIndex > -1 && classTableGroup.rows && classTableGroup.rows.length > level - 1) {
-                spellsKnownOrPrepared = classTableGroup.rows[level][spellsColIndex];
+                spellsKnownOrPrepared = classTableGroup.rows[level - 1][spellsColIndex];
               }
               const cantripsColIndex = classTableGroup.colLabels.findIndex((label) => label.toLowerCase().indexOf("cantrips known") > -1);
               if (cantripsColIndex > -1 && classTableGroup.rows && classTableGroup.rows.length > level - 1) {
-                cantripsKnown = classTableGroup.rows[level][cantripsColIndex];
+                cantripsKnown = classTableGroup.rows[level - 1][cantripsColIndex];
               }
               const warlockSpellLevelColIndex = classTableGroup.colLabels.findIndex((label) => label.toLowerCase().indexOf("slot level") > -1);
               if (warlockSpellLevelColIndex > -1 && classTableGroup.rows && classTableGroup.rows.length > level - 1) {
-                const warlockSpellLevelString = classTableGroup.rows[level][warlockSpellLevelColIndex];
+                const warlockSpellLevelString = classTableGroup.rows[level - 1][warlockSpellLevelColIndex];
                 const warlockSpellLevelMatches = warlockSpellLevelString.match(/(\d+)/g);
                 if (warlockSpellLevelMatches && warlockSpellLevelMatches.length) {
                   warlockSpellLevel = parseInt(warlockSpellLevelMatches[0]);
@@ -117,11 +151,12 @@ class DndCharacterBuilderSpells extends PolymerElement {
               }
               const warlockSpellSlotsColIndex = classTableGroup.colLabels.findIndex((label) => label.toLowerCase().indexOf("spell slots") > -1);
               if (warlockSpellSlotsColIndex > -1 && classTableGroup.rows && classTableGroup.rows.length > level - 1) {
-                warlockSpellSlots = classTableGroup.rows[level][warlockSpellSlotsColIndex];
+                warlockSpellSlots = classTableGroup.rows[level - 1][warlockSpellSlotsColIndex];
               }
             }
           });
 
+          // otherwise compute spells prepared
           if (spellsKnownOrPrepared === undefined) {
             spellsKnowPreparedType = 'prepared';
             const levelMultiplier = classRef.casterProgression === 'full' ? 1 : 0.5;
@@ -130,8 +165,10 @@ class DndCharacterBuilderSpells extends PolymerElement {
             spellsKnownOrPrepared = spellsKnownOrPrepared < 1 ? 1 : spellsKnownOrPrepared;
           }
 
+          // Getting class spell list
           let classSpellList = await filterModel('spells', { key: 'classes.fromClassList', value: { name: className, source: classRef.source } } );
 
+          // Getting subclass spell list (always prepared)
           const subclassLevel = getSubclassChoiceLevel(classRef);
           if (level >= subclassLevel) {
             const subclassName = character.subclasses && character.subclasses[className] ? character.subclasses[className].shortName : '';
@@ -142,29 +179,33 @@ class DndCharacterBuilderSpells extends PolymerElement {
             }
           }
 
+          // Getting spell slots per level array
           const spellTable = classRef.classTableGroups.find((tableGroup) => tableGroup.title === "Spell Slots per Spell Level");
           let spellSlotEntries;
           if (spellTable) {
             spellSlotEntries = spellTable.rows[level - 1].filter((spellSlots) => spellSlots !== 0);
           } else {
-            // todo: Warlock
+            // If no spell slots per level, then we're a warlock, get spell entries for
+            // warlocks with zero spell slots at each level (pact slots will be added later)
             spellSlotEntries = [];
-            for (let i = 0; i < warlockSpellLevel; i++){
-              if (i === warlockSpellLevel - 1) {
-                spellSlotEntries.push(warlockSpellSlots);
-              } else {
-                spellSlotEntries.push(0);
-              }
+            for (let i = 0; i < warlockSpellLevel; i++) {
+              spellSlotEntries.push(0);
             }
           }
+
+          // Adding cantrips entry
           const hasCantrips = cantripsKnown ? 0 : 1;
           if (cantripsKnown) {
             spellSlotEntries = [0].concat(spellSlotEntries);
           }
+
           // Clearing prepared spells to filter out those that can no longer be prepared
           let oldSpellsPrepared = JSON.parse(JSON.stringify(character.preparedSpells));
+          let oldCantripsPrepared = JSON.parse(JSON.stringify(character.preparedCantrips));
           character.preparedSpells[className] = {};
+          character.preparedCantrips[className] = {};
 
+          // Generating hierarchical structure of classes > levels > spells > spellDef
           const spellSlots = spellSlotEntries.map((spellSlots, index) => {
             if (spellSlots !== -1) {
               let spellList = classSpellList
@@ -178,9 +219,13 @@ class DndCharacterBuilderSpells extends PolymerElement {
                 })
                 .map(spell => {
                   const isCantrip = index + hasCantrips === 0;
-                  const isPrepared = isCantrip ? isSpellPreparedFromObj(className, spell, character.preparedCantrips) : isSpellPreparedFromObj(className, spell, oldSpellsPrepared);
+                  const isPrepared = isCantrip ? isSpellPreparedFromObj(className, spell, oldCantripsPrepared) : isSpellPreparedFromObj(className, spell, oldSpellsPrepared);
                   if (isPrepared) {
-                    character.preparedSpells[className][spell.name] = {name: spell.name, source: spell.source};
+                    if (isCantrip) {
+                      character.preparedCantrips[className][spell.name] = {name: spell.name, source: spell.source};
+                    } else {
+                      character.preparedSpells[className][spell.name] = {name: spell.name, source: spell.source};
+                    }
                   }
                   if (this.isEditMode || isPrepared || spell.isSubclassSpell) {
                     return {
@@ -203,10 +248,11 @@ class DndCharacterBuilderSpells extends PolymerElement {
                 id: 'level',
                 level: index + hasCantrips,
                 spellSlots,
-                currentSlots: getSpellSlots(className, index + hasCantrips),
+                currentSlots: getSpellSlots(index + hasCantrips),
                 children: spellList,
                 hasChildren: spellList.length > 0,
-                parentClass: className
+                parentClass: className,
+                isWarlock: !!warlockSpellLevel
               };
               const isExpanded = this.$.grid.expandedItems.some(item => item.id === 'level' && item.level === levelObj.level && item.parentClass === levelObj.parentClass);
               if (isExpanded) {
@@ -231,16 +277,75 @@ class DndCharacterBuilderSpells extends PolymerElement {
               id: 'class',
               className,
               level,
+              hasCantrips,
               children: spellSlots,
               spellsKnown: spellsKnownOrPrepared,
               hasChildren: spellSlots.length > 0,
-              spellPrepType: spellsKnowPreparedType
+              spellPrepType: spellsKnowPreparedType,
+              multiclassingLevels: (classRef.casterProgression === 'full' ? 1 : 0.5) * level,
+              isWarlock: !!warlockSpellLevel,
+              warlockSpellLevel,
+              warlockSpellSlots
             };
             expandedItems.push(classObj);
             spellDisplay.push(classObj);
           }
         }
       }
+
+      // sorting most levels first
+      spellDisplay.sort((a, b) => a.children.length - b.children.length);
+
+      // Changing structure for non-edit mode & multiclassing
+      if (!this.isEditMode && spellDisplay.length) {
+        let newSpellDisplay = [],
+          multiclassLevel = 0,
+          isMulticlass = -1,
+          warlockSpellLevel,
+          warlockSpellSlots;
+
+        // Combine all class spell levels into single references
+        for (let spellClass of spellDisplay) {
+          if (!spellClass.isWarlock) {
+            multiclassLevel += spellClass.multiclassingLevels;
+            isMulticlass ++;
+          } else {
+            warlockSpellLevel = spellClass.warlockSpellLevel;
+            warlockSpellSlots = spellClass.warlockSpellSlots;
+          }
+
+          spellClass.children.forEach((spellLevel, index) => {
+            const adjIndex = index + spellClass.hasCantrips;
+            if (!newSpellDisplay[adjIndex]) {
+              newSpellDisplay[adjIndex] = spellLevel;
+            } else if (spellLevel.children[index]) {
+              newSpellDisplay[adjIndex].children.push(spellLevel.children[index]);
+            }
+          });
+        }
+
+        // remove index 0 if no cantrips
+        newSpellDisplay = newSpellDisplay.filter(i => i !== undefined);
+
+        // Changing spell slots for multiclass rules
+        const hasCantrips = newSpellDisplay[0].level === 0;
+        if (isMulticlass > 0) {
+          const multiclassSlotsArray = this.multiclassSlotsDef[multiclassLevel];
+
+          for (let i = (hasCantrips ? 1 : 0); i < newSpellDisplay.length; i++) {
+            newSpellDisplay[i].spellSlots = multiclassSlotsArray[i - (hasCantrips ? 1 : 0)];
+          }
+        }
+
+        // Adding warlock slots
+        if (warlockSpellLevel) {
+          newSpellDisplay[warlockSpellLevel - (hasCantrips ? 0 : 1)].warlockSpellSlots = warlockSpellSlots;
+          newSpellDisplay[warlockSpellLevel - (hasCantrips ? 0 : 1)].currentWarlockSlots = character.warlockSpellSlots || 0;
+        }
+
+        spellDisplay = newSpellDisplay;
+      }
+
       this.refresh = false;
       saveCharacter(character);
       this.spellsKnown = spellsKnownObj;
@@ -249,8 +354,6 @@ class DndCharacterBuilderSpells extends PolymerElement {
       this.dispatchEvent(new CustomEvent("loadingChange", { bubbles: true, composed: true }));
       this.$.grid.clearCache();
     }
-    const later = Date.now();
-    console.error('Spells Tab: ' + (later - now));
   }
 
   _renderSpell(spell) {
@@ -330,30 +433,51 @@ class DndCharacterBuilderSpells extends PolymerElement {
     e.preventDefault();
     e.stopPropagation();
     const isInput = findInPath('vaadin-checkbox', e.path);
-    const currentSlots = e.model.item.currentSlots;
-    const maxSlots = e.model.item.spellSlots;
-    const className = e.model.item.className;
+    const isWarlock = !!findInPath('[warlock-spell]', e.path);
+    const currentSlots = isWarlock ? e.model.item.currentWarlockSlots : e.model.item.currentSlots;
+    const maxSlots = isWarlock ? e.model.item.warlockSpellSlots : e.model.item.spellSlots;
     const level = e.model.item.level;
 
     if (isInput) {
       const isChecked = !isInput.checked;
       if (!isChecked && currentSlots < maxSlots) {
-        e.model.item.currentSlots = currentSlots + 1;
+        if (isWarlock) {
+          e.model.item.currentWarlockSlots = currentSlots + 1
+        } else {
+          e.model.item.currentSlots = currentSlots + 1;
+        }
   
       } else if (currentSlots > 0) {
-        e.model.item.currentSlots = currentSlots - 1;
+        if (isWarlock) {
+          e.model.item.currentWarlockSlots = currentSlots - 1;
+        } else {
+          e.model.item.currentSlots = currentSlots - 1;
+        }
       }
     } else {
       if (currentSlots < maxSlots) {
-        e.model.item.currentSlots = currentSlots + 1;
+        if (isWarlock) {
+          e.model.item.currentWarlockSlots = currentSlots + 1;
+        } else {
+          e.model.item.currentSlots = currentSlots + 1;
+        }
 
       } else if (currentSlots > 0) {
-        e.model.item.currentSlots = currentSlots - 1;
+        if (isWarlock) {
+          e.model.item.currentWarlockSlots = currentSlots - 1;
+        } else {
+          e.model.item.currentSlots = currentSlots - 1;
+        }
       }
     }
     
-    this._setSpellSlotsChecked(e.model.item.currentSlots, findInPath('.slot-checkboxes', e.path));
-    setSpellSlots(className, level, e.model.item.currentSlots);
+    if (isWarlock) {
+      this._setSpellSlotsChecked(e.model.item.currentWarlockSlots, findInPath('.slot-checkboxes', e.path));
+      setSpellSlots(level, e.model.item.currentWarlockSlots, undefined, true);
+    } else {
+      this._setSpellSlotsChecked(e.model.item.currentSlots, findInPath('.slot-checkboxes', e.path));
+      setSpellSlots(level, e.model.item.currentSlots);
+    }
   }
 
   _setSpellSlotsChecked(count, el) {
@@ -369,6 +493,7 @@ class DndCharacterBuilderSpells extends PolymerElement {
 
   _preventDefault(e) {
     e.preventDefault();
+    e.stopPropagation();
   }
 
   _isPreparedClass(spellsKnown, item, isEditMode) {
@@ -476,13 +601,21 @@ class DndCharacterBuilderSpells extends PolymerElement {
     }
   }
 
+  _isSpellSlotChecked(currentSlots, index) {
+    return index < currentSlots;
+  }
+
+  _spellClassText(parentClass) {
+    return util_capitalizeAll(parentClass);
+  }
+
   _isEmpty(a) {
     return !a || !a.length;
   }
 
   _hideCheckboxes(spellSlots) {
-    return spellSlots && spellSlots > 0 && this.isEditMode;
-  } 
+    return !spellSlots || spellSlots > 0 && this.isEditMode;
+  }
 
   _equal(a, b) {
     return a === b;
@@ -658,16 +791,19 @@ class DndCharacterBuilderSpells extends PolymerElement {
           margin: 0 14px;
         }
 
-        .spell-button {
+        .spell-button,
+        .class-icon {
           background-color: var(--mdc-theme-text-disabled-on-background);
           color: var(--mdc-theme-on-secondary);
           border: none;
           border-radius: 4px;
           outline: none;
           width: 60px;
-          display: inline-flex;
+          display: inline-block;
           justify-content: center;
           white-space: normal;
+          font-size: 12px;
+          padding: 1px 4px;
         }
         .spell-button.edit-mode {
           cursor: pointer;
@@ -685,6 +821,9 @@ class DndCharacterBuilderSpells extends PolymerElement {
         }
         .spell-button.transition-bg {
           transition: background-color 0.2s ease-in;
+        }
+        .class-icon {
+          width: auto;
         }
       </style>
 
@@ -712,9 +851,17 @@ class DndCharacterBuilderSpells extends PolymerElement {
                         <span class='prepared-count'>[[_currentCantripsKnownCount(item.parentClass, spellsKnown)]] / [[_maxCantripsKnownCount(item.parentClass, spellsKnown)]]</span>
                       </div>
                     </vaadin-grid-tree-toggle>
+
+                    <div class="slot-checkboxes" hidden$="[[_hideCheckboxes(item.warlockSpellSlots, isEditMode)]]" on-click="_toggleSpellSlot" warlock-spell>
+                      <template is='dom-repeat' items='[[_countToArray(item.warlockSpellSlots)]]' as="thing">
+                        <vaadin-checkbox on-click="_preventDefault" checked="[[_isSpellSlotChecked(item.currentWarlockSlots, index)]]"></vaadin-checkbox>
+                      </template>
+                      <span>Pact</span>
+                    </div>
+
                     <div class="slot-checkboxes" hidden$="[[_hideCheckboxes(item.spellSlots, isEditMode)]]" on-click="_toggleSpellSlot">
-                      <template is='dom-repeat' items='[[_countToArray(item.spellSlots)]]'>
-                        <vaadin-checkbox on-click="_preventDefault"></vaadin-checkbox>
+                      <template is='dom-repeat' items='[[_countToArray(item.spellSlots)]]' as="thing">
+                        <vaadin-checkbox on-click="_preventDefault" checked="[[_isSpellSlotChecked(item.currentSlots, index)]]"></vaadin-checkbox>
                       </template>
                       <span>Slots</span>
                     </div>
@@ -726,7 +873,8 @@ class DndCharacterBuilderSpells extends PolymerElement {
                     <vaadin-grid-tree-toggle leaf="[[!item.hasChildren]]" expanded="{{expanded}}" class="spell-wrap">
                       <span class="spell-inner-wrap">[[item.name]]<span class="spell-level" hidden>[[_spellLevel(item)]]</span><span class="rit-ind" title="Ritual" hidden$="[[!_isRitualSpell(item)]]"></span><span class="conc-ind" title="Concentration" hidden$="[[!_isConcentrationSpell(item)]]"></span></span>
                     </vaadin-grid-tree-toggle>
-                    <button class$="[[_isPreparedClass(spellsKnown, item, isEditMode)]]" on-click="_toggleSpellPrepared">[[_isPreparedText(spellsKnown, item)]]</button>
+                    <button class$="[[_isPreparedClass(spellsKnown, item, isEditMode)]]" hidden$="[[!isEditMode]]" on-click="_toggleSpellPrepared">[[_isPreparedText(spellsKnown, item)]]</button>
+                    <span class="class-icon" hidden$="[[isEditMode]]">[[_spellClassText(item.parentClass)]]</span>
                   </div>
                 </template>
 

@@ -860,23 +860,25 @@ async function getAttributeModifier(attribute, character = selectedCharacter) {
   return attributeModifier;
 }
 
-function setSpellSlots(className, level, currentSlots, character = selectedCharacter) {
+function setSpellSlots(level, currentSlots, character = selectedCharacter, isWarlock) {
   if (character) {
-    if (!character.spellSlots) {
-      character.spellSlots = {};
+    if (isWarlock) {
+      character.warlockSpellSlots = currentSlots;
+      saveCharacter(character);
+    } else {
+      if (!character.spellSlots) {
+        character.spellSlots = {};
+      }
+
+      character.spellSlots[level] = currentSlots;
+      saveCharacter(character);
     }
-    if (!character.spellSlots[className]) {
-      character.spellSlots[className] = {};
-    }
-    
-    character.spellSlots[className][level] = currentSlots;
-    saveCharacter(character);
   }
 }
 
-function getSpellSlots(className, level, character = selectedCharacter) {
-  if (character && character.spellSlots && character.spellSlots[className] && character.spellSlots[className][level] !== undefined) {
-    return character.spellSlots[className][level];
+function getSpellSlots(level, character = selectedCharacter) {
+  if (character && character.spellSlots && character.spellSlots[level] !== undefined) {
+    return character.spellSlots[level];
   }
   return 0;
 }

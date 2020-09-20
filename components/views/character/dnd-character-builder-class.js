@@ -99,28 +99,28 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
         deets.innerHTML = renderStack.join("");
       }).bind(this);
 
-      grid.addEventListener('grid-dragstart', function(e) {
-        draggedItem = e.detail.draggedItems[0];
-        grid.dropMode = 'between';
-      });
+      // grid.addEventListener('grid-dragstart', function(e) {
+      //   draggedItem = e.detail.draggedItems[0];
+      //   grid.dropMode = 'between';
+      // });
 
-      grid.addEventListener('grid-dragend', function(e) {
-        draggedItem = grid.dropMode = null;
-      });
+      // grid.addEventListener('grid-dragend', function(e) {
+      //   draggedItem = grid.dropMode = null;
+      // });
 
-      grid.addEventListener('grid-drop', function(e) {
-        const dropTargetItem = e.detail.dropTargetItem;
-        if (draggedItem && draggedItem !== dropTargetItem) {
-          // Reorder the items
-          const items = grid.items.filter(function(i) {
-            return i !== draggedItem;
-          });
-          const dropIndex = items.indexOf(dropTargetItem)
-            + (e.detail.dropLocation === 'below' ? 1 : 0);
-          items.splice(dropIndex, 0, draggedItem);
-          setClassLevels(items);
-        }
-      });
+      // grid.addEventListener('grid-drop', function(e) {
+      //   const dropTargetItem = e.detail.dropTargetItem;
+      //   if (draggedItem && draggedItem !== dropTargetItem) {
+      //     // Reorder the items
+      //     const items = grid.items.filter(function(i) {
+      //       return i !== draggedItem;
+      //     });
+      //     const dropIndex = items.indexOf(dropTargetItem)
+      //       + (e.detail.dropLocation === 'below' ? 1 : 0);
+      //     items.splice(dropIndex, 0, draggedItem);
+      //     setClassLevels(items);
+      //   }
+      // });
     }, 0);
   }
 
@@ -138,17 +138,17 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
   }
 
   _getClassLevelFeatures(levels, index, classes, subclasses) {
-    if (classes && levels[index]) {
+    if (classes && levels[index] && subclasses) {
       const className = levels[index].name;
       const classRef = classes[className];
 
       if (classRef) {
         const classFeatures = classRef.classFeatures;
-        let levelsInClass = 0;
+        let levelsInClass = -1;
         let levelsInSubclass = -1;
 
         if (levels.length >= index + 1) {
-          for (let i = 0; i < index; i ++) {
+          for (let i = 0; i <= index; i ++) {
             if (levels[i].name === className) {
               levelsInClass ++;
 
@@ -164,7 +164,7 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
 
           const classFeaturesForLevel = classFeatures[levelsInClass];
           if (classFeaturesForLevel) {
-            const hasSubclassFeature = classFeaturesForLevel.find(i => i.gainSubclassFeature);
+            const hasSubclassFeature = classFeaturesForLevel.some(i => i.gainSubclassFeature);
             if (hasSubclassFeature && subclasses && subclasses[className] && classRef.subclasses && classRef.subclasses.length) {
               const subclassDef = classRef.subclasses.find(i => subclasses[className].name === i.name);
               if (subclassDef.subclassFeatures[levelsInSubclass]) {
@@ -532,7 +532,6 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
           flex-wrap: wrap;
         }
         .choices-col__choice {
-          margin-top: 10px;
           margin-right: 16px;
         }
         .choices-col__subclass-choice {
@@ -553,9 +552,21 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
         .delete-btn:hover {
           color: var(--mdc-theme-secondary);
         }
+
         .details {
-          padding: 0 6px;
+          font-size: 14px;
+          width: calc(100% - 30px);
+          margin: 0 auto 13px !important;
+          background: var(--lumo-contrast-10pct);
+          border-radius: 4px;
+          white-space: pre-line;
+          padding: 14px 14px 1px;
         }
+
+        .details#stats p {
+          line-height: 1.5;
+        }
+
         @media(min-width: 921px) {
           .open-details {
             flex-wrap: nowrap;
