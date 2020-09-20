@@ -9,7 +9,7 @@ module.exports = merge(common, {
   mode: "development",
   devtool: "inline-source-map",
   devServer: {
-    contentBase: "./dist",
+    contentBase: "./docs",
     // https: true,
     // host: '0.0.0.0',
     // port: 443,
@@ -22,7 +22,7 @@ module.exports = merge(common, {
       patterns: [
         {
           from: "fake-service-worker.js",
-          to: path.resolve(__dirname, "dist") + "/service-worker.js",
+          to: path.resolve(__dirname, "docs") + "/service-worker.js",
           toType: "file"
         }
       ]
