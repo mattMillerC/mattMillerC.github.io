@@ -1993,12 +1993,6 @@ const W="adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.pro
   :host([height-by-rows]) #table {
     overflow-y: hidden;
   }
-  /* Below Tablet */
-  @media(max-width: 920px) {
-    [no-scrollbars]:not([safari]):not([firefox]) #outerscroller, [no-scrollbars][safari] #table, [no-scrollbars][firefox] #table {
-      overflow: auto;
-    }
-  }
 `);class oe extends i.a{static get properties(){return{viewId:{type:String,value:"index",observer:"viewIdChange"},header:{type:String,computed:"_lookupheader(viewId)"},loadingRender:{type:Boolean,value:!1},loadingData:{type:Boolean,value:!1},loadingView:{type:Boolean,value:!0},loading:{type:Boolean,value:!0,computed:"anyLoading(loadingRender, loadingData, loadingView)"}}}anyLoading(e,t,n){return e||t||n}ready(){super.ready(),Object(o.b)(this.shadowRoot);let e=Object(o.d)();e&&(this.viewId=e),Object(o.e)().addEventListener("view-change",e=>{this.viewId=e.detail.view})}connectedCallback(){super.connectedCallback(),this.loadingRenderEventHandler=e=>{e.detail&&void 0!==e.detail.loading&&e.detail.loading!==this.loadingRender&&(this.loadingRender=e.detail.loading)},this.loadingDataEventHandler=e=>{e.detail&&void 0!==e.detail.loading&&e.detail.loading!==this.loadingData&&(this.loadingData=e.detail.loading)},this.addEventListener("loading-render",this.loadingRenderEventHandler),this.addEventListener("loading-data",this.loadingDataEventHandler)}disconnectedCallback(){super.disconnectedCallback(),this.removeEventListener("loading-render",this.loadingRenderEventHandler),this.removeEventListener("loading-data",this.loadingDataEventHandler)}async viewIdChange(){this.loadingView=!0,Object(r.jqEmpty)(this.$.routeTarget),await n(80)(`./dnd-${this.viewId}-view.js`),Object(r.jqEmpty)(this.$.routeTarget),this.$.routeTarget.appendChild(document.createElement(`dnd-${this.viewId}-view`)),this.loadingView=!1,window.scrollTo(0,0)}_lookupheader(e){switch(e){case"variantrules":return"Variant Rules";case"index":return;case"dice":return"Dice Roller";case"character-builder":return"Character Builder";default:return e?Object(r.util_capitalize)(e):""}}static get template(){return i.b`
       <dnd-layout header="[[header]]">
         <dnd-spinner loading$="[[loading]]"></dnd-spinner>

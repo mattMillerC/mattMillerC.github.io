@@ -107,7 +107,7 @@ class DndCharacterBuilderSpells extends PolymerElement {
   }
 
   updateSpellStats(character, classRefs, classLevels) {
-    
+
   }
 
   async updateFromCharacter(character) {
@@ -282,7 +282,7 @@ class DndCharacterBuilderSpells extends PolymerElement {
               spellsKnown: spellsKnownOrPrepared,
               hasChildren: spellSlots.length > 0,
               spellPrepType: spellsKnowPreparedType,
-              multiclassingLevels: (classRef.casterProgression === 'full' ? 1 : 0.5) * level,
+              multiclassingLevels: Math.floor((classRef.casterProgression === 'full' ? 1 : 0.5) * level),
               isWarlock: !!warlockSpellLevel,
               warlockSpellLevel,
               warlockSpellSlots

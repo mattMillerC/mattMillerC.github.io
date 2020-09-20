@@ -66,10 +66,4 @@ registerStyles('vaadin-grid', css`
   :host([height-by-rows]) #table {
     overflow-y: hidden;
   }
-  /* Below Tablet */
-  @media(max-width: 920px) {
-    [no-scrollbars]:not([safari]):not([firefox]) #outerscroller, [no-scrollbars][safari] #table, [no-scrollbars][firefox] #table {
-      overflow: auto;
-    }
-  }
 `);
