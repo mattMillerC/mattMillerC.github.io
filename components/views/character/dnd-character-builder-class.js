@@ -172,7 +172,10 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
                 return [...classFeaturesForLevel].concat(subclassDef.subclassFeatures[levelsInSubclass]);
               }
             }
-            return classFeaturesForLevel;
+            return classFeaturesForLevel.filter((feature) => { 
+              const name = getEntryName(feature);
+              return name !== 'Proficiency Versatility' && name !== 'Martial Versatility';
+            });
           }
         }
       }
