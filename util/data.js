@@ -117,7 +117,7 @@ export async function filterModel(modelId, selectorString, orOperand = false) {
 	}
 
 	return await loadModel(modelId).then((data) => {
-		return data.filter(item => {
+		return selectors && selectors.length ? data.filter(item => {
 			const compareFunc = orOperand ? Array.prototype.some : Array.prototype.every;
 			return compareFunc.apply(selectors, [(selector => {
 				const valPath = selector.key.split('.');
@@ -180,7 +180,7 @@ export async function filterModel(modelId, selectorString, orOperand = false) {
 				}
 				return false;
 			})]);
-		});
+		}) : data;
 	});
 }
 

@@ -127,6 +127,36 @@ export const classOptionsMap = {
         }
       }
     }
+  },
+  sorcerer: {
+    class: {
+      3: {
+        name: "Metamagic",
+        type: "mm",
+        count: 2
+      },
+      10: {
+        name: "Metamagic",
+        type: "mm",
+        count: 1
+      },
+      17: {
+        name: "Metamagic",
+        type: "mm",
+        count: 1
+      }
+    },
+    subclasses: {
+      "Divine Soul": {
+        1: [
+          {
+            name: "Divine Magic Affinity",
+            options: ["Good (Cure Wounds)", "Evil (Inflict Wounds)", "Law (Bless)", "Chaos (Bane)", "Neutrality (Protection From Good and Evil"],
+            count: 1
+          }
+        ]
+      }
+    }
   }
 };
 

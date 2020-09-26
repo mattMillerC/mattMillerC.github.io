@@ -1,11 +1,11 @@
 import { PolymerElement,html } from "@polymer/polymer";
 import "@vaadin/vaadin-grid";
 import "@vaadin/vaadin-grid/vaadin-grid-tree-toggle";
-import { getCharacterChannel, getSelectedCharacter, getClassReferences, getClassLevelGroups, toggleSpellPrepared, saveCharacter, getAttributeModifier, isSpellPreparedFromObj, setSpellSlots, getSpellSlots, toggleCantripPrepared, getSubclassChoiceLevel } from "../../../util/charBuilder";
+import { getCharacterChannel, getSelectedCharacter, getClassReferences, getClassLevelGroups, toggleSpellPrepared, saveCharacter, getAttributeModifier, isSpellPreparedFromObj, setSpellSlots, getSpellSlots, toggleCantripPrepared, getSubclassChoiceLevel, getSubclassChoice } from "../../../util/charBuilder";
 import { filterModel } from "../../../util/data";
 import { getEditModeChannel, isEditMode } from "../../../util/editMode";
 import { spellHtml } from "../../../js/spells";
-import { findInPath, util_capitalize, util_capitalizeAll } from "../../../js/utils";
+import { findInPath, util_capitalize, util_capitalizeAll, getProfBonus } from "../../../js/utils";
 import Parser from "../../../util/Parser";
 import "@vaadin/vaadin-checkbox";
 
@@ -106,8 +106,27 @@ class DndCharacterBuilderSpells extends PolymerElement {
     }, 0);
   }
 
-  updateSpellStats(character, classRefs, classLevels) {
+  async updateSpellStats(classRefs, classLevels) {
+    if (classLevels && classRefs) {
+      // DCs and Spell Modifier
+      const newSpellMods = [];
+      const overalLevel = Object.entries(classLevels).reduce((total, [className, level]) => total + level, 0);
+      const profBonus = getProfBonus(overalLevel);
 
+      for (const [className, level] of Object.entries(classLevels)) {
+        const classRef = classRefs[className];
+        if (classRef.casterProgression) {
+          const attributeModifier = await getAttributeModifier(classRef.spellcastingAbility);
+          const spellAttackBonus = attributeModifier + profBonus
+          const dc = 8 + spellAttackBonus;
+          newSpellMods.push({ className, mod: attributeModifier, spellAttackBonus, dc });
+        }
+      }
+
+      this.spellMods = newSpellMods;
+    } else {
+      this.spellMods = [];
+    }
   }
 
   async updateFromCharacter(character) {
@@ -118,7 +137,7 @@ class DndCharacterBuilderSpells extends PolymerElement {
         spellsKnownObj = {};
       let spellDisplay = [];
 
-      this.updateSpellStats(character, classRefs, classLevels);
+      this.updateSpellStats(classRefs, classLevels);
 
       for (const [ className, level ] of Object.entries(classLevels)) {
         const classRef = classRefs[className];
@@ -165,6 +184,7 @@ class DndCharacterBuilderSpells extends PolymerElement {
             spellsKnownOrPrepared = spellsKnownOrPrepared < 1 ? 1 : spellsKnownOrPrepared;
           }
 
+          /* SPELL LISTS */
           // Getting class spell list
           let classSpellList = await filterModel('spells', { key: 'classes.fromClassList', value: { name: className, source: classRef.source } } );
 
@@ -174,8 +194,20 @@ class DndCharacterBuilderSpells extends PolymerElement {
             const subclassName = character.subclasses && character.subclasses[className] ? character.subclasses[className].shortName : '';
             if (subclassName) {
               let subclassSpellList = await filterModel('spells', { key: 'classes.fromSubclass', value: { 'subclass.name': subclassName, 'class.name': className, 'class.source': classRef.source } } );
+              if (subclassName === 'Divine Soul') {
+                let divineAffinityChoice = getSubclassChoice(className.toLowerCase(), subclassName.toLowerCase(), level, 'Divine Magic Affinity', character);
+                if (divineAffinityChoice) {
+                  subclassSpellList = subclassSpellList.filter(spell => divineAffinityChoice.indexOf(spell.name) > -1);
+                } else {
+                  subclassSpellList = [];
+                }
+              }
               subclassSpellList = subclassSpellList.map(spell => ({ ...spell, isSubclassSpell: true }));
               classSpellList = [...new Set(classSpellList.concat(subclassSpellList))];
+            }
+            if (subclassName === 'Divine Soul') {
+              let divineSoulSpellList = await filterModel('spells', { key: 'classes.fromClassList', value: { name: 'cleric', source: 'phb' } } );
+              classSpellList = [...new Set(classSpellList.concat(divineSoulSpellList))];
             }
           }
 
@@ -387,7 +419,7 @@ class DndCharacterBuilderSpells extends PolymerElement {
           this.spellsKnown = spellsKnownCopy;
           toggleSpellPrepared(className, spell);
         } else if (currentPreparedCount >= maxPreparedCount) {
-          this._flashPreparedButton(findInPath('button', e.path));
+          this._flashPreparedButton(findInPath('button', e));
         }
       }
     }
@@ -413,7 +445,7 @@ class DndCharacterBuilderSpells extends PolymerElement {
       this.spellsKnown = spellsKnownCopy;
       toggleCantripPrepared(className, spell);
     } else if (currentPreparedCount >= maxPreparedCount) {
-      this._flashPreparedButton(findInPath('button', e.path));
+      this._flashPreparedButton(findInPath('button', e));
     }
   }
 
@@ -433,8 +465,8 @@ class DndCharacterBuilderSpells extends PolymerElement {
   _toggleSpellSlot(e) {
     e.preventDefault();
     e.stopPropagation();
-    const isInput = findInPath('.checkbox-wrap', e.path);
-    const isWarlock = !!findInPath('[warlock-spell]', e.path);
+    const isInput = findInPath('.checkbox-wrap', e);
+    const isWarlock = !!findInPath('[warlock-spell]', e);
     const currentSlots = isWarlock ? e.model.item.currentWarlockSlots : e.model.item.currentSlots;
     const maxSlots = isWarlock ? e.model.item.warlockSpellSlots : e.model.item.spellSlots;
     const level = e.model.item.level;
@@ -473,10 +505,10 @@ class DndCharacterBuilderSpells extends PolymerElement {
     }
     
     if (isWarlock) {
-      this._setSpellSlotsChecked(e.model.item.currentWarlockSlots, findInPath('.slot-checkboxes', e.path));
+      this._setSpellSlotsChecked(e.model.item.currentWarlockSlots, findInPath('.slot-checkboxes', e));
       setSpellSlots(level, e.model.item.currentWarlockSlots, undefined, true);
     } else {
-      this._setSpellSlotsChecked(e.model.item.currentSlots, findInPath('.slot-checkboxes', e.path));
+      this._setSpellSlotsChecked(e.model.item.currentSlots, findInPath('.slot-checkboxes', e));
       setSpellSlots(level, e.model.item.currentSlots);
     }
   }
@@ -615,6 +647,10 @@ class DndCharacterBuilderSpells extends PolymerElement {
 
   _equal(a, b) {
     return a === b;
+  }
+
+  _hasTwo(a) {
+    return a && a.length && a.length > 1;
   }
 
   static get template() {
@@ -814,68 +850,111 @@ class DndCharacterBuilderSpells extends PolymerElement {
         .class-icon {
           width: auto;
         }
+
+        .mods {
+          display: flex;
+          flex-wrap: nowrap;
+          justify-content: space-around;
+          margin: 16px 0;
+        }
+        .mod-row {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+        .mod-val:not(:first-child)::before {
+          content: '|';
+          margin-right: 4px;
+        }
+        .mod-label {
+          font-weight: bold;
+        }
       </style>
 
-      <h2>Spells</h2>
-      <div>
-        <vaadin-grid id="grid" theme="no-border no-row-borders" expanded-items="[[expandedItems]]" height-by-rows$="[[heightByRows]]">
-          <vaadin-grid-column flex-grow="1">
-            <template>
-                <template is="dom-if" if="[[_equal(item.id, 'class')]]">
-                  <div class="class-wrap">
-                    <h3>[[item.className]]</h3>
-                    <div class='spells-prepared-text'>
-                      <span>[[_spellsKnownString(item.spellPrepType)]]</span>
-                      <span class='prepared-count'>[[_currentSpellsKnownCount(item.className, spellsKnown)]] / [[_maxSpellsKnownCount(item.className, spellsKnown)]]</span>
-                    </div>
-                  </div>
-                </template>
-    
-                <template is="dom-if" if="[[_equal(item.id, 'level')]]">
-                  <div class="level-outer-wrap">
-                    <vaadin-grid-tree-toggle leaf="[[!item.hasChildren]]" expanded="{{expanded}}">
-                      <h4 class="level-wrap">[[_toLevel(item.level)]]</h4>
-                      <div class="cantrips-prepared spells-prepared-text" hidden$="[[!_equal(item.level, 0)]]">
-                        <span>Cantrips Known:</span>
-                        <span class='prepared-count'>[[_currentCantripsKnownCount(item.parentClass, spellsKnown)]] / [[_maxCantripsKnownCount(item.parentClass, spellsKnown)]]</span>
-                      </div>
-                    </vaadin-grid-tree-toggle>
-
-                    <div class="slot-checkboxes" hidden$="[[_hideCheckboxes(item.warlockSpellSlots, isEditMode)]]" on-click="_toggleSpellSlot" warlock-spell>
-                      <template is='dom-repeat' items='[[_countToArray(item.warlockSpellSlots)]]' as="thing">
-                        <span class="checkbox-wrap"><vaadin-checkbox checked="[[_isSpellSlotChecked(item.currentWarlockSlots, index)]]"></vaadin-checkbox></span>
-                      </template>
-                      <span>Pact</span>
-                    </div>
-
-                    <div class="slot-checkboxes" hidden$="[[_hideCheckboxes(item.spellSlots, isEditMode)]]" on-click="_toggleSpellSlot">
-                      <template is='dom-repeat' items='[[_countToArray(item.spellSlots)]]' as="thing">
-                        <span class="checkbox-wrap"><vaadin-checkbox checked="[[_isSpellSlotChecked(item.currentSlots, index)]]"></vaadin-checkbox></span>
-                      </template>
-                      <span>Slots</span>
-                    </div>
-                  </div>
-                </template>
-
-                <template is="dom-if" if="[[_equal(item.id, 'spell')]]">
-                  <div class="spell-outer-wrap">
-                    <vaadin-grid-tree-toggle leaf="[[!item.hasChildren]]" expanded="{{expanded}}" class="spell-wrap">
-                      <span class="spell-inner-wrap">[[item.name]]<span class="spell-level" hidden>[[_spellLevel(item)]]</span><span class="rit-ind" title="Ritual" hidden$="[[!_isRitualSpell(item)]]"></span><span class="conc-ind" title="Concentration" hidden$="[[!_isConcentrationSpell(item)]]"></span></span>
-                    </vaadin-grid-tree-toggle>
-                    <button class$="[[_isPreparedClass(spellsKnown, item, isEditMode)]]" hidden$="[[!isEditMode]]" on-click="_toggleSpellPrepared">[[_isPreparedText(spellsKnown, item)]]</button>
-                    <span class="class-icon" hidden$="[[isEditMode]]">[[_spellClassText(item.parentClass)]]</span>
-                  </div>
-                </template>
-
-                <template is="dom-if" if="[[_equal(item.id, 'spelldef')]]">
-                  <div class="spell-def-wrap">
-                    <div class= "stats-wrapper" inner-h-t-m-l="[[_renderSpell(item)]]"></div>
-                  </div>
-                </template>
+      <div class="mods">
+        <div class="mod-row">
+          <span>
+            <template is="dom-repeat" items="[[spellMods]]">
+              <span class="mod-val">+[[item.mod]]</span>
             </template>
-          </vaadin-grid-column>
-        </vaadin-grid>
+          </span>
+          <span class="mod-label">Spell Mod</span>
+        </div>
+        <div class="mod-row">
+          <span>
+            <template is="dom-repeat" items="[[spellMods]]">
+              <span class="mod-val">+[[item.spellAttackBonus]]</span>
+            </template>
+          </span>
+          <span class="mod-label">Spell Bonus</span>
+        </div>
+        <div class="mod-row">
+          <span>
+            <template is="dom-repeat" items="[[spellMods]]">
+              <span class="mod-val">[[item.dc]]</span>
+            </template>
+          </span>
+          <span class="mod-label">Spell DC</span>
+        </div>
       </div>
+
+      <vaadin-grid id="grid" theme="no-border no-row-borders" expanded-items="[[expandedItems]]" height-by-rows$="[[heightByRows]]">
+        <vaadin-grid-column flex-grow="1">
+          <template>
+              <template is="dom-if" if="[[_equal(item.id, 'class')]]">
+                <div class="class-wrap">
+                  <h3>[[item.className]]</h3>
+                  <div class='spells-prepared-text'>
+                    <span>[[_spellsKnownString(item.spellPrepType)]]</span>
+                    <span class='prepared-count'>[[_currentSpellsKnownCount(item.className, spellsKnown)]] / [[_maxSpellsKnownCount(item.className, spellsKnown)]]</span>
+                  </div>
+                </div>
+              </template>
+  
+              <template is="dom-if" if="[[_equal(item.id, 'level')]]">
+                <div class="level-outer-wrap">
+                  <vaadin-grid-tree-toggle leaf="[[!item.hasChildren]]" expanded="{{expanded}}">
+                    <h4 class="level-wrap">[[_toLevel(item.level)]]</h4>
+                    <div class="cantrips-prepared spells-prepared-text" hidden$="[[!_equal(item.level, 0)]]">
+                      <span>Cantrips Known:</span>
+                      <span class='prepared-count'>[[_currentCantripsKnownCount(item.parentClass, spellsKnown)]] / [[_maxCantripsKnownCount(item.parentClass, spellsKnown)]]</span>
+                    </div>
+                  </vaadin-grid-tree-toggle>
+
+                  <div class="slot-checkboxes" hidden$="[[_hideCheckboxes(item.warlockSpellSlots, isEditMode)]]" on-click="_toggleSpellSlot" warlock-spell>
+                    <template is='dom-repeat' items='[[_countToArray(item.warlockSpellSlots)]]' as="thing">
+                      <span class="checkbox-wrap"><vaadin-checkbox checked="[[_isSpellSlotChecked(item.currentWarlockSlots, index)]]"></vaadin-checkbox></span>
+                    </template>
+                    <span>Pact</span>
+                  </div>
+
+                  <div class="slot-checkboxes" hidden$="[[_hideCheckboxes(item.spellSlots, isEditMode)]]" on-click="_toggleSpellSlot">
+                    <template is='dom-repeat' items='[[_countToArray(item.spellSlots)]]' as="thing">
+                      <span class="checkbox-wrap"><vaadin-checkbox checked="[[_isSpellSlotChecked(item.currentSlots, index)]]"></vaadin-checkbox></span>
+                    </template>
+                    <span>Slots</span>
+                  </div>
+                </div>
+              </template>
+
+              <template is="dom-if" if="[[_equal(item.id, 'spell')]]">
+                <div class="spell-outer-wrap">
+                  <vaadin-grid-tree-toggle leaf="[[!item.hasChildren]]" expanded="{{expanded}}" class="spell-wrap">
+                    <span class="spell-inner-wrap">[[item.name]]<span class="spell-level" hidden>[[_spellLevel(item)]]</span><span class="rit-ind" title="Ritual" hidden$="[[!_isRitualSpell(item)]]"></span><span class="conc-ind" title="Concentration" hidden$="[[!_isConcentrationSpell(item)]]"></span></span>
+                  </vaadin-grid-tree-toggle>
+                  <button class$="[[_isPreparedClass(spellsKnown, item, isEditMode)]]" hidden$="[[!isEditMode]]" on-click="_toggleSpellPrepared">[[_isPreparedText(spellsKnown, item)]]</button>
+                  <span class="class-icon" hidden$="[[isEditMode]]">[[_spellClassText(item.parentClass)]]</span>
+                </div>
+              </template>
+
+              <template is="dom-if" if="[[_equal(item.id, 'spelldef')]]">
+                <div class="spell-def-wrap">
+                  <div class= "stats-wrapper" inner-h-t-m-l="[[_renderSpell(item)]]"></div>
+                </div>
+              </template>
+          </template>
+        </vaadin-grid-column>
+      </vaadin-grid>
     `;
   }
 }

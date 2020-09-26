@@ -256,7 +256,7 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
           });
         }
 
-        let features = this._getClassLevelFeatures(levels, levelIndex, classes);
+        let features = this._getClassLevelFeatures(levels, levelIndex, classes, subclasses);
         if (features && features.length
             && features.find((f) => { return f.name === "Ability Score Improvement"; })) {
           choices.push({
@@ -308,8 +308,8 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
             }
           }
 
-          if (classOptions && classOptions.subclasses && subclasses[name] && classOptions.subclasses[subclasses[name]] && classOptions.subclasses[subclasses[name]][classLevelCount]) {
-            const subclassLevelOptions = [].concat(classOptions.subclasses[subclasses[name]][classLevelCount]);
+          if (classOptions && classOptions.subclasses && subclasses[name] && classOptions.subclasses[subclasses[name].name] && classOptions.subclasses[subclasses[name].name][classLevelCount]) {
+            const subclassLevelOptions = [].concat(classOptions.subclasses[subclasses[name].name][classLevelCount]);
             
             for (const subclassLevelOption of subclassLevelOptions) {
               if (subclassLevelOption.options) {
@@ -322,7 +322,7 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
                   subclass: subclasses[name],
                   feature: subclassLevelOption.name,
                   level: classLevelCount,
-                  selections: getSubclassChoice(name.toLowerCase(), subclasses[name], classLevelCount, subclassLevelOption.name)
+                  selections: getSubclassChoice(name.toLowerCase(), subclasses[name].name.toLowerCase(), classLevelCount, subclassLevelOption.name)
                 });
               } else if (subclassLevelOption.type) {
                 const options = await filterModel("features", subclassLevelOption.type);
@@ -335,7 +335,7 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
                   subclass: subclasses[name],
                   feature: subclassLevelOption.name,
                   level: classLevelCount,
-                  selections: getSubclassChoice(name.toLowerCase(), subclasses[name], classLevelCount, subclassLevelOption.name)
+                  selections: getSubclassChoice(name.toLowerCase(), subclasses[name].name.toLowerCase(), classLevelCount, subclassLevelOption.name)
                 });
               }
             }
@@ -392,17 +392,17 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
       if (Array.isArray(choice)) {
         adjChoice = choice.map(c => {
           if (c.name) {
-            return { name: c.name, source: c.source }
+            return { ...c }
           } else {
             return c;
           }
         });
       } else if (choice.name) {
-        adjChoice = { name: choice.name, source: choice.source };
+        adjChoice = { ...choice };
       } else {
         adjChoice = choice;
       }
-      setSubclassChoice(classs, subclass, level, feature, adjChoice);
+      setSubclassChoice(classs, subclass.name.toLowerCase(), level, feature, adjChoice);
     };
   }
 
@@ -583,7 +583,7 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
       </style>
 
       <div class="heading-wrap">
-        <dnd-select-add model="classes" placeholder="Add a Level"></dnd-select-add>
+        <dnd-select-add model="classes" placeholder="Add a Class"></dnd-select-add>
       </div>
       <div class="button-wrap">
         <template is="dom-repeat" items="[[_objArray(classes)]]">
@@ -591,7 +591,7 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
         </template>
       </div>
 
-      <vaadin-grid id="classGrid" rows-draggable items=[[levels]] theme="no-border" height-by-rows$="[[heightByRows]]">
+      <vaadin-grid id="classGrid" items=[[levels]] theme="no-border" height-by-rows$="[[heightByRows]]">
         <vaadin-grid-column flex-grow="1">
           <template>
             <div class="row">

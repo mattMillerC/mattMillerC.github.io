@@ -920,10 +920,15 @@ function initCollapseToggles(rootEl) {
 	}
 }
 
-function findInPath(selector, path) {
+function findInPath(selector, event) {
+	const path = event.path || event.composedPath();
 	return path.find(el => {
 		return el.matches && el.matches(selector);
 	});
+}
+
+function getProfBonus(level) {
+	return Math.ceil(level / 4) + 1;
 }
 
 function dashToCaplital(string) {
@@ -1024,5 +1029,6 @@ export {
 	dashToCaplital,
 	getEntryName,
 	absInt,
-	entrySearch
+	entrySearch,
+	getProfBonus
 };

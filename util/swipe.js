@@ -15,14 +15,14 @@ export default function registerSwipe(element, direction, handler, mustBeInEl, c
 
     function handleTouchStart(evt) {
         if (mustBeInEl) {
-            let isInEl = findInPath(mustBeInEl, evt.path);
+            let isInEl = findInPath(mustBeInEl, evt);
             if (!isInEl) {
                 hardStop = true;
                 return;
             }
         }
         if (cantBeInEl) {
-            let isInEl = findInPath(cantBeInEl, evt.path);
+            let isInEl = findInPath(cantBeInEl, evt);
             if (isInEl) {
                 hardStop = true;
                 return;

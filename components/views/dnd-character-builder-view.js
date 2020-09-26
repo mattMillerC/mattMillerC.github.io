@@ -189,13 +189,11 @@ class DndCharacterBuilderView extends PolymerElement {
         }
         .char-detail-edit {
           display: flex;
-          flex-wrap: wrap;
           justify-content: space-between;
         }
         .char-detail {
           font-size: 20px;
           line-height: 1.5;
-          margin-left: 8px;
         }
         #editBtn {
           background: var(--mdc-theme-surface);

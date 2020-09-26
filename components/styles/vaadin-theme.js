@@ -63,7 +63,11 @@ registerStyles('vaadin-grid', css`
   :host([theme~="no-row-padding"]) [part~="cell"] {
     min-height: 2px;
   }
-  :host([height-by-rows]) #table {
-    overflow-y: hidden;
+
+  :host {
+    touch-action: unset !important;
+  }
+  #scroller {
+    touch-action: unset !important;
   }
 `);
