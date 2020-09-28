@@ -34,6 +34,11 @@ class DndAsiSelect extends PolymerElement {
       featAttributeOptions: {
         type: Array,
         value: []
+      },
+      disabled: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true
       }
     };
   }
@@ -125,6 +130,10 @@ class DndAsiSelect extends PolymerElement {
     }
   }
 
+  _disableLabel(checked) {
+    return checked ? 'Feat' : 'ASI';
+  }
+
   static get template() {
     return html`
       <style>
@@ -149,18 +158,24 @@ class DndAsiSelect extends PolymerElement {
         dnd-select-add {
           display: block;
         }
+        .disable-label {
+          font-size: 14px;
+          font-weight: 500;
+          color: var(--mdc-theme-primary);
+        }
       </style>
 
-      <dnd-switch initial-value=[[checked]] label="ASI" secondary-label="Feat"></dnd-switch>
+      <div class="disable-label" hidden$="[[!disabled]]">[[_disableLabel(checked)]]</div>
+      <dnd-switch initial-value=[[checked]] label="ASI" secondary-label="Feat" disabled$="[[disabled]]" hidden$="[[disabled]]"></dnd-switch>
       <div class="abilities" hidden$=[[checked]]>
-        <dnd-select-add add-callback="[[_genASICallback('ability1')]]" value="[[selectedAbility1]]" options="[[attributeOptions]]" placeholder="<ASI>"></dnd-select-add>
-        <dnd-select-add add-callback="[[_genASICallback('ability2')]]" value="[[selectedAbility2]]" options="[[attributeOptions]]" placeholder="<ASI>"></dnd-select-add>
+        <dnd-select-add add-callback="[[_genASICallback('ability1')]]" value="[[selectedAbility1]]" options="[[attributeOptions]]" placeholder="<ASI>" disabled$="[[disabled]]"></dnd-select-add>
+        <dnd-select-add add-callback="[[_genASICallback('ability2')]]" value="[[selectedAbility2]]" options="[[attributeOptions]]" placeholder="<ASI>" disabled$="[[disabled]]"></dnd-select-add>
       </div>
       <div hidden$=[[!checked]]>
-        <dnd-select-add add-callback="[[_genASICallback('feat')]]" model="feats" value="[[selectedFeat.name]]" placeholder="<Choose Feat>"></dnd-select-add>
+        <dnd-select-add add-callback="[[_genASICallback('feat')]]" model="feats" value="[[selectedFeat.name]]" placeholder="<Choose Feat>" disabled$="[[disabled]]"></dnd-select-add>
       </div>
       <div hidden$=[[!featHasAttributeChoice]]>
-        <dnd-select-add test add-callback="[[_genFeatAbilityCallback()]]" value="[[featAttributeSelection]]" options="[[featAttributeOptions]]" placeholder="<Choose Attribute>"></dnd-select-add>
+        <dnd-select-add test add-callback="[[_genFeatAbilityCallback()]]" value="[[featAttributeSelection]]" options="[[featAttributeOptions]]" placeholder="<Choose Attribute>" disabled$="[[disabled]]"></dnd-select-add>
       </div>
     `;
   }

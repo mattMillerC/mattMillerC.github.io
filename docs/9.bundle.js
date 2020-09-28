@@ -1,4 +1,4 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[9],{117:function(e,t,a){"use strict";a.r(t);var i=a(7),d=a(18),c=a(106),r=a(1);class o extends i.a{static get properties(){return{selectedBackground:{type:String,value:""},backgroundSkillProfOptions:{type:Object,value:[]},defaultBackgroundSkillProf:{type:String,value:""},selectedRace:{type:String,value:""},raceAttributeOptions:{type:Object,value:[]},defaultRaceAttribute:{type:String,value:""},isEditMode:{type:Boolean,value:!1}}}connectedCallback(){super.connectedCallback(),this.characterChangeHandler=e=>{let t=e.detail.character;this.updateFromCharacter(t)},this.updateFromCharacter(Object(d.s)()),Object(d.i)().addEventListener("character-selected",this.characterChangeHandler),this.editModeHandler=e=>{this.isEditMode=e.detail.isEditMode},Object(c.b)().addEventListener("editModeChange",this.editModeHandler)}disconnectedCallback(){super.disconnectedCallback(),Object(d.i)().removeEventListener("character-selected",this.characterChangeHandler),Object(c.b)().removeEventListener("editModeChange",this.editModeHandler)}async updateFromCharacter(e){this.selectedBackground=e.background.name,this.selectedRace=e.race.name;let t=await Object(d.h)();t&&t.choose?(this.backgroundSkillProfOptions=t.choose.from,this.backgroundSkillProfChoices=t.choose.count||1,this.backgroundSkillProfSelections=e.backgroundSkillProficiencies):(this.backgroundSkillProfOptions=void 0,this.backgroundSkillProfChoices=void 0,this.backgroundSkillProfSelections=void 0);let a=await Object(d.g)(t);this.defaultBackgroundSkillProf=a.map(e=>Object(r.util_capitalizeAll)(e)).join(", ");let i=await Object(d.r)();i&&i.choose?(this.raceAttributeOptions=i.choose.from.map(e=>e.toUpperCase()),this.raceAttributeChoices=i.choose.count||1,this.raceAttributeSelections=e.raceAttributes):(this.raceAttributeOptions=void 0,this.raceAttributeChoices=void 0,this.raceAttributeSelections=void 0);let c=await Object(d.q)(i);this.defaultRaceAttribute=c.map(e=>{let t=e[0].toLowerCase(),a=e[1];return t.toUpperCase()+" "+Object(r.absInt)(a)}).join(", "),this.dispatchEvent(new CustomEvent("loadingChange",{bubbles:!0,composed:!0}))}_backgroundSkillAddCallback(e){Object(d.F)(e)}_raceAttributeAddCallback(e){Object(d.K)(e)}_exists(){for(let e of arguments)if(e&&(e.constructor!==Object||Object.entries(e).length>0)&&(!Array.isArray(e)||e.length>0))return!0;return!1}static get template(){return i.b`
+(window.webpackJsonp=window.webpackJsonp||[]).push([[9],{117:function(e,t,i){"use strict";i.r(t);var a=i(7),d=i(18),o=i(106),c=i(1);class s extends a.a{static get properties(){return{selectedBackground:{type:String,value:""},backgroundSkillProfOptions:{type:Object,value:[]},defaultBackgroundSkillProf:{type:String,value:""},selectedRace:{type:String,value:""},raceAttributeOptions:{type:Object,value:[]},defaultRaceAttribute:{type:String,value:""},isEditMode:{type:Boolean,value:!1}}}connectedCallback(){super.connectedCallback(),this.characterChangeHandler=e=>{let t=e.detail.character;this.updateFromCharacter(t)},this.updateFromCharacter(Object(d.s)()),Object(d.i)().addEventListener("character-selected",this.characterChangeHandler),this.editModeHandler=e=>{this.isEditMode=e.detail.isEditMode},Object(o.b)().addEventListener("editModeChange",this.editModeHandler),this.isEditMode=Object(o.c)()}disconnectedCallback(){super.disconnectedCallback(),Object(d.i)().removeEventListener("character-selected",this.characterChangeHandler),Object(o.b)().removeEventListener("editModeChange",this.editModeHandler)}async updateFromCharacter(e){this.selectedBackground=e.background.name,this.selectedRace=e.race.name;let t=await Object(d.h)();t&&t.choose?(this.backgroundSkillProfOptions=t.choose.from,this.backgroundSkillProfChoices=t.choose.count||1,this.backgroundSkillProfSelections=e.backgroundSkillProficiencies):(this.backgroundSkillProfOptions=void 0,this.backgroundSkillProfChoices=void 0,this.backgroundSkillProfSelections=void 0);let i=await Object(d.g)(t);this.defaultBackgroundSkillProf=i.map(e=>Object(c.util_capitalizeAll)(e)).join(", ");let a=await Object(d.r)();a&&a.choose?(this.raceAttributeOptions=a.choose.from.map(e=>e.toUpperCase()),this.raceAttributeChoices=a.choose.count||1,this.raceAttributeSelections=e.raceAttributes):(this.raceAttributeOptions=void 0,this.raceAttributeChoices=void 0,this.raceAttributeSelections=void 0);let o=await Object(d.q)(a);this.defaultRaceAttribute=o.map(e=>{let t=e[0].toLowerCase(),i=e[1];return t.toUpperCase()+" "+Object(c.absInt)(i)}).join(", "),this.dispatchEvent(new CustomEvent("loadingChange",{bubbles:!0,composed:!0}))}_backgroundSkillAddCallback(e){Object(d.F)(e)}_raceAttributeAddCallback(e){Object(d.K)(e)}_showEmpty(e,t){return!e&&!t}_exists(){for(let e of arguments)if(e&&(e.constructor!==Object||Object.entries(e).length>0)&&(!Array.isArray(e)||e.length>0))return!0;return!1}static get template(){return a.b`
       <style>
         :host {
           display: block;
@@ -34,6 +34,11 @@
           color: var(--mdc-theme-secondary)
         }
 
+        .missing-text {
+          font-style: italic;
+          font-size: 14px;
+        }
+
         @media(min-width: 921px) {
           .row-wrap {
             width: calc(50% - 10px);
@@ -47,8 +52,8 @@
       <div class="col-wrap">
         <div class="row-wrap">
           <h2>Race</h2>
-          <dnd-select-add model="races" value="[[selectedRace]]" placeholder="<Choose Race>"></dnd-select-add>
-          <div hidden$="[[_exists(raceAttributeOptions, defaultRaceAttribute)]]">Select Race to add Attribute Bonuses</div>
+          <dnd-select-add model="races" value="[[selectedRace]]" placeholder="<Choose Race>" disabled$="[[!isEditMode]]" hidden$="[[_showEmpty(isEditMode, selectedRace)]]"></dnd-select-add>
+          <div class="missing-text" hidden$="[[_exists(raceAttributeOptions, defaultRaceAttribute)]]">Select Race to add Attribute Bonuses</div>
           <div hidden$="[[!_exists(raceAttributeOptions, defaultRaceAttribute)]]">Attribute Bonuses from Race:</div>
           <div hidden$="[[!_exists(defaultRaceAttribute)]]" class="default-selection">Default Attributes: <span>[[defaultRaceAttribute]]</span></div>
           <dnd-select-add hidden$="[[!_exists(raceAttributeOptions)]]" choices="[[raceAttributeChoices]]" placeholder="<Choose Attribute>" label="Choosen Attribute(s)"
@@ -57,13 +62,13 @@
 
         <div class="row-wrap">
           <h2>Background</h2>
-          <dnd-select-add model="backgrounds" value="[[selectedBackground]]" placeholder="<Choose Background>"></dnd-select-add>
-          <div hidden$="[[_exists(backgroundSkillProfOptions, defaultBackgroundSkillProf)]]">Select Background to add Skill Proficiencies</div>
+          <dnd-select-add model="backgrounds" value="[[selectedBackground]]" placeholder="<Choose Background>" disabled$="[[!isEditMode]]" hidden$="[[_showEmpty(isEditMode, selectedBackground)]]"></dnd-select-add>
+          <div class="missing-text" hidden$="[[_exists(backgroundSkillProfOptions, defaultBackgroundSkillProf)]]">Select Background to add Skill Proficiencies</div>
           <div hidden$="[[!_exists(backgroundSkillProfOptions, defaultBackgroundSkillProf)]]">Skill Proficiencies from Background:</div>
           <div hidden$="[[!_exists(defaultBackgroundSkillProf)]]" class="default-selection">Default Skills: <span>[[defaultBackgroundSkillProf]]</span></div>
-          <dnd-select-add hidden$="[[!_exists(backgroundSkillProfOptions)]]" choices="[[backgroundSkillProfChoices]]" placeholder="<Choose Skills>" label="Choosen Skill(s)"
+          <dnd-select-add hidden$="[[!_exists(backgroundSkillProfOptions)]]" choices="[[backgroundSkillProfChoices]]" placeholder="<Choose Skills>" label="Choosen Skill(s)" disabled$="[[!isEditMode]]"
             options="[[backgroundSkillProfOptions]]" value="[[backgroundSkillProfSelections]]" add-callback="[[_backgroundSkillAddCallback]]"></dnd-select-add>
         </div>
       </div>
-    `}}customElements.define("dnd-character-builder-background-race",o)}}]);
+    `}}customElements.define("dnd-character-builder-background-race",s)}}]);
 //# sourceMappingURL=9.bundle.js.map

@@ -1,7 +1,7 @@
 import { PolymerElement, html } from "@polymer/polymer";
 import { getCharacterChannel, getSelectedCharacter, getClassReferences, getBackgroundReference } from "../../../util/charBuilder";
 import EntryRenderer from '../../../util/entryrender.js'
-import { getEditModeChannel } from "../../../util/editMode";
+import { getEditModeChannel, isEditMode } from "../../../util/editMode";
 import { entrySearch } from '../../../js/utils.js'
 
 class DndCharacterBuilderEquipment extends PolymerElement {
@@ -47,6 +47,7 @@ class DndCharacterBuilderEquipment extends PolymerElement {
       this.isEditMode = e.detail.isEditMode;
     }
     getEditModeChannel().addEventListener('editModeChange', this.editModeHandler);
+    this.isEditMode = isEditMode();
   }
 
   disconnectedCallback() {
@@ -68,6 +69,8 @@ class DndCharacterBuilderEquipment extends PolymerElement {
         firstClass = classRefs[character.levels[0].name];
         this.hasClass = true;
         this.$.classEquipment.innerHTML = this.parseClassEquipment(firstClass.startingEquipment);
+      } else {
+        this.$.classEquipment.innerHTML = "";
       }
 
       if (!firstClass || firstClass.startingEquipment.additionalFromBackground) {
@@ -75,8 +78,13 @@ class DndCharacterBuilderEquipment extends PolymerElement {
         if (background) {
           this.hasBackground = true;
           this.$.backgroundEquipment.innerHTML = this.parseBackgroundEquipment(background.entries)
+        } else {
+          this.$.backgroundEquipment.innerHTML = "";
         }
+      } else {
+        this.$.backgroundEquipment.innerHTML = "";
       }
+
       this.dispatchEvent(new CustomEvent("loadingChange", { bubbles: true, composed: true }));
     }
   }
@@ -132,7 +140,7 @@ class DndCharacterBuilderEquipment extends PolymerElement {
         .row-wrap {
           width: 100%;
         }
-        .row-wrap:first-child {
+        .row-wrap:not(:last-child) {
           margin-bottom: 24px;
         }
 
@@ -166,6 +174,10 @@ class DndCharacterBuilderEquipment extends PolymerElement {
           <h2>From Background</h2>
           <span hidden$=[[hasBackground]]>Select a background to see equipment</span>
           <div id="backgroundEquipment"></div>
+        </div>
+
+        <div class="row-wrap">
+          <h2>Other Items</h2>
         </div>
       </div>
     `;

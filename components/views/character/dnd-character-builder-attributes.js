@@ -11,7 +11,7 @@ import {
   getRaceAttributeDefaults,
   getAttributeScoreModifiers
 } from "../../../util/charBuilder";
-import { getEditModeChannel } from "../../../util/editMode";
+import { getEditModeChannel, isEditMode } from "../../../util/editMode";
 import { util_capitalizeAll, absInt } from "../../../js/utils";
 
 class DndCharacterBuilderAttributes extends PolymerElement {
@@ -137,6 +137,7 @@ class DndCharacterBuilderAttributes extends PolymerElement {
       this.isEditMode = e.detail.isEditMode;
     }
     getEditModeChannel().addEventListener('editModeChange', this.editModeHandler);
+    this.isEditMode = isEditMode();
   }
 
   disconnectedCallback() {
@@ -367,7 +368,7 @@ class DndCharacterBuilderAttributes extends PolymerElement {
           <div class="prof data"></div>
         </div>
         <div class="row">
-          <vaadin-integer-field value={{str}} min="1" max="20" has-controls label="Strength"></vaadin-integer-field>
+          <vaadin-integer-field value={{str}} min="1" max="20" has-controls label="Strength" disabled$="[[!isEditMode]]"></vaadin-integer-field>
           <div class="save data">
             <span hidden$="[[!_contains(saves, 'str')]]" class="save-icon material-icons">done</span>
           </div>
@@ -378,7 +379,7 @@ class DndCharacterBuilderAttributes extends PolymerElement {
         </div>
 
         <div class="row">
-          <vaadin-integer-field value={{dex}} min="1" max="20" has-controls label="Dexterity"></vaadin-integer-field>
+          <vaadin-integer-field value={{dex}} min="1" max="20" has-controls label="Dexterity" disabled$="[[!isEditMode]]"></vaadin-integer-field>
           <div class="save data">
             <span hidden$="[[!_contains(saves, 'dex')]]" class="save-icon material-icons">done</span>
           </div>
@@ -389,7 +390,7 @@ class DndCharacterBuilderAttributes extends PolymerElement {
         </div>
 
         <div class="row">
-          <vaadin-integer-field value={{con}} min="1" max="20" has-controls label="Constitution"></vaadin-integer-field>
+          <vaadin-integer-field value={{con}} min="1" max="20" has-controls label="Constitution" disabled$="[[!isEditMode]]"></vaadin-integer-field>
           <div class="save data">
             <span hidden$="[[!_contains(saves, 'con')]]" class="save-icon material-icons">done</span>
           </div>
@@ -400,7 +401,7 @@ class DndCharacterBuilderAttributes extends PolymerElement {
         </div>
 
         <div class="row">
-          <vaadin-integer-field value={{int}} min="1" max="20" has-controls label="Intellegence"></vaadin-integer-field>
+          <vaadin-integer-field value={{int}} min="1" max="20" has-controls label="Intellegence" disabled$="[[!isEditMode]]"></vaadin-integer-field>
           <div class="save data">
             <span hidden$="[[!_contains(saves, 'int')]]" class="save-icon material-icons">done</span>
           </div>
@@ -411,7 +412,7 @@ class DndCharacterBuilderAttributes extends PolymerElement {
         </div>
 
         <div class="row">
-          <vaadin-integer-field value={{wis}} min="1" max="20" has-controls label="Wisdom"></vaadin-integer-field>
+          <vaadin-integer-field value={{wis}} min="1" max="20" has-controls label="Wisdom" disabled$="[[!isEditMode]]"></vaadin-integer-field>
           <div class="save data">
             <span hidden$="[[!_contains(saves, 'wis')]]" class="save-icon material-icons">done</span>
           </div>
@@ -422,7 +423,7 @@ class DndCharacterBuilderAttributes extends PolymerElement {
         </div>
 
         <div class="row">
-          <vaadin-integer-field value={{cha}} min="1" max="20" has-controls label="Charisma"></vaadin-integer-field>
+          <vaadin-integer-field value={{cha}} min="1" max="20" has-controls label="Charisma" disabled$="[[!isEditMode]]"></vaadin-integer-field>
           <div class="save data">
             <span hidden$="[[!_contains(saves, 'cha')]]" class="save-icon material-icons">done</span>
           </div>

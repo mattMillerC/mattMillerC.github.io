@@ -32,6 +32,10 @@ class DndCharacterBuilderSpells extends PolymerElement {
           return window.innerWidth < 900;
         }
       },
+      noContentMessage: {
+        type: Boolean,
+        value: false
+      },
       isEditMode: {
         type: Boolean,
         value: false
@@ -116,10 +120,15 @@ class DndCharacterBuilderSpells extends PolymerElement {
       for (const [className, level] of Object.entries(classLevels)) {
         const classRef = classRefs[className];
         if (classRef.casterProgression) {
-          const attributeModifier = await getAttributeModifier(classRef.spellcastingAbility);
-          const spellAttackBonus = attributeModifier + profBonus
-          const dc = 8 + spellAttackBonus;
-          newSpellMods.push({ className, mod: attributeModifier, spellAttackBonus, dc });
+          const alreadyAdded = newSpellMods.find(spellMod => classRef.spellcastingAbility === spellMod.spellcastingAbility);
+          if (alreadyAdded) {
+            alreadyAdded.classes.push(className);
+          } else {
+            const attributeModifier = await getAttributeModifier(classRef.spellcastingAbility);
+            const spellAttackBonus = attributeModifier + profBonus
+            const dc = 8 + spellAttackBonus;
+            newSpellMods.push({ classes: [className], mod: attributeModifier, spellAttackBonus, dc, spellcastingAbility: classRef.spellcastingAbility});
+          }
         }
       }
 
@@ -131,6 +140,7 @@ class DndCharacterBuilderSpells extends PolymerElement {
 
   async updateFromCharacter(character) {
     if (character && this.refresh) {
+      this.noContentMessage = true;
       const classRefs = await getClassReferences(character),
         classLevels = getClassLevelGroups(character),
         expandedItems = [],
@@ -143,6 +153,7 @@ class DndCharacterBuilderSpells extends PolymerElement {
         const classRef = classRefs[className];
 
         if (classRef.casterProgression) {
+          this.noContentMessage = false;
           let spellsKnownOrPrepared;
           let spellsKnowPreparedType = 'known';
           let cantripsKnown;
@@ -609,6 +620,41 @@ class DndCharacterBuilderSpells extends PolymerElement {
     return 0;
   }
 
+  _toggleTooltip(e) {
+    const tooltipStr = e.target.dataset.tooltip;
+    const hasTooltip = Array.from(e.target.children).find((childEl) => childEl.matches('.tooltip'));
+
+    if (!window.tooltipCloseListener) {
+      window.tooltipCloseListener = true;
+      window.tooltips = [];
+      document.addEventListener('click', () => {
+        window.tooltips.forEach((tooltip) => {
+          tooltip.classList.remove('tooltip--open');
+          setTimeout(() => {
+            tooltip.remove();
+          }, 300);
+        });
+        window.tooltips = [];
+      });
+    }
+
+    if (hasTooltip) {
+      hasTooltip.classList.remove('tooltip--open');
+      setTimeout(() => {
+        hasTooltip.remove();
+      }, 300);
+    } else if (tooltipStr) {
+      const tooltipEl = document.createElement('div');
+      tooltipEl.innerHTML = tooltipStr;
+      tooltipEl.classList.add('tooltip');
+      e.target.appendChild(tooltipEl);
+      setTimeout(() => {
+        tooltipEl.classList.add('tooltip--open');
+        window.tooltips.push(tooltipEl);
+      }, 0);
+    }
+  }
+
   _spellsKnownString(spellPrepType) {
     return 'Spells ' + util_capitalize(spellPrepType) + ':'
   }
@@ -651,6 +697,10 @@ class DndCharacterBuilderSpells extends PolymerElement {
 
   _hasTwo(a) {
     return a && a.length && a.length > 1;
+  }
+
+  _join(a) {
+    return a.join(', ');
   }
 
   static get template() {
@@ -861,6 +911,9 @@ class DndCharacterBuilderSpells extends PolymerElement {
           display: flex;
           flex-direction: column;
           align-items: center;
+          font-size: 12px;
+          text-align: center;
+          margin: 0 4px;
         }
         .mod-val:not(:first-child)::before {
           content: '|';
@@ -869,36 +922,79 @@ class DndCharacterBuilderSpells extends PolymerElement {
         .mod-label {
           font-weight: bold;
         }
+        @media(min-width: 420px) {
+          .mod-row {
+            font-size: 14px;
+          }
+        }
+
+        .tooltip {
+          position: absolute;
+          background: lightgray;
+          color: black;
+          padding: 2px 10px;
+          border-radius: 4px;
+          white-space: nowrap;
+          left: 8px;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+          border-top-left-radius: 0px;
+        }
+        .tooltip--open {
+          opacity: 1;
+        }
+        .tooltip::after {
+          content: '';
+          height: 0;
+          width: 0;
+          position: absolute;
+          border-left: 5px solid transparent;
+          border-right: 5px solid transparent;
+          border-bottom: 5px solid lightgray;
+          top: -5px;
+          left: 0px;
+        }
+        [data-tooltip] {
+          position: relative;
+        }
+
+        .no-content-message {
+          font-size: 14px;
+          padding: 20px;
+          font-style: italic;
+        }
       </style>
 
-      <div class="mods">
+      <div class="mods" hidden$="[[noContentMessage]]">
         <div class="mod-row">
-          <span>
+          <span class="mod-val-wrap">
             <template is="dom-repeat" items="[[spellMods]]">
-              <span class="mod-val">+[[item.mod]]</span>
+              <span class="mod-val" data-tooltip$="[[_join(item.classes)]]" on-mouseover="_toggleTooltip" on-mouseout="_toggleTooltip">+[[item.mod]]</span>
             </template>
           </span>
-          <span class="mod-label">Spell Mod</span>
+          <span class="mod-label">Spell Modifier</span>
         </div>
         <div class="mod-row">
-          <span>
+          <span class="mod-val-wrap">
             <template is="dom-repeat" items="[[spellMods]]">
-              <span class="mod-val">+[[item.spellAttackBonus]]</span>
+              <span class="mod-val" data-tooltip$="[[_join(item.classes)]]" on-mouseover="_toggleTooltip" on-mouseout="_toggleTooltip">+[[item.spellAttackBonus]]</span>
             </template>
           </span>
-          <span class="mod-label">Spell Bonus</span>
+          <span class="mod-label">Spell Attack Bonus</span>
         </div>
         <div class="mod-row">
-          <span>
+          <span class="mod-val-wrap">
             <template is="dom-repeat" items="[[spellMods]]">
-              <span class="mod-val">[[item.dc]]</span>
+              <span class="mod-val" data-tooltip$="[[_join(item.classes)]]" on-mouseover="_toggleTooltip" on-mouseout="_toggleTooltip">[[item.dc]]</span>
             </template>
           </span>
           <span class="mod-label">Spell DC</span>
         </div>
       </div>
 
-      <vaadin-grid id="grid" theme="no-border no-row-borders" expanded-items="[[expandedItems]]" height-by-rows$="[[heightByRows]]">
+      <div class="no-content-message" hidden$="[[!noContentMessage]]">Enter edit mode to add classes and levels.</div>
+
+      <vaadin-grid id="grid" theme="no-border no-row-borders" expanded-items="[[expandedItems]]" height-by-rows$="[[heightByRows]]" hidden$="[[noContentMessage]]">
         <vaadin-grid-column flex-grow="1">
           <template>
               <template is="dom-if" if="[[_equal(item.id, 'class')]]">

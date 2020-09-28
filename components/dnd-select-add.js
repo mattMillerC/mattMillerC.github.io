@@ -40,6 +40,11 @@ class DndSelectAdd extends PolymerElement {
       multiValue: {
         type: String,
         value: ""
+      },
+      disabled: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true
       }
     }
   }
@@ -221,7 +226,7 @@ class DndSelectAdd extends PolymerElement {
           color: var(--lumo-body-text-color);
         }
       </style>
-      <vaadin-select test$="[[test]]" theme="dark" add id="select" label="[[_label(label, choices)]]" placeholder="[[placeholder]]">
+      <vaadin-select test$="[[test]]" theme="dark" add id="select" label="[[_label(label, choices)]]" placeholder="[[placeholder]]" disabled$="[[disabled]]">
         <div hidden$="[[!_exists(multiValue)]]" slot="prefix">
           <span class="prefix">[[multiValue]]</span>
         </div>

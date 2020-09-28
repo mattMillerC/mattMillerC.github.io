@@ -12,7 +12,7 @@ import { classOptionsMap } from "../../../data/choices";
 import EntryRenderer from "../../../util/entryrender";
 import { } from '@polymer/polymer/lib/elements/dom-if.js';
 import { } from '@polymer/polymer/lib/elements/dom-repeat.js';
-import { getEditModeChannel } from "../../../util/editMode";
+import { getEditModeChannel, isEditMode } from "../../../util/editMode";
 import {filterModel} from "../../../util/data";
 
 class DndCharacterBuilderClass extends MutableData(PolymerElement) {
@@ -36,6 +36,10 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
           return window.innerWidth < 900;
         }
       },
+      noContentMessage: {
+        type: Boolean,
+        value: false
+      },
       isEditMode: {
         type: Boolean,
         value: false
@@ -56,8 +60,10 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
 
     this.editModeHandler = (e) => {
       this.isEditMode = e.detail.isEditMode;
+      this.$.classGrid.notifyResize();
     }
     getEditModeChannel().addEventListener('editModeChange', this.editModeHandler);
+    this.isEditMode = isEditMode();
   }
 
   disconnectedCallback() {
@@ -99,42 +105,49 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
         deets.innerHTML = renderStack.join("");
       }).bind(this);
 
-      // grid.addEventListener('grid-dragstart', function(e) {
-      //   draggedItem = e.detail.draggedItems[0];
-      //   grid.dropMode = 'between';
-      // });
+      grid.addEventListener('grid-dragstart', function(e) {
+        draggedItem = e.detail.draggedItems[0];
+        grid.dropMode = 'between';
+      });
 
-      // grid.addEventListener('grid-dragend', function(e) {
-      //   draggedItem = grid.dropMode = null;
-      // });
+      grid.addEventListener('grid-dragend', function(e) {
+        draggedItem = grid.dropMode = null;
+      });
 
-      // grid.addEventListener('grid-drop', function(e) {
-      //   const dropTargetItem = e.detail.dropTargetItem;
-      //   if (draggedItem && draggedItem !== dropTargetItem) {
-      //     // Reorder the items
-      //     const items = grid.items.filter(function(i) {
-      //       return i !== draggedItem;
-      //     });
-      //     const dropIndex = items.indexOf(dropTargetItem)
-      //       + (e.detail.dropLocation === 'below' ? 1 : 0);
-      //     items.splice(dropIndex, 0, draggedItem);
-      //     setClassLevels(items);
-      //   }
-      // });
+      grid.addEventListener('grid-drop', function(e) {
+        const dropTargetItem = e.detail.dropTargetItem;
+        if (draggedItem && draggedItem !== dropTargetItem) {
+          // Reorder the items
+          const items = grid.items.filter(function(i) {
+            return i !== draggedItem;
+          });
+          const dropIndex = items.indexOf(dropTargetItem)
+            + (e.detail.dropLocation === 'below' ? 1 : 0);
+          items.splice(dropIndex, 0, draggedItem);
+          setClassLevels(items);
+        }
+      });
     }, 0);
   }
 
   async updateFromCharacter(character) {
-    this.character = character;
-    this.classes = await getClassReferences(character);
-    this.subclasses = JSON.parse(JSON.stringify(character.subclasses));
+    if (character && character.levels && character.levels.length) {
+      this.noContentMessage = false;
+      this.character = character;
+      this.classes = await getClassReferences(character);
+      this.subclasses = JSON.parse(JSON.stringify(character.subclasses));
 
-    this.classChoices = await this._findLevelChoices(character, this.classes);
+      this.classChoices = await this._findLevelChoices(character, this.classes);
 
-    this.dispatchEvent(new CustomEvent("loadingChange", { bubbles: true, composed: true }));
+      this.dispatchEvent(new CustomEvent("loadingChange", { bubbles: true, composed: true }));
 
-    this.levels = character.levels;
-    this.$.classGrid.clearCache();
+      this.levels = character.levels;
+      this.$.classGrid.clearCache();
+    } else {
+      this.noContentMessage = true;
+      this.dispatchEvent(new CustomEvent("loadingChange", { bubbles: true, composed: true }));
+      this.$.classGrid.clearCache();
+    }
   }
 
   _getClassLevelFeatures(levels, index, classes, subclasses) {
@@ -434,6 +447,10 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
     setClassSkillProficiencies(skills);
   }
 
+  _editModeClass(isEditMode) {
+    return isEditMode ? 'edit-mode' : 'not-edit-mode';
+  }
+
   static get template() {
     return html`
       <style include="material-styles my-styles">
@@ -448,11 +465,19 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
           padding: 0 24px;
         }
 
+        .not-edit-mode .heading-wrap {
+          display: none;
+        }
+
         .heading-wrap {
           display: flex;
           justify-content: space-between;
           margin: 22px 14px 5px;
           align-items: center;
+        }
+
+        .not-edit-mode .button-wrap {
+          display: none;
         }
 
         .button-wrap {
@@ -555,6 +580,9 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
         .delete-btn:hover {
           color: var(--mdc-theme-secondary);
         }
+        .not-edit-mode .delete-btn {
+          display: none;
+        }
 
         .details {
           font-size: 14px;
@@ -580,68 +608,78 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
             font-size: 16px;
           }
         }
+
+        .no-content-message {
+          padding: 20px;
+          font-size: 14px;
+          font-style: italic;
+        }
       </style>
 
-      <div class="heading-wrap">
-        <dnd-select-add model="classes" placeholder="Add a Class"></dnd-select-add>
-      </div>
-      <div class="button-wrap">
-        <template is="dom-repeat" items="[[_objArray(classes)]]">
-          <dnd-button icon="add" label="[[item.name]]" on-click="_addClassLevel"></dnd-button>
-        </template>
-      </div>
+      <div class$="[[_editModeClass(isEditMode)]]">
+        <div class="heading-wrap">
+          <dnd-select-add model="classes" placeholder="Add a Class"></dnd-select-add>
+        </div>
+        <div class="button-wrap">
+          <template is="dom-repeat" items="[[_objArray(classes)]]">
+            <dnd-button icon="add" label="[[item.name]]" on-click="_addClassLevel"></dnd-button>
+          </template>
+        </div>
 
-      <vaadin-grid id="classGrid" items=[[levels]] theme="no-border" height-by-rows$="[[heightByRows]]">
-        <vaadin-grid-column flex-grow="1">
-          <template>
-            <div class="row">
-              <div class="open-details" on-click="_expandDetails">
-                <div class="level-col">
-                  <span class="level-col__level">[[_level(index)]]</span>
-                  <span class="level-col__image-wrap" ><dnd-svg class="level-col__image" id="[[_svgFromClass(item.name)]]"></dnd-svg></span>
-                  <span class="level-col__class">[[item.name]]</span>
-                </div>
+        <div class="no-content-message" hidden$="[[!noContentMessage]]">Enter edit mode to add classes and levels.</div>
 
-                <div class="features-col">
-                  <template is="dom-repeat" items="[[_getClassLevelFeatureStringArray(levels, index, classes, subclasses)]]">
-                    <span class="class-feature" subclass$="[[item.isSubclass]]">[[item.name]]</span>
-                  </template>
-                </div>
-              </div>
+        <vaadin-grid id="classGrid" items=[[levels]] theme="no-border" height-by-rows$="[[heightByRows]]">
+          <vaadin-grid-column flex-grow="1">
+            <template>
+              <div class="row">
+                <div class="open-details" on-click="_expandDetails">
+                  <div class="level-col">
+                    <span class="level-col__level">[[_level(index)]]</span>
+                    <span class="level-col__image-wrap" ><dnd-svg class="level-col__image" id="[[_svgFromClass(item.name)]]"></dnd-svg></span>
+                    <span class="level-col__class">[[item.name]]</span>
+                  </div>
 
-              <div class="choices-col">
-                <template is="dom-repeat" items="[[_atIndex(classChoices, index)]]" as="choice">
-                  <div class="choices-col__choice">
-                    <template is="dom-if" if="[[_equal(choice.id, 'subclass')]]">
-                      <dnd-select-add class="choices-col__subclass-choice" label="Subclass" placeholder="<Choose Subclass>"
-                        options="[[choice.from]]" value="[[choice.selections]]" add-callback="[[_genSubclassCallback(item)]]"></dnd-select-add>
-                    </template>
-                    <template is="dom-if" if="[[_equal(choice.id, 'asi')]]">
-                      <dnd-asi-select level-index="[[_indexOfLevel(item, levels)]]" character="[[character]]"></dnd-asi-select>
-                    </template>
-                    <template is="dom-if" if="[[_equal(choice.id, 'profs')]]">
-                      <dnd-select-add choices="[[choice.count]]" label="Skill Proficiency" placeholder="<Choose Skills>"
-                        options="[[choice.from]]" value="[[choice.selections]]" add-callback="[[_classSkillAddCallback]]"></dnd-select-add>
-                    </template>
-                    <template is="dom-if" if="[[_equal(choice.id, 'classFeature')]]">
-                      <dnd-select-add choices="[[choice.count]]" label="[[choice.name]]" placeholder="<Choose Option>"
-                        options="[[choice.from]]" value="[[choice.selections]]" add-callback="[[_classFeatureOptionAddCallback(choice.class, choice.level, choice.feature)]]"></dnd-select-add>
-                    </template>
-                    <template is="dom-if" if="[[_equal(choice.id, 'subclassFeature')]]">
-                      <dnd-select-add choices="[[choice.count]]" label="[[choice.name]]" placeholder="<Choose Option>"
-                        options="[[choice.from]]" value="[[choice.selections]]" add-callback="[[_subclassFeatureOptionAddCallback(choice.class, choice.subclass, choice.level, choice.feature)]]"></dnd-select-add>
+                  <div class="features-col">
+                    <template is="dom-repeat" items="[[_getClassLevelFeatureStringArray(levels, index, classes, subclasses)]]">
+                      <span class="class-feature" subclass$="[[item.isSubclass]]">[[item.name]]</span>
                     </template>
                   </div>
-                </template>
-              </div>
+                </div>
 
-              <div class="delete-col">
-                <button class="mdc-icon-button material-icons delete-btn" on-click="_deleteLevel">close</button>
+                <div class="choices-col">
+                  <template is="dom-repeat" items="[[_atIndex(classChoices, index)]]" as="choice">
+                    <div class="choices-col__choice">
+                      <template is="dom-if" if="[[_equal(choice.id, 'subclass')]]">
+                        <dnd-select-add class="choices-col__subclass-choice" label="Subclass" placeholder="<Choose Subclass>" disabled$="[[!isEditMode]]"
+                          options="[[choice.from]]" value="[[choice.selections]]" add-callback="[[_genSubclassCallback(item)]]"></dnd-select-add>
+                      </template>
+                      <template is="dom-if" if="[[_equal(choice.id, 'asi')]]">
+                        <dnd-asi-select level-index="[[_indexOfLevel(item, levels)]]" character="[[character]]" disabled$="[[!isEditMode]]"></dnd-asi-select>
+                      </template>
+                      <template is="dom-if" if="[[_equal(choice.id, 'profs')]]">
+                        <dnd-select-add choices="[[choice.count]]" label="Skill Proficiency" placeholder="<Choose Skills>" disabled$="[[!isEditMode]]"
+                          options="[[choice.from]]" value="[[choice.selections]]" add-callback="[[_classSkillAddCallback]]"></dnd-select-add>
+                      </template>
+                      <template is="dom-if" if="[[_equal(choice.id, 'classFeature')]]">
+                        <dnd-select-add choices="[[choice.count]]" label="[[choice.name]]" placeholder="<Choose Option>" disabled$="[[!isEditMode]]"
+                          options="[[choice.from]]" value="[[choice.selections]]" add-callback="[[_classFeatureOptionAddCallback(choice.class, choice.level, choice.feature)]]"></dnd-select-add>
+                      </template>
+                      <template is="dom-if" if="[[_equal(choice.id, 'subclassFeature')]]">
+                        <dnd-select-add choices="[[choice.count]]" label="[[choice.name]]" placeholder="<Choose Option>" disabled$="[[!isEditMode]]"
+                          options="[[choice.from]]" value="[[choice.selections]]" add-callback="[[_subclassFeatureOptionAddCallback(choice.class, choice.subclass, choice.level, choice.feature)]]"></dnd-select-add>
+                      </template>
+                    </div>
+                  </template>
+                </div>
+
+                <div class="delete-col">
+                  <button class="mdc-icon-button material-icons delete-btn" on-click="_deleteLevel">close</button>
+                </div>
               </div>
-            </div>
-          </template>
-        </vaadin-grid-column>
-      </vaadin-grid>
+            </template>
+          </vaadin-grid-column>
+        </vaadin-grid>
+      </div>
     `;
   }
 }

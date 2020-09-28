@@ -9,7 +9,7 @@ import {
   getBackgroundSkillProfDefaults,
   setBackgroundSkillProficiencies,
 } from "../../../util/charBuilder";
-import { getEditModeChannel } from "../../../util/editMode";
+import { getEditModeChannel, isEditMode } from "../../../util/editMode";
 import { util_capitalizeAll, absInt } from "../../../js/utils"; 
 
 class DndCharacterBuilderBackgroundRace extends PolymerElement {
@@ -62,6 +62,7 @@ class DndCharacterBuilderBackgroundRace extends PolymerElement {
       this.isEditMode = e.detail.isEditMode;
     }
     getEditModeChannel().addEventListener('editModeChange', this.editModeHandler);
+    this.isEditMode = isEditMode();
   }
 
   disconnectedCallback() {
@@ -118,6 +119,10 @@ class DndCharacterBuilderBackgroundRace extends PolymerElement {
     setRaceAttributes(attr);
   }
 
+  _showEmpty(isEditMode, value) {
+    return !isEditMode && !value;
+  }
+
   _exists() {
     for (let arg of arguments) {
       if (!!arg && (arg.constructor !== Object || Object.entries(arg).length > 0) && (!Array.isArray(arg) || arg.length > 0)) {
@@ -164,6 +169,11 @@ class DndCharacterBuilderBackgroundRace extends PolymerElement {
           color: var(--mdc-theme-secondary)
         }
 
+        .missing-text {
+          font-style: italic;
+          font-size: 14px;
+        }
+
         @media(min-width: 921px) {
           .row-wrap {
             width: calc(50% - 10px);
@@ -177,8 +187,8 @@ class DndCharacterBuilderBackgroundRace extends PolymerElement {
       <div class="col-wrap">
         <div class="row-wrap">
           <h2>Race</h2>
-          <dnd-select-add model="races" value="[[selectedRace]]" placeholder="<Choose Race>"></dnd-select-add>
-          <div hidden$="[[_exists(raceAttributeOptions, defaultRaceAttribute)]]">Select Race to add Attribute Bonuses</div>
+          <dnd-select-add model="races" value="[[selectedRace]]" placeholder="<Choose Race>" disabled$="[[!isEditMode]]" hidden$="[[_showEmpty(isEditMode, selectedRace)]]"></dnd-select-add>
+          <div class="missing-text" hidden$="[[_exists(raceAttributeOptions, defaultRaceAttribute)]]">Select Race to add Attribute Bonuses</div>
           <div hidden$="[[!_exists(raceAttributeOptions, defaultRaceAttribute)]]">Attribute Bonuses from Race:</div>
           <div hidden$="[[!_exists(defaultRaceAttribute)]]" class="default-selection">Default Attributes: <span>[[defaultRaceAttribute]]</span></div>
           <dnd-select-add hidden$="[[!_exists(raceAttributeOptions)]]" choices="[[raceAttributeChoices]]" placeholder="<Choose Attribute>" label="Choosen Attribute(s)"
@@ -187,11 +197,11 @@ class DndCharacterBuilderBackgroundRace extends PolymerElement {
 
         <div class="row-wrap">
           <h2>Background</h2>
-          <dnd-select-add model="backgrounds" value="[[selectedBackground]]" placeholder="<Choose Background>"></dnd-select-add>
-          <div hidden$="[[_exists(backgroundSkillProfOptions, defaultBackgroundSkillProf)]]">Select Background to add Skill Proficiencies</div>
+          <dnd-select-add model="backgrounds" value="[[selectedBackground]]" placeholder="<Choose Background>" disabled$="[[!isEditMode]]" hidden$="[[_showEmpty(isEditMode, selectedBackground)]]"></dnd-select-add>
+          <div class="missing-text" hidden$="[[_exists(backgroundSkillProfOptions, defaultBackgroundSkillProf)]]">Select Background to add Skill Proficiencies</div>
           <div hidden$="[[!_exists(backgroundSkillProfOptions, defaultBackgroundSkillProf)]]">Skill Proficiencies from Background:</div>
           <div hidden$="[[!_exists(defaultBackgroundSkillProf)]]" class="default-selection">Default Skills: <span>[[defaultBackgroundSkillProf]]</span></div>
-          <dnd-select-add hidden$="[[!_exists(backgroundSkillProfOptions)]]" choices="[[backgroundSkillProfChoices]]" placeholder="<Choose Skills>" label="Choosen Skill(s)"
+          <dnd-select-add hidden$="[[!_exists(backgroundSkillProfOptions)]]" choices="[[backgroundSkillProfChoices]]" placeholder="<Choose Skills>" label="Choosen Skill(s)" disabled$="[[!isEditMode]]"
             options="[[backgroundSkillProfOptions]]" value="[[backgroundSkillProfSelections]]" add-callback="[[_backgroundSkillAddCallback]]"></dnd-select-add>
         </div>
       </div>

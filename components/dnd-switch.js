@@ -22,6 +22,11 @@ class DndSwitch extends PolymerElement {
       secondaryLabel: {
         type: String,
         value: ''
+      },
+      disabled: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true
       }
     };
   }
@@ -36,10 +41,12 @@ class DndSwitch extends PolymerElement {
   ready() {
     super.ready(); 
 
-    this.switchEl = new MDCSwitch(this.shadowRoot.querySelector(".mdc-switch"));
-
-    this.switchEl.checked = this.initialValue;
-    this.checked = this.initialValue;
+    setTimeout(() => {
+      this.switchEl = new MDCSwitch(this.shadowRoot.querySelector(".mdc-switch"));
+  
+      this.switchEl.checked = this.initialValue;
+      this.checked = this.initialValue;
+    }, 10);
   }
 
   connectedCallback() {
@@ -62,6 +69,10 @@ class DndSwitch extends PolymerElement {
     super.disconnectedCallback();
 
     this.shadowRoot.querySelector(".mdc-switch__native-control").removeEventListener("change", this.switchEventHandler);
+  }
+
+  _switchClasses(disabled) {
+    return disabled ? "mdc-switch mdc-list-item__meta mdc-switch--disabled" : "mdc-switch mdc-list-item__meta";
   }
 
   static get template() {
@@ -91,11 +102,11 @@ class DndSwitch extends PolymerElement {
       </style>
       
       <label for="swich">[[label]]</label>
-      <div class="mdc-switch mdc-list-item__meta">
+      <div class$="[[_switchClasses(disabled)]]">
         <div class="mdc-switch__track"></div>
         <div class="mdc-switch__thumb-underlay">
           <div class="mdc-switch__thumb">
-            <input type="checkbox" id="swich" class="mdc-switch__native-control" role="switch" />
+            <input type="checkbox" id="swich" class="mdc-switch__native-control" role="switch" disabled$="[[disabled]]" />
           </div>
         </div>
       </div>

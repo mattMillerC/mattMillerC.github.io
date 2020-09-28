@@ -8,7 +8,7 @@ import "../dnd-switch";
 import { jqEmpty } from "../../js/utils.js";
 import { getCharacterChannel, getSelectedCharacter, updateName, getClassString, getFeatureString, addCharacter, removeSelectedCharacter } from '../../util/charBuilder.js';
 import registerSwipe from '../../util/swipe.js';
-import { dispatchEditModeChange } from '../../util/editMode.js';
+import { dispatchEditModeChange, getEditModeChannel, isEditMode } from '../../util/editMode.js';
 
 class DndCharacterBuilderView extends PolymerElement {
   static get properties() {
@@ -28,6 +28,10 @@ class DndCharacterBuilderView extends PolymerElement {
       indexForTabs: {
         type: Number,
         value: 0
+      },
+      isEditMode: {
+        type: Boolean,
+        value: false
       }
     }
   }
@@ -102,7 +106,13 @@ class DndCharacterBuilderView extends PolymerElement {
         this.$.name.inputElement.select();
       }
     }
-    this.$.name.addEventListener("focus", this.nameFieldFocusHandler)
+    this.$.name.addEventListener("focus", this.nameFieldFocusHandler);
+
+    this.editModeHandler = (e) => {
+      this.isEditMode = e.detail.isEditMode;
+    }
+    getEditModeChannel().addEventListener('editModeChange', this.editModeHandler);
+    this.isEditMode = isEditMode();
 
     if (!this.isLoaded) {
       this.isLoaded = true;
@@ -128,7 +138,8 @@ class DndCharacterBuilderView extends PolymerElement {
     this.removeEventListener("loadingChange", this.loadingHandler);
     window.removeEventListener('scroll', this.fixedTabsScrollHandler);
     getCharacterChannel().removeEventListener("character-selected", this.characterChangeHandler);
-    this.$.name.removeEventListener("focus", this.nameFieldFocusHandler)
+    this.$.name.removeEventListener("focus", this.nameFieldFocusHandler);
+    getEditModeChannel().removeEventListener('editModeChange', this.editModeHandler);
   }
 
   updateView(el) {
@@ -162,6 +173,10 @@ class DndCharacterBuilderView extends PolymerElement {
     dispatchEditModeChange(isEditMode);
     this.$.editBtn.innerHTML = isEditMode ? 'check' : 'edit';
   }
+
+  _editModeClass(isEditMode) {
+    return isEditMode ? 'edit-mode' : 'not-edit-mode';
+  }
   
   static get template() {
     return html`
@@ -192,18 +207,22 @@ class DndCharacterBuilderView extends PolymerElement {
           justify-content: space-between;
         }
         .char-detail {
-          font-size: 20px;
+          font-size: 16px;
           line-height: 1.5;
         }
         #editBtn {
           background: var(--mdc-theme-surface);
           color: var(--mdc-theme-on-surface);
-          border-radius: 8px;
+          border-radius: 50%;
           border: 1px solid var(--mdc-theme-text-divider-on-background);
         }
         .tab-wrap {
           background-color: var(--mdc-theme-surface);
           border: 1px solid var(--mdc-theme-text-divider-on-background);
+        }
+        .not-edit-mode .delete-char,
+        .not-edit-mode .add-char {
+          display: none;
         }
         @media(max-width: 420px) {
           #tabs.fixed {
@@ -224,29 +243,31 @@ class DndCharacterBuilderView extends PolymerElement {
         }
       </style>
 
-      <div class="head-wrap">
-        <div class="char-change">
-          <vaadin-text-field id="name" class="name" value="{{characterName}}"></vaadin-text-field>
-          <dnd-character-select mini></dnd-character-select>
-          <button class="mdc-icon-button material-icons" on-click="newCharacter">person_add</button>
-          <button class="mdc-icon-button material-icons" on-click="removeCharacter">delete</button>
-        </div>
-
-        <div class="char-detail-edit">
-          <div class="char-detail">
-            <div class="class">[[classLevel]]</div>
-            <div class="race-background">[[race]] - [[background]]</div>
+      <div class$="[[_editModeClass(isEditMode)]]">
+        <div class="head-wrap">
+          <div class="char-change">
+            <vaadin-text-field id="name" class="name" value="{{characterName}}" disabled$="[[!isEditMode]]"></vaadin-text-field>
+            <dnd-character-select mini></dnd-character-select>
+            <button class="mdc-icon-button material-icons add-char" on-click="newCharacter">person_add</button>
+            <button class="mdc-icon-button material-icons delete-char" on-click="removeCharacter">delete</button>
           </div>
-          <button class="mdc-icon-button material-icons" id="editBtn" on-click="toggleEditMode">edit</button>
+
+          <div class="char-detail-edit">
+            <div class="char-detail">
+              <div class="class">[[classLevel]]</div>
+              <div class="race-background">[[race]] - [[background]]</div>
+            </div>
+            <button class="mdc-icon-button material-icons" id="editBtn" on-click="toggleEditMode">edit</button>
+          </div>
         </div>
-      </div>
 
-      <div class="character-builder--tabs-wrapper">
-        <dnd-tabs id="tabs" tabs="[[tabs]]" initial-selected-index="[[initialSelectedTab]]"></dnd-tabs>
+        <div class="character-builder--tabs-wrapper">
+          <dnd-tabs id="tabs" tabs="[[tabs]]" initial-selected-index="[[initialSelectedTab]]"></dnd-tabs>
 
-        <div class="tab-wrap" id="tabWrap">
-          <div id="tabTarget" hidden$="[[loading]]"></div>
-          <dnd-spinner loading$="[[loading]]"></dnd-spinner>
+          <div class="tab-wrap" id="tabWrap">
+            <div id="tabTarget" hidden$="[[loading]]"></div>
+            <dnd-spinner loading$="[[loading]]"></dnd-spinner>
+          </div>
         </div>
       </div>
     `;
