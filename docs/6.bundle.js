@@ -1,511 +1,514 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[6],{104:function(e,t,s){"use strict";var l=s(1),a=s(0),n=s(5);function r(){this.wrapperTag="div",this.baseUrl="",this.setWrapperTag=function(e){this.wrapperTag=e},this.setBaseUrl=function(e){this.baseUrl=e},this.recursiveEntryRender=function(e,t,s,o,i,c){if(s=null==s?"section"===e.type?-1:0:s,o=null==o?null:o,i=null==i?null:i,(c=null!=c&&c)&&p(),"object"==typeof e){switch(void 0===e.type||"section"===e.type?"entries":e.type){case"entries":h(this,!0);break;case"options":!function(t){e.entries&&(e.entries=e.entries.sort((e,t)=>e.name&&t.name?Object(l.ascSort)(e.name,t.name):e.name?-1:t.name?1:0),h(t,!1))}(this);break;case"list":if(e.items){t.push(`<ul ${e.style?`class="${e.style}"`:""}>`);for(let n=0;n<e.items.length;n++)this.recursiveEntryRender(e.items[n],t,s+1,`<li ${Object(l.isNonstandardSource)(e.items[n].source)?`class="${a.i}"`:""}>`,"</li>");t.push("</ul>")}break;case"table":!function(l){t.push("<table class='table'>"),void 0!==e.caption&&t.push(`<caption>${e.caption}</caption>`);if(t.push("<thead>"),t.push("<tr class='table-row table-row--header'>"),e.colLabels)for(let s=0;s<e.colLabels.length;++s)t.push(`<th ${a(s)}>${e.colLabels[s]}</th>`);t.push("</tr>"),t.push("</thead>"),t.push("<tbody>");for(let a=0;a<e.rows.length;++a){t.push("<tr class='table-row'>");for(let r=0;r<e.rows[a].length;++r)t.push(`<td ${n(r)}>`),l.recursiveEntryRender(e.rows[a][r],t,s+1),t.push("</td>");t.push("</tr>")}function a(t){return void 0===e.colStyles||t>=e.colStyles.length?"class='table-cell'":`class="table-cell ${e.colStyles[t]}"`}function n(t){return void 0!==e.rowStyles?void 0===e.rowStyles||t>=e.rowStyles.length?"class='table-cell'":`class="table-cell ${e.rowStyles[t]}"`:a(t)}t.push("</tbody>"),t.push("</table>")}(this);break;case"invocation":!function(e){h(e,!0)}(this);break;case"patron":!function(e){h(e,!1)}(this);break;case"abilityDc":p(),t.push(`<span class='spell-ability'><span>${e.name} save DC</span> = 8 + your proficiency bonus + your ${Object(l.utils_makeAttChoose)(e.attributes)}</span>`),d();break;case"abilityAttackMod":null!==o&&t.push(o),t.push(`<span class='spell-ability'><span>${e.name} attack modifier</span> = your proficiency bonus + your ${Object(l.utils_makeAttChoose)(e.attributes)}</span>`),null!==i&&t.push(i);break;case"inline":if(e.entries)for(let l=0;l<e.entries.length;l++)this.recursiveEntryRender(e.entries[l],t,s);break;case"bonus":t.push((e.value<0?"":"+")+e.value);break;case"bonusSpeed":t.push((e.value<0?"":"+")+e.value+"ft.");break;case"dice":t.push(r.getEntryDice(e));break;case"link":!function(e,s){let a;if("internal"===s.href.type){if(a=`${e.baseUrl}${s.href.path}#`,void 0!==s.href.hash&&(a+=s.href.hash,void 0!==s.href.subhashes))for(let e=0;e<s.href.subhashes.length;e++){const t=s.href.subhashes[e];a+=`,${Object(l.encodeForHash)(t.key)}:${Object(l.encodeForHash)(t.value)}`}}else"external"===s.href.type&&(a=s.href.url);t.push(`<a href='${a}'>${s.text}</a>`)}(this,e);break;case"item":t.push(`<li><b>${e.name}: </b>`),this.recursiveEntryRender(e.entry,t,s),t.push("</li>");break;case"print":t.push(u(e.entry))}}else"string"==typeof e?(p(),u(this),d()):(p(),t.push(e),d());function p(){null!==o&&t.push(o)}function d(){null!==i&&t.push(i)}function h(o,i){const c=s>=2,p=i?s+1:s,d=function(){const t=[];Object(l.isNonstandardSource)(e.source)&&t.push(a.i);c&&void 0!==e.name?t.push(r.HEAD_2):t.push(-1===s?r.HEAD_NEG_1:0===s?r.HEAD_0:r.HEAD_1);"invocation"!==e.type&&"patron"!==e.type||void 0===e.subclass||t.push(a.j);return t.length>0?`class="${t.join(" ")}"`:""}(),h=function(){let t="";if("invocation"===e.type||"patron"===e.type){const s=e.source?`title="Source: ${n.a.sourceJsonToFull(e.source)}"`:"";t=void 0!==e.subclass?`${a.f}="${e.subclass.name}" ${a.g}="${e.subclass.source}" ${s}`:`${a.f}="${r.DATA_NONE}" ${a.g}="${r.DATA_NONE}" ${s}`}return t}(),u=e.prerequisite?`<span class="prerequisite">Prerequisite: ${e.prerequisite}</span>`:"",m=void 0!==e.name?`<span class="stat-name">${e.name}${Object(l.isNonstandardSource)(e.source)?" (UA)":""}${c?".":""}</span> `:"";if(e.entries||e.name){if(t.push(`<${o.wrapperTag} ${h} ${d}>${m}${u}`),e.entries)for(let s=0;s<e.entries.length;s++)o.recursiveEntryRender(e.entries[s],t,p,"<p>","</p>");t.push(`</${o.wrapperTag}>`)}}function u(o){const i=function(){let t,s,l=0,a=!1;const n=[];let r="";for(let o=0;o<e.length;++o)switch(t=e.charAt(o),s=o<e.length-1?e.charAt(o+1):null,t){case"{":"@"===s?l++>0?r+=t:(n.push(r),a=!1,r=""):r+=t;break;case"}":0==--l?(n.push(r),r=""):r+=t;break;default:r+=t}r.length>0&&n.push(r);return n}();for(let e=0;e<i.length;e++){const p=i[e];if(null!=p&&""!==p)if("@"===p.charAt(0)){const[e,i]=[(c=p).substr(0,c.indexOf(" ")),c.substr(c.indexOf(" ")+1)];if("@bold"===e||"@b"===e||"@italic"===e||"@i"===e||"@skill"===e||"@action"===e)switch(e){case"@b":case"@bold":t.push("<b>"),o.recursiveEntryRender(i,t,s),t.push("</b>");break;case"@i":case"@italic":t.push("<i>"),o.recursiveEntryRender(i,t,s),t.push("</i>");break;case"@action":t.push(`<span title="${n.a.actionToExplanation(i)}" class="explanation">${i}</span>`);break;case"@skill":t.push(`<span title="${n.a.skillToExplanation(i)}" class="explanation">${i}</span>`)}else{const[n,c,p,...d]=i.split("|"),h=`${n}${c?`${a.n}${c}`:""}`,u={type:"link",href:{type:"internal",path:"",hash:Object(l.encodeForHash)(h)},text:p||n};switch(e){case"@spell":c||(u.href.hash+=a.n+a.hb),u.href.hash="/spells/"+u.href.hash,o.recursiveEntryRender(u,t,s);break;case"@item":c||(u.href.hash+=a.n+a.T),u.href.hash="/items/"+u.href.hash,o.recursiveEntryRender(u,t,s);break;case"@condition":c||(u.href.hash+=a.n+a.hb),u.href.hash="/conditions/"+u.href.hash,o.recursiveEntryRender(u,t,s);break;case"@class":const e=r.RE_INLINE_CLASS.exec(i);e&&(u.href.hash=e[1].trim(),u.href.subhashes=[{key:"sub",value:e[2].trim()+"~phb"}]),c||(u.href.hash+=a.n+a.hb),u.href.hash="/classes/"+u.href.hash,o.recursiveEntryRender(u,t,s);break;case"@creature":c||(u.href.hash+=a.n+a.cb),u.href.hash="/bestiary/"+u.href.hash,o.recursiveEntryRender(u,t,s);break;case"@filter":t.push(n);break;case"@damage":case"@dice":case"@book":t.push(n);break;case"@5etools":c.indexOf(".")>-1?u.href.hash="/"+c.substring(0,c.indexOf(".")):u.href.hash="/"+c,o.recursiveEntryRender(u,t,s)}}}else t.push(p)}var c}c&&d()}}r.getEntryDice=function(e){let t;if(e.number&&e.faces)t=String(e.number)+"d"+e.faces;else if(e.toRoll&&e.toRoll.length){for(let s of e.toRoll)t=String(s.number)+"d"+s.faces+" + ";t=t.substring(0,t.length-3)}return"undefined"!=typeof droll&&!0===e.rollable?`<span class='roller unselectable' onclick="if (this.rolled) { this.innerHTML = this.innerHTML.split('=')[0].trim()+' = '+droll.roll('${t}').total; } else { this.rolled = true; this.innerHTML += ' = '+droll.roll('${t}').total; }">${t}</span>`:t},r.RE_INLINE_CLASS=/(.*?) \((.*?)\)/,r.HEAD_NEG_1="statsBlockSectionHead",r.HEAD_0="statsBlockHead",r.HEAD_1="statsBlockSubHead",r.HEAD_2="statsInlineHead",r.DATA_NONE="data-none",t.a=r},109:function(e,t,s){"use strict";s.r(t),s.d(t,"renderSelection",(function(){return r})),s.d(t,"spellHtml",(function(){return o}));var l=s(104),a=s(5);const n=new l.a;function r(e,t){t.querySelector(".selection-wrapper").innerHTML='\n\t<div class="stats-wrapper margin-bottom_large">\n\t</div>';const s=o(e);t.querySelector(".stats-wrapper").innerHTML=s}function o(e){const t=[];if(t.push(`<div class="margin-bottom_med"><span class="stats-source source${e.source}" title="${a.a.sourceJsonToFull(e.source)}">${a.a.sourceJsonToAbv(e.source)}</div>`),t.push(`<div class="margin-bottom_med"><span>${a.a.spLevelSchoolMetaToFull(e.level,e.school,e.meta)}</span></div>`),t.push(`<div class="margin-bottom_med"><span class="stat-name">Casting Time: </span>${a.a.spTimeListToFull(e.time)}</div>`),t.push(`<div class="margin-bottom_med"><span class="stat-name">Range: </span>${a.a.spRangeToFull(e.range)}</div>`),t.push(`<div class="margin-bottom_med"><span class="stat-name">Components: </span>${a.a.spComponentsToFull(e.components)}</div>`),t.push(`<div class="margin-bottom_med"><span class="stat-name">Duration: </span>${a.a.spDurationToFull(e.duration)}</div>`),t.push("<div class='text'>"),n.recursiveEntryRender({type:"entries",entries:e.entries},t,1),e.entriesHigherLevel){const s={type:"entries",entries:e.entriesHigherLevel};n.recursiveEntryRender(s,t,2)}if(t.push("</div>"),t.push(`<div class="margin-bottom_med"><span class="stat-name">Classes: </span>${a.a.spMainClassesToFull(e.classes)}</div>`),e.classes.fromSubclass){const s=a.a.spSubclassesToCurrentAndLegacyFull(e.classes);t.push(`<div class="margin-bottom_med"><span class="stat-name">Subclasses: </span>${s[0]}</div>`),s[1]&&t.push(`<div class="mdc-theme--text-disabled-on-background margin-bottom_med"><span class="stat-name">Subclasses (legacy): </span>${s[1]}</div>`)}return e.scrollNote&&(t.push('<div class="mdc-theme--text-disabled-on-background">'),n.recursiveEntryRender("{@italic Note: Both the {@class Fighter (Eldritch Knight)} and the {@class Rogue (Arcane Trickster)} spell lists include all {@class Wizard} spells. Spells of 5th level or higher may be cast with the aid of a spell scroll or similar.}",t,2),t.push("</div>")),t.join("")}},121:function(e,t,s){"use strict";s.r(t);var l=s(7),a=(s(119),s(44),s(36),s(13));const n=a.a`<dom-module id="lumo-grid-tree-toggle" theme-for="vaadin-grid-tree-toggle">
-  <template>
-    <style>
-      :host {
-        --vaadin-grid-tree-toggle-level-offset: 2em;
-        align-items: center;
-        vertical-align: middle;
-        margin-left: calc(var(--lumo-space-s) * -1);
-        -webkit-tap-highlight-color: transparent;
-      }
-
-      :host(:not([leaf])) {
-        cursor: default;
-      }
-
-      [part="toggle"] {
-        display: inline-block;
-        font-size: 1.5em;
-        line-height: 1;
-        width: 1em;
-        height: 1em;
-        text-align: center;
-        color: var(--lumo-contrast-50pct);
-        /* Increase touch target area */
-        padding: calc(1em / 3);
-        margin: calc(1em / -3);
-      }
-
-      :host(:not([dir="rtl"])) [part="toggle"] {
-        margin-right: 0;
-      }
-
-      @media (hover: hover) {
-        :host(:hover) [part="toggle"] {
-          color: var(--lumo-contrast-80pct);
+(window.webpackJsonp=window.webpackJsonp||[]).push([[6],{111:function(t,e,i){"use strict";var s=i(7),n=i(18),a=i(1),r=(i(78),i(39));class l extends s.a{static get properties(){return{test:{type:Boolean,reflectToAttribute:!0,value:!1},options:{type:Array,observer:"optionsUpdated"},model:{type:String},addCallback:{type:Function},value:{type:String,value:"",observer:"valueUpdated"},choices:{type:Number,observer:"choicesUpdated"},label:{type:String},placeholder:{type:String},multiValue:{type:String,value:""},disabled:{type:Boolean,value:!1,reflectToAttribute:!0}}}choicesUpdated(){this.listBox&&(this.listBox.remove(),delete this.listBox),this.$.select.render()}optionsUpdated(){this.listBox&&(this.listBox.remove(),delete this.listBox),this.$.select.render()}valueUpdated(){if(this.choices)if(Array.isArray(this.value)&&this.options){const t=this.value.map(t=>-1!==this.options.indexOf(t)?this.options.indexOf(t):this.options.findIndex(e=>e.name===t.name&&e.source===t.source)).filter(t=>-1!==t);this.listBox&&(this.listBox.selectedValues=t),this.multiValue=t.map(t=>{let e=this.options[t];return e.name?e.name:Object(a.util_capitalizeAll)(e)}).join(", ")}else this.listBox&&(this.listBox.selectedValues=[]),this.multiValue="";else this.value&&this.options?this.value.name?this.$.select.value=this.options.findIndex(t=>t.name===this.value.name||t===this.value.name)+"":this.$.select.value=this.options.findIndex(t=>t.name===this.value||t===this.value)+"":this.$.select.value=""}ready(){super.ready(),setTimeout(async()=>{this.model&&(this.options=await Object(r.b)(this.model)),this.$.select.renderer=(t,e)=>{if(!this.listBox){if(this.listBox=document.createElement("vaadin-list-box"),this.choices&&(this.listBox.setAttribute("multiple",!0),this.listBox.addEventListener("click",t=>{e.opened=!0;let i=null!==t.srcElement.getAttribute("selected");setTimeout(()=>{this.listBox.selectedValues.length>this.choices&&!i&&this.listBox.selectedValues.splice(this.listBox.selectedValues.length-2,1);let t=this.listBox.selectedValues.map(t=>this.options[t]);this.multiValue=t.map(t=>t.name?t.name:Object(a.util_capitalizeAll)(t)).join(", "),this.addCallback&&this.addCallback(t)},0)})),this.options&&this.options.length)for(let t=0;t<this.options.length;t++){const e=this.options[t],i=document.createElement("vaadin-item");e.name?(i.textContent=e.name,i.setAttribute("value",t)):(i.textContent=Object(a.util_capitalizeAll)(e),i.setAttribute("value",t)),this.listBox.appendChild(i)}t.appendChild(this.listBox),this.$.select._assignMenuElement(),this.valueUpdated()}}},0)}connectedCallback(){super.connectedCallback(),this.selectChangeHandler=()=>{const t=this.$.select.value;if(t&&!this.choices){const e=this.options[t];this.addCallback?this.addCallback(e,this.model):Object(n.G)(void 0,e,this.model),this.value||(this.$.select.value="")}},this.$.select.addEventListener("change",this.selectChangeHandler)}disconnectedCallback(){super.disconnectedCallback(),this.$.select.removeEventListener("change",this.selectChangeHandler)}_exists(t){return!!t}_label(t,e){if(t)return e?`${t} (${e})`:t}static get template(){return s.b`
+      <style>
+        :host {
+          display: inline-block;
         }
+        [slot="prefix"] {
+          width: calc(100% - 46px);
+          padding: 12px;
+          line-height: 1.4;
+        }
+        vaadin-select {
+          width: 100%;
+        }
+        .prefix {
+          white-space: normal;
+          color: var(--lumo-body-text-color);
+        }
+      </style>
+      <vaadin-select test$="[[test]]" theme="dark" add id="select" label="[[_label(label, choices)]]" placeholder="[[placeholder]]" disabled$="[[disabled]]">
+        <div hidden$="[[!_exists(multiValue)]]" slot="prefix">
+          <span class="prefix">[[multiValue]]</span>
+        </div>
+      </vaadin-select>
+    `}}customElements.define("dnd-select-add",l)},112:function(t,e,i){"use strict";var s=i(7),n=i(68);i(75),i(108);class a extends s.a{static get properties(){return{label:{type:String,value:""},icon:{type:String,value:""},svg:{type:String,value:""},background:{type:String,value:""},border:{type:String,value:""},svgFill:{type:String,value:""},svgStroke:{type:String,value:""}}}connectedCallback(){setTimeout(()=>{this.button=new n.a(this.$.button)},10)}_exists(t){return!!t}_styleStr(t,e){let i="";return t&&(i+=`background: ${t}; `),e&&(i+=`border: ${e}; `),i}_svgStyleStr(t,e){let i="";return t&&(i+=`fill: ${t}; `),e&&(i+=`stroke: ${e}; `),i}static get template(){return s.b`
+      <style include="material-styles">
+        .mdc-tab-scroller__scroll-area--scroll {
+          overflow-x: auto;
+          background-color: var(--mdc-theme-surface);
+          border: 1px solid var(--mdc-theme-text-divider-on-background);
+          border-bottom: none;
+        }
+        :host {
+          display: inline;
+          overflow: hidden;
+          white-space: nowrap;
+        }
+        .mdc-button {
+          display: inline-flex;
+          justify-content: center;
+          align-items: center;
+          width: 100%;
+        }
+        .mdc-button .mdc-button__icon {
+          margin-right: 0px;
+          margin-left: 8px;
+        }
+        .mdc-button [background] {
+          background: var(--lumo-contrast-10pct);
+        }
+        dnd-svg {
+          height: 20px;
+          width: 20px;
+          padding-left: 8px;
+          fill: var(--mdc-theme-primary);
+          stroke: var(--mdc-theme-primary);
+        }
+      </style>
+      <button id="button" class="mdc-button" style$="[[_styleStr(background, border)]]">
+        <div class="mdc-button__ripple"></div>
+        <span class="mdc-button__label">[[label]]</span>
+        <slot name="label"></slot>
+        <template is="dom-if" if="[[_exists(icon)]]">
+          <i class="material-icons mdc-button__icon" aria-hidden="true">[[icon]]</i>
+        </template>
+        <template is="dom-if" if="[[_exists(svg)]]">
+          <dnd-svg id="[[svg]]" style$="[[_svgStyleStr(svgFill, svgStroke)]]"></dnd-svg>
+        </template>
+      </button>
+    `}}customElements.define("dnd-button",a)},121:function(t,e,i){"use strict";i.r(e);var s=i(7);i(50),i(49),i(72);const n=i(13).a`<dom-module id="lumo-number-field" theme-for="vaadin-number-field">
+  <template>
+    <style include="lumo-field-button">
+      :host {
+        width: 8em;
       }
 
-      [part="toggle"]::before {
-        font-family: "lumo-icons";
-        display: inline-block;
-        height: 100%;
+      :host([has-controls]:not([theme~="align-right"])) [part="value"] {
+        text-align: center;
       }
 
-      :host(:not([expanded])) [part="toggle"]::before {
-        content: var(--lumo-icons-angle-right);
+      [part="decrease-button"][disabled],
+      [part="increase-button"][disabled] {
+        opacity: 0.2;
       }
 
-      :host([expanded]) [part="toggle"]::before {
-        content: var(--lumo-icons-angle-right);
-        transform: rotate(90deg);
+      :host([has-controls]) [part="input-field"] {
+        padding: 0;
       }
 
-      /* Experimental support for hierarchy connectors, using an unsupported selector */
-      :host([theme~="connectors"]) #level-spacer {
-        position: relative;
-        z-index: -1;
-        font-size: 1em;
-        height: 1.5em;
+      [part="decrease-button"],
+      [part="increase-button"] {
+        cursor: pointer;
+        font-size: var(--lumo-icon-size-s);
+        width: 1.6em;
+        height: 1.6em;
       }
 
-      :host([theme~="connectors"]) #level-spacer::before {
-        display: block;
-        content: "";
-        margin-top: calc(var(--lumo-space-m) * -1);
-        height: calc(var(--lumo-space-m) + 3em);
-        background-image: linear-gradient(to right, transparent calc(var(--vaadin-grid-tree-toggle-level-offset) - 1px), var(--lumo-contrast-10pct) calc(var(--vaadin-grid-tree-toggle-level-offset) - 1px));
-        background-size: var(--vaadin-grid-tree-toggle-level-offset) var(--vaadin-grid-tree-toggle-level-offset);
-        background-position: calc(var(--vaadin-grid-tree-toggle-level-offset) / 2 - 2px) 0;
+      [part="decrease-button"]::before,
+      [part="increase-button"]::before {
+        margin-top: 0.2em;
       }
 
       /* RTL specific styles */
 
-      :host([dir="rtl"]) {
-        margin-left: 0;
-        margin-right: calc(var(--lumo-space-s) * -1);
-      }
-
-      :host([dir="rtl"]) [part="toggle"] {
-        margin-left: 0;
-      }
-
-      :host([dir="rtl"][expanded]) [part="toggle"]::before {
-        transform: rotate(-90deg);
-      }
-
-      :host([dir="rtl"][theme~="connectors"]) #level-spacer::before {
-        background-image: linear-gradient(to left, transparent calc(var(--vaadin-grid-tree-toggle-level-offset) - 1px), var(--lumo-contrast-10pct) calc(var(--vaadin-grid-tree-toggle-level-offset) - 1px));
-        background-position: calc(100% - (var(--vaadin-grid-tree-toggle-level-offset) / 2 - 2px)) 0;
-      }
-
-      :host([dir="rtl"]:not([expanded])) [part="toggle"]::before,
-      :host([dir="rtl"][expanded]) [part="toggle"]::before {
-        content: var(--lumo-icons-angle-left);
+      :host([dir="rtl"]) [part="value"],
+      :host([dir="rtl"]) [part="input-field"] ::slotted(input) {
+        --_lumo-text-field-overflow-mask-image: linear-gradient(to left, transparent, #000 1.25em);
       }
     </style>
   </template>
-</dom-module>`;document.head.appendChild(n.content);s(30);var r=s(15),o=s(20),i=s(41),c=s(10);
+</dom-module>`;document.head.appendChild(n.content);i(80),i(30);var a=i(66),r=i(19);
 /**
 @license
 Copyright (c) 2017 Vaadin Ltd.
 This program is available under Apache License Version 2.0, available at https://vaadin.com/license/
 */
-const p=document.createElement("template");p.innerHTML="<custom-style>\n  <style>\n    @font-face {\n      font-family: \"vaadin-grid-tree-icons\";\n      src: url(data:application/font-woff;charset=utf-8;base64,d09GRgABAAAAAAQkAA0AAAAABrwAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAABGRlRNAAAECAAAABoAAAAcgHwa6EdERUYAAAPsAAAAHAAAAB4AJwAOT1MvMgAAAZQAAAA/AAAAYA8TBIJjbWFwAAAB8AAAAFUAAAFeGJvXWmdhc3AAAAPkAAAACAAAAAgAAAAQZ2x5ZgAAAlwAAABLAAAAhIrPOhFoZWFkAAABMAAAACsAAAA2DsJI02hoZWEAAAFcAAAAHQAAACQHAgPHaG10eAAAAdQAAAAZAAAAHAxVAgBsb2NhAAACSAAAABIAAAASAIAAVG1heHAAAAF8AAAAGAAAACAACgAFbmFtZQAAAqgAAAECAAACTwflzbdwb3N0AAADrAAAADYAAABZQ7Ajh3icY2BkYGAA4twv3Vfi+W2+MnCzMIDANSOmbGSa2YEZRHEwMIEoAAoiB6sAeJxjYGRgYD7w/wADAwsDCDA7MDAyoAI2AFEEAtIAAAB4nGNgZGBg4GBgZgDRDAxMDGgAAAGbABB4nGNgZp7JOIGBlYGBaSbTGQYGhn4IzfiawZiRkwEVMAqgCTA4MDA+38d84P8BBgdmIAapQZJVYGAEAGc/C54AeJxjYYAAxlAIzQTELAwMBxgZGB0ACy0BYwAAAHicY2BgYGaAYBkGRgYQiADyGMF8FgYbIM3FwMHABISMDArP9/3/+/8/WJXC8z0Q9v8nEp5gHVwMMMAIMo+RDYiZoQJMQIKJARUA7WBhGN4AACFKDtoAAAAAAAAAAAgACAAQABgAJgA0AEIAAHichYvBEYBADAKBVHBjBT4swl9KS2k05o0XHd/yW1hAfBFwCv9sIlJu3nZaNS3PXAaXXHI8Lge7DlzF7C1RgXc7xkK6+gvcD2URmQB4nK2RQWoCMRiFX3RUqtCli65yADModOMBLLgQSqHddRFnQghIAnEUvEA3vUUP0LP0Fj1G+yb8R5iEhO9/ef/7FwFwj28o9EthiVp4hBlehcfUP4Ur8o/wBAv8CU+xVFvhOR7UB7tUdUdlVRJ6HnHWTnhM/V24In8JT5j/KzzFSi2E53hUz7jCcrcIiDDwyKSW1JEct2HdIPH1DFytbUM0PofWdNk5E5oUqb/Q6HHBiVGZpfOXkyUMEj5IyBuNmYZQjBobfsuassvnkKLe1OuBBj0VQ8cRni2xjLWsHaM0jrjx3peYA0/vrdmUYqe9iy7bzrX6eNP7Jh1SijX+AaUVbB8AAHicY2BiwA84GBgYmRiYGJkZmBlZGFkZ2djScyoLMgzZS/MyDQwMwLSruZMzlHaB0q4A76kLlwAAAAEAAf//AA94nGNgZGBg4AFiMSBmYmAEQnYgZgHzGAAD6wA2eJxjYGBgZACCKxJigiD6mhFTNowGACmcA/8AAA==) format('woff');\n      font-weight: normal;\n      font-style: normal;\n    }\n  </style>\n</custom-style>",document.head.appendChild(p.content);class d extends(Object(o.a)(Object(i.a)(l.a))){static get template(){return a.a`
-    <style>
-      :host {
-        display: inline-flex;
-        align-items: baseline;
-
-        /* CSS API for :host */
-        --vaadin-grid-tree-toggle-level-offset: 1em;
-
-        /*
-          ShadyCSS seems to polyfill :dir(rtl) only for :host, thus using
-          a host custom CSS property for ltr/rtl toggle icon choice.
-         */
-        ---collapsed-icon: "\\e7be\\00a0";
-      }
-
-      :host(:dir(rtl)) {
-        ---collapsed-icon: "\\e7bd\\00a0";
-      }
-
-      :host([hidden]) {
-        display: none !important;
-      }
-
-      :host(:not([leaf])) {
-        cursor: pointer;
-      }
-
-      #level-spacer,
-      [part="toggle"] {
-        flex: none;
-      }
-
-      #level-spacer {
-        display: inline-block;
-        width: calc(var(---level, '0') * var(--vaadin-grid-tree-toggle-level-offset));
-      }
-
-      [part="toggle"]::before {
-        font-family: "vaadin-grid-tree-icons";
-        line-height: 1em; /* make icon font metrics not affect baseline */
-      }
-
-      :host(:not([expanded])) [part="toggle"]::before {
-        content: var(---collapsed-icon);
-      }
-
-      :host([expanded]) [part="toggle"]::before {
-        content: "\\e7bc\\00a0"; /* icon glyph + single non-breaking space */
-      }
-
-      :host([leaf]) [part="toggle"] {
-        visibility: hidden;
-      }
-    </style>
-
-    <span id="level-spacer"></span>
-    <span part="toggle"></span>
-    <slot></slot>
-`}static get is(){return"vaadin-grid-tree-toggle"}static get properties(){return{level:{type:Number,value:0,observer:"_levelChanged"},leaf:{type:Boolean,value:!1,reflectToAttribute:!0},expanded:{type:Boolean,value:!1,reflectToAttribute:!0,notify:!0}}}ready(){super.ready(),this.addEventListener("click",e=>this._onClick(e))}_onClick(e){this.leaf||(e.preventDefault(),this.expanded=!this.expanded)}_levelChanged(e){const t=Number(e).toString();this.style["---level"]=t,this._debouncerUpdateLevel=r.a.debounce(this._debouncerUpdateLevel,c.c,()=>this.updateStyles({"---level":t}))}}customElements.define(d.is,d);var h=s(18),u=s(39),m=s(106),g=s(109),f=s(1),b=s(5);s(113),s(112);class A extends l.a{static get properties(){return{spellsKnown:{type:Object,value:{}},preparedSpells:{type:Object,value:{}},heightByRows:{type:Boolean,value:()=>window.innerWidth<900},noContentMessage:{type:Boolean,value:!1},isEditMode:{type:Boolean,value:!1}}}connectedCallback(){super.connectedCallback(),this.characterChangeHandler=e=>{let t=e.detail.character;this.updateFromCharacter(t)},this.refresh=!0,this.updateFromCharacter(Object(h.s)()),Object(h.i)().addEventListener("character-selected",this.characterChangeHandler),this.editModeHandler=e=>{this.isEditMode=e.detail.isEditMode,this.refresh=!0,this.updateFromCharacter(Object(h.s)())},Object(m.b)().addEventListener("editModeChange",this.editModeHandler),this.isEditMode=Object(m.c)()}disconnectedCallback(){super.disconnectedCallback(),Object(h.i)().removeEventListener("character-selected",this.characterChangeHandler),Object(m.b)().removeEventListener("editModeChange",this.editModeHandler)}ready(){super.ready(),this.multiclassSlotsDef=[[2],[3],[4,2],[4,3],[4,3,2],[4,3,3],[4,3,3,1],[4,3,3,2],[4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2,1],[4,3,3,3,2,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1,1],[4,3,3,3,3,1,1,1,1],[4,3,3,3,3,2,1,1,1],[4,3,3,3,3,2,2,1,1]],setTimeout(()=>{this.$.grid.dataProvider=((e,t)=>{const s=e.page*e.pageSize,l=e.parentItem?e.parentItem.children:this.spellDisplay;if(l&&l.length){t(l.slice(s,s+e.pageSize),l.length)}}).bind(this)},0)}async updateSpellStats(e,t){if(t&&e){const s=[],l=Object.entries(t).reduce((e,[t,s])=>e+s,0),a=Object(f.getProfBonus)(l);for(const[l,n]of Object.entries(t)){const t=e[l];if(t.casterProgression){const e=s.find(e=>t.spellcastingAbility===e.spellcastingAbility);if(e)e.classes.push(l);else{const e=await Object(h.d)(t.spellcastingAbility),n=e+a,r=8+n;s.push({classes:[l],mod:e,spellAttackBonus:n,dc:r,spellcastingAbility:t.spellcastingAbility})}}}this.spellMods=s}else this.spellMods=[]}async updateFromCharacter(e){if(e&&this.refresh){this.noContentMessage=!0;const t=await Object(h.l)(e),s=Object(h.k)(e),l=[],a={};let n=[];this.updateSpellStats(t,s);for(const[r,o]of Object.entries(s)){const s=t[r];if(s.casterProgression){let t;this.noContentMessage=!1;let i,c,p,d="known";if(s.classTableGroups.forEach(e=>{if(e.colLabels&&e.colLabels.length){const s=e.colLabels.findIndex(e=>e.toLowerCase().indexOf("spells known")>-1);s>-1&&e.rows&&e.rows.length>o-1&&(t=e.rows[o-1][s]);const l=e.colLabels.findIndex(e=>e.toLowerCase().indexOf("cantrips known")>-1);l>-1&&e.rows&&e.rows.length>o-1&&(i=e.rows[o-1][l]);const a=e.colLabels.findIndex(e=>e.toLowerCase().indexOf("slot level")>-1);if(a>-1&&e.rows&&e.rows.length>o-1){const t=e.rows[o-1][a].match(/(\d+)/g);t&&t.length&&(c=parseInt(t[0]))}const n=e.colLabels.findIndex(e=>e.toLowerCase().indexOf("spell slots")>-1);n>-1&&e.rows&&e.rows.length>o-1&&(p=e.rows[o-1][n])}}),void 0===t){d="prepared";const e="full"===s.casterProgression?1:.5,l=await Object(h.d)(s.spellcastingAbility);t=Math.floor(o*e)+l,t=t<1?1:t}let m=await Object(u.a)("spells",{key:"classes.fromClassList",value:{name:r,source:s.source}});const g=Object(h.w)(s);if(o>=g){const t=e.subclasses&&e.subclasses[r]?e.subclasses[r].shortName:"";if(t){let l=await Object(u.a)("spells",{key:"classes.fromSubclass",value:{"subclass.name":t,"class.name":r,"class.source":s.source}});if("Divine Soul"===t){let s=Object(h.v)(r.toLowerCase(),t.toLowerCase(),o,"Divine Magic Affinity",e);l=s?l.filter(e=>s.indexOf(e.name)>-1):[]}l=l.map(e=>({...e,isSubclassSpell:!0})),m=[...new Set(m.concat(l))]}if("Divine Soul"===t){let e=await Object(u.a)("spells",{key:"classes.fromClassList",value:{name:"cleric",source:"phb"}});m=[...new Set(m.concat(e))]}}const f=s.classTableGroups.find(e=>"Spell Slots per Spell Level"===e.title);let b;if(f)b=f.rows[o-1].filter(e=>0!==e);else{b=[];for(let e=0;e<c;e++)b.push(0)}const A=i?0:1;i&&(b=[0].concat(b));let v=JSON.parse(JSON.stringify(e.preparedSpells)),w=JSON.parse(JSON.stringify(e.preparedCantrips));e.preparedSpells[r]={},e.preparedCantrips[r]={};const y=b.map((t,s)=>{if(-1!==t){let a=m.filter(e=>e.level===s+A).sort((e,t)=>e.name<t.name?-1:e.name>t.name?1:0).map(t=>{const l=s+A===0,a=l?Object(h.y)(r,t,w):Object(h.y)(r,t,v);return a&&(l?e.preparedCantrips[r][t.name]={name:t.name,source:t.source}:e.preparedSpells[r][t.name]={name:t.name,source:t.source}),this.isEditMode||a||t.isSubclassSpell?{id:"spell",name:t.name,children:[{...t,hasChildren:!1,id:"spelldef",parentClass:r,parentLevel:s+A}],hasChildren:!0,parentClass:r,parentLevel:s+A,isCantrip:l,isSubclassSpell:t.isSubclassSpell,isWarlock:!!c}:void 0}).filter(e=>void 0!==e);const n={id:"level",level:s+A,spellSlots:t,currentSlots:Object(h.u)(s+A),children:a,hasChildren:a.length>0,parentClass:r,isWarlock:!!c};return this.$.grid.expandedItems.some(e=>"level"===e.id&&e.level===n.level&&e.parentClass===n.parentClass)&&l.push(n),n}return null}).filter(e=>null!==e);if(a[r]={current:e.preparedSpells&&e.preparedSpells[r]?Object.keys(e.preparedSpells[r]):[],max:t,type:d,maxCantrips:i,currentCantrips:e.preparedCantrips&&e.preparedCantrips[r]?Object.keys(e.preparedCantrips[r]):[]},y.length){const e={id:"class",className:r,level:o,hasCantrips:A,children:y,spellsKnown:t,hasChildren:y.length>0,spellPrepType:d,multiclassingLevels:Math.floor(("full"===s.casterProgression?1:.5)*o),isWarlock:!!c,warlockSpellLevel:c,warlockSpellSlots:p};l.push(e),n.push(e)}}}if(n.sort((e,t)=>e.children.length-t.children.length),!this.isEditMode){let t=[];if(n.length){let s,l,a=0,r=-1;for(let e of n)e.isWarlock?(s=e.warlockSpellLevel,l=e.warlockSpellSlots):(a+=e.multiclassingLevels,r++),e.children.forEach((s,l)=>{const a=l+e.hasCantrips;t[a]?s.children[l]&&(t[a].children=t[a].children.concat(s.children)):t[a]=s});t=t.filter(e=>void 0!==e);const o=0===t[0].level;if(r>0){const e=this.multiclassSlotsDef[a];for(let s=o?1:0;s<t.length;s++)t[s].spellSlots=e[s-(o?1:0)]}s&&(t[s-(o?0:1)].warlockSpellSlots=l,t[s-(o?0:1)].currentWarlockSlots=e.warlockSpellSlots||0)}n=t}this.refresh=!1,Object(h.C)(e),this.spellsKnown=a,this.spellDisplay=n,this.expandedItems=l,this.dispatchEvent(new CustomEvent("loadingChange",{bubbles:!0,composed:!0})),this.$.grid.clearCache()}}_renderSpell(e){return Object(g.spellHtml)(e)}_toggleSpellPrepared(e){e.preventDefault(),e.stopPropagation();if(!e.model.item.isSubclassSpell&&this.isEditMode){if(e.model.item.isCantrip)this._toggleCantripPrepared(e);else{const t=e.model.item.parentClass,s=e.model.item.children[0],l=this._isPreparedSpell(this.spellsKnown,t,s.name),a=this._currentSpellsKnownCount(t,this.spellsKnown),n=this._maxSpellsKnownCount(t,this.spellsKnown);if((l||a<n)&&"spelldef"===s.id){let e=JSON.parse(JSON.stringify(this.spellsKnown));if(l){const l=e[t].current.indexOf(s.name);e[t].current.splice(l,1)}else e[t].current.push(s.name);this.spellsKnown=e,Object(h.O)(t,s)}else a>=n&&this._flashPreparedButton(Object(f.findInPath)("button",e))}}}_toggleCantripPrepared(e){e.preventDefault(),e.stopPropagation();const t=e.model.item.parentClass,s=e.model.item.children[0],l=this._isPreparedCantrip(this.spellsKnown,t,s.name),a=this._currentCantripsKnownCount(t,this.spellsKnown),n=this._maxCantripsKnownCount(t,this.spellsKnown);if((l||a<n)&&"spelldef"===s.id){let e=JSON.parse(JSON.stringify(this.spellsKnown));if(l){const l=e[t].currentCantrips.indexOf(s.name);e[t].currentCantrips.splice(l,1)}else e[t].currentCantrips.push(s.name);this.spellsKnown=e,Object(h.N)(t,s)}else a>=n&&this._flashPreparedButton(Object(f.findInPath)("button",e))}_flashPreparedButton(e){e&&(e.classList.add("transition-bg"),e.classList.add("flash-error"),setTimeout(()=>{e.classList.remove("flash-error"),setTimeout(()=>{e.classList.remove("transition-bg")},200)},200))}_toggleSpellSlot(e){e.preventDefault(),e.stopPropagation();const t=Object(f.findInPath)(".checkbox-wrap",e),s=!!Object(f.findInPath)("[warlock-spell]",e),l=s?e.model.item.currentWarlockSlots:e.model.item.currentSlots,a=s?e.model.item.warlockSpellSlots:e.model.item.spellSlots,n=e.model.item.level;if(t){!t.children[0].checked&&l<a?s?e.model.item.currentWarlockSlots=l+1:e.model.item.currentSlots=l+1:l>0&&(s?e.model.item.currentWarlockSlots=l-1:e.model.item.currentSlots=l-1)}else l<a?s?e.model.item.currentWarlockSlots=l+1:e.model.item.currentSlots=l+1:l>0&&(s?e.model.item.currentWarlockSlots=l-1:e.model.item.currentSlots=l-1);s?(this._setSpellSlotsChecked(e.model.item.currentWarlockSlots,Object(f.findInPath)(".slot-checkboxes",e)),Object(h.L)(n,e.model.item.currentWarlockSlots,void 0,!0)):(this._setSpellSlotsChecked(e.model.item.currentSlots,Object(f.findInPath)(".slot-checkboxes",e)),Object(h.L)(n,e.model.item.currentSlots))}_setSpellSlotsChecked(e,t){const s=t.querySelectorAll("vaadin-checkbox");for(let t=0;t<s.length;t++)s[t].checked=t<e}_isPreparedClass(e,t,s){const l=t.parentClass,a=t.name,n=t.isCantrip,r=t.isSubclassSpell;if(r)return s?"spell-button always-prepared edit-mode":"spell-button always-prepared";return(n?this._isPreparedCantrip(e,l,a):this._isPreparedSpell(e,l,a,r))?s?"spell-prepared spell-button edit-mode":"spell-prepared spell-button":s?"spell-button edit-mode":"spell-button"}_isPreparedSpell(e,t,s,l){return l||e[t]&&e[t].current&&e[t].current.length&&e[t].current.indexOf(s)>-1}_isPreparedCantrip(e,t,s){return e[t]&&e[t].currentCantrips&&e[t].currentCantrips.length&&e[t].currentCantrips.indexOf(s)>-1}_isPreparedText(e,t){const s=t.parentClass,l=t.name,a=t.isCantrip,n=t.isSubclassSpell,r=e[s].type;if(n)return"Always";return(a?this._isPreparedCantrip(e,s,l):this._isPreparedSpell(e,s,l,n))?"known"===r?"Learned":"Prepared":"known"===r?"Learn":"Prepare"}_countToArray(e){const t=[];for(var s=0;s<e;s++)t.push(null);return t}_toLevel(e){return 0===e?b.a.spLevelToFull(e)+"s":b.a.spLevelToFull(e)+" Level"}_currentSpellsKnownCount(e,t){return t&&e&&t[e]&&t[e].current?t[e].current.length:0}_maxSpellsKnownCount(e,t){return t&&e&&t[e]?t[e].max:0}_currentCantripsKnownCount(e,t){return t&&e&&t[e]&&t[e].current?t[e].currentCantrips.length:0}_maxCantripsKnownCount(e,t){return t&&e&&t[e]?t[e].maxCantrips:0}_toggleTooltip(e){const t=e.target.dataset.tooltip,s=Array.from(e.target.children).find(e=>e.matches(".tooltip"));if(window.tooltipCloseListener||(window.tooltipCloseListener=!0,window.tooltips=[],document.addEventListener("click",()=>{window.tooltips.forEach(e=>{e.classList.remove("tooltip--open"),setTimeout(()=>{e.remove()},300)}),window.tooltips=[]})),s)s.classList.remove("tooltip--open"),setTimeout(()=>{s.remove()},300);else if(t){const s=document.createElement("div");s.innerHTML=t,s.classList.add("tooltip"),e.target.appendChild(s),setTimeout(()=>{s.classList.add("tooltip--open"),window.tooltips.push(s)},0)}}_spellsKnownString(e){return"Spells "+Object(f.util_capitalize)(e)+":"}_isRitualSpell(e){const t=e.children[0];return t&&t.meta&&t.meta.ritual}_isConcentrationSpell(e){return e.children[0].duration.some(e=>e.concentration)}_spellLevel(e){if(e&&e.children&&e.children.length&&e.children[0].level)return b.a.spLevelToFull(e.children[0].level)}_isSpellSlotChecked(e,t){return t<e}_spellClassText(e){return Object(f.util_capitalizeAll)(e)}_isEmpty(e){return!e||!e.length}_hideCheckboxes(e){return!e||e>0&&this.isEditMode}_equal(e,t){return e===t}_hasTwo(e){return e&&e.length&&e.length>1}_join(e){return e.join(", ")}static get template(){return l.b`
-      <style include='my-styles'>
-        :host {}
+const l=document.createElement("template");let o;l.innerHTML='<dom-module id="vaadin-number-field-template">\n  <template>\n    <style>\n      :host([readonly]) [part$="button"] {\n        pointer-events: none;\n      }\n\n      [part="decrease-button"]::before {\n        content: "−";\n      }\n\n      [part="increase-button"]::before {\n        content: "+";\n      }\n\n      [part="decrease-button"],\n      [part="increase-button"] {\n        -webkit-user-select: none;\n        -moz-user-select: none;\n        -ms-user-select: none;\n        user-select: none;\n      }\n\n      /* Hide the native arrow icons */\n      [part="value"]::-webkit-outer-spin-button,\n      [part="value"]::-webkit-inner-spin-button {\n        -webkit-appearance: none;\n        margin: 0;\n      }\n\n      [part="value"] {\n        /* Older Firefox versions (v47.0) requires !important */\n        -moz-appearance: textfield !important;\n      }\n\n      :host([dir="rtl"]) [part="input-field"] {\n        direction: ltr;\n      }\n\n      :host([dir="rtl"]) [part="value"]::placeholder {\n        direction: rtl;\n      }\n\n      :host([dir="rtl"]) [part="input-field"] ::slotted(input)::placeholder {\n        direction: rtl;\n      }\n\n      :host([dir="rtl"]) [part="value"]:-ms-input-placeholder,\n      :host([dir="rtl"]) [part="input-field"] ::slotted(input):-ms-input-placeholder {\n        direction: rtl;\n      }\n\n      :host([dir="rtl"]:not([has-controls])) [part="value"]::placeholder {\n        text-align: left;\n      }\n\n      :host([dir="rtl"]:not([has-controls])) [part="input-field"] ::slotted(input)::placeholder {\n        text-align: left;\n      }\n\n      :host([dir="rtl"]:not([has-controls])) [part="value"]:-ms-input-placeholder,\n      :host([dir="rtl"]:not([has-controls])) [part="input-field"] ::slotted(input):-ms-input-placeholder {\n        text-align: left;\n      }\n    </style>\n\n    <div disabled$="[[!_allowed(-1, value, min, max, step)]]" part="decrease-button" on-click="_decreaseValue" on-touchend="_decreaseButtonTouchend" hidden$="[[!hasControls]]">\n    </div>\n\n    <div disabled$="[[!_allowed(1, value, min, max, step)]]" part="increase-button" on-click="_increaseValue" on-touchend="_increaseButtonTouchend" hidden$="[[!hasControls]]">\n    </div>\n  </template>\n\n  \n</dom-module>',document.head.appendChild(l.content);class d extends a.a{static get is(){return"vaadin-number-field"}static get version(){return"2.6.2"}static get properties(){return{hasControls:{type:Boolean,value:!1,reflectToAttribute:!0},min:{type:Number,reflectToAttribute:!0,observer:"_minChanged"},max:{type:Number,reflectToAttribute:!0,observer:"_maxChanged"},step:{type:Number,value:1,observer:"_stepChanged"}}}ready(){super.ready(),this.__previousValidInput=this.value||"",this.inputElement.type="number",this.inputElement.addEventListener("change",this.__onInputChange.bind(this))}_decreaseButtonTouchend(t){t.preventDefault(),this._decreaseValue()}_increaseButtonTouchend(t){t.preventDefault(),this._increaseValue()}static get template(){if(!o){o=super.template.cloneNode(!0);const t=r.a.import(this.is+"-template","template"),e=t.content.querySelector('[part="decrease-button"]'),i=t.content.querySelector('[part="increase-button"]'),s=t.content.querySelector("style"),n=o.content.querySelector('[part="input-field"]'),a=o.content.querySelector('[name="prefix"]');n.insertBefore(e,a),n.appendChild(i),o.content.appendChild(s)}return o}_createConstraintsObserver(){this._createMethodObserver("_constraintsChanged(required, minlength, maxlength, pattern, min, max, step)")}_constraintsChanged(t,e,i,s,n,a,r){if(!this.invalid)return;const l=t=>!t&&0!==t;l(n)&&l(a)?super._constraintsChanged(t,e,i,s):this.validate()}_decreaseValue(){this._incrementValue(-1)}_increaseValue(){this._incrementValue(1)}_incrementValue(t){if(this.disabled||this.readonly)return;let e=parseFloat(this.value);this.value?e<this.min?(t=0,e=this.min):e>this.max&&(t=0,e=this.max):0==this.min&&t<0||0==this.max&&t>0||0==this.max&&0==this.min?(t=0,e=0):(null==this.max||this.max>=0)&&(null==this.min||this.min<=0)?e=0:this.min>0?(e=this.min,this.max<0&&t<0&&(e=this.max),t=0):this.max<0&&(e=this.max,t<0?t=0:this._getIncrement(1,e-this.step)>this.max?e-=2*this.step:e-=this.step);const i=this._getIncrement(t,e);this.value&&0!=t&&!this._incrementIsInsideTheLimits(t,e)||this._setValue(i)}_setValue(t){this.value=this.inputElement.value=String(parseFloat(t)),this.dispatchEvent(new CustomEvent("change",{bubbles:!0}))}_getIncrement(t,e){let i=this.step||1,s=this.min||0;const n=Math.max(this._getMultiplier(e),this._getMultiplier(i),this._getMultiplier(s));i*=n,s*=n;const a=((e=Math.round(e*n))-s)%i;return t>0?(e-a+i)/n:t<0?(e-(a||i))/n:e/n}_getDecimalCount(t){const e=String(t),i=e.indexOf(".");return-1===i?1:e.length-i-1}_getMultiplier(t){if(!isNaN(t))return Math.pow(10,this._getDecimalCount(t))}_incrementIsInsideTheLimits(t,e){return t<0?null==this.min||this._getIncrement(t,e)>=this.min:t>0?null==this.max||this._getIncrement(t,e)<=this.max:this._getIncrement(t,e)<=this.max&&this._getIncrement(t,e)>=this.min}_allowed(t){const e=t*(this.step||1),i=parseFloat(this.value);return!this.value||!this.disabled&&this._incrementIsInsideTheLimits(e,i)}_stepChanged(t){this.__validateByStep=this.__stepChangedCalled||null!==this.getAttribute("step"),this.inputElement.step=this.__validateByStep?t:"any",this.__stepChangedCalled=!0,this.setAttribute("step",t)}_minChanged(t){this.inputElement.min=t}_maxChanged(t){this.inputElement.max=t}_valueChanged(t,e){t&&isNaN(parseFloat(t))?this.value="":"string"!=typeof this.value&&(this.value=String(this.value)),super._valueChanged(this.value,e)}_onKeyDown(t){38==t.keyCode?(t.preventDefault(),this._increaseValue()):40==t.keyCode&&(t.preventDefault(),this._decreaseValue()),super._onKeyDown(t)}__onInputChange(){this.validate()}checkValidity(){return void 0!==this.min||void 0!==this.max||this.__validateByStep?this.inputElement.checkValidity():super.checkValidity()}}window.customElements.define(d.is,d);
+/**
+@license
+Copyright (c) 2019 Vaadin Ltd.
+This program is available under Apache License Version 2.0, available at https://vaadin.com/license/
+*/
+const c=document.createElement("template");c.innerHTML='<dom-module id="vaadin-integer-field-template">\n\n  \n</dom-module>',document.head.appendChild(c.content);class p extends d{static get is(){return"vaadin-integer-field"}static get version(){return"2.6.2"}static get properties(){return{pattern:String,preventInvalidInput:Boolean,minlength:Number,maxlength:Number}}ready(){super.ready(),this._enabledCharPattern="[-+\\d]"}_valueChanged(t,e){if(""!==t&&!this.__isInteger(t))return console.warn(`Trying to set non-integer value "${t}" to <vaadin-integer-field>. Clearing the value.`),void(this.value="");super._valueChanged(t,e)}_stepChanged(t,e){if(!this.__hasOnlyDigits(t))return console.warn(`Trying to set invalid step size "${t}", which is not a positive integer, to <vaadin-integer-field>. Resetting the default value 1.`),void(this.step=1);super._stepChanged(t,e)}__isInteger(t){return/^(-\d)?\d*$/.test(String(t))}__hasOnlyDigits(t){return/^\d*$/.test(String(t))}}window.customElements.define(p.is,p);i(111),i(112),i(108);var u=i(18),h=i(107),b=i(1);class m extends s.a{static get properties(){return{str:{type:Number},dex:{type:Number},con:{type:Number},int:{type:Number},wis:{type:Number},cha:{type:Number},strAdj:{type:Number,value:0},dexAdj:{type:Number,value:0},conAdj:{type:Number,value:0},intAdj:{type:Number,value:0},wisAdj:{type:Number,value:0},chaAdj:{type:Number,value:0},attributeProfs:{type:String,value:""},saves:{type:Array,value:[]},classSkillProfOptions:{type:Object,value:{}},backgroundSkillProfOptions:{type:Object,value:[]},defaultBackgroundSkillProf:{type:String,value:""},raceAttributeOptions:{type:Object,value:[]},defaultRaceAttribute:{type:String,value:""},maxHP:{type:Number},tempHP:{type:Number,value:0},currentHP:{type:Number,observer:"currentHPChange"},isEditMode:{type:Boolean,value:!1}}}static get observers(){return["updateCharAttr(str, dex, con, int, wis, cha)"]}updateCharAttr(t,e,i,s,n,a){t&&e&&i&&s&&n&&a&&Object(u.Z)({str:t,dex:e,con:i,int:s,wis:n,cha:a})}currentHPChange(t){}connectedCallback(){super.connectedCallback(),this.characterChangeHandler=t=>{let e=t.detail.character;this.updateAttributesFromCharacter(e)},this.updateAttributesFromCharacter(Object(u.y)()),Object(u.j)().addEventListener("character-selected",this.characterChangeHandler),this.editModeHandler=t=>{this.isEditMode=t.detail.isEditMode},Object(h.b)().addEventListener("editModeChange",this.editModeHandler),this.isEditMode=Object(h.c)()}disconnectedCallback(){super.disconnectedCallback(),Object(u.j)().removeEventListener("character-selected",this.characterChangeHandler),Object(h.b)().removeEventListener("editModeChange",this.editModeHandler)}async updateAttributesFromCharacter(t){if(t&&t.attr){const e=t.attr;e.str===this.str&&e.dex===this.dex&&e.con===this.con&&e.int===this.int&&e.wis===this.wis&&e.cha===this.cha||this.setProperties({str:t.attr.str,dex:t.attr.dex,con:t.attr.con,int:t.attr.int,wis:t.attr.wis,cha:t.attr.cha}),this.saves=await Object(u.n)();let i=await Object(u.f)(),s=await Object(u.x)();s&&s.choose?(this.raceAttributeOptions=s.choose.from.map(t=>t.toUpperCase()),this.raceAttributeChoices=s.choose.count||1,this.raceAttributeSelections=t.raceAttributes):(this.raceAttributeOptions=void 0,this.raceAttributeChoices=void 0,this.raceAttributeSelections=void 0);let n=await Object(u.w)(s);this.defaultRaceAttribute=n.map(t=>{let e=t[0].toLowerCase(),i=t[1];return e.toUpperCase()+" "+Object(b.absInt)(i)}).join(", "),this.strAdj=i.str,this.dexAdj=i.dex,this.conAdj=i.con,this.intAdj=i.int,this.wisAdj=i.wis,this.chaAdj=i.cha,this.attributeProfs=(await Object(u.z)()).join(","),this.maxHP=await Object(u.v)(),this.currentHP=await Object(u.p)(),this.tempHP=await Object(u.D)(),this.hitDice=await Object(u.u)(),this.dispatchEvent(new CustomEvent("loadingChange",{bubbles:!0,composed:!0}))}}_adjustString(t){return 0!==t&&void 0!==t?Object(b.absInt)(t):""}_total(t,e){let i=parseInt(t),s=parseInt(e);return i=isNaN(i)?0:i,s=isNaN(s)?0:s,i+s}_mod(t,e){return Object(b.absInt)(Math.floor((this._total(t,e)-10)/2))}_contains(t,e){return t.indexOf(e)>-1}_exists(){for(let t of arguments)if(t&&(t.constructor!==Object||Object.entries(t).length>0)&&(!Array.isArray(t)||t.length>0))return!0;return!1}_editModeClass(t){return t?"edit-mode":"not-edit-mode"}_tempHpStr(t){return t&&"number"==typeof t&&t>0?" + "+t:""}_toggleButtonField(t){const e=t.target.closest(".btn-field"),i=e.classList.contains("btn-field--open"),s=e.classList.contains("btn-field--temp"),n=e.querySelector("vaadin-integer-field");if(e.classList.toggle("btn-field--open"),s)if(i){const t=parseInt(n.value);t&&(Object(u.c)(parseInt(this.tempHP)+t),n.value="")}else n.focus();else if(i){const t=parseInt(n.value);if(t){const i=e.classList.contains("btn-field--heal")?1:-1;Object(u.R)(parseInt(this.currentHP)+i*t),n.value=""}}else n.focus()}_useHitDice(t){const e=t.target.closest(".hit-dice__item");if(this.currentHP<this.maxHP){const t=e.dataset.className;console.error(t),Object(u.bb)(t)}else e.classList.add("hit-dice__item--error"),setTimeout(()=>{e.classList.remove("hit-dice__item--error")},500)}_strContains(t,e){return t.indexOf(e)>-1}_resetHitDice(t){Object(u.J)()}_triggerShortRest(t){}_triggerLongRest(t){}static get template(){return s.b`
+      <style include="material-styles">
         :host {
           display: block;
+          padding: 14px;
         }
+
         [hidden] {
-          display: none !important;
+          visibility: hidden;
         }
 
-        h2 {
-          font-size: 24px;
-          font-weight: bold;
-          margin: 34px 14px 24px;
-        }
-
-        vaadin-grid-tree-toggle { 
-          width: 100%;
-          cursor: pointer;
-        }
-
-        .class-wrap {
-          width: 100%;
+        .wrap {
           display: flex;
+          flex-direction: row-reverse;
           justify-content: space-between;
-          flex-wrap: wrap;
-          align-items: center;
-          padding-top: 4px;
-          /* padding-top: 34px;
-          padding-bottom: 8px; */
-          -youbkit-touch-callout: none;
-          -youbkit-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
         }
-        .class-wrap h3 {
-          font-size: 22px;
-          font-weight: bold;
-        }
-
-        .spells-prepared-text {
-          margin-right: 6px;
-          margin-left: auto;
-        }
-        .prepared-count {
-          color: var(--mdc-theme-secondary);
-          font-weight: bold;
-        }
-        .cantrips-prepared {
-          margin-right: 0;
-        }
-
-        .level-outer-wrap {
-          border-bottom: 1px solid var(--_lumo-grid-secondary-border-color);
-          padding-bottom: 8px;
-          display: flex;
-          height: 32px;
-        }
-
-        .level-wrap {
-          width: 100%;
-          -youbkit-touch-callout: none;
-          -youbkit-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
-        }
-
-        .slot-checkboxes {
-          cursor: pointer;
-          display: flex;
-          padding: 4px;
-        }
-
-        .slot-checkboxes span {
-          -youbkit-touch-callout: none;
-          -youbkit-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
-        }
-
-        vaadin-checkbox {
-          pointer-events: none;
-        }
-
-        .spell-wrap {
-          width: calc(100% - 100px);
-          margin-left: 24px;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-
-        .spell-inner-wrap {
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          -youbkit-touch-callout: none;
-          -youbkit-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
-        }
-
-        .spell-level {
-          color: var(--mdc-theme-text-disabled-on-background);
-          margin-left: 8px;
-          margin-right: 4px;
-          font-size: 12px;
-        }
-
-        .rit-ind,
-        .conc-ind {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 13px;
-          height: 13px;
-          border-radius: 50%;
-          color: var(--mdc-theme-on-secondary);
-          background-color: var(--mdc-theme-secondary);
-          font-size: 10px;
-          position: relative;
-          bottom: 1px;
-          margin-left: 4px;
-        }
-
-        .rit-ind::before {
-          content: 'R';
-        }
-
-        .conc-ind::before {
-          content: 'C';
-        }
-
-        .spell-def-wrap {
-          font-size: 14px;
-          width: calc(100% - 20px);
-          margin: 0 auto;
-          background: var(--lumo-contrast-10pct);
-          border-radius: 4px;
-          white-space: pre-line;
-        }
-
-        .spell-def-wrap .margin-bottom_med {
-          margin-bottom: 0px !important;
-        }
-
-        .spell-def-wrap .text {
-          margin-top: 16px;
-        }
-
-        .spell-def-wrap p {
-          margin-bottom: 16px;
-        }
-
-        .stats-wrapper {
-          margin: 0 14px;
-        }
-
-        .spell-button,
-        .class-icon {
-          background-color: var(--mdc-theme-text-disabled-on-background);
-          color: var(--mdc-theme-on-secondary);
-          border: none;
-          border-radius: 4px;
-          outline: none;
-          width: 60px;
-          display: inline-block;
-          justify-content: center;
-          white-space: normal;
-          font-size: 12px;
-          padding: 1px 4px;
-        }
-        .spell-button.edit-mode {
-          cursor: pointer;
-        }
-        .spell-button.always-prepared {
-          background-color: var(--mdc-theme-secondary-lighter);
-          cursor: not-allowed;
-        }
-        .spell-button.spell-prepared {
-          background-color: var(--mdc-theme-secondary);
-        }
-        .spell-button.flash-error {
-          background-color: var(--mdc-theme-error);
-          transition: background-color 0.2s ease-out;
-        }
-        .spell-button.transition-bg {
-          transition: background-color 0.2s ease-in;
-        }
-        .class-icon {
-          width: auto;
-        }
-
-        .mods {
-          display: flex;
-          flex-wrap: nowrap;
-          justify-content: space-around;
-          margin: 16px 0;
-        }
-        .mod-row {
+        .stats {
           display: flex;
           flex-direction: column;
-          align-items: center;
-          font-size: 12px;
-          text-align: center;
-          margin: 0 4px;
+          min-width: 0;
         }
-        .mod-val:not(:first-child)::before {
-          content: '|';
-          margin-right: 4px;
+        .attribute-wrap {
+          display: flex;
+          flex-direction: row;
+          min-width: 0;
         }
-        .mod-label {
-          font-weight: bold;
-        }
-        @media(min-width: 420px) {
-          .mod-row {
-            font-size: 14px;
-          }
+        .health-wrap {
+          display: flex;
+          flex-direction: column;
+          min-width: 0;
         }
 
-        .tooltip {
-          position: absolute;
-          background: lightgray;
-          color: black;
-          padding: 2px 10px;
-          border-radius: 4px;
+
+        /* Proficiencies */
+        .proficiencies {
+          margin-left: 8px;
+          line-height: 1.7;
+          min-width: 0;
+        }
+        .proficiency-item {
+          font-size: 14px;
           white-space: nowrap;
-          left: 8px;
-          opacity: 0;
-          transition: opacity 0.3s ease;
-          border-top-left-radius: 0px;
-        }
-        .tooltip--open {
-          opacity: 1;
-        }
-        .tooltip::after {
-          content: '';
-          height: 0;
-          width: 0;
-          position: absolute;
-          border-left: 5px solid transparent;
-          border-right: 5px solid transparent;
-          border-bottom: 5px solid lightgray;
-          top: -5px;
-          left: 0px;
-        }
-        [data-tooltip] {
+          overflow: hidden;
+          text-overflow: ellipsis;
           position: relative;
         }
 
-        .no-content-message {
+        .proficiency-item::before,
+        .proficiency-item[expertise]::after {
+          content: '';
+          display: inline-block;
+          height: 10px;
+          width: 10px;
+          border: 1px solid var(--mdc-theme-primary);
+          border-radius: 50%;
+          background-color: transparent;
+          margin-right: 8px;
+          position: relative;
+          top: 1px;
+          box-shadow: 0px 0px 10px -4px rgba(0,0,0,0.75);
+        }
+        .proficiency-item[expertise]::after {
+          position: absolute;
+          left: 10px;
+          top: 5px;
+          margin-right: 0;
+          background-color: var(--mdc-theme-primary);
+        }
+        .proficiency-item[expertise]::before {
+          margin-right: 14px;
+        }
+        .proficiency-item[enabled]::before {
+          background-color: var(--mdc-theme-primary);
+        }
+
+
+        /* Stat Box */
+        .stat-box {
+          position: relative;
+          display: inline-flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          background: var(--lumo-contrast-10pct);
+          border: 2px solid var(--mdc-theme-text-divider-on-background);
+          border-radius: 4px;
+        }
+        .stat-box:not(:last-child) {
+          margin-bottom:16px;
+        }
+        .stat-box__save {
+          position: absolute;
+          height: 12px;
+          width: 12px;
+          border: 2px solid var(--mdc-theme-primary);
+          border-radius: 50%;
+          top: -8px;
+          background-color: #33383C;
+          display: none;
+        }
+        .stat-box__save[enabled] {
+          background-color: var(--mdc-theme-primary);
+          display: block;
+        }
+        .stat-box__mod {
+          font-size: 40px;
+          font-weight: normal;
+          margin: 16px 8px 4px;
+          line-height: 1;
+          position: relative;
+          left: 1px;
+        }
+        .stat-box__footer {
+          display: inline-block;
+        }
+        .not-edit-mode .stat-box__adj {
+          position: relative;
+          right: 18px;
+          color: var(--lumo-body-text-color);
+          -webkit-text-fill-color: var(--lumo-body-text-color);
+        }
+
+
+        /* Stat Box HP  */
+        .stat-box--hp {
+
+        }
+        .stat-box__total {
           font-size: 14px;
-          padding: 20px;
-          font-style: italic;
+        }
+        .stat-box--hp .stat-box__adj--hp {
+          position: absolute;
+          bottom: -10px;
+          right: 5px;
+          font-size: 16px;
+        }
+
+
+        /* Button Field */
+        .btn-field {
+          display: inline-flex;
+          flex-direction: row;
+          flex-wrap: nowrap;
+          margin-bottom: 16px;
+          width: 120px;
+          height: 36px;
+          background: var(--lumo-contrast-10pct);
+          border-radius: 4px;
+        }
+        .btn-field__btn {
+          display: block;
+          width: 100%;
+        }
+        .btn-field__input {
+          display: none;
+        }
+        .btn-field--open .btn-field__btn {
+          width: calc(100% - 60px);
+        }
+        .btn-field--open .btn-field__btn-label {
+          width: 0;
+          overflow: hidden;
+        }
+        .btn-field--open .btn-field__input {
+          display: block;
+          width: 60px;
+          margin-top: -40px;
+        }
+        .btn-field--heal.btn-field--open .btn-field__btn-label {
+          margin-left: -8px;
+        }
+        .btn-field vaadin-integer-field {
+          --lumo-contrast-10pct: transparent;
+        }
+
+
+        /* Hit Dice */
+        .hit-dice {
+          display: flex;
+          flex-direction: column;
+          border-radius: 4px;
+          padding: 6px;
+          background: var(--lumo-contrast-10pct);
+          margin-bottom: 16px;
+        }
+        .hit-dice__heading {
+          display: inline-block;
+          text-align: center;
+          margin-bottom: 8px;
+          color: var(--mdc-theme-primary);
+          text-transform: uppercase;
+          font-size: 14px;
+        }
+        .hit-dice__item {
+          width: 100%;
+          display: flex;
+          flex-direction: row;
+          flex-wrap: nowrap;
+        }
+        .hit-dice__item dnd-button {
+          width: 100%;
+        }
+        .hit-dice__item--error dnd-button {
+          --mdc-theme-primary: var(--lumo-error-color-50pct);
+        }
+        .hit-dice__item-label {
+          width: 100%;
+          display: flex;
+          justify-content: space-around;
+          align-items: center;
+          padding: 4px 0 0;
+        }
+        .hit-dice__item-label dnd-svg {
+          stroke: var(--mdc-theme-on-primary);
+          fill: var(--mdc-theme-primary);
+          width: 30px;
+        }
+
+        /* Rest Buttons */
+        .rest-btn {
+          margin-bottom: 16px;
         }
       </style>
 
-      <div class="mods" hidden$="[[noContentMessage]]">
-        <div class="mod-row">
-          <span class="mod-val-wrap">
-            <template is="dom-repeat" items="[[spellMods]]">
-              <span class="mod-val" data-tooltip$="[[_join(item.classes)]]" on-mouseover="_toggleTooltip" on-mouseout="_toggleTooltip">+[[item.mod]]</span>
-            </template>
-          </span>
-          <span class="mod-label">Spell Modifier</span>
-        </div>
-        <div class="mod-row">
-          <span class="mod-val-wrap">
-            <template is="dom-repeat" items="[[spellMods]]">
-              <span class="mod-val" data-tooltip$="[[_join(item.classes)]]" on-mouseover="_toggleTooltip" on-mouseout="_toggleTooltip">+[[item.spellAttackBonus]]</span>
-            </template>
-          </span>
-          <span class="mod-label">Spell Attack Bonus</span>
-        </div>
-        <div class="mod-row">
-          <span class="mod-val-wrap">
-            <template is="dom-repeat" items="[[spellMods]]">
-              <span class="mod-val" data-tooltip$="[[_join(item.classes)]]" on-mouseover="_toggleTooltip" on-mouseout="_toggleTooltip">[[item.dc]]</span>
-            </template>
-          </span>
-          <span class="mod-label">Spell DC</span>
+      <div class$="[[_editModeClass(isEditMode)]]">
+        <div class="wrap">
+          <div class="health-wrap">
+            <!-- Hit Points -->
+            <div class="stat-box stat-box--hp">
+              <div class="stat-box__footer">
+                <vaadin-integer-field theme="hp" value={{currentHP}} min="0" max="[[maxHP]]" has-controls label="Hit Points">
+                  <span class="stat-box__adj--hp" slot="suffix">/ [[maxHP]] [[_tempHpStr(tempHP)]]</span>
+                </vaadin-integer-field>
+              </div>
+            </div>
+
+            <!--  Healing / Damage -->
+            <div class="btn-field btn-field--heal">
+                <dnd-button icon="favorite" background="none" class="btn-field__btn" on-click="_toggleButtonField">
+                  <span class="btn-field__btn-label" slot="label">Heal</span>
+                </dnd-button>
+                <vaadin-integer-field class="btn-field__input" min="0" >
+                  <span slot="prefix">+</span>
+                </vaadin-integer-field>
+            </div>
+            <div class="btn-field">
+                <dnd-button svg="swords" background="none" class="btn-field__btn" on-click="_toggleButtonField">
+                  <span class="btn-field__btn-label" slot="label">Damage</span>
+                </dnd-button>
+                <vaadin-integer-field class="btn-field__input" min="0" >
+                  <span slot="prefix">-</span>
+                </vaadin-integer-field>
+            </div>
+            <div class="btn-field btn-field--temp">
+                <dnd-button svg="paladin" background="none" class="btn-field__btn" on-click="_toggleButtonField">
+                  <span class="btn-field__btn-label" slot="label">Temp HP</span>
+                </dnd-button>
+                <vaadin-integer-field class="btn-field__input" min="0" >
+                  <span slot="prefix">+</span>
+                </vaadin-integer-field>
+            </div>
+
+            <!--  Hit Dice -->
+            <div class="hit-dice">
+              <div class="hit-dice__heading">Hit Dice</div>
+              <template is="dom-repeat" items="[[hitDice]]">
+                <div class="hit-dice__item" data-class-name$="[[item.className]]">
+                  <dnd-button on-click="_useHitDice">
+                    <div class="hit-dice__item-label" slot="label">
+                      <dnd-svg id="[[item.die]]"></dnd-svg>
+                      <div class="hit-dice__count">[[item.current]] / [[item.total]]</div>
+                    </div>
+                  </dnd-button>
+                </div>
+              </template>
+              <dnd-button class="hit-dice__reset" label="Reset" on-click="_resetHitDice"></dnd-button>
+            </div>
+
+            <!-- Reset Hit Dice -->
+
+            <!--  Short Rest -->
+            <!-- <dnd-button icon="watch" class="rest-btn rest-btn--short" background="var(--lumo-contrast-10pct)" label="Short" on-click="_triggerShortRest"></dnd-button> -->
+
+            <!--  Long Rest -->
+            <!-- <dnd-button icon="watch_later" class="rest-btn rest-btn--long" background="var(--lumo-contrast-10pct)" label="Long" on-click="_triggerLongRest"></dnd-button> -->
+
+            
+          </div>
+
+          <div class="stats">
+            <!--  Attributes -->
+            <div class="attribute-wrap">
+              <div class="stat-box">
+                <div class="stat-box__save" enabled$="[[_contains(saves, 'str')]]"></div>
+                <div class="stat-box__mod">[[_mod(strAdj, str)]]</div>
+                <div class="stat-box__footer">
+                  <vaadin-integer-field theme="mini" value={{str}} min="1" max="20" has-controls label="Strength" disabled$="[[!isEditMode]]">
+                    <span class="stat-box__adj" slot="suffix">[[_adjustString(strAdj)]]</span>
+                  </vaadin-integer-field>
+                </div>
+              </div>
+              <div class="proficiencies">
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'athletics')]]">Athletics</div>
+              </div>
+            </div>
+            <div class="attribute-wrap">
+              <div class="stat-box">
+                <div class="stat-box__save" enabled$="[[_contains(saves, 'dex')]]"></div>
+                <div class="stat-box__mod">[[_mod(dexAdj, dex)]]</div>
+                <div class="stat-box__footer">
+                  <vaadin-integer-field theme="mini" value={{dex}} min="1" max="20" has-controls label="Dexterity" disabled$="[[!isEditMode]]">
+                    <span class="stat-box__adj" slot="suffix">[[_adjustString(dexAdj)]]</span>
+                  </vaadin-integer-field>
+                </div>
+              </div>
+              <div class="proficiencies">
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'acrobatics')]]">Acrobatics</div>
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'slight of hand')]]">Slight of Hand</div>
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'stealth')]]">Stealth</div>
+              </div>
+            </div>
+            <div class="attribute-wrap">
+              <div class="stat-box">
+                <div class="stat-box__save" enabled$="[[_contains(saves, 'con')]]"></div>
+                <div class="stat-box__mod">[[_mod(conAdj, con)]]</div>
+                <div class="stat-box__footer">
+                  <vaadin-integer-field theme="mini" value={{con}} min="1" max="20" has-controls label="Constitution" disabled$="[[!isEditMode]]">
+                    <span class="stat-box__adj" slot="suffix">[[_adjustString(conAdj)]]</span>
+                  </vaadin-integer-field>
+                </div>
+              </div>
+              <div class="proficiencies">
+              
+              </div>
+            </div>
+            <div class="attribute-wrap">
+              <div class="stat-box">
+                <div class="stat-box__save" enabled$="[[_contains(saves, 'int')]]"></div>
+                <div class="stat-box__mod">[[_mod(intAdj, int)]]</div>
+                <div class="stat-box__footer">
+                  <vaadin-integer-field theme="mini" value={{int}} min="1" max="20" has-controls label="Intellegence" disabled$="[[!isEditMode]]">
+                    <span class="stat-box__adj" slot="suffix">[[_adjustString(intAdj)]]</span>
+                  </vaadin-integer-field>
+                </div>
+              </div>
+              <div class="proficiencies">
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'arcana')]]">Arcana</div>
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'history')]]">History</div>
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'investigation')]]">Investigation</div>
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'nature')]]">Nature</div>
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'religion')]]">Religion</div>
+              </div>
+            </div>
+            <div class="attribute-wrap">
+              <div class="stat-box">
+                <div class="stat-box__save" enabled$="[[_contains(saves, 'wis')]]"></div>
+                <div class="stat-box__mod">[[_mod(wisAdj, wis)]]</div>
+                <div class="stat-box__footer">
+                  <vaadin-integer-field theme="mini" value={{wis}} min="1" max="20" has-controls label="Wisdom" disabled$="[[!isEditMode]]">
+                    <span class="stat-box__adj" slot="suffix">[[_adjustString(wisAdj)]]</span>
+                  </vaadin-integer-field>
+                </div>
+              </div>
+              <div class="proficiencies">
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'animal handling')]]">Animal Handling</div>
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'insight')]]">Insight</div>
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'medicine')]]">Medicine</div>
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'perception')]]">Perception</div>
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'survival')]]">Survival</div>
+              </div>
+            </div>
+            <div class="attribute-wrap">
+              <div class="stat-box">
+                <div class="stat-box__save" enabled$="[[_contains(saves, 'cha')]]"></div>
+                <div class="stat-box__mod">[[_mod(chaAdj, cha)]]</div>
+                <div class="stat-box__footer">
+                  <vaadin-integer-field theme="mini" value={{cha}} min="1" max="20" has-controls label="Charisma" disabled$="[[!isEditMode]]">
+                    <span class="stat-box__adj" slot="suffix">[[_adjustString(chaAdj)]]</span>
+                  </vaadin-integer-field>
+                </div>
+              </div>
+              <div class="proficiencies">
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'deception')]]">Deception</div>
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'intimidation')]]">Intimidation</div>
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'performance')]]">Performance</div>
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'persuasion')]]">Persuasion</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-
-      <div class="no-content-message" hidden$="[[!noContentMessage]]">Enter edit mode to add classes and levels.</div>
-
-      <vaadin-grid id="grid" theme="no-border no-row-borders" expanded-items="[[expandedItems]]" height-by-rows$="[[heightByRows]]" hidden$="[[noContentMessage]]">
-        <vaadin-grid-column flex-grow="1">
-          <template>
-              <template is="dom-if" if="[[_equal(item.id, 'class')]]">
-                <div class="class-wrap">
-                  <h3>[[item.className]]</h3>
-                  <div class='spells-prepared-text'>
-                    <span>[[_spellsKnownString(item.spellPrepType)]]</span>
-                    <span class='prepared-count'>[[_currentSpellsKnownCount(item.className, spellsKnown)]] / [[_maxSpellsKnownCount(item.className, spellsKnown)]]</span>
-                  </div>
-                </div>
-              </template>
-  
-              <template is="dom-if" if="[[_equal(item.id, 'level')]]">
-                <div class="level-outer-wrap">
-                  <vaadin-grid-tree-toggle leaf="[[!item.hasChildren]]" expanded="{{expanded}}">
-                    <h4 class="level-wrap">[[_toLevel(item.level)]]</h4>
-                    <div class="cantrips-prepared spells-prepared-text" hidden$="[[!_equal(item.level, 0)]]">
-                      <span>Cantrips Known:</span>
-                      <span class='prepared-count'>[[_currentCantripsKnownCount(item.parentClass, spellsKnown)]] / [[_maxCantripsKnownCount(item.parentClass, spellsKnown)]]</span>
-                    </div>
-                  </vaadin-grid-tree-toggle>
-
-                  <div class="slot-checkboxes" hidden$="[[_hideCheckboxes(item.warlockSpellSlots, isEditMode)]]" on-click="_toggleSpellSlot" warlock-spell>
-                    <template is='dom-repeat' items='[[_countToArray(item.warlockSpellSlots)]]' as="thing">
-                      <span class="checkbox-wrap"><vaadin-checkbox checked="[[_isSpellSlotChecked(item.currentWarlockSlots, index)]]"></vaadin-checkbox></span>
-                    </template>
-                    <span>Pact</span>
-                  </div>
-
-                  <div class="slot-checkboxes" hidden$="[[_hideCheckboxes(item.spellSlots, isEditMode)]]" on-click="_toggleSpellSlot">
-                    <template is='dom-repeat' items='[[_countToArray(item.spellSlots)]]' as="thing">
-                      <span class="checkbox-wrap"><vaadin-checkbox checked="[[_isSpellSlotChecked(item.currentSlots, index)]]"></vaadin-checkbox></span>
-                    </template>
-                    <span>Slots</span>
-                  </div>
-                </div>
-              </template>
-
-              <template is="dom-if" if="[[_equal(item.id, 'spell')]]">
-                <div class="spell-outer-wrap">
-                  <vaadin-grid-tree-toggle leaf="[[!item.hasChildren]]" expanded="{{expanded}}" class="spell-wrap">
-                    <span class="spell-inner-wrap">[[item.name]]<span class="spell-level" hidden>[[_spellLevel(item)]]</span><span class="rit-ind" title="Ritual" hidden$="[[!_isRitualSpell(item)]]"></span><span class="conc-ind" title="Concentration" hidden$="[[!_isConcentrationSpell(item)]]"></span></span>
-                  </vaadin-grid-tree-toggle>
-                  <button class$="[[_isPreparedClass(spellsKnown, item, isEditMode)]]" hidden$="[[!isEditMode]]" on-click="_toggleSpellPrepared">[[_isPreparedText(spellsKnown, item)]]</button>
-                  <span class="class-icon" hidden$="[[isEditMode]]">[[_spellClassText(item.parentClass)]]</span>
-                </div>
-              </template>
-
-              <template is="dom-if" if="[[_equal(item.id, 'spelldef')]]">
-                <div class="spell-def-wrap">
-                  <div class= "stats-wrapper" inner-h-t-m-l="[[_renderSpell(item)]]"></div>
-                </div>
-              </template>
-          </template>
-        </vaadin-grid-column>
-      </vaadin-grid>
-    `}}customElements.define("dnd-character-builder-spells",A)}}]);
+    `}}customElements.define("dnd-character-builder-attributes",m)}}]);
 //# sourceMappingURL=6.bundle.js.map

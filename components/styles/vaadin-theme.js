@@ -89,7 +89,86 @@ registerStyles('vaadin-integer-field', css`
     :host([disabled]) [part="increase-button"] {
       display: none !important;
     }
+  
+    :host([theme="mini"]) {
+      width: 80px;
+      padding: 0;
+      margin: -16px 8px 8px;
+    }
+    :host([theme="mini"]) [part="decrease-button"],
+    :host([theme="mini"]) [part="increase-button"] {
+      width: 20px;
+      height: 20px;
+      background-color: transparent;
+      top: -2px;
+      position: relative;
+    }
+    :host([theme="mini"]) [part="decrease-button"]::before, 
+    :host([theme="mini"]) [part="increase-button"]::before {
+      margin-top: 0;
+    }
+    :host([theme="mini"]) .vaadin-text-field-container {
+      flex-direction: column-reverse;
+    }
+  
+    :host([theme="mini"]) [part="value"] {
+      padding: 0;
+      margin: 0;
+      min-height: 0;
+    }
+    :host([theme="mini"]) [part="label"] {
+      padding-top: 0px;
+      padding-bottom: 0;
+      margin: 4px auto 0;
+    }
 
+
+
+    :host([theme="hp"]) {
+      width: 100px;
+      padding: 0;
+      margin: -16px 8px 8px;
+    }
+    :host([theme="hp"]) [part="decrease-button"],
+    :host([theme="hp"]) [part="increase-button"] {
+      width: 20px;
+      background-color: transparent;
+      top: -2px;
+      position: relative;
+      font-size: 20px;
+      height: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    :host([theme="hp"]) [part="decrease-button"]::before, 
+    :host([theme="hp"]) [part="increase-button"]::before {
+      margin-top: 0;
+    }
+    :host([theme="hp"]) .vaadin-text-field-container {
+      flex-direction: column-reverse;
+    }
+  
+    :host([theme="hp"]) [part="value"] {
+      padding: 0;
+      margin: 0;
+      min-height: 0;
+    }
+    :host([theme="hp"]) [part="label"] {
+      padding-top: 0px;
+      padding-bottom: 0;
+      margin: 4px auto 0;
+    }
+    :host([theme="hp"]) [part="input-field"] {
+      margin-bottom: 20px;
+      margin-top: 24px;
+      font-size: 30px;
+      height: 55px;
+      background: transparent !important;
+    }
+    :host([theme="hp"]) [part="input-field"]::after {
+      display: none;
+    }
 `);
 
 registerStyles('vaadin-grid', css`

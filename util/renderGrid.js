@@ -15,7 +15,7 @@ export default function renderGrid(rootEl, items) {
 			`<div class='grid-item history-link grid-item__${svg}'
 				data-link='${encodeForHash(curItem.name, curItem.source)}' data-title='${curItem.name}'>
 				<span class='grid-item--text'>${curItem.name}</span>
-				<dnd-svg id='${svg}' class='grid-item--image grid-item__${svg}'></dnd-svg>
+				<dnd-svg id='${svg}' default-color class='grid-item--image grid-item__${svg}'></dnd-svg>
 			</div>`
 	}
 	let itemElements = parseHTML(htmlString);

@@ -1,6 +1,6 @@
 import { PolymerElement, html } from "@polymer/polymer";
 import { MutableData } from '@polymer/polymer/lib/mixins/mutable-data.js';
-import { getCharacterChannel, getSelectedCharacter, getClassReferences, setClassLevels, mergeSubclass, setClassSkillProficiencies, getSubclassChoiceLevel, mergeFeature, setSubclassChoice, setClassChoice, getSubclassChoice, getClassChoice} from "../../../util/charBuilder";
+import { getCharacterChannel, getSelectedCharacter, getClassReferences, setClassLevels, mergeSubclass, setClassSkillProficiencies, getSubclassChoiceLevel, mergeFeature, setSubclassChoice, setClassChoice, getSubclassChoice, getClassChoice, getHPRollForClassLevel, getHPDiceForLevel, setHpRoll } from "../../../util/charBuilder";
 import "@vaadin/vaadin-grid";
 import "../../dnd-select-add";
 import "../../dnd-switch";
@@ -142,6 +142,13 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
       this.dispatchEvent(new CustomEvent("loadingChange", { bubbles: true, composed: true }));
 
       this.levels = character.levels;
+
+      const hitDiceMaxes = [];
+      for (let i = 0; i < character.levels.length; i++) {
+        hitDiceMaxes.push(await getHPDiceForLevel(i));
+      }
+      this.hitDiceMaxes = hitDiceMaxes;
+
       this.$.classGrid.clearCache();
     } else {
       this.noContentMessage = true;
@@ -447,8 +454,44 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
     setClassSkillProficiencies(skills);
   }
 
+  _levelHp(className, index) {
+    return getHPRollForClassLevel(className, index + 1);
+  }
+
   _editModeClass(isEditMode) {
     return isEditMode ? 'edit-mode' : 'not-edit-mode';
+  }
+
+  _toggleHpField(e) {
+    const element = e.target.closest('.btn-field');
+    const isOpen = element.classList.contains('btn-field--open');
+    const intField = element.querySelector('vaadin-integer-field');
+    const level = parseInt(element.dataset.level) + 1;
+    const className = element.dataset.className;
+    const max = parseInt(element.dataset.max);
+  
+    if (isOpen) {
+      const changeVal = parseInt(intField.value);
+      if (changeVal && changeVal <= max && changeVal > 0) {
+        setHpRoll(className, level, changeVal);
+        intField.value = '';
+        element.classList.toggle('btn-field--open');
+      } else {
+        element.classList.add('btn-field--error');
+        setTimeout(() => {
+          element.classList.remove('btn-field--error');
+        }, 500);
+      }
+    } else {
+      element.classList.toggle('btn-field--open');
+      intField.focus();
+    }
+  }
+
+  _levelHitDice(index, maxes) {
+    if (maxes && index !== undefined && maxes[index]) {
+      return maxes[index];
+    }
   }
 
   static get template() {
@@ -510,7 +553,7 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
         }
 
         .level-col {
-          width: 200px;
+          width: calc(100% - 70px);
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;
@@ -583,6 +626,75 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
         .not-edit-mode .delete-btn {
           display: none;
         }
+        
+
+        .btn-field {
+          display: inline-flex;
+          flex-direction: row;
+          flex-wrap: nowrap;
+          margin-bottom: 16px;
+          width: 80px;
+          height: 36px;
+          background: var(--lumo-contrast-10pct);
+          border-radius: 4px;
+        }
+        .btn-field--error {
+          background: var(--lumo-error-color-50pct);
+        }
+        .btn-field__btn {
+          display: block;
+          width: 100%;
+        }
+        .btn-field__input {
+          display: none;
+        }
+        .btn-field--open .btn-field__btn {
+          width: 40px;
+        }
+        .btn-field__btn-label-text {
+          position: relative;
+          left: 4px;
+          bottom: 2px;
+        }
+        .btn-field--open .btn-field__btn-label-text {
+          display: none;
+        }
+        .btn-field--open .btn-field__input {
+          display: block;
+          width: 40px;
+          margin-top: -40px;
+        }
+        .btn-field--open .btn-field__btn-label {
+          margin-left: -20px;
+        }
+        .btn-field vaadin-integer-field {
+          --lumo-contrast-10pct: transparent;
+        }
+
+
+        .hp-col {
+          position: absolute;
+          right: 22px;
+          top: 8px;
+        }
+        .hp-col .material-icons {
+          font-size: 16px;
+          position: relative;
+          top: 1px;
+          margin-right: 2px;
+        }
+        .hp-col__non-edit {
+          display: block;
+        }
+        .edit-mode .hp-col__non-edit {
+          display: none;
+        }
+        .hp-col__edit {
+          display: none;
+        }
+        .edit-mode .hp-col__edit {
+          display: inline-flex;
+        }
 
         .details {
           font-size: 14px;
@@ -635,7 +747,7 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
                 <div class="open-details" on-click="_expandDetails">
                   <div class="level-col">
                     <span class="level-col__level">[[_level(index)]]</span>
-                    <span class="level-col__image-wrap" ><dnd-svg class="level-col__image" id="[[_svgFromClass(item.name)]]"></dnd-svg></span>
+                    <span class="level-col__image-wrap" ><dnd-svg class="level-col__image" default-color id="[[_svgFromClass(item.name)]]"></dnd-svg></span>
                     <span class="level-col__class">[[item.name]]</span>
                   </div>
 
@@ -670,6 +782,17 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
                       </template>
                     </div>
                   </template>
+                </div>
+
+                <div class="hp-col">
+                  <div class="hp-col__non-edit"><span class="material-icons" aria-hidden="true">favorite</span> [[_levelHp(item.name, index)]]</div>
+
+                  <div class="hp-col__edit btn-field" data-max$="[[_levelHitDice(index, hitDiceMaxes)]]" data-level$="[[index]]" data-class-name$="[[item.name]]">
+                    <dnd-button background="none" class="btn-field__btn" on-click="_toggleHpField">
+                      <span class="btn-field__btn-label" slot="label"><span class="material-icons" aria-hidden="true">favorite</span><span class="btn-field__btn-label-text">[[_levelHp(item.name, index)]]</span></span>
+                    </dnd-button>
+                    <vaadin-integer-field class="btn-field__input" min="1" max="[[_levelHitDice(index, hitDiceMaxes)]]" ></vaadin-integer-field>
+                  </div>
                 </div>
 
                 <div class="delete-col">

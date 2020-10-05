@@ -1,6 +1,7 @@
 import { readRouteView, readRouteSelection } from "./routing";
-import {loadModel} from "./data";
+import { loadModel } from "./data";
 import { resolveHash } from './renderTable.js';
+import droll from "../lib/droll";
 
 let schema = {
   name: '',
@@ -24,7 +25,8 @@ let schema = {
   asi: [],
   featAttributeSelections: {},
   preparedSpells: {},
-  preparedCantrips: {}
+  preparedCantrips: {},
+  hp: {}
 }
 
 const channel = document.createElement('div');
@@ -227,6 +229,7 @@ function mergeClass(character, selectedItem) {
       id: selectedItem.name + '_' + selectedItem.source
     });
   }
+  updateLevelHP(character, selectedItem);
 }
 
 function mergeSubclass(character = selectedCharacter, className, subclass) {
@@ -883,6 +886,162 @@ function getSpellSlots(level, character = selectedCharacter) {
   return 0;
 }
 
+function updateLevelHP(character, selectedItem, forceRoll) {
+  const className = selectedItem.name || selectedItem;
+  const newLevel = character.levels.length;
+  const firstLevelRoll = newLevel === 1 ? selectedItem.hd.faces : undefined;
+  const diceRoll = firstLevelRoll || forceRoll || droll.roll('1d'+selectedItem.hd.faces).total;
+  if (!character.hp) {
+    character.hp = {};
+  }
+  if (!character.hp[className]) {
+    character.hp[className] = {};
+  }
+  if (!character.hp[className][newLevel]) {
+    character.hp[className][newLevel] = diceRoll;
+  }
+}
+
+function getHPRollForClassLevel(className, level, character = selectedCharacter) {
+  if (character && character.hp && character.hp[className] && character.hp[className][level]) {
+    return character.hp[className][level];
+  }
+  return 0;
+}
+
+async function getHPDiceForLevel(index, character = selectedCharacter) {
+  const classRef = await getClassReferences(character, index);
+  return classRef.hd.faces;
+}
+
+async function getMaxHP(character = selectedCharacter) {
+  let totalHp = 0;
+  const conMod = await getAttributeModifier('con', character);
+  if (character && character.levels && character.levels.length) {
+    character.levels.forEach((level, index) => {
+      totalHp += getHPRollForClassLevel(level.name, index + 1, character);
+      totalHp += conMod;
+    });
+  }
+  return totalHp;
+}
+
+async function getCurrentHP(character = selectedCharacter) {
+  return character && character.currentHp !== undefined ? character.currentHp : await getMaxHP(character);
+}
+
+async function setCurrentHp(currentHp, character = selectedCharacter) {
+  if (character && typeof currentHp === 'number') {
+    const prevHp = character.currentHp;
+    const hpDiff = currentHp - prevHp;
+
+    if (typeof prevHp === 'number' &&  hpDiff < 0 && character.tempHp && character.tempHp > 0)  {
+      if (Math.abs(hpDiff) > character.tempHp) {
+        character.currentHp += character.tempHp - Math.abs(hpDiff);
+        character.tempHp = 0;
+      } else {
+        character.tempHp += hpDiff;
+      }
+    } else {
+      character.currentHp = currentHp;
+    }
+    // maxing out health
+    if (character.currentHp >= 0) {
+      character.currentHp = Math.min(character.currentHp, (await getMaxHP(character)));
+    } else {
+      character.currentHp = Math.max(character.currentHp, 0);
+    }
+    saveCharacter(character);
+  }
+}
+
+function getTempHp(character = selectedCharacter) {
+  return character && character.tempHp !== undefined ? character.tempHp : 0;
+}
+
+function addTempHp(tempHp, character = selectedCharacter) {
+  if (character) {
+    const prevTempHp = character.tempHp || 0;
+    character.tempHp = prevTempHp + tempHp;
+    saveCharacter(character);
+  }
+}
+
+function getHitDiceCount(className, character = selectedCharacter) {
+  if (character && character.hitDice && character.hitDice[className] !== undefined) {
+    return character.hitDice[className];
+  }
+  return null;
+}
+
+async function useHitDice(className, character = selectedCharacter) {
+  if (character) {
+    if (!character.hitDice) {
+      character.hitDice = {};
+    }
+    if (!character.hitDice[className]) {
+      const classLevel = Object.entries(getClassLevelGroups(character)).find(([classLeveName, levels]) => classLeveName === className);
+      character.hitDice[className] = classLevel[1];
+    }
+
+    if (typeof character.hitDice[className] === 'number' && character.hitDice[className] > 0) {
+      const classRef = (await getClassReferences(character))[className];
+      const hitDie = classRef.hd.faces;
+      const conMod = await getAttributeModifier('con');
+      const rollTotal = droll.roll('1d' + hitDie).total;
+      const newCurrentHp = character.currentHp + rollTotal + conMod;
+      setCurrentHp(newCurrentHp);
+      character.hitDice[className] = character.hitDice[className] - 1;
+      saveCharacter(character);
+    }
+  }
+}
+
+function resetHitDice(character = selectedCharacter) {
+  if (character && character.hitDice && character.hitDice) {
+    const classLevels = getClassLevelGroups(character);
+    
+    for (const key of Object.keys(classLevels)) {
+      character.hitDice[key] = null;
+    }
+
+    saveCharacter(character);
+  }
+}
+
+async function getHitDice(character = selectedCharacter) {
+  const hitDice = [];
+  if (character) {
+    const classLevels = getClassLevelGroups(character);
+    const classRefs = await getClassReferences(character);
+    
+    for (const [classStr, level] of Object.entries(classLevels)) {
+      const classRef = classRefs[classStr];
+      const total = level;
+      const hitDiceCount = getHitDiceCount(classStr);
+      const current =  hitDiceCount !== null ? hitDiceCount : total;
+      const die = 'd' + classRef.hd.faces;
+      hitDice.push({
+        total, current, die, className: classStr
+      })
+    }
+  }
+  return hitDice;
+}
+
+function setHpRoll(className, level, roll, character = selectedCharacter) {
+  if (character) {
+    if (!character.hp) {
+      character.hp = {};
+    }
+    if (!character.hp[className]) {
+      character.hp[className] = {};
+    }
+    character.hp[className][level] = roll;
+    saveCharacter(character);
+  }
+}
+
 export {
   addCharacter,
   addFeature,
@@ -933,5 +1092,16 @@ export {
   getAttributeModifier,
   saveCharacter,
   setSpellSlots,
-  getSpellSlots
+  getSpellSlots,
+  getHPRollForClassLevel,
+  getMaxHP,
+  getCurrentHP,
+  setCurrentHp,
+  getTempHp,
+  addTempHp,
+  getHitDice,
+  resetHitDice,
+  useHitDice,
+  getHPDiceForLevel,
+  setHpRoll
 };

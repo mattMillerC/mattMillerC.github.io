@@ -1,6 +1,8 @@
 import {PolymerElement, html} from "@polymer/polymer";
 import "@vaadin/vaadin-text-field/vaadin-integer-field";
 import "../../dnd-select-add";
+import "../../dnd-button";
+import "../../dnd-svg";
 import { 
   getCharacterChannel,
   getSelectedCharacter,
@@ -9,7 +11,13 @@ import {
   getSkillProfs,
   getRaceAttributeOptions,
   getRaceAttributeDefaults,
-  getAttributeScoreModifiers
+  getAttributeScoreModifiers,
+  getMaxHP,
+  getCurrentHP, getTempHp, setCurrentHp,
+  getHitDice,
+  resetHitDice,
+  addTempHp,
+  useHitDice
 } from "../../../util/charBuilder";
 import { getEditModeChannel, isEditMode } from "../../../util/editMode";
 import { util_capitalizeAll, absInt } from "../../../js/utils";
@@ -60,23 +68,7 @@ class DndCharacterBuilderAttributes extends PolymerElement {
         type: Number,
         value: 0
       },
-      strProfs: {
-        type: String,
-        value: ""
-      },
-      dexProfs: {
-        type: String,
-        value: ""
-      },
-      intProfs: {
-        type: String,
-        value: ""
-      },
-      wisProfs: {
-        type: String,
-        value: ""
-      },
-      chaProfs: {
+      attributeProfs: {
         type: String,
         value: ""
       },
@@ -105,6 +97,17 @@ class DndCharacterBuilderAttributes extends PolymerElement {
         type: String,
         value: ""
       },
+      maxHP: {
+        type: Number
+      },
+      tempHP: {
+        type: Number,
+        value: 0
+      },
+      currentHP: {
+        type: Number,
+        observer: 'currentHPChange'
+      },
       isEditMode: {
         type: Boolean,
         value: false
@@ -120,6 +123,9 @@ class DndCharacterBuilderAttributes extends PolymerElement {
     if (str && dex && con && int && wis && cha) {
       updateAttr({str, dex, con, int, wis, cha});
     }
+  }
+
+  currentHPChange(currentHP) {
   }
 
   connectedCallback() {
@@ -191,16 +197,13 @@ class DndCharacterBuilderAttributes extends PolymerElement {
       this.wisAdj = attributeAdj.wis;
       this.chaAdj = attributeAdj.cha;
 
-      let strProfs = await getSkillProfs('str')
-      this.strProfs = strProfs.map(s => {return util_capitalizeAll(s)}).join(', ');
-      let dexProfs = await getSkillProfs('dex')
-      this.dexProfs = dexProfs.map(s => {return util_capitalizeAll(s)}).join(', ');
-      let intProfs = await getSkillProfs('int')
-      this.intProfs = intProfs.map(s => {return util_capitalizeAll(s)}).join(', ');
-      let wisProfs = await getSkillProfs('wis')
-      this.wisProfs = wisProfs.map(s => {return util_capitalizeAll(s)}).join(', ');
-      let chaProfs = await getSkillProfs('cha')
-      this.chaProfs = chaProfs.map(s => {return util_capitalizeAll(s)}).join(', ');
+      this.attributeProfs = (await getSkillProfs()).join(',');
+
+      this.maxHP = await getMaxHP();
+      this.currentHP = await getCurrentHP();
+      this.tempHP = await getTempHp();
+
+      this.hitDice = await getHitDice();
 
       this.dispatchEvent(new CustomEvent("loadingChange", { bubbles: true, composed: true }));
     }
@@ -240,6 +243,78 @@ class DndCharacterBuilderAttributes extends PolymerElement {
     return false;
   }
 
+  _editModeClass(isEditMode) {
+    return isEditMode ? 'edit-mode' : 'not-edit-mode';
+  }
+
+  _tempHpStr(tempHP) {
+    return tempHP && typeof tempHP === 'number' && tempHP > 0 ? ` + ${tempHP}` : '';
+  }
+
+  _toggleButtonField(e) {
+    const element = e.target.closest('.btn-field');
+    const isOpen = element.classList.contains('btn-field--open');
+    const isTemp = element.classList.contains('btn-field--temp');
+    const intField = element.querySelector('vaadin-integer-field');
+    element.classList.toggle('btn-field--open');
+
+
+    if (isTemp) {
+      if (isOpen) {
+        const changeVal = parseInt(intField.value);
+        if (changeVal) {
+          addTempHp(parseInt(this.tempHP) + changeVal);
+          intField.value = '';
+        }
+      } else {
+        intField.focus();
+      }
+
+    } else {
+      if (isOpen) {
+        const changeVal = parseInt(intField.value);
+        if (changeVal) {
+          const modifier = element.classList.contains('btn-field--heal') ? 1 : -1;
+          setCurrentHp(parseInt(this.currentHP) + (modifier * changeVal));
+          intField.value = '';
+        }
+      } else {
+        intField.focus();
+      }
+    }
+  }
+
+  _useHitDice(e) {
+    const element = e.target.closest('.hit-dice__item');
+    if (this.currentHP < this.maxHP) {
+      const className = element.dataset.className;
+      console.error(className);
+      useHitDice(className);
+    } else {
+      // flash error
+      element.classList.add('hit-dice__item--error');
+      setTimeout(() => {
+        element.classList.remove('hit-dice__item--error');
+      }, 500);
+    }
+  }
+
+  _strContains(str, search) {
+    return str.indexOf(search) > -1;
+  }
+
+  _resetHitDice(e) {
+    resetHitDice();
+  }
+
+  _triggerShortRest(e) {
+
+  }
+
+  _triggerLongRest(e) {
+
+  }
+
   static get template() {
     return html`
       <style include="material-styles">
@@ -248,189 +323,388 @@ class DndCharacterBuilderAttributes extends PolymerElement {
           padding: 14px;
         }
 
-        .default-selection {
-          font-style: italic;
-        }
-
-        .row {
-          display: flex;
-          flex-wrap: wrap;
-          align-items: flex-end;
-          margin-bottom: 12px;
-        }
-
-        .row.heading {
-          margin-bottom: 0;
-        }
-
-        .data {
-          font-size: 18px;
-          padding: 10px 8px 8px;
-          display: flex;
-          justify-content: center;
-          margin-bottom: 4px;
-          min-width: 24px;
-        }
-
-        .data:last-child {
-          flex-basis: 100%;
-        }
-        
-        .heading .data {
-          font-weight: bold;
-          margin-bottom: 0;
-          padding-bottom: 0;
-          font-size: 14px;
-        }
-
-        .mod {
-          background: var(--lumo-contrast-10pct);
-          border-radius: 4px;
-          width: 24px;
-          margin-left: auto;
-          margin-right: auto;
-          border: 2px solid var(--mdc-theme-primary);
-        }
-        .mod.no-bg {
-          background: none;
-          border: none;
-        }
-
-        .prof {
-          justify-content: flex-start;
-          margin: 0 12px;
-        }
-
-        .heading .prof {
-          display: none;
-        }
-
-        .mobile-label .data {
-          justify-content: flex-start;
-        }
-
-        vaadin-integer-field {
-          width: 100px;
-        }
-
-        .input {
-          width: 84px;
-          flex-shrink: 0;
-        }
-        
-        .save {
-          width: 24px;
-        }
-
-        .save-icon {
-          width: 24px;
-        }
-
         [hidden] {
           visibility: hidden;
         }
-        @media(min-width: 420px) {
-          .mod {
-            width: 32px;
-          }
-          .data {
-            min-width: 44px;
-          }
-          .heading .data {
-            font-size: 18px;
-          }
+
+        .wrap {
+          display: flex;
+          flex-direction: row-reverse;
+          justify-content: space-between;
         }
-        @media(min-width: 921px) {
-          .mobile-label {
-            display: none;
-          }
-          .attr-choice-wrap,
-          .prof-choice-wrap {
-            flex-direction: row;
-          }
-          .row {
-            flex-wrap: nowrap;
-          }
-          .heading .prof {
-            display: block;
-          }
+        .stats {
+          display: flex;
+          flex-direction: column;
+          min-width: 0;
+        }
+        .attribute-wrap {
+          display: flex;
+          flex-direction: row;
+          min-width: 0;
+        }
+        .health-wrap {
+          display: flex;
+          flex-direction: column;
+          min-width: 0;
+        }
+
+
+        /* Proficiencies */
+        .proficiencies {
+          margin-left: 8px;
+          line-height: 1.7;
+          min-width: 0;
+        }
+        .proficiency-item {
+          font-size: 14px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          position: relative;
+        }
+
+        .proficiency-item::before,
+        .proficiency-item[expertise]::after {
+          content: '';
+          display: inline-block;
+          height: 10px;
+          width: 10px;
+          border: 1px solid var(--mdc-theme-primary);
+          border-radius: 50%;
+          background-color: transparent;
+          margin-right: 8px;
+          position: relative;
+          top: 1px;
+          box-shadow: 0px 0px 10px -4px rgba(0,0,0,0.75);
+        }
+        .proficiency-item[expertise]::after {
+          position: absolute;
+          left: 10px;
+          top: 5px;
+          margin-right: 0;
+          background-color: var(--mdc-theme-primary);
+        }
+        .proficiency-item[expertise]::before {
+          margin-right: 14px;
+        }
+        .proficiency-item[enabled]::before {
+          background-color: var(--mdc-theme-primary);
+        }
+
+
+        /* Stat Box */
+        .stat-box {
+          position: relative;
+          display: inline-flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          background: var(--lumo-contrast-10pct);
+          border: 2px solid var(--mdc-theme-text-divider-on-background);
+          border-radius: 4px;
+        }
+        .stat-box:not(:last-child) {
+          margin-bottom:16px;
+        }
+        .stat-box__save {
+          position: absolute;
+          height: 12px;
+          width: 12px;
+          border: 2px solid var(--mdc-theme-primary);
+          border-radius: 50%;
+          top: -8px;
+          background-color: #33383C;
+          display: none;
+        }
+        .stat-box__save[enabled] {
+          background-color: var(--mdc-theme-primary);
+          display: block;
+        }
+        .stat-box__mod {
+          font-size: 40px;
+          font-weight: normal;
+          margin: 16px 8px 4px;
+          line-height: 1;
+          position: relative;
+          left: 1px;
+        }
+        .stat-box__footer {
+          display: inline-block;
+        }
+        .not-edit-mode .stat-box__adj {
+          position: relative;
+          right: 18px;
+          color: var(--lumo-body-text-color);
+          -webkit-text-fill-color: var(--lumo-body-text-color);
+        }
+
+
+        /* Stat Box HP  */
+        .stat-box--hp {
+
+        }
+        .stat-box__total {
+          font-size: 14px;
+        }
+        .stat-box--hp .stat-box__adj--hp {
+          position: absolute;
+          bottom: -10px;
+          right: 5px;
+          font-size: 16px;
+        }
+
+
+        /* Button Field */
+        .btn-field {
+          display: inline-flex;
+          flex-direction: row;
+          flex-wrap: nowrap;
+          margin-bottom: 16px;
+          width: 120px;
+          height: 36px;
+          background: var(--lumo-contrast-10pct);
+          border-radius: 4px;
+        }
+        .btn-field__btn {
+          display: block;
+          width: 100%;
+        }
+        .btn-field__input {
+          display: none;
+        }
+        .btn-field--open .btn-field__btn {
+          width: calc(100% - 60px);
+        }
+        .btn-field--open .btn-field__btn-label {
+          width: 0;
+          overflow: hidden;
+        }
+        .btn-field--open .btn-field__input {
+          display: block;
+          width: 60px;
+          margin-top: -40px;
+        }
+        .btn-field--heal.btn-field--open .btn-field__btn-label {
+          margin-left: -8px;
+        }
+        .btn-field vaadin-integer-field {
+          --lumo-contrast-10pct: transparent;
+        }
+
+
+        /* Hit Dice */
+        .hit-dice {
+          display: flex;
+          flex-direction: column;
+          border-radius: 4px;
+          padding: 6px;
+          background: var(--lumo-contrast-10pct);
+          margin-bottom: 16px;
+        }
+        .hit-dice__heading {
+          display: inline-block;
+          text-align: center;
+          margin-bottom: 8px;
+          color: var(--mdc-theme-primary);
+          text-transform: uppercase;
+          font-size: 14px;
+        }
+        .hit-dice__item {
+          width: 100%;
+          display: flex;
+          flex-direction: row;
+          flex-wrap: nowrap;
+        }
+        .hit-dice__item dnd-button {
+          width: 100%;
+        }
+        .hit-dice__item--error dnd-button {
+          --mdc-theme-primary: var(--lumo-error-color-50pct);
+        }
+        .hit-dice__item-label {
+          width: 100%;
+          display: flex;
+          justify-content: space-around;
+          align-items: center;
+          padding: 4px 0 0;
+        }
+        .hit-dice__item-label dnd-svg {
+          stroke: var(--mdc-theme-on-primary);
+          fill: var(--mdc-theme-primary);
+          width: 30px;
+        }
+
+        /* Rest Buttons */
+        .rest-btn {
+          margin-bottom: 16px;
         }
       </style>
 
-      <h2>Attributes</h2>
-      <div class="stats">
-        <div class="row heading">
-          <div class="input data"></div>
-          <div class="save data">Save</div>
-          <div class="adj data">Adj.</div>
-          <div class="total data">Total</div>
-          <div class="mod data no-bg">Mod</div>
-          <div class="prof data"></div>
-        </div>
-        <div class="row">
-          <vaadin-integer-field value={{str}} min="1" max="20" has-controls label="Strength" disabled$="[[!isEditMode]]"></vaadin-integer-field>
-          <div class="save data">
-            <span hidden$="[[!_contains(saves, 'str')]]" class="save-icon material-icons">done</span>
-          </div>
-          <div class="adj data">[[_adjustString(strAdj)]]</div>
-          <div class="total data">[[_total(strAdj, str)]]</div>
-          <div class="mod data">[[_mod(strAdj, str)]]</div>
-          <div class="prof data">[[strProfs]]</div>
-        </div>
+      <div class$="[[_editModeClass(isEditMode)]]">
+        <div class="wrap">
+          <div class="health-wrap">
+            <!-- Hit Points -->
+            <div class="stat-box stat-box--hp">
+              <div class="stat-box__footer">
+                <vaadin-integer-field theme="hp" value={{currentHP}} min="0" max="[[maxHP]]" has-controls label="Hit Points">
+                  <span class="stat-box__adj--hp" slot="suffix">/ [[maxHP]] [[_tempHpStr(tempHP)]]</span>
+                </vaadin-integer-field>
+              </div>
+            </div>
 
-        <div class="row">
-          <vaadin-integer-field value={{dex}} min="1" max="20" has-controls label="Dexterity" disabled$="[[!isEditMode]]"></vaadin-integer-field>
-          <div class="save data">
-            <span hidden$="[[!_contains(saves, 'dex')]]" class="save-icon material-icons">done</span>
-          </div>
-          <div class="adj data">[[_adjustString(dexAdj)]]</div>
-          <div class="total data">[[_total(dexAdj, dex)]]</div>
-          <div class="mod data">[[_mod(dexAdj, dex)]]</div>
-          <div class="prof data">[[dexProfs]]</div>
-        </div>
+            <!--  Healing / Damage -->
+            <div class="btn-field btn-field--heal">
+                <dnd-button icon="favorite" background="none" class="btn-field__btn" on-click="_toggleButtonField">
+                  <span class="btn-field__btn-label" slot="label">Heal</span>
+                </dnd-button>
+                <vaadin-integer-field class="btn-field__input" min="0" >
+                  <span slot="prefix">+</span>
+                </vaadin-integer-field>
+            </div>
+            <div class="btn-field">
+                <dnd-button svg="swords" background="none" class="btn-field__btn" on-click="_toggleButtonField">
+                  <span class="btn-field__btn-label" slot="label">Damage</span>
+                </dnd-button>
+                <vaadin-integer-field class="btn-field__input" min="0" >
+                  <span slot="prefix">-</span>
+                </vaadin-integer-field>
+            </div>
+            <div class="btn-field btn-field--temp">
+                <dnd-button svg="paladin" background="none" class="btn-field__btn" on-click="_toggleButtonField">
+                  <span class="btn-field__btn-label" slot="label">Temp HP</span>
+                </dnd-button>
+                <vaadin-integer-field class="btn-field__input" min="0" >
+                  <span slot="prefix">+</span>
+                </vaadin-integer-field>
+            </div>
 
-        <div class="row">
-          <vaadin-integer-field value={{con}} min="1" max="20" has-controls label="Constitution" disabled$="[[!isEditMode]]"></vaadin-integer-field>
-          <div class="save data">
-            <span hidden$="[[!_contains(saves, 'con')]]" class="save-icon material-icons">done</span>
-          </div>
-          <div class="adj data">[[_adjustString(conAdj)]]</div>
-          <div class="total data">[[_total(conAdj, con)]]</div>
-          <div class="mod data">[[_mod(conAdj, con)]]</div>
-          <div class="prof data">[[conProfs]]</div>
-        </div>
+            <!--  Hit Dice -->
+            <div class="hit-dice">
+              <div class="hit-dice__heading">Hit Dice</div>
+              <template is="dom-repeat" items="[[hitDice]]">
+                <div class="hit-dice__item" data-class-name$="[[item.className]]">
+                  <dnd-button on-click="_useHitDice">
+                    <div class="hit-dice__item-label" slot="label">
+                      <dnd-svg id="[[item.die]]"></dnd-svg>
+                      <div class="hit-dice__count">[[item.current]] / [[item.total]]</div>
+                    </div>
+                  </dnd-button>
+                </div>
+              </template>
+              <dnd-button class="hit-dice__reset" label="Reset" on-click="_resetHitDice"></dnd-button>
+            </div>
 
-        <div class="row">
-          <vaadin-integer-field value={{int}} min="1" max="20" has-controls label="Intellegence" disabled$="[[!isEditMode]]"></vaadin-integer-field>
-          <div class="save data">
-            <span hidden$="[[!_contains(saves, 'int')]]" class="save-icon material-icons">done</span>
-          </div>
-          <div class="adj data">[[_adjustString(intAdj)]]</div>
-          <div class="total data">[[_total(intAdj, int)]]</div>
-          <div class="mod data">[[_mod(intAdj, int)]]</div>
-          <div class="prof data">[[intProfs]]</div>
-        </div>
+            <!-- Reset Hit Dice -->
 
-        <div class="row">
-          <vaadin-integer-field value={{wis}} min="1" max="20" has-controls label="Wisdom" disabled$="[[!isEditMode]]"></vaadin-integer-field>
-          <div class="save data">
-            <span hidden$="[[!_contains(saves, 'wis')]]" class="save-icon material-icons">done</span>
-          </div>
-          <div class="adj data">[[_adjustString(wisAdj)]]</div>
-          <div class="total data">[[_total(wisAdj, wis)]]</div>
-          <div class="mod data">[[_mod(wisAdj, wis)]]</div>
-          <div class="prof data">[[wisProfs]]</div>
-        </div>
+            <!--  Short Rest -->
+            <!-- <dnd-button icon="watch" class="rest-btn rest-btn--short" background="var(--lumo-contrast-10pct)" label="Short" on-click="_triggerShortRest"></dnd-button> -->
 
-        <div class="row">
-          <vaadin-integer-field value={{cha}} min="1" max="20" has-controls label="Charisma" disabled$="[[!isEditMode]]"></vaadin-integer-field>
-          <div class="save data">
-            <span hidden$="[[!_contains(saves, 'cha')]]" class="save-icon material-icons">done</span>
+            <!--  Long Rest -->
+            <!-- <dnd-button icon="watch_later" class="rest-btn rest-btn--long" background="var(--lumo-contrast-10pct)" label="Long" on-click="_triggerLongRest"></dnd-button> -->
+
+            
           </div>
-          <div class="adj data">[[_adjustString(chaAdj)]]</div>
-          <div class="total data">[[_total(chaAdj, cha)]]</div>
-          <div class="mod data">[[_mod(chaAdj, cha)]]</div>
-          <div class="prof data">[[chaProfs]]</div>
+
+          <div class="stats">
+            <!--  Attributes -->
+            <div class="attribute-wrap">
+              <div class="stat-box">
+                <div class="stat-box__save" enabled$="[[_contains(saves, 'str')]]"></div>
+                <div class="stat-box__mod">[[_mod(strAdj, str)]]</div>
+                <div class="stat-box__footer">
+                  <vaadin-integer-field theme="mini" value={{str}} min="1" max="20" has-controls label="Strength" disabled$="[[!isEditMode]]">
+                    <span class="stat-box__adj" slot="suffix">[[_adjustString(strAdj)]]</span>
+                  </vaadin-integer-field>
+                </div>
+              </div>
+              <div class="proficiencies">
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'athletics')]]">Athletics</div>
+              </div>
+            </div>
+            <div class="attribute-wrap">
+              <div class="stat-box">
+                <div class="stat-box__save" enabled$="[[_contains(saves, 'dex')]]"></div>
+                <div class="stat-box__mod">[[_mod(dexAdj, dex)]]</div>
+                <div class="stat-box__footer">
+                  <vaadin-integer-field theme="mini" value={{dex}} min="1" max="20" has-controls label="Dexterity" disabled$="[[!isEditMode]]">
+                    <span class="stat-box__adj" slot="suffix">[[_adjustString(dexAdj)]]</span>
+                  </vaadin-integer-field>
+                </div>
+              </div>
+              <div class="proficiencies">
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'acrobatics')]]">Acrobatics</div>
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'slight of hand')]]">Slight of Hand</div>
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'stealth')]]">Stealth</div>
+              </div>
+            </div>
+            <div class="attribute-wrap">
+              <div class="stat-box">
+                <div class="stat-box__save" enabled$="[[_contains(saves, 'con')]]"></div>
+                <div class="stat-box__mod">[[_mod(conAdj, con)]]</div>
+                <div class="stat-box__footer">
+                  <vaadin-integer-field theme="mini" value={{con}} min="1" max="20" has-controls label="Constitution" disabled$="[[!isEditMode]]">
+                    <span class="stat-box__adj" slot="suffix">[[_adjustString(conAdj)]]</span>
+                  </vaadin-integer-field>
+                </div>
+              </div>
+              <div class="proficiencies">
+              
+              </div>
+            </div>
+            <div class="attribute-wrap">
+              <div class="stat-box">
+                <div class="stat-box__save" enabled$="[[_contains(saves, 'int')]]"></div>
+                <div class="stat-box__mod">[[_mod(intAdj, int)]]</div>
+                <div class="stat-box__footer">
+                  <vaadin-integer-field theme="mini" value={{int}} min="1" max="20" has-controls label="Intellegence" disabled$="[[!isEditMode]]">
+                    <span class="stat-box__adj" slot="suffix">[[_adjustString(intAdj)]]</span>
+                  </vaadin-integer-field>
+                </div>
+              </div>
+              <div class="proficiencies">
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'arcana')]]">Arcana</div>
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'history')]]">History</div>
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'investigation')]]">Investigation</div>
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'nature')]]">Nature</div>
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'religion')]]">Religion</div>
+              </div>
+            </div>
+            <div class="attribute-wrap">
+              <div class="stat-box">
+                <div class="stat-box__save" enabled$="[[_contains(saves, 'wis')]]"></div>
+                <div class="stat-box__mod">[[_mod(wisAdj, wis)]]</div>
+                <div class="stat-box__footer">
+                  <vaadin-integer-field theme="mini" value={{wis}} min="1" max="20" has-controls label="Wisdom" disabled$="[[!isEditMode]]">
+                    <span class="stat-box__adj" slot="suffix">[[_adjustString(wisAdj)]]</span>
+                  </vaadin-integer-field>
+                </div>
+              </div>
+              <div class="proficiencies">
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'animal handling')]]">Animal Handling</div>
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'insight')]]">Insight</div>
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'medicine')]]">Medicine</div>
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'perception')]]">Perception</div>
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'survival')]]">Survival</div>
+              </div>
+            </div>
+            <div class="attribute-wrap">
+              <div class="stat-box">
+                <div class="stat-box__save" enabled$="[[_contains(saves, 'cha')]]"></div>
+                <div class="stat-box__mod">[[_mod(chaAdj, cha)]]</div>
+                <div class="stat-box__footer">
+                  <vaadin-integer-field theme="mini" value={{cha}} min="1" max="20" has-controls label="Charisma" disabled$="[[!isEditMode]]">
+                    <span class="stat-box__adj" slot="suffix">[[_adjustString(chaAdj)]]</span>
+                  </vaadin-integer-field>
+                </div>
+              </div>
+              <div class="proficiencies">
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'deception')]]">Deception</div>
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'intimidation')]]">Intimidation</div>
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'performance')]]">Performance</div>
+                <div class="proficiency-item" enabled$="[[_strContains(attributeProfs, 'persuasion')]]">Persuasion</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     `;

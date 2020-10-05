@@ -50,9 +50,9 @@ class DndCharacterBuilderView extends PolymerElement {
     super();
 
     this.tabs = [
+      { label: "Attributes & Proficiencies", icon: "favorite", viewId: "attributes" },
       { label: "Class Levels", icon: "class", viewId: "class" },
       { label: "Race & Background", icon: "face", viewId: "background-race" },
-      { label: "Attributes & Proficiencies", icon: "favorite", viewId: "attributes" },
       { label: "Spells", icon: "flash_on", viewId: "spells" },
       { label: "Equipment", icon: "local_grocery_store", viewId: "equipment" },
     ]
@@ -224,6 +224,9 @@ class DndCharacterBuilderView extends PolymerElement {
         .not-edit-mode .add-char {
           display: none;
         }
+        .not-edit-mode .char-change vaadin-text-field {
+          max-width: calc(100% - 50px);
+        }
         @media(max-width: 420px) {
           #tabs.fixed {
             position: fixed;
@@ -254,8 +257,8 @@ class DndCharacterBuilderView extends PolymerElement {
 
           <div class="char-detail-edit">
             <div class="char-detail">
-              <div class="class">[[classLevel]]</div>
-              <div class="race-background">[[race]] - [[background]]</div>
+              <span class="class">[[classLevel]]</span>
+              <span class="race-background">[[race]] - [[background]]</span>
             </div>
             <button class="mdc-icon-button material-icons" id="editBtn" on-click="toggleEditMode">edit</button>
           </div>
