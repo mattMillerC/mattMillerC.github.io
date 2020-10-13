@@ -107,7 +107,7 @@
       }
     </style>
   </template>
-</dom-module>`;document.head.appendChild(n.content);i(80),i(30);var a=i(66),r=i(19);
+</dom-module>`;document.head.appendChild(n.content);i(79),i(30);var a=i(66),r=i(19);
 /**
 @license
 Copyright (c) 2017 Vaadin Ltd.
@@ -119,7 +119,7 @@ const l=document.createElement("template");let o;l.innerHTML='<dom-module id="va
 Copyright (c) 2019 Vaadin Ltd.
 This program is available under Apache License Version 2.0, available at https://vaadin.com/license/
 */
-const c=document.createElement("template");c.innerHTML='<dom-module id="vaadin-integer-field-template">\n\n  \n</dom-module>',document.head.appendChild(c.content);class p extends d{static get is(){return"vaadin-integer-field"}static get version(){return"2.6.2"}static get properties(){return{pattern:String,preventInvalidInput:Boolean,minlength:Number,maxlength:Number}}ready(){super.ready(),this._enabledCharPattern="[-+\\d]"}_valueChanged(t,e){if(""!==t&&!this.__isInteger(t))return console.warn(`Trying to set non-integer value "${t}" to <vaadin-integer-field>. Clearing the value.`),void(this.value="");super._valueChanged(t,e)}_stepChanged(t,e){if(!this.__hasOnlyDigits(t))return console.warn(`Trying to set invalid step size "${t}", which is not a positive integer, to <vaadin-integer-field>. Resetting the default value 1.`),void(this.step=1);super._stepChanged(t,e)}__isInteger(t){return/^(-\d)?\d*$/.test(String(t))}__hasOnlyDigits(t){return/^\d*$/.test(String(t))}}window.customElements.define(p.is,p);i(111),i(112),i(108);var u=i(18),h=i(107),b=i(1);class m extends s.a{static get properties(){return{str:{type:Number},dex:{type:Number},con:{type:Number},int:{type:Number},wis:{type:Number},cha:{type:Number},strAdj:{type:Number,value:0},dexAdj:{type:Number,value:0},conAdj:{type:Number,value:0},intAdj:{type:Number,value:0},wisAdj:{type:Number,value:0},chaAdj:{type:Number,value:0},attributeProfs:{type:String,value:""},saves:{type:Array,value:[]},classSkillProfOptions:{type:Object,value:{}},backgroundSkillProfOptions:{type:Object,value:[]},defaultBackgroundSkillProf:{type:String,value:""},raceAttributeOptions:{type:Object,value:[]},defaultRaceAttribute:{type:String,value:""},maxHP:{type:Number},tempHP:{type:Number,value:0},currentHP:{type:Number,observer:"currentHPChange"},isEditMode:{type:Boolean,value:!1}}}static get observers(){return["updateCharAttr(str, dex, con, int, wis, cha)"]}updateCharAttr(t,e,i,s,n,a){t&&e&&i&&s&&n&&a&&Object(u.Z)({str:t,dex:e,con:i,int:s,wis:n,cha:a})}currentHPChange(t){}connectedCallback(){super.connectedCallback(),this.characterChangeHandler=t=>{let e=t.detail.character;this.updateAttributesFromCharacter(e)},this.updateAttributesFromCharacter(Object(u.y)()),Object(u.j)().addEventListener("character-selected",this.characterChangeHandler),this.editModeHandler=t=>{this.isEditMode=t.detail.isEditMode},Object(h.b)().addEventListener("editModeChange",this.editModeHandler),this.isEditMode=Object(h.c)()}disconnectedCallback(){super.disconnectedCallback(),Object(u.j)().removeEventListener("character-selected",this.characterChangeHandler),Object(h.b)().removeEventListener("editModeChange",this.editModeHandler)}async updateAttributesFromCharacter(t){if(t&&t.attr){const e=t.attr;e.str===this.str&&e.dex===this.dex&&e.con===this.con&&e.int===this.int&&e.wis===this.wis&&e.cha===this.cha||this.setProperties({str:t.attr.str,dex:t.attr.dex,con:t.attr.con,int:t.attr.int,wis:t.attr.wis,cha:t.attr.cha}),this.saves=await Object(u.n)();let i=await Object(u.f)(),s=await Object(u.x)();s&&s.choose?(this.raceAttributeOptions=s.choose.from.map(t=>t.toUpperCase()),this.raceAttributeChoices=s.choose.count||1,this.raceAttributeSelections=t.raceAttributes):(this.raceAttributeOptions=void 0,this.raceAttributeChoices=void 0,this.raceAttributeSelections=void 0);let n=await Object(u.w)(s);this.defaultRaceAttribute=n.map(t=>{let e=t[0].toLowerCase(),i=t[1];return e.toUpperCase()+" "+Object(b.absInt)(i)}).join(", "),this.strAdj=i.str,this.dexAdj=i.dex,this.conAdj=i.con,this.intAdj=i.int,this.wisAdj=i.wis,this.chaAdj=i.cha,this.attributeProfs=(await Object(u.z)()).join(","),this.maxHP=await Object(u.v)(),this.currentHP=await Object(u.p)(),this.tempHP=await Object(u.D)(),this.hitDice=await Object(u.u)(),this.dispatchEvent(new CustomEvent("loadingChange",{bubbles:!0,composed:!0}))}}_adjustString(t){return 0!==t&&void 0!==t?Object(b.absInt)(t):""}_total(t,e){let i=parseInt(t),s=parseInt(e);return i=isNaN(i)?0:i,s=isNaN(s)?0:s,i+s}_mod(t,e){return Object(b.absInt)(Math.floor((this._total(t,e)-10)/2))}_contains(t,e){return t.indexOf(e)>-1}_exists(){for(let t of arguments)if(t&&(t.constructor!==Object||Object.entries(t).length>0)&&(!Array.isArray(t)||t.length>0))return!0;return!1}_editModeClass(t){return t?"edit-mode":"not-edit-mode"}_tempHpStr(t){return t&&"number"==typeof t&&t>0?" + "+t:""}_toggleButtonField(t){const e=t.target.closest(".btn-field"),i=e.classList.contains("btn-field--open"),s=e.classList.contains("btn-field--temp"),n=e.querySelector("vaadin-integer-field");if(e.classList.toggle("btn-field--open"),s)if(i){const t=parseInt(n.value);t&&(Object(u.c)(parseInt(this.tempHP)+t),n.value="")}else n.focus();else if(i){const t=parseInt(n.value);if(t){const i=e.classList.contains("btn-field--heal")?1:-1;Object(u.R)(parseInt(this.currentHP)+i*t),n.value=""}}else n.focus()}_useHitDice(t){const e=t.target.closest(".hit-dice__item");if(this.currentHP<this.maxHP){const t=e.dataset.className;console.error(t),Object(u.bb)(t)}else e.classList.add("hit-dice__item--error"),setTimeout(()=>{e.classList.remove("hit-dice__item--error")},500)}_strContains(t,e){return t.indexOf(e)>-1}_resetHitDice(t){Object(u.J)()}_triggerShortRest(t){}_triggerLongRest(t){}static get template(){return s.b`
+const c=document.createElement("template");c.innerHTML='<dom-module id="vaadin-integer-field-template">\n\n  \n</dom-module>',document.head.appendChild(c.content);class p extends d{static get is(){return"vaadin-integer-field"}static get version(){return"2.6.2"}static get properties(){return{pattern:String,preventInvalidInput:Boolean,minlength:Number,maxlength:Number}}ready(){super.ready(),this._enabledCharPattern="[-+\\d]"}_valueChanged(t,e){if(""!==t&&!this.__isInteger(t))return console.warn(`Trying to set non-integer value "${t}" to <vaadin-integer-field>. Clearing the value.`),void(this.value="");super._valueChanged(t,e)}_stepChanged(t,e){if(!this.__hasOnlyDigits(t))return console.warn(`Trying to set invalid step size "${t}", which is not a positive integer, to <vaadin-integer-field>. Resetting the default value 1.`),void(this.step=1);super._stepChanged(t,e)}__isInteger(t){return/^(-\d)?\d*$/.test(String(t))}__hasOnlyDigits(t){return/^\d*$/.test(String(t))}}window.customElements.define(p.is,p);i(111),i(112),i(108);var u=i(18),h=i(107),b=i(1);class m extends s.a{static get properties(){return{str:{type:Number},dex:{type:Number},con:{type:Number},int:{type:Number},wis:{type:Number},cha:{type:Number},strAdj:{type:Number,value:0},dexAdj:{type:Number,value:0},conAdj:{type:Number,value:0},intAdj:{type:Number,value:0},wisAdj:{type:Number,value:0},chaAdj:{type:Number,value:0},attributeProfs:{type:String,value:""},saves:{type:Array,value:[]},classSkillProfOptions:{type:Object,value:{}},backgroundSkillProfOptions:{type:Object,value:[]},defaultBackgroundSkillProf:{type:String,value:""},raceAttributeOptions:{type:Object,value:[]},defaultRaceAttribute:{type:String,value:""},maxHP:{type:Number},tempHP:{type:Number,value:0},currentHP:{type:Number,observer:"currentHPChange"},isEditMode:{type:Boolean,value:!1}}}static get observers(){return["updateCharAttr(str, dex, con, int, wis, cha)"]}updateCharAttr(t,e,i,s,n,a){t&&e&&i&&s&&n&&a&&Object(u.Z)({str:t,dex:e,con:i,int:s,wis:n,cha:a})}currentHPChange(t){}connectedCallback(){super.connectedCallback(),this.characterChangeHandler=t=>{let e=t.detail.character;this.updateAttributesFromCharacter(e)},this.updateAttributesFromCharacter(Object(u.y)()),Object(u.j)().addEventListener("character-selected",this.characterChangeHandler),this.editModeHandler=t=>{this.isEditMode=t.detail.isEditMode},Object(h.b)().addEventListener("editModeChange",this.editModeHandler),this.isEditMode=Object(h.c)()}disconnectedCallback(){super.disconnectedCallback(),Object(u.j)().removeEventListener("character-selected",this.characterChangeHandler),Object(h.b)().removeEventListener("editModeChange",this.editModeHandler)}async updateAttributesFromCharacter(t){if(t&&t.attr){const e=t.attr;e.str===this.str&&e.dex===this.dex&&e.con===this.con&&e.int===this.int&&e.wis===this.wis&&e.cha===this.cha||this.setProperties({str:t.attr.str,dex:t.attr.dex,con:t.attr.con,int:t.attr.int,wis:t.attr.wis,cha:t.attr.cha}),this.saves=await Object(u.n)();let i=await Object(u.f)(),s=await Object(u.x)();s&&s.choose?(this.raceAttributeOptions=s.choose.from.map(t=>t.toUpperCase()),this.raceAttributeChoices=s.choose.count||1,this.raceAttributeSelections=t.raceAttributes):(this.raceAttributeOptions=void 0,this.raceAttributeChoices=void 0,this.raceAttributeSelections=void 0);let n=await Object(u.w)(s);this.defaultRaceAttribute=n.map(t=>{let e=t[0].toLowerCase(),i=t[1];return e.toUpperCase()+" "+Object(b.absInt)(i)}).join(", "),this.strAdj=i.str,this.dexAdj=i.dex,this.conAdj=i.con,this.intAdj=i.int,this.wisAdj=i.wis,this.chaAdj=i.cha,this.attributeProfs=(await Object(u.z)()).join(","),this.maxHP=await Object(u.v)(),this.currentHP=await Object(u.p)(),this.tempHP=await Object(u.D)(),this.hitDice=await Object(u.u)(),this.dispatchEvent(new CustomEvent("loadingChange",{bubbles:!0,composed:!0}))}}_adjustString(t){return 0!==t&&void 0!==t?Object(b.absInt)(t):""}_total(t,e){let i=parseInt(t),s=parseInt(e);return i=isNaN(i)?0:i,s=isNaN(s)?0:s,i+s}_mod(t,e){return Object(b.absInt)(Math.floor((this._total(t,e)-10)/2))}_contains(t,e){return t.indexOf(e)>-1}_exists(){for(let t of arguments)if(t&&(t.constructor!==Object||Object.entries(t).length>0)&&(!Array.isArray(t)||t.length>0))return!0;return!1}_editModeClass(t){return t?"edit-mode":"not-edit-mode"}_tempHpStr(t){return t&&"number"==typeof t&&t>0?" + "+t:""}_toggleButtonField(t){const e=t.target.closest(".btn-field"),i=e.classList.contains("btn-field--open"),s=e.classList.contains("btn-field--temp"),n=e.querySelector("vaadin-integer-field");if(e.classList.toggle("btn-field--open"),s)if(i){const t=parseInt(n.value);t&&(Object(u.c)(parseInt(this.tempHP)+t),n.value="")}else n.focus();else if(i){const t=parseInt(n.value);if(t){const i=e.classList.contains("btn-field--heal")?1:-1;Object(u.R)(parseInt(this.currentHP)+i*t),n.value=""}}else n.focus()}_submitButtonField(t){if("Enter"===t.key){const e=t.target.closest(".btn-field"),i=e.classList.contains("btn-field--temp"),s=e.querySelector("vaadin-integer-field"),n=parseInt(s.value);if(n)if(e.classList.toggle("btn-field--open"),i)Object(u.c)(parseInt(this.tempHP)+n),s.value="";else{const t=e.classList.contains("btn-field--heal")?1:-1;Object(u.R)(parseInt(this.currentHP)+t*n),s.value=""}}}_useHitDice(t){const e=t.target.closest(".hit-dice__item");if(this.currentHP<this.maxHP){const t=e.dataset.className;console.error(t),Object(u.bb)(t)}else e.classList.add("hit-dice__item--error"),setTimeout(()=>{e.classList.remove("hit-dice__item--error")},500)}_strContains(t,e){return t.indexOf(e)>-1}_resetHitDice(t){Object(u.J)()}_triggerShortRest(t){}_triggerLongRest(t){}static get template(){return s.b`
       <style include="material-styles">
         :host {
           display: block;
@@ -132,7 +132,7 @@ const c=document.createElement("template");c.innerHTML='<dom-module id="vaadin-i
 
         .wrap {
           display: flex;
-          flex-direction: row-reverse;
+          flex-direction: column;
           justify-content: space-between;
         }
         .stats {
@@ -147,8 +147,18 @@ const c=document.createElement("template");c.innerHTML='<dom-module id="vaadin-i
         }
         .health-wrap {
           display: flex;
-          flex-direction: column;
+          flex-direction: row;
+          flex-wrap: wrap;
           min-width: 0;
+          flex-shrink: 0;
+          justify-content: space-between;
+        }
+        .health-wrap > div {
+          width: calc(33% - 8px);
+          max-width: 120px;
+        }
+        .health-wrap > div:not(:last-child) {
+          margin-bottom: 9px;
         }
 
 
@@ -226,7 +236,7 @@ const c=document.createElement("template");c.innerHTML='<dom-module id="vaadin-i
         .stat-box__mod {
           font-size: 40px;
           font-weight: normal;
-          margin: 16px 8px 4px;
+          margin: 4px 8px 0px;
           line-height: 1;
           position: relative;
           left: 1px;
@@ -244,7 +254,7 @@ const c=document.createElement("template");c.innerHTML='<dom-module id="vaadin-i
 
         /* Stat Box HP  */
         .stat-box--hp {
-
+          width: calc(100% - 4px);
         }
         .stat-box__total {
           font-size: 14px;
@@ -255,6 +265,9 @@ const c=document.createElement("template");c.innerHTML='<dom-module id="vaadin-i
           right: 5px;
           font-size: 16px;
         }
+        .stat-box--hp .stat-box__footer {
+          width: 100%;
+        }
 
 
         /* Button Field */
@@ -262,11 +275,14 @@ const c=document.createElement("template");c.innerHTML='<dom-module id="vaadin-i
           display: inline-flex;
           flex-direction: row;
           flex-wrap: nowrap;
-          margin-bottom: 16px;
-          width: 120px;
+          width: calc(100% - 4px);
           height: 36px;
           background: var(--lumo-contrast-10pct);
+          border: 2px solid var(--mdc-theme-text-divider-on-background);
           border-radius: 4px;
+        }
+        .btn-field:not(:last-child){
+          margin-bottom: 8px;
         }
         .btn-field__btn {
           display: block;
@@ -300,8 +316,9 @@ const c=document.createElement("template");c.innerHTML='<dom-module id="vaadin-i
           display: flex;
           flex-direction: column;
           border-radius: 4px;
-          padding: 6px;
+          padding: 6px 0 0;
           background: var(--lumo-contrast-10pct);
+          border: 2px solid var(--mdc-theme-text-divider-on-background);
           margin-bottom: 16px;
         }
         .hit-dice__heading {
@@ -347,38 +364,42 @@ const c=document.createElement("template");c.innerHTML='<dom-module id="vaadin-i
         <div class="wrap">
           <div class="health-wrap">
             <!-- Hit Points -->
-            <div class="stat-box stat-box--hp">
-              <div class="stat-box__footer">
-                <vaadin-integer-field theme="hp" value={{currentHP}} min="0" max="[[maxHP]]" has-controls label="Hit Points">
-                  <span class="stat-box__adj--hp" slot="suffix">/ [[maxHP]] [[_tempHpStr(tempHP)]]</span>
-                </vaadin-integer-field>
+            <div>
+              <div class="stat-box stat-box--hp">
+                <div class="stat-box__footer">
+                  <vaadin-integer-field theme="hp" value={{currentHP}} min="0" max="[[maxHP]]" has-controls label="Hit Points">
+                    <span class="stat-box__adj--hp" slot="suffix">/ [[maxHP]] [[_tempHpStr(tempHP)]]</span>
+                  </vaadin-integer-field>
+                </div>
               </div>
             </div>
 
             <!--  Healing / Damage -->
-            <div class="btn-field btn-field--heal">
-                <dnd-button icon="favorite" background="none" class="btn-field__btn" on-click="_toggleButtonField">
-                  <span class="btn-field__btn-label" slot="label">Heal</span>
-                </dnd-button>
-                <vaadin-integer-field class="btn-field__input" min="0" >
-                  <span slot="prefix">+</span>
-                </vaadin-integer-field>
-            </div>
-            <div class="btn-field">
-                <dnd-button svg="swords" background="none" class="btn-field__btn" on-click="_toggleButtonField">
-                  <span class="btn-field__btn-label" slot="label">Damage</span>
-                </dnd-button>
-                <vaadin-integer-field class="btn-field__input" min="0" >
-                  <span slot="prefix">-</span>
-                </vaadin-integer-field>
-            </div>
-            <div class="btn-field btn-field--temp">
-                <dnd-button svg="paladin" background="none" class="btn-field__btn" on-click="_toggleButtonField">
-                  <span class="btn-field__btn-label" slot="label">Temp HP</span>
-                </dnd-button>
-                <vaadin-integer-field class="btn-field__input" min="0" >
-                  <span slot="prefix">+</span>
-                </vaadin-integer-field>
+            <div class="health-wrap__buttons">
+              <div class="btn-field btn-field--heal">
+                  <dnd-button icon="favorite" background="none" class="btn-field__btn" on-click="_toggleButtonField">
+                    <span class="btn-field__btn-label" slot="label">Heal</span>
+                  </dnd-button>
+                  <vaadin-integer-field class="btn-field__input" min="0" on-keydown="_submitButtonField">
+                    <span slot="prefix">+</span>
+                  </vaadin-integer-field>
+              </div>
+              <div class="btn-field">
+                  <dnd-button svg="swords" background="none" class="btn-field__btn" on-click="_toggleButtonField">
+                    <span class="btn-field__btn-label" slot="label">Damage</span>
+                  </dnd-button>
+                  <vaadin-integer-field class="btn-field__input" min="0" on-keydown="_submitButtonField">
+                    <span slot="prefix">-</span>
+                  </vaadin-integer-field>
+              </div>
+              <div class="btn-field btn-field--temp">
+                  <dnd-button svg="paladin" background="none" class="btn-field__btn" on-click="_toggleButtonField">
+                    <span class="btn-field__btn-label" slot="label">Temp HP</span>
+                  </dnd-button>
+                  <vaadin-integer-field class="btn-field__input" min="0" on-keydown="_submitButtonField">
+                    <span slot="prefix">+</span>
+                  </vaadin-integer-field>
+              </div>
             </div>
 
             <!--  Hit Dice -->

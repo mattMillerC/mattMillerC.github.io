@@ -123,9 +123,42 @@ registerStyles('vaadin-integer-field', css`
     }
 
 
+    :host([theme="stat"]) {
+      width: 80px;
+      padding: 0;
+      margin: -16px 8px 8px;
+    }
+    :host([theme="stat"]) [part="decrease-button"],
+    :host([theme="stat"]) [part="increase-button"] {
+      width: 20px;
+      height: 20px;
+      background-color: transparent;
+      top: -2px;
+      position: relative;
+    }
+    :host([theme="stat"]) [part="decrease-button"]::before, 
+    :host([theme="stat"]) [part="increase-button"]::before {
+      margin-top: 0;
+    }
+    :host([theme="stat"]) .vaadin-text-field-container {
+      flex-direction: column-reverse;
+    }
+  
+    :host([theme="stat"]) [part="value"] {
+      padding: 0;
+      margin: 0;
+      min-height: 0;
+    }
+    :host([theme="stat"]) [part="label"] {
+      padding-top: 0px;
+      padding-bottom: 0;
+      margin: 4px auto 0;
+    }
+
+
 
     :host([theme="hp"]) {
-      width: 100px;
+      width: calc(100% - 16px);
       padding: 0;
       margin: -16px 8px 8px;
     }
@@ -163,7 +196,7 @@ registerStyles('vaadin-integer-field', css`
       margin-bottom: 20px;
       margin-top: 24px;
       font-size: 30px;
-      height: 55px;
+      height: 78px;
       background: transparent !important;
     }
     :host([theme="hp"]) [part="input-field"]::after {
@@ -173,7 +206,7 @@ registerStyles('vaadin-integer-field', css`
 
 registerStyles('vaadin-grid', css`
   :host([theme~="no-border"]) {
-    border-top: 3px solid var(--mdc-theme-text-divider-on-background);
+    border-top: none;//3px solid var(--mdc-theme-text-divider-on-background);
   }
   [part~="cell"]:not([part~="details-cell"]) {
     align-items: flex-start;

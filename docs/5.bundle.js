@@ -324,9 +324,6 @@
         }
 
         @media(min-width: 921px) {
-          .open-details {
-            flex-wrap: nowrap;
-          }
           .features-col {
             margin: 0 30px 0 12px;
             width: unset;

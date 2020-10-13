@@ -37,7 +37,33 @@
       <style include="material-styles">
         .mdc-tab-bar {
           max-width: 100vw;
+          line-height: 1;
         }
+        .mdc-tab__icon {
+          width: unset;
+          height: unset;
+        }
+        :host([theme="large"]) .mdc-tab {
+          height: 80px;
+          margin-left: -5px;
+        }
+        :host([theme="large"]) .mdc-tab__icon {
+          font-size: 30px;
+        }
+        :host([theme="large"]) .mdc-tab__text-label {
+          font-size: 20px;
+          padding-left: 16px;
+        }
+        :host([theme="large"]) .mdc-tab__content {
+          margin-left: 6px;
+        }
+        :host([theme="large"]) .mdc-tab .mdc-tab--active {
+          background-color: var(--lumo-primary-color-10pct);
+        }
+        :host([theme="large"]) .mdc-tab-indicator .mdc-tab-indicator__content {
+          border-width: 6px;
+        }
+
         .mdc-tab-scroller__scroll-area--scroll {
           overflow-x: auto;
           background-color: var(--mdc-theme-surface);
@@ -70,7 +96,7 @@
           </div>
         </div>
       </div>
-    `}}customElements.define("dnd-tabs",d);a(79),a(76),a(117);var c=a(1),n=a(18),r=a(67),l=a(107);class o extends i.a{static get properties(){return{loading:{type:Boolean,value:!0},characterName:{type:String,value:""},initialSelectedTab:{type:Number,value:0},indexForTabs:{type:Number,value:0},isEditMode:{type:Boolean,value:!1}}}static get observers(){return["_setName(characterName)"]}_setName(e){e&&Object(n.ab)(e)}constructor(){super(),this.tabs=[{label:"Attributes & Proficiencies",icon:"favorite",viewId:"attributes"},{label:"Class Levels",icon:"class",viewId:"class"},{label:"Race & Background",icon:"face",viewId:"background-race"},{label:"Spells",icon:"flash_on",viewId:"spells"},{label:"Equipment",icon:"local_grocery_store",viewId:"equipment"}]}connectedCallback(){super.connectedCallback(),this.tabChangeHandler=e=>{let t=e.detail.index,i=this.tabs[t].viewId;this.indexForTabs=t,void 0!==i&&(this.loading=!0,a(138)("./dnd-character-builder-"+i).then(()=>{this.updateView(document.createElement("dnd-character-builder-"+i))}))},this.addEventListener("tabChange",this.tabChangeHandler),this.loadingHandler=()=>{setTimeout(()=>{this.loading=!1},0)},this.addEventListener("loadingChange",this.loadingHandler),this.setStateFromCharacter(Object(n.y)()),this.characterChangeHandler=e=>{this.setStateFromCharacter(e.detail.character)},Object(n.j)().addEventListener("character-selected",this.characterChangeHandler),this.fixedTabsScrollHandler=()=>{this.$.tabWrap.getBoundingClientRect().top<=104?this.$.tabs.classList.add("fixed"):this.$.tabs.classList.remove("fixed")},window.addEventListener("scroll",this.fixedTabsScrollHandler),this.$.tabs.classList.remove("fixed"),this.nameFieldFocusHandler=e=>{"New Character"===this.$.name.value&&this.$.name.inputElement.select()},this.$.name.addEventListener("focus",this.nameFieldFocusHandler),this.editModeHandler=e=>{this.isEditMode=e.detail.isEditMode},Object(l.b)().addEventListener("editModeChange",this.editModeHandler),this.isEditMode=Object(l.c)(),this.isLoaded||(this.isLoaded=!0,Object(r.a)(this.$.tabTarget,"right",()=>{if(this.indexForTabs>0){const e=this.indexForTabs-1;this.$.tabs.tabBar.activateTab(e)}}),Object(r.a)(this.$.tabTarget,"left",()=>{if(this.indexForTabs<this.tabs.length-1){const e=this.indexForTabs+1;this.$.tabs.tabBar.activateTab(e)}}))}disconnectedCallback(){super.disconnectedCallback(),this.removeEventListener("tabChange",this.tabChangeHandler),this.removeEventListener("loadingChange",this.loadingHandler),window.removeEventListener("scroll",this.fixedTabsScrollHandler),Object(n.j)().removeEventListener("character-selected",this.characterChangeHandler),this.$.name.removeEventListener("focus",this.nameFieldFocusHandler),Object(l.b)().removeEventListener("editModeChange",this.editModeHandler)}updateView(e){window.requestAnimationFrame(()=>{const t=window.scrollY;Object(c.jqEmpty)(this.$.tabTarget),this.$.tabTarget.appendChild(e),this.$.tabs.classList.remove("fixed"),window.scrollTo(0,t)})}setStateFromCharacter(e){this.characterName=e.name,this.classLevel=Object(n.o)(e),this.background=Object(n.r)("backgrounds",e,!0),this.race=Object(n.r)("races",e,!0)}newCharacter(){Object(n.a)()}removeCharacter(){Object(n.I)()}toggleEditMode(){this.$.editBtn.classList.toggle("edit-mode");const e=this.$.editBtn.classList.contains("edit-mode");Object(l.a)(e),this.$.editBtn.innerHTML=e?"check":"edit"}_editModeClass(e){return e?"edit-mode":"not-edit-mode"}static get template(){return i.b`
+    `}}customElements.define("dnd-tabs",d);a(80),a(76),a(117);var c=a(1),n=a(18),r=a(67),l=a(107);class o extends i.a{static get properties(){return{loading:{type:Boolean,value:!0},characterName:{type:String,value:""},initialSelectedTab:{type:Number,value:0},indexForTabs:{type:Number,value:0},isEditMode:{type:Boolean,value:!1}}}static get observers(){return["_setName(characterName)"]}_setName(e){e&&Object(n.ab)(e)}constructor(){super(),this.tabs=[{label:"",icon:"favorite",viewId:"attributes"},{label:"",icon:"class",viewId:"class"},{label:"",icon:"face",viewId:"background-race"},{label:"",icon:"flash_on",viewId:"spells"},{label:"",icon:"local_grocery_store",viewId:"equipment"}]}connectedCallback(){super.connectedCallback(),this.tabChangeHandler=e=>{let t=e.detail.index,i=this.tabs[t].viewId;this.indexForTabs=t,void 0!==i&&(this.loading=!0,a(138)("./dnd-character-builder-"+i).then(()=>{this.updateView(document.createElement("dnd-character-builder-"+i))}))},this.addEventListener("tabChange",this.tabChangeHandler),this.loadingHandler=()=>{setTimeout(()=>{this.loading=!1},0)},this.addEventListener("loadingChange",this.loadingHandler),this.setStateFromCharacter(Object(n.y)()),this.characterChangeHandler=e=>{this.setStateFromCharacter(e.detail.character)},Object(n.j)().addEventListener("character-selected",this.characterChangeHandler),this.fixedTabsScrollHandler=()=>{if(this.$.tabwrap.matches(".fixed--bottom"))return void this.$.tabs.classList.add("fixed");this.$.tabWrap.getBoundingClientRect().top<=104?this.$.tabs.classList.add("fixed"):this.$.tabs.classList.remove("fixed")},window.addEventListener("scroll",this.fixedTabsScrollHandler),this.$.tabs.classList.remove("fixed"),this.nameFieldFocusHandler=e=>{"New Character"===this.$.name.value&&this.$.name.inputElement.select()},this.$.name.addEventListener("focus",this.nameFieldFocusHandler),this.editModeHandler=e=>{this.isEditMode=e.detail.isEditMode},Object(l.b)().addEventListener("editModeChange",this.editModeHandler),this.isEditMode=Object(l.c)(),this.isLoaded||(this.isLoaded=!0,Object(r.a)(this.$.tabTarget,"right",()=>{if(this.indexForTabs>0){const e=this.indexForTabs-1;this.$.tabs.tabBar.activateTab(e)}}),Object(r.a)(this.$.tabTarget,"left",()=>{if(this.indexForTabs<this.tabs.length-1){const e=this.indexForTabs+1;this.$.tabs.tabBar.activateTab(e)}}))}disconnectedCallback(){super.disconnectedCallback(),this.removeEventListener("tabChange",this.tabChangeHandler),this.removeEventListener("loadingChange",this.loadingHandler),window.removeEventListener("scroll",this.fixedTabsScrollHandler),Object(n.j)().removeEventListener("character-selected",this.characterChangeHandler),this.$.name.removeEventListener("focus",this.nameFieldFocusHandler),Object(l.b)().removeEventListener("editModeChange",this.editModeHandler)}updateView(e){window.requestAnimationFrame(()=>{const t=window.scrollY;Object(c.jqEmpty)(this.$.tabTarget),this.$.tabTarget.appendChild(e),this.$.tabs.classList.remove("fixed"),window.scrollTo(0,t)})}setStateFromCharacter(e){this.characterName=e.name,this.classLevel=Object(n.o)(e),this.background=Object(n.r)("backgrounds",e,!0),this.race=Object(n.r)("races",e,!0)}newCharacter(){Object(n.a)()}removeCharacter(){Object(n.I)()}toggleEditMode(){this.$.editBtn.classList.toggle("edit-mode");const e=this.$.editBtn.classList.contains("edit-mode");Object(l.a)(e),this.$.editBtn.innerHTML=e?"check":"edit"}_editModeClass(e){return e?"edit-mode":"not-edit-mode"}static get template(){return i.b`
       <style include="material-styles"></style>
       <style>
         :host {
@@ -123,10 +149,22 @@
             position: fixed;
             top: 56px;
             z-index: 2;
+            box-shadow: 0px 0px 30px -5px rgba(0,0,0,0.75);
             border-bottom: 1px solid var(--mdc-theme-text-divider-on-background);
           }
           #tabs.fixed + .tab-wrap {
             margin-top: 64px;
+          }
+          #tabs.fixed--bottom {
+            position: fixed;
+            bottom: 0;
+            z-index: 2;
+            box-shadow: 0px 0px 30px -10px rgba(0,0,0,0.75);
+            border-top: 1px solid var(--mdc-theme-text-divider-on-background);
+            height: 80px
+          }
+          #tabs.fixed--bottom + .tab-wrap {
+            margin-bottom: 64px;
           }
           .character-builder--tabs-wrapper {
             margin: 0 -16px -90px;
@@ -156,7 +194,7 @@
         </div>
 
         <div class="character-builder--tabs-wrapper">
-          <dnd-tabs id="tabs" tabs="[[tabs]]" initial-selected-index="[[initialSelectedTab]]"></dnd-tabs>
+          <dnd-tabs id="tabs" class='fixed--bottom' theme="large" tabs="[[tabs]]" initial-selected-index="[[initialSelectedTab]]"></dnd-tabs>
 
           <div class="tab-wrap" id="tabWrap">
             <div id="tabTarget" hidden$="[[loading]]"></div>

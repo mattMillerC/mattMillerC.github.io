@@ -49,12 +49,20 @@ class DndCharacterBuilderView extends PolymerElement {
   constructor() {
     super();
 
+    // this.tabs = [
+    //   { label: "Attributes & Proficiencies", icon: "favorite", viewId: "attributes" },
+    //   { label: "Class Levels", icon: "class", viewId: "class" },
+    //   { label: "Race & Background", icon: "face", viewId: "background-race" },
+    //   { label: "Spells", icon: "flash_on", viewId: "spells" },
+    //   { label: "Equipment", icon: "local_grocery_store", viewId: "equipment" },
+    // ]
+    
     this.tabs = [
-      { label: "Attributes & Proficiencies", icon: "favorite", viewId: "attributes" },
-      { label: "Class Levels", icon: "class", viewId: "class" },
-      { label: "Race & Background", icon: "face", viewId: "background-race" },
-      { label: "Spells", icon: "flash_on", viewId: "spells" },
-      { label: "Equipment", icon: "local_grocery_store", viewId: "equipment" },
+      { label: "", icon: "favorite", viewId: "attributes" },
+      { label: "", icon: "class", viewId: "class" },
+      { label: "", icon: "face", viewId: "background-race" },
+      { label: "", icon: "flash_on", viewId: "spells" },
+      { label: "", icon: "local_grocery_store", viewId: "equipment" },
     ]
   }
 
@@ -90,6 +98,13 @@ class DndCharacterBuilderView extends PolymerElement {
     getCharacterChannel().addEventListener("character-selected", this.characterChangeHandler);
 
     this.fixedTabsScrollHandler = () => {
+      const isBottomFixed = this.$.tabwrap.matches('.fixed--bottom');
+
+      if (isBottomFixed) {
+        this.$.tabs.classList.add('fixed');
+        return;
+      }
+      
       const heightDiff = this.$.tabWrap.getBoundingClientRect().top;
 
       if (heightDiff <= 104) {
@@ -232,10 +247,22 @@ class DndCharacterBuilderView extends PolymerElement {
             position: fixed;
             top: 56px;
             z-index: 2;
+            box-shadow: 0px 0px 30px -5px rgba(0,0,0,0.75);
             border-bottom: 1px solid var(--mdc-theme-text-divider-on-background);
           }
           #tabs.fixed + .tab-wrap {
             margin-top: 64px;
+          }
+          #tabs.fixed--bottom {
+            position: fixed;
+            bottom: 0;
+            z-index: 2;
+            box-shadow: 0px 0px 30px -10px rgba(0,0,0,0.75);
+            border-top: 1px solid var(--mdc-theme-text-divider-on-background);
+            height: 80px
+          }
+          #tabs.fixed--bottom + .tab-wrap {
+            margin-bottom: 64px;
           }
           .character-builder--tabs-wrapper {
             margin: 0 -16px -90px;
@@ -265,7 +292,7 @@ class DndCharacterBuilderView extends PolymerElement {
         </div>
 
         <div class="character-builder--tabs-wrapper">
-          <dnd-tabs id="tabs" tabs="[[tabs]]" initial-selected-index="[[initialSelectedTab]]"></dnd-tabs>
+          <dnd-tabs id="tabs" class='fixed--bottom' theme="large" tabs="[[tabs]]" initial-selected-index="[[initialSelectedTab]]"></dnd-tabs>
 
           <div class="tab-wrap" id="tabWrap">
             <div id="tabTarget" hidden$="[[loading]]"></div>

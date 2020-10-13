@@ -8,6 +8,7 @@ import { spellHtml } from "../../../js/spells";
 import { findInPath, util_capitalize, util_capitalizeAll, getProfBonus } from "../../../js/utils";
 import Parser from "../../../util/Parser";
 import "@vaadin/vaadin-checkbox";
+import "@vaadin/vaadin-text-field";
 
 // todo:
 // compute spell slots for multiclassing, warlock ++
@@ -39,8 +40,22 @@ class DndCharacterBuilderSpells extends PolymerElement {
       isEditMode: {
         type: Boolean,
         value: false
+      },
+      filterStr: {
+        type: String,
+        value: '',
+        observer: '_filterChange'
       }
     };
+  }
+
+  _filterChange() {
+    if (this.filterStr.length) {
+      console.log('filter string change');
+
+      this.$.grid.clearCache();
+      this.expandAll();
+    }
   }
 
   connectedCallback() {
@@ -101,13 +116,48 @@ class DndCharacterBuilderSpells extends PolymerElement {
 
       grid.dataProvider = ((params, callback) => {
         const startIndex = params.page * params.pageSize;
-        const children = params.parentItem ? params.parentItem.children : this.spellDisplay;
+        let children = params.parentItem ? params.parentItem.children : this.spellDisplay;
+        if (this.filterStr.length) {
+          children = children.filter((child) => {
+            return this.hasDecendentWithFilter(child, this.filterStr.toLowerCase()) 
+          });
+        }
         if (children && children.length) {
           const page = children.slice(startIndex, startIndex + params.pageSize);
           callback(page, children.length);
         }
       }).bind(this);
     }, 0);
+  }
+
+  hasDecendentWithFilter(node, filterStr) {
+    if (!node.name || node.name.toLowerCase().indexOf(filterStr) > -1) {
+      return true;
+    }
+    const children = node.length ? node : node.children;
+    if (children && children.length) {
+      for (let child of children) {
+        return this.hasDecendentWithFilter(child, filterStr);
+      }
+    }
+    return false;
+  }
+
+  expandAll() {
+    this.$.grid.expandedItems = this.findExpandables(this.spellDisplay);
+  }
+
+  findExpandables(node, array = []) {
+    if (node.id === 'level' || node.id === 'class') {
+      array.push(node);
+    }
+    const children = node.length ? node : node.children;
+    if (children && children.length) {
+      for (let child of children) {
+        return this.findExpandables(child, array);
+      }
+    }
+    return array;
   }
 
   async updateSpellStats(classRefs, classLevels) {
@@ -905,7 +955,7 @@ class DndCharacterBuilderSpells extends PolymerElement {
           display: flex;
           flex-wrap: nowrap;
           justify-content: space-around;
-          margin: 16px 0;
+          margin: 16px 0 8px;
         }
         .mod-row {
           display: flex;
@@ -914,6 +964,10 @@ class DndCharacterBuilderSpells extends PolymerElement {
           font-size: 12px;
           text-align: center;
           margin: 0 4px;
+          width: 130px;
+        }
+        .mod-val-wrap {
+          font-size: 16px;
         }
         .mod-val:not(:first-child)::before {
           content: '|';
@@ -923,9 +977,20 @@ class DndCharacterBuilderSpells extends PolymerElement {
           font-weight: bold;
         }
         @media(min-width: 420px) {
+          .mods {
+            justify-content: flex-start;
+          }
           .mod-row {
             font-size: 14px;
           }
+          .mod-val-wrap {
+            font-size: 18px;
+          }
+        }
+
+        .filter {
+          margin-left: 16px;
+
         }
 
         .tooltip {
@@ -965,30 +1030,38 @@ class DndCharacterBuilderSpells extends PolymerElement {
         }
       </style>
 
-      <div class="mods" hidden$="[[noContentMessage]]">
-        <div class="mod-row">
-          <span class="mod-val-wrap">
-            <template is="dom-repeat" items="[[spellMods]]">
-              <span class="mod-val" data-tooltip$="[[_join(item.classes)]]" on-mouseover="_toggleTooltip" on-mouseout="_toggleTooltip">+[[item.mod]]</span>
-            </template>
-          </span>
-          <span class="mod-label">Spell Modifier</span>
+      <div class="header-wrap" hidden$="[[noContentMessage]]">
+
+        <!-- Spell Mods -->
+        <div class="mods" >
+          <div class="mod-row">
+            <span class="mod-val-wrap">
+              <template is="dom-repeat" items="[[spellMods]]">
+                <span class="mod-val" data-tooltip$="[[_join(item.classes)]]" on-mouseover="_toggleTooltip" on-mouseout="_toggleTooltip">+[[item.mod]]</span>
+              </template>
+            </span>
+            <span class="mod-label">Spell Mod</span>
+          </div>
+          <div class="mod-row">
+            <span class="mod-val-wrap">
+              <template is="dom-repeat" items="[[spellMods]]">
+                <span class="mod-val" data-tooltip$="[[_join(item.classes)]]" on-mouseover="_toggleTooltip" on-mouseout="_toggleTooltip">+[[item.spellAttackBonus]]</span>
+              </template>
+            </span>
+            <span class="mod-label">Spell Atk +</span>
+          </div>
+          <div class="mod-row">
+            <span class="mod-val-wrap">
+              <template is="dom-repeat" items="[[spellMods]]">
+                <span class="mod-val" data-tooltip$="[[_join(item.classes)]]" on-mouseover="_toggleTooltip" on-mouseout="_toggleTooltip">[[item.dc]]</span>
+              </template>
+            </span>
+            <span class="mod-label">Spell DC</span>
+          </div>
         </div>
-        <div class="mod-row">
-          <span class="mod-val-wrap">
-            <template is="dom-repeat" items="[[spellMods]]">
-              <span class="mod-val" data-tooltip$="[[_join(item.classes)]]" on-mouseover="_toggleTooltip" on-mouseout="_toggleTooltip">+[[item.spellAttackBonus]]</span>
-            </template>
-          </span>
-          <span class="mod-label">Spell Attack Bonus</span>
-        </div>
-        <div class="mod-row">
-          <span class="mod-val-wrap">
-            <template is="dom-repeat" items="[[spellMods]]">
-              <span class="mod-val" data-tooltip$="[[_join(item.classes)]]" on-mouseover="_toggleTooltip" on-mouseout="_toggleTooltip">[[item.dc]]</span>
-            </template>
-          </span>
-          <span class="mod-label">Spell DC</span>
+
+        <div class="filter">
+          <vaadin-text-field value="{{filterStr}}" placeholder='Filter'></vaadin-text-field>
         </div>
       </div>
 

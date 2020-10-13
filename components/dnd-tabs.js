@@ -45,7 +45,33 @@ class DndTabs extends PolymerElement {
       <style include="material-styles">
         .mdc-tab-bar {
           max-width: 100vw;
+          line-height: 1;
         }
+        .mdc-tab__icon {
+          width: unset;
+          height: unset;
+        }
+        :host([theme="large"]) .mdc-tab {
+          height: 80px;
+          margin-left: -5px;
+        }
+        :host([theme="large"]) .mdc-tab__icon {
+          font-size: 30px;
+        }
+        :host([theme="large"]) .mdc-tab__text-label {
+          font-size: 20px;
+          padding-left: 16px;
+        }
+        :host([theme="large"]) .mdc-tab__content {
+          margin-left: 6px;
+        }
+        :host([theme="large"]) .mdc-tab .mdc-tab--active {
+          background-color: var(--lumo-primary-color-10pct);
+        }
+        :host([theme="large"]) .mdc-tab-indicator .mdc-tab-indicator__content {
+          border-width: 6px;
+        }
+
         .mdc-tab-scroller__scroll-area--scroll {
           overflow-x: auto;
           background-color: var(--mdc-theme-surface);
