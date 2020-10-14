@@ -52,7 +52,7 @@ class DndTabs extends PolymerElement {
           height: unset;
         }
         :host([theme="large"]) .mdc-tab {
-          height: 80px;
+          height: 64px;
           margin-left: -5px;
         }
         :host([theme="large"]) .mdc-tab__icon {

@@ -259,7 +259,7 @@ class DndCharacterBuilderView extends PolymerElement {
             z-index: 2;
             box-shadow: 0px 0px 30px -10px rgba(0,0,0,0.75);
             border-top: 1px solid var(--mdc-theme-text-divider-on-background);
-            height: 80px
+            height: 64px
           }
           #tabs.fixed--bottom + .tab-wrap {
             margin-bottom: 64px;

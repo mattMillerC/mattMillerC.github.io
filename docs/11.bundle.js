@@ -44,7 +44,7 @@
           height: unset;
         }
         :host([theme="large"]) .mdc-tab {
-          height: 80px;
+          height: 64px;
           margin-left: -5px;
         }
         :host([theme="large"]) .mdc-tab__icon {
@@ -161,7 +161,7 @@
             z-index: 2;
             box-shadow: 0px 0px 30px -10px rgba(0,0,0,0.75);
             border-top: 1px solid var(--mdc-theme-text-divider-on-background);
-            height: 80px
+            height: 64px
           }
           #tabs.fixed--bottom + .tab-wrap {
             margin-bottom: 64px;
