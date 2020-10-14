@@ -677,6 +677,9 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
           right: 22px;
           top: 8px;
         }
+        .not-edit-mode .hp-col {
+          right: 0px;
+        }
         .hp-col .material-icons {
           font-size: 16px;
           position: relative;

@@ -98,10 +98,9 @@ class DndCharacterBuilderView extends PolymerElement {
     getCharacterChannel().addEventListener("character-selected", this.characterChangeHandler);
 
     this.fixedTabsScrollHandler = () => {
-      const isBottomFixed = this.$.tabwrap.matches('.fixed--bottom');
+      const isBottomFixed = this.$.tabs.matches('.fixed--bottom');
 
       if (isBottomFixed) {
-        this.$.tabs.classList.add('fixed');
         return;
       }
       

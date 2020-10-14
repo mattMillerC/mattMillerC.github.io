@@ -54,8 +54,8 @@ class DndCharacterBuilderSpells extends PolymerElement {
       if (!this.oldExpanded) {
         this.oldExpanded = this.$.grid.expandedItems;
       }
-      this.$.grid.clearCache();
       this.expandAll();
+      this.$.grid.clearCache();
     } else {
       if (this.oldExpanded) {
         this.$.grid.expandedItems = this.oldExpanded;

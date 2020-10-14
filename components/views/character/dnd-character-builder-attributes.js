@@ -370,6 +370,7 @@ class DndCharacterBuilderAttributes extends PolymerElement {
           min-width: 0;
           flex-shrink: 0;
           justify-content: space-between;
+          margin-bottom: 16px;      
         }
         .health-wrap > div {
           width: calc(33% - 8px);
@@ -383,7 +384,7 @@ class DndCharacterBuilderAttributes extends PolymerElement {
         /* Proficiencies */
         .proficiencies {
           margin-left: 8px;
-          line-height: 1.7;
+          line-height: 1.4;
           min-width: 0;
         }
         .proficiency-item {
@@ -452,7 +453,7 @@ class DndCharacterBuilderAttributes extends PolymerElement {
           display: block;
         }
         .stat-box__mod {
-          font-size: 40px;
+          font-size: 32px;
           font-weight: normal;
           margin: 4px 8px 0px;
           line-height: 1;
