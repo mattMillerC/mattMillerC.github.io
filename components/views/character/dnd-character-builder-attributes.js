@@ -17,7 +17,8 @@ import {
   getHitDice,
   resetHitDice,
   addTempHp,
-  useHitDice
+  useHitDice,
+  getCharacterAC
 } from "../../../util/charBuilder";
 import { getEditModeChannel, isEditMode } from "../../../util/editMode";
 import { util_capitalizeAll, absInt } from "../../../js/utils";
@@ -205,6 +206,8 @@ class DndCharacterBuilderAttributes extends PolymerElement {
 
       this.hitDice = await getHitDice();
 
+      this.ac = await getCharacterAC();
+
       this.dispatchEvent(new CustomEvent("loadingChange", { bubbles: true, composed: true }));
     }
   }
@@ -256,7 +259,9 @@ class DndCharacterBuilderAttributes extends PolymerElement {
     const isOpen = element.classList.contains('btn-field--open');
     const isTemp = element.classList.contains('btn-field--temp');
     const intField = element.querySelector('vaadin-integer-field');
+    const buttonComp = element.querySelector('dnd-button');
     element.classList.toggle('btn-field--open');
+    buttonComp.classList.toggle('icon-only');
 
     if (isTemp) {
       if (isOpen) {
@@ -386,6 +391,8 @@ class DndCharacterBuilderAttributes extends PolymerElement {
           margin-left: 8px;
           line-height: 1.4;
           min-width: 0;
+          position: relative;
+          top: -2px;
         }
         .proficiency-item {
           font-size: 14px;
@@ -432,7 +439,6 @@ class DndCharacterBuilderAttributes extends PolymerElement {
           justify-content: center;
           align-items: center;
           background: var(--lumo-contrast-10pct);
-          border: 2px solid var(--mdc-theme-text-divider-on-background);
           border-radius: 4px;
         }
         .stat-box:not(:last-child) {
@@ -455,7 +461,7 @@ class DndCharacterBuilderAttributes extends PolymerElement {
         .stat-box__mod {
           font-size: 32px;
           font-weight: normal;
-          margin: 4px 8px 0px;
+          margin: 8px 8px 2px;
           line-height: 1;
           position: relative;
           left: 1px;
@@ -463,9 +469,12 @@ class DndCharacterBuilderAttributes extends PolymerElement {
         .stat-box__footer {
           display: inline-block;
         }
-        .not-edit-mode .stat-box__adj {
+        .stat-box__adj {
           position: relative;
-          right: 18px;
+          right: 0px;
+        }
+        .not-edit-mode .stat-box__adj {
+          right: 15px;
           color: var(--lumo-body-text-color);
           -webkit-text-fill-color: var(--lumo-body-text-color);
         }
@@ -473,7 +482,7 @@ class DndCharacterBuilderAttributes extends PolymerElement {
 
         /* Stat Box HP  */
         .stat-box--hp {
-          width: calc(100% - 4px);
+          width: 100%;
         }
         .stat-box__total {
           font-size: 14px;
@@ -494,14 +503,13 @@ class DndCharacterBuilderAttributes extends PolymerElement {
           display: inline-flex;
           flex-direction: row;
           flex-wrap: nowrap;
-          width: calc(100% - 4px);
+          width: 100%;
           height: 36px;
           background: var(--lumo-contrast-10pct);
-          border: 2px solid var(--mdc-theme-text-divider-on-background);
           border-radius: 4px;
         }
         .btn-field:not(:last-child){
-          margin-bottom: 8px;
+          margin-bottom: 12px;
         }
         .btn-field__btn {
           display: block;
@@ -528,6 +536,10 @@ class DndCharacterBuilderAttributes extends PolymerElement {
         .btn-field vaadin-integer-field {
           --lumo-contrast-10pct: transparent;
         }
+        .btn-field__btn-label--temp,
+        .btn-field__btn-label--damage {
+          font-size: 9px;
+        }
 
 
         /* Hit Dice */
@@ -537,7 +549,6 @@ class DndCharacterBuilderAttributes extends PolymerElement {
           border-radius: 4px;
           padding: 6px 0 0;
           background: var(--lumo-contrast-10pct);
-          border: 2px solid var(--mdc-theme-text-divider-on-background);
           margin-bottom: 16px;
         }
         .hit-dice__heading {
@@ -573,6 +584,23 @@ class DndCharacterBuilderAttributes extends PolymerElement {
           width: 30px;
         }
 
+        .ac {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 4px 0;
+          background: var(--lumo-contrast-10pct);
+          border-radius: 4px;
+          margin-bottom: 8px;
+        }
+        .ac__label {
+          color: var(--mdc-theme-primary);
+          font-size: 14px;
+        }
+        .ac__value {
+          font-size: 22px;
+        }
+
         /* Rest Buttons */
         .rest-btn {
           margin-bottom: 16px;
@@ -605,7 +633,7 @@ class DndCharacterBuilderAttributes extends PolymerElement {
               </div>
               <div class="btn-field">
                   <dnd-button svg="swords" background="none" class="btn-field__btn" on-click="_toggleButtonField">
-                    <span class="btn-field__btn-label" slot="label">Damage</span>
+                    <span class="btn-field__btn-label btn-field__btn-label--damage" slot="label">Damage</span>
                   </dnd-button>
                   <vaadin-integer-field class="btn-field__input" min="0" on-keydown="_submitButtonField">
                     <span slot="prefix">-</span>
@@ -613,7 +641,7 @@ class DndCharacterBuilderAttributes extends PolymerElement {
               </div>
               <div class="btn-field btn-field--temp">
                   <dnd-button svg="paladin" background="none" class="btn-field__btn" on-click="_toggleButtonField">
-                    <span class="btn-field__btn-label" slot="label">Temp HP</span>
+                    <span class="btn-field__btn-label btn-field__btn-label--temp" slot="label">Temp HP</span>
                   </dnd-button>
                   <vaadin-integer-field class="btn-field__input" min="0" on-keydown="_submitButtonField">
                     <span slot="prefix">+</span>
@@ -637,7 +665,10 @@ class DndCharacterBuilderAttributes extends PolymerElement {
               <dnd-button class="hit-dice__reset" label="Reset" on-click="_resetHitDice"></dnd-button>
             </div>
 
-            <!-- Reset Hit Dice -->
+            <div class="ac">
+              <div class="ac__value">[[ac]]</div>
+              <div class="ac__label">AC</div>
+            </div>
 
             <!--  Short Rest -->
             <!-- <dnd-button icon="watch" class="rest-btn rest-btn--short" background="var(--lumo-contrast-10pct)" label="Short" on-click="_triggerShortRest"></dnd-button> -->

@@ -104,10 +104,53 @@ class DndCharacterPopup extends PolymerElement {
           right: 0;
           z-index: 2;
         }
-        
-        @media(min-width: 599px) {
-          :host {
+        [hidden] {
+          display: none !important;
+        }
+        .wrapper {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border-top: 1px solid var(--mdc-theme-text-divider-on-background);
+          padding: 8px;
+        }
+        .left-wrap {
+          display: flex;
+          align-items: center;
+        }
+        .open-char-button {
+          margin-right: 10px;
+        }
+        dnd-character-select {
+          width: 100%;
+        }
+        .char-select-wrap {
+          display: flex;
+          flex-direction: column;
+        }
+        .char-select-wrap[smaller] {
+          width: 140px;
+        }
 
+        .feature-button {
+          display: flex;
+          align-items: center;
+        }
+        .class,
+        .feature {
+          font-size: 11px;
+          font-style: italic;
+          margin-left: 8px;
+        }
+        .add-character-option {
+          margin-left: 10px;
+          flex-grow: 0;
+          flex-shrink: 0;
+        }
+
+        @media(min-width: 420px) {
+          .char-select-wrap[smaller] {
+            width: auto;
           }
         }
         @media(min-width: 1321px) {
@@ -115,41 +158,19 @@ class DndCharacterPopup extends PolymerElement {
             width: calc(100% - 256px);
           }
         }
-        .wrapper {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          flex-wrap: wrap;
-          border-top: 1px solid var(--mdc-theme-text-divider-on-background);
-          padding: 10px 32px;
-        }
-        .name {
-          display: flex;
-          align-items: center;
-        }
-        .name .mdc-icon-button {
-          margin-right: 16px;
-        }
-        .feature-button {
-          display: flex;
-          align-items: center;
-        }
-        .add-character-option {
-          margin-left: 24px;
-        }
-        [hidden] {
-          display: none !important;
-        }
       </style>
-      <div class="wrapper" hidden$="[[!_exists(selection)]]">
-        <div class="name">
-          <a class="mdc-icon-button material-icons" href="#/character-builder">launch</a>
-          <dnd-character-select></dnd-character-select>
+
+      <div class="wrapper">
+        <div class="left-wrap">
+          <a class="open-char-button mdc-icon-button material-icons" href="#/character-builder">launch</a>
+          <div class="char-select-wrap" smaller$="[[_exists(selection)]]">
+            <dnd-character-select></dnd-character-select>
+            <div class="class" hidden$="[[!_equal(view, 'classes')]]">[[classString(selectedCharacter)]]</div>
+            <div class="feature" hidden$="[[_equal(view, 'classes')]]">[[featureString(view, selectedCharacter)]]</div>
+          </div>
         </div>
         <div class="feature-button">
-          <div class="class" hidden$="[[!_equal(view, 'classes')]]">[[classString(selectedCharacter)]]</div>
-          <div class="feature" hidden$="[[_equal(view, 'classes')]]">[[featureString(view, selectedCharacter)]]</div>
-          <button class="mdc-button add-character-option" on-click="addFeatureToCharacter">
+          <button class="mdc-button add-character-option" on-click="addFeatureToCharacter" hidden$="[[!_exists(selection)]]">
             <div class="mdc-button__ripple"></div>
             <i class="material-icons mdc-button__icon" aria-hidden="true">person_add</i>
             <span class="mdc-button__label">Add [[_viewString(view)]]</span>

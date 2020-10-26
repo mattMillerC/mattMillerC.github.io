@@ -1,6 +1,8 @@
 import { readRouteView, readRouteSelection } from "./routing";
 import { loadModel } from "./data";
 import { resolveHash } from './renderTable.js';
+import Parser from "./Parser";
+
 import droll from "../lib/droll";
 
 let schema = {
@@ -191,6 +193,11 @@ async function addFeatureById(type = readRouteView(), id = readRouteSelection(),
 function mergeFeature(character = selectedCharacter, selectedItem, type) {
   if (type === "classes") {
     mergeClass(character, selectedItem);
+
+  } else if (type==="items") { 
+    addItem(selectedItem, true, false, character);
+    return;
+
   } else {
     if (type === "backgrounds") {
       character.backgroundSkillProficiencies = []
@@ -1042,6 +1049,177 @@ function setHpRoll(className, level, roll, character = selectedCharacter) {
   }
 }
 
+function addItem(item, isFromRef = false, isCopy = false, character = selectedCharacter) {
+  if (!character.items) {
+    character.items = [];
+  }
+
+  if (isFromRef) {
+    character.items.push({
+      itemRef: true,
+      source: item.source,
+      name: item.name
+    });
+  } else {
+    if (isCopy) {
+      item.isCopy = true;
+    }
+    character.items.push(item);
+  }
+  
+  saveCharacter(character);
+}
+
+async function getItems(character = selectedCharacter) {
+  let resultItems = [];
+  if (character && character.items && character.items.length) {
+    
+    const itemRefs = await loadModel('items');
+    resultItems = character.items.map((itemFromChar, index) => {
+      if (itemFromChar.itemRef) {
+        const { isAttuned, isEquiped } = itemFromChar;
+        const itemRef = itemRefs.find(item => item.source === itemFromChar.source && itemFromChar.name === item.name);
+        const isShieldInherited = getIsShieldInherited(itemRef);
+        const newItem = {
+          ...itemRef,
+          id: index,
+          type: isShieldInherited ? 'S' : itemRef.type,
+          isAttuned,
+          isEquiped,
+          canEquip: itemRef.armor || itemRef.weaponCategory || itemRef.type === 'S' || isShieldInherited
+        };
+        newItem.typeText = getItemType(newItem);
+        return newItem;
+
+      } else {
+        const isShieldInherited = getIsShieldInherited(itemFromChar);
+        const newItem = {
+          ...itemFromChar,
+          id: index,
+          type: itemFromChar.requires && itemFromChar.requires.type === 'S' ? 'S' : itemFromChar.type,
+          canEquip: itemFromChar.armor || itemFromChar.weaponCategory || itemFromChar.type === 'S' || isShieldInherited
+        };
+        newItem.typeText = getItemType(newItem);
+        return newItem;
+      }
+    });
+    resultItems = resultItems.filter((item) => item.type !== 'GV');
+  }
+  return resultItems;
+}
+
+function getIsShieldInherited(item) {
+  return item && item.requires && item.requires.type === 'S';
+}
+
+function getItemType(item) {
+  const type = [];
+  if (item.wondrous) type.push("Wondrous Item");
+  if (item.technology) type.push(item.technology);
+  if (item.age) type.push(item.age);
+  if (item.weaponCategory) type.push(`Weapon (${item.weaponCategory})`);
+  if (item.type) type.push(Parser.itemTypeToAbv(item.type));
+  return type.join(", ");
+}
+
+function removeItem(index, character = selectedCharacter) {
+  if (character && character.items && index !== undefined && character.items.length > index) {
+    character.items.splice(index, 1)
+    saveCharacter(character);
+  }
+}
+
+function toggleItemEquiped(index, character = selectedCharacter) {
+  if (character && character.items && index !== undefined && character.items.length > index) {
+    character.items[index].isEquiped = !character.items[index].isEquiped;
+    saveCharacter(character);
+  }
+}
+
+function toggleItemAttuned(index, character = selectedCharacter) {
+  if (character && character.items && index !== undefined && character.items.length > index) {
+    character.items[index].isAttuned = !character.items[index].isAttuned;
+    saveCharacter(character);
+  }
+}
+
+async function canEquipItem(thisItem, character = selectedCharacter) {
+  if (character && character.items) {
+    if (thisItem.canEquip) {
+      const items = await getItems();
+      const anyEquipedArmor = items.some((item) => item.isEquiped && item.armor && item.id !== thisItem.id);
+      const anyEquipedShield = items.some((item) => item.type === 'S' && item.isEquiped && item.id !== thisItem.id);
+      return (thisItem.armor && !anyEquipedArmor) || (thisItem.type === 'S' && !anyEquipedShield) || (!thisItem.armor && thisItem.type !== 'S');
+    }
+  }
+  return false;
+}
+
+async function canAttuneItem(thisItem, character = selectedCharacter) {
+  if (character && character.items) {
+    let canEquip = await canEquipItem(thisItem, character);
+    if (thisItem.reqAttune && (!thisItem.canEquip || (thisItem.canEquip && canEquip && thisItem.isEquiped))) {
+      const items = await getItems();
+      const allAttuned = items.filter((item) => item.isAttuned && item.reqAttune).length >= 3;
+      return !allAttuned;
+    }
+  }
+  return false;
+}
+
+async function getWeaponItems(character = selectedCharacter) {
+  const items = await getItems(character);
+
+  return items.filter(item => !!item.weaponCategory)
+}
+
+async function getArmorItems(character = selectedCharacter) {
+  const items = await getItems(character);
+
+  return items.filter(item => !!item.armor)
+}
+
+async function getCharacterAC(character = selectedCharacter) {
+  let ac = 10;
+  const items = await getItems(character);
+  const dexMod = await getAttributeModifier('dex', character);
+  const equipedArmor = items.find(item => item.isEquiped && item.armor);
+  const equipedShield = items.find(item => item.type === 'S' && item.isEquiped);
+
+  if (equipedArmor) {
+    const type = equipedArmor.type;
+    if (type === "LA") {
+      ac = parseInt(equipedArmor.ac) + dexMod;
+    } else if (type === "MA") {
+      ac = parseInt(equipedArmor.ac) + Math.min(dexMod, 2);
+    } else if (type === "HA") {
+      ac = equipedArmor.ac;
+    }
+
+    if (equipedArmor.genericBonus) {
+      ac += parseInt(equipedArmor.genericBonus)
+    }
+  } else {
+    ac = 10 + dexMod;
+  }
+
+  if (equipedShield) {
+    let shieldAc = parseInt(equipedShield.ac);
+
+    if (Number.isNaN(shieldAc)) {
+      shieldAc = 2;
+    }
+
+    if (equipedShield.inherits && equipedShield.inherits.genericBonus) {
+      shieldAc += parseInt(equipedShield.inherits.genericBonus)
+    }
+
+    return `${ac} + ${shieldAc}`;
+  }
+  
+  return ac;
+}
+
 export {
   addCharacter,
   addFeature,
@@ -1103,5 +1281,15 @@ export {
   resetHitDice,
   useHitDice,
   getHPDiceForLevel,
-  setHpRoll
+  setHpRoll,
+  addItem,
+  getItems,
+  removeItem,
+  toggleItemEquiped,
+  toggleItemAttuned,
+  canEquipItem,
+  canAttuneItem,
+  getWeaponItems,
+  getArmorItems,
+  getCharacterAC
 };

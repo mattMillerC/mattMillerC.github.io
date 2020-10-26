@@ -91,7 +91,7 @@ registerStyles('vaadin-integer-field', css`
     }
   
     :host([theme="mini"]) {
-      width: 80px;
+      width: 70px;
       padding: 0;
       margin: -16px 8px 8px;
     }
@@ -115,6 +115,7 @@ registerStyles('vaadin-integer-field', css`
       padding: 0;
       margin: 0;
       min-height: 0;
+      min-width: 18px;
     }
     :host([theme="mini"]) [part="label"] {
       padding-top: 0px;

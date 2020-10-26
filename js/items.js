@@ -21,8 +21,9 @@ const stats_wrapper = `
 	</div>`;
 
 const renderer = new EntryRenderer();
-function renderSelection(item, rootEl) {
-	rootEl.querySelector(".selection-wrapper").innerHTML = stats_wrapper;
+function renderSelection(item, rootEl, hideFirstLine) {
+	const wrap = rootEl.querySelector(".selection-wrapper") || rootEl;
+	wrap.innerHTML = stats_wrapper;
 	
 	const source = item.source;
 	const sourceFull = Parser.sourceJsonToFull(source);
@@ -73,6 +74,9 @@ function renderSelection(item, rootEl) {
 	const renderStack = [];
 	renderer.recursiveEntryRender(entryList, renderStack, 1);
 	rootEl.querySelector(".stats-wrapper .text").innerHTML = (utils_makeRoller(renderStack.join("")).split(item.name.toLowerCase()).join("<i>"+item.name.toLowerCase()+"</i>"));
+	if (hideFirstLine) {
+		rootEl.querySelector(".margin-bottom_small").remove();
+	}
 }
 
 export { renderSelection };

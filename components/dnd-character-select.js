@@ -119,6 +119,9 @@ class DndCharacterSelect extends PolymerElement {
         :host {
           display: inline-block;
         }
+        :host(:not([mini])) vaadin-select {
+          width: 100%;
+        }
       </style>
       <vaadin-select mini$="[[mini]]" label="[[label]]" id="select"></vaadin-select>
     `;

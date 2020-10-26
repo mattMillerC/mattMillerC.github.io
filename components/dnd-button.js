@@ -99,9 +99,23 @@ class DndButton extends PolymerElement {
         dnd-svg {
           height: 20px;
           width: 20px;
+          flex-shrink: 0;
+          flex-grow: 0;
           padding-left: 8px;
           fill: var(--mdc-theme-primary);
           stroke: var(--mdc-theme-primary);
+        }
+        i {
+          flex-shrink: 0;
+          flex-grow: 0;
+        }
+        :host(.icon-only) dnd-svg {
+          margin-left: -24px;
+          padding-left: 0;
+        }
+        :host(.icon-only) i {
+          margin-left: -18px;
+          padding-left: 0;
         }
       </style>
       <button id="button" class="mdc-button" style$="[[_styleStr(background, border)]]">

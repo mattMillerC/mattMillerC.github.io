@@ -6,7 +6,7 @@ import { renderTable } from "../util/renderTable.js";
 import './styles/material-styles.js';
 import "./styles/my-styles.js";
 import "./dnd-spinner.js";
-import { setRouteSelection } from '../util/routing.js';
+import { routeEventChannel, readRouteView, setRouteSelection } from '../util/routing';
 
 class DndList extends PolymerElement {
   static get properties() {
@@ -17,6 +17,9 @@ class DndList extends PolymerElement {
       data: {
         type: Array,
         observer: '_dataChange'
+      },
+      view: {
+        type: String
       }
     };
   }
@@ -25,6 +28,20 @@ class DndList extends PolymerElement {
     super.connectedCallback();
     new MDCTextField(this.shadowRoot.querySelector(".mdc-text-field"));
     new MDCNotchedOutline(this.shadowRoot.querySelector(".mdc-notched-outline"));
+
+    this.viewChangeHandler = (e) => {
+      if (e && e.detail) {
+        this.view = e.detail.view;
+      }
+    };
+    routeEventChannel().addEventListener("view-change", this.viewChangeHandler);
+    this.view = readRouteView();
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+
+    routeEventChannel().removeEventListener("view-change", this.viewChangeHandler);
   }
 
   _dataChange() {
@@ -74,7 +91,7 @@ class DndList extends PolymerElement {
         </div>
 
         <div class="table-wrap mdc-elevation--z6">
-          <div class="table--scroll">
+          <div class="table--scroll" view$="[[view]]">
             <table class="table">
               <thead>
                 <tr class="table-row table-row--header">

@@ -284,10 +284,11 @@ styleElement.innerHTML = `
       .table-wrap {
         border-radius: 4px;
         display: inline-block;
-        margin-top: 16px;
+        margin-top: 8px;
         position: relative;
-        max-width: 100%;
-        width: 100%;
+        width: calc(100% + 32px);
+        max-width: unset;
+        margin-left: -16px;
       }
       .table-wrap:before {
         content: '';
@@ -311,13 +312,18 @@ styleElement.innerHTML = `
         width: 100%;
       }
       .table--scroll {
-        max-height: calc(100vh - 330px);
+        max-height: calc(100vh - 297px);
         overflow-x: auto;
         overflow-y: auto;
         padding-top: 44px;
         border-radius: 4px;
         box-shadow: 0 0 0 1px var(--mdc-theme-text-divider-on-background);
         background-color: var(--mdc-theme-surface);
+      }
+      .table--scroll[view="feats"],
+      .table--scroll[view="backgrounds"],
+      .table--scroll[view="races"] {
+        max-height: calc(100vh - 315px);
       }
       .table--scroll .table-row--header {
         border-bottom: none;
@@ -426,39 +432,15 @@ styleElement.innerHTML = `
         display: flex;
         align-items: center;
       }
-      .breadcrumbs__crumb:last-of-type {
-        display: none;
-      }
-      .breadcrumbs__crumb:last-of-type::before {
-        content: 'chevron_right';
-        font-family: 'Material Icons';
-        font-weight: normal;
-        font-style: normal;
-        font-size: 24px;
-        line-height: 1;
-        letter-spacing: normal;
-        text-transform: none;
-        white-space: nowrap;
-        word-wrap: normal;
-        direction: ltr;
-        -moz-font-feature-settings: 'liga';
-        -moz-osx-font-smoothing: grayscale;
-        left: -2px;
-        margin: 0 .5em;
-        position: relative;
-        display: inline;
-      }
       .breadcrumbs__crumb a {
         color: inherit;
         text-decoration: none;
         cursor: pointer;
         transition: color .2s;
       }
-
       .breadcrumbs__crumb a:hover {
         color: var(--mdc-theme-secondary, #018786);
       }
-
 
       .mdc-notched-outline__leading {
         border-color: var(--mdc-theme-primary) !important;
@@ -481,7 +463,6 @@ styleElement.innerHTML = `
       .filter-group {
         display: flex;
         flex-wrap: wrap;
-        padding-top: 16px;
       }
       .filter-group > * {
         margin-right: 8px;
@@ -649,12 +630,13 @@ styleElement.innerHTML = `
       }
       .close-item {
         position: absolute;
-        top: 57px;
-        right: 0;
         height: 64px;
         width: 64px;
         font-size: 44px;
         display: none;
+        right: 0;
+        top: -4px;
+        z-index: 12;
       }
       .stats-wrapper p,
       .stats-wrapper ul {
@@ -1584,11 +1566,22 @@ styleElement.innerHTML = `
           width: 50px;
           height: 50px;
         }
+        .table--scroll {
+          max-height: calc(100vh - 310px);
+        }
+        .table--scroll[view="feats"],
+        .table--scroll[view="backgrounds"],
+        .table--scroll[view="races"] {
+          max-height: calc(100vh - 325px);
+        }
       }
       /* Tablet and up */
       @media(min-width: 921px) {
         .nav-button .logo {
           margin-left: 24px;
+        }
+        .close-item {
+          top: 57px;
         }
         .container {
           max-width: 840px;
@@ -1600,6 +1593,25 @@ styleElement.innerHTML = `
         .breadcrumbs__list {
           height: 64px;
           padding: 0;
+        }
+        .breadcrumbs__crumb:last-of-type::before {
+          content: 'chevron_right';
+          font-family: 'Material Icons';
+          font-weight: normal;
+          font-style: normal;
+          font-size: 24px;
+          line-height: 1;
+          letter-spacing: normal;
+          text-transform: none;
+          white-space: nowrap;
+          word-wrap: normal;
+          direction: ltr;
+          -moz-font-feature-settings: 'liga';
+          -moz-osx-font-smoothing: grayscale;
+          left: -2px;
+          margin: 0 .5em;
+          position: relative;
+          display: inline;
         }
         .main.item-opened #listcontainer {
           display: block !important;
@@ -1639,8 +1651,17 @@ styleElement.innerHTML = `
           width: calc(100% / 5 - 34px);
         }
         .table--scroll {
-          max-height: calc(100vh - 489px);
+          max-height: calc(100vh - 345px);
           min-height: 404px;
+        }
+        .table--scroll[view="feats"],
+        .table--scroll[view="backgrounds"],
+        .table--scroll[view="races"] {
+          max-height: calc(100vh - 360px);
+        }
+        .table-wrap {
+          max-width: 100%;
+          width: 100%;
         }
         #subclasses.fixed {
           width: 840px;

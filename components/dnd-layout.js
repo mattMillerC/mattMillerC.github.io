@@ -158,6 +158,7 @@ class DndLayout extends PolymerElement {
         case "feats":
         case "races":
         case "backgrounds":
+        case "items":
           this.hideCharacterPopup = false;
           break;
         default:
@@ -189,18 +190,24 @@ class DndLayout extends PolymerElement {
           display: none;
         }
         .content-wrap {
-          margin-top: 30px;
-        }
-        @media(min-width: 921px) {
-          .page-title {
-            display: block;
-          }
+          margin-top: 16px;
         }
         .main {
           min-height: calc(100vh - 64px);
         }
         .container {
-          padding-bottom: 92px;
+          padding-bottom: 45px;
+        }
+        @media(min-width: 921px) {
+          .page-title {
+            display: block;
+          }
+          .container {
+              padding-bottom: 125px;
+          }
+          .breadcrumbs__crumb[hidden] {
+            display: flex !important;
+          }
         }
       </style>
 
@@ -208,10 +215,10 @@ class DndLayout extends PolymerElement {
         <div class="mdc-top-app-bar__row">
           <div class="breadcrumbs mdc-theme--on-primary">
             <div class="container breadcrumbs__list">
-              <div class="breadcrumbs__crumb">
+              <div class="breadcrumbs__crumb" hidden$="[[_exists(selectedTitle)]]">
                 <a on-click="_resetHashClickHandler">[[header]]</a>
               </div>
-              <div class="breadcrumbs__crumb" hidden$="[[!selectedTitle]]">[[selectedTitle]]</div>
+              <div class="breadcrumbs__crumb" hidden$="[[!_exists(selectedTitle)]]">[[selectedTitle]]</div>
             </div>
           </div>
           <div class="nav-button">

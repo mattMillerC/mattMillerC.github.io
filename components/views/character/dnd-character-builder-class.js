@@ -237,6 +237,7 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
     } else {
       this.$.classGrid.openItemDetails(data);
     }
+    this.$.classGrid.notifyResize();
   }
 
   async _findLevelChoices(character, classes) {
