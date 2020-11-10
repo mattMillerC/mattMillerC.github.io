@@ -83,26 +83,27 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
       let draggedItem;
 
       grid.rowDetailsRenderer = ((root, grid, rowData) => {
-        if (!root.firstElementChild) {
-          root.innerHTML =
-          '<div class="details" id="stats"></div>';
-        }
         let renderStack = [],
           features = this._getClassLevelFeatures(this.levels, rowData.index, this.classes, this.subclasses);
         
-        for (let feature of features) {
-          renderer.recursiveEntryRender(
-            feature,
-            renderStack,
-            0,
-            undefined,
-            true
-          );
-        }
+        if (features && features.length) {
+          if (!root.firstElementChild) {
+            root.innerHTML = '<div class="details" id="stats"></div>';
+          }
 
-        const deets = root.querySelector('.details');
-        jqEmpty(deets);
-        deets.innerHTML = renderStack.join("");
+          for (let feature of features) {
+            renderer.recursiveEntryRender(
+              feature,
+              renderStack,
+              0,
+              undefined,
+              true
+            );
+          }
+          const deets = root.querySelector('.details');
+          jqEmpty(deets);
+          deets.innerHTML = renderStack.join("");
+        }
       }).bind(this);
 
       grid.addEventListener('grid-dragstart', function(e) {
@@ -509,6 +510,10 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
           padding: 0 24px;
         }
 
+        #classGrid {
+          margin-bottom: 144px;
+        }
+
         .not-edit-mode .heading-wrap {
           display: none;
         }
@@ -719,6 +724,9 @@ class DndCharacterBuilderClass extends MutableData(PolymerElement) {
             margin: 0 30px 0 12px;
             width: unset;
             font-size: 16px;
+          }
+          #classGrid {
+            margin-bottom: 0;
           }
         }
 

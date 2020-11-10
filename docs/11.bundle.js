@@ -1,4 +1,4 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[11],{107:function(e,t,a){"use strict";a.d(t,"b",(function(){return d})),a.d(t,"a",(function(){return c})),a.d(t,"c",(function(){return n}));const i=document.createElement("div");let s=!1;function d(){return i}function c(e){i.dispatchEvent(new CustomEvent("editModeChange",{bubbles:!0,composed:!0,detail:{isEditMode:e}}))}function n(){return s}i.addEventListener("editModeChange",e=>{e.detail&&(s=!!e.detail.isEditMode)})},120:function(e,t,a){"use strict";var i=a(7),s=a(104);class d extends i.a{static get properties(){return{initialValue:{type:Boolean,value:!1,observer:"initValueChange"},checked:{type:Boolean,value:!1,reflectToAttribute:!0},label:{type:String,value:""},secondaryLabel:{type:String,value:""},disabled:{type:Boolean,value:!1,reflectToAttribute:!0}}}initValueChange(){this.switchEl&&(this.switchEl.checked=this.initialValue,this.checked=this.initialValue)}ready(){super.ready(),setTimeout(()=>{this.switchEl=new s.a(this.shadowRoot.querySelector(".mdc-switch")),this.switchEl.checked=this.initialValue,this.checked=this.initialValue},10)}connectedCallback(){super.connectedCallback(),this.switchEventHandler=()=>{this.checked=this.switchEl.checked,this.dispatchEvent(new CustomEvent("switch-change",{detail:{checked:this.switchEl.checked},bubbles:!0,composed:!0}))},this.shadowRoot.querySelector(".mdc-switch__native-control").addEventListener("change",this.switchEventHandler)}disconnectedCallback(){super.disconnectedCallback(),this.shadowRoot.querySelector(".mdc-switch__native-control").removeEventListener("change",this.switchEventHandler)}_switchClasses(e){return e?"mdc-switch mdc-list-item__meta mdc-switch--disabled":"mdc-switch mdc-list-item__meta"}static get template(){return i.b`
+(window.webpackJsonp=window.webpackJsonp||[]).push([[11],{107:function(e,t,a){"use strict";a.d(t,"b",(function(){return d})),a.d(t,"a",(function(){return n})),a.d(t,"c",(function(){return c}));const i=document.createElement("div");let s=!1;function d(){return i}function n(e){i.dispatchEvent(new CustomEvent("editModeChange",{bubbles:!0,composed:!0,detail:{isEditMode:e}}))}function c(){return s}i.addEventListener("editModeChange",e=>{e.detail&&(s=!!e.detail.isEditMode)})},120:function(e,t,a){"use strict";var i=a(7),s=a(104);class d extends i.a{static get properties(){return{initialValue:{type:Boolean,value:!1,observer:"initValueChange"},checked:{type:Boolean,value:!1,reflectToAttribute:!0},label:{type:String,value:""},secondaryLabel:{type:String,value:""},disabled:{type:Boolean,value:!1,reflectToAttribute:!0}}}initValueChange(){this.switchEl&&(this.switchEl.checked=this.initialValue,this.checked=this.initialValue)}ready(){super.ready(),setTimeout(()=>{this.switchEl=new s.a(this.shadowRoot.querySelector(".mdc-switch")),this.switchEl.checked=this.initialValue,this.checked=this.initialValue},10)}connectedCallback(){super.connectedCallback(),this.switchEventHandler=()=>{this.checked=this.switchEl.checked,this.dispatchEvent(new CustomEvent("switch-change",{detail:{checked:this.switchEl.checked},bubbles:!0,composed:!0}))},this.shadowRoot.querySelector(".mdc-switch__native-control").addEventListener("change",this.switchEventHandler)}disconnectedCallback(){super.disconnectedCallback(),this.shadowRoot.querySelector(".mdc-switch__native-control").removeEventListener("change",this.switchEventHandler)}_switchClasses(e){return e?"mdc-switch mdc-list-item__meta mdc-switch--disabled":"mdc-switch mdc-list-item__meta"}static get template(){return i.b`
       <style include="material-styles">
         :host {
           display: inline-block;
@@ -96,7 +96,7 @@
           </div>
         </div>
       </div>
-    `}}customElements.define("dnd-tabs",d);a(80),a(76),a(120);var c=a(1),n=a(18),r=a(67),l=a(107);class o extends i.a{static get properties(){return{loading:{type:Boolean,value:!0},characterName:{type:String,value:""},initialSelectedTab:{type:Number,value:0},indexForTabs:{type:Number,value:0},isEditMode:{type:Boolean,value:!1}}}static get observers(){return["_setName(characterName)"]}_setName(e){e&&Object(n.hb)(e)}constructor(){super(),this.tabs=[{label:"",icon:"favorite",viewId:"attributes"},{label:"",icon:"class",viewId:"class"},{label:"",icon:"face",viewId:"background-race"},{label:"",icon:"flash_on",viewId:"spells"},{label:"",icon:"local_grocery_store",viewId:"equipment"}]}connectedCallback(){super.connectedCallback(),this.tabChangeHandler=e=>{let t=e.detail.index,i=this.tabs[t].viewId;this.indexForTabs=t,void 0!==i&&(this.loading=!0,a(141)("./dnd-character-builder-"+i).then(()=>{this.updateView(document.createElement("dnd-character-builder-"+i))}))},this.addEventListener("tabChange",this.tabChangeHandler),this.loadingHandler=()=>{setTimeout(()=>{this.loading=!1},0)},this.addEventListener("loadingChange",this.loadingHandler),this.setStateFromCharacter(Object(n.C)()),this.characterChangeHandler=e=>{this.setStateFromCharacter(e.detail.character)},Object(n.m)().addEventListener("character-selected",this.characterChangeHandler),this.fixedTabsScrollHandler=()=>{if(this.$.tabs.matches(".fixed--bottom"))return;this.$.tabWrap.getBoundingClientRect().top<=104?this.$.tabs.classList.add("fixed"):this.$.tabs.classList.remove("fixed")},window.addEventListener("scroll",this.fixedTabsScrollHandler),this.$.tabs.classList.remove("fixed"),this.nameFieldFocusHandler=e=>{"New Character"===this.$.name.value&&this.$.name.inputElement.select()},this.$.name.addEventListener("focus",this.nameFieldFocusHandler),this.editModeHandler=e=>{this.isEditMode=e.detail.isEditMode},Object(l.b)().addEventListener("editModeChange",this.editModeHandler),this.isEditMode=Object(l.c)(),this.isLoaded||(this.isLoaded=!0,Object(r.a)(this.$.tabTarget,"right",()=>{if(this.indexForTabs>0){const e=this.indexForTabs-1;this.$.tabs.tabBar.activateTab(e)}}),Object(r.a)(this.$.tabTarget,"left",()=>{if(this.indexForTabs<this.tabs.length-1){const e=this.indexForTabs+1;this.$.tabs.tabBar.activateTab(e)}}))}disconnectedCallback(){super.disconnectedCallback(),this.removeEventListener("tabChange",this.tabChangeHandler),this.removeEventListener("loadingChange",this.loadingHandler),window.removeEventListener("scroll",this.fixedTabsScrollHandler),Object(n.m)().removeEventListener("character-selected",this.characterChangeHandler),this.$.name.removeEventListener("focus",this.nameFieldFocusHandler),Object(l.b)().removeEventListener("editModeChange",this.editModeHandler)}updateView(e){window.requestAnimationFrame(()=>{const t=window.scrollY;Object(c.jqEmpty)(this.$.tabTarget),this.$.tabTarget.appendChild(e),this.$.tabs.classList.remove("fixed"),window.scrollTo(0,t)})}setStateFromCharacter(e){this.characterName=e.name,this.classLevel=Object(n.r)(e),this.background=Object(n.u)("backgrounds",e,!0),this.race=Object(n.u)("races",e,!0)}newCharacter(){Object(n.a)()}removeCharacter(){Object(n.N)()}toggleEditMode(){this.$.editBtn.classList.toggle("edit-mode");const e=this.$.editBtn.classList.contains("edit-mode");Object(l.a)(e),this.$.editBtn.innerHTML=e?"check":"edit"}_editModeClass(e){return e?"edit-mode":"not-edit-mode"}static get template(){return i.b`
+    `}}customElements.define("dnd-tabs",d);a(80),a(76),a(120);var n=a(1),c=a(18),r=a(67),l=a(107);class o extends i.a{static get properties(){return{loading:{type:Boolean,value:!0},characterName:{type:String,value:""},initialSelectedTab:{type:Number,value:0},indexForTabs:{type:Number,value:0},isEditMode:{type:Boolean,value:!1}}}static get observers(){return["_setName(characterName)"]}_setName(e){e&&Object(c.jb)(e)}constructor(){super(),this.tabs=[{label:"",icon:"favorite",viewId:"attributes"},{label:"",icon:"class",viewId:"class"},{label:"",icon:"face",viewId:"background-race"},{label:"",icon:"flash_on",viewId:"spells"},{label:"",icon:"local_grocery_store",viewId:"equipment"}]}connectedCallback(){super.connectedCallback(),this.tabChangeHandler=e=>{let t=e.detail.index,i=this.tabs[t].viewId;this.indexForTabs=t,void 0!==i&&(this.loading=!0,a(141)("./dnd-character-builder-"+i).then(()=>{this.updateView(document.createElement("dnd-character-builder-"+i))}))},this.addEventListener("tabChange",this.tabChangeHandler),this.loadingHandler=()=>{setTimeout(()=>{this.loading=!1},0)},this.addEventListener("loadingChange",this.loadingHandler),this.setStateFromCharacter(Object(c.E)()),this.characterChangeHandler=e=>{this.setStateFromCharacter(e.detail.character)},Object(c.m)().addEventListener("character-selected",this.characterChangeHandler),this.fixedTabsScrollHandler=()=>{if(this.$.tabs.matches(".fixed--bottom"))return;this.$.tabWrap.getBoundingClientRect().top<=104?this.$.tabs.classList.add("fixed"):this.$.tabs.classList.remove("fixed")},window.addEventListener("scroll",this.fixedTabsScrollHandler),this.$.tabs.classList.remove("fixed"),this.nameFieldFocusHandler=e=>{"New Character"===this.$.name.value&&this.$.name.inputElement.select()},this.$.name.addEventListener("focus",this.nameFieldFocusHandler),this.editModeHandler=e=>{this.isEditMode=e.detail.isEditMode},Object(l.b)().addEventListener("editModeChange",this.editModeHandler),this.isEditMode=Object(l.c)(),this.isLoaded||(this.isLoaded=!0,Object(r.a)(this.$.tabTarget,"right",()=>{if(this.indexForTabs>0){const e=this.indexForTabs-1;this.$.tabs.tabBar.activateTab(e)}}),Object(r.a)(this.$.tabTarget,"left",()=>{if(this.indexForTabs<this.tabs.length-1){const e=this.indexForTabs+1;this.$.tabs.tabBar.activateTab(e)}}))}disconnectedCallback(){super.disconnectedCallback(),this.removeEventListener("tabChange",this.tabChangeHandler),this.removeEventListener("loadingChange",this.loadingHandler),window.removeEventListener("scroll",this.fixedTabsScrollHandler),Object(c.m)().removeEventListener("character-selected",this.characterChangeHandler),this.$.name.removeEventListener("focus",this.nameFieldFocusHandler),Object(l.b)().removeEventListener("editModeChange",this.editModeHandler)}updateView(e){window.requestAnimationFrame(()=>{const t=window.scrollY;Object(n.jqEmpty)(this.$.tabTarget),this.$.tabTarget.appendChild(e),this.$.tabs.classList.remove("fixed"),window.scrollTo(0,t)})}setStateFromCharacter(e){this.characterName=e.name,this.classLevel=Object(c.t)(e),this.background=Object(c.w)("backgrounds",e,!0),this.race=Object(c.w)("races",e,!0)}newCharacter(){Object(c.a)()}removeCharacter(){Object(c.P)()}toggleEditMode(){this.$.editBtn.classList.toggle("edit-mode");const e=this.$.editBtn.classList.contains("edit-mode");Object(l.a)(e),this.$.editBtn.innerHTML=e?"check":"edit"}_editModeClass(e){return e?"edit-mode":"not-edit-mode"}static get template(){return i.b`
       <style include="material-styles"></style>
       <style>
         :host {
@@ -126,13 +126,32 @@
         .char-detail {
           font-size: 16px;
           line-height: 1.5;
+          display: flex;
+          flex-direction: column;
         }
-        #editBtn {
-          background: var(--mdc-theme-surface);
-          color: var(--mdc-theme-on-surface);
+        .char-detail__class {
+          font-size: 17px;
+        }
+        .char-detail__race-background {
+          font-size: 13px;
+          font-style: italic;
+        }
+
+        .thumb-menu {
+          position: fixed;
+          bottom: 24px;
+          right: 24px;
+          z-index: 2;
+          display: flex;
+          flex-direction: column-reverse;
+        }
+        .thumb-menu__btn {
           border-radius: 50%;
-          border: 1px solid var(--mdc-theme-text-divider-on-background);
         }
+        #editBtn.edit-mode {
+          background: var(--mdc-theme-secondary) !important;
+        }
+
         .tab-wrap {
           background-color: var(--mdc-theme-surface);
           border: 1px solid var(--mdc-theme-text-divider-on-background);
@@ -145,6 +164,9 @@
           max-width: calc(100% - 50px);
         }
         @media(max-width: 420px) {
+          .thumb-menu {
+            bottom: 90px;
+          }
           #tabs.fixed {
             position: fixed;
             top: 56px;
@@ -170,7 +192,13 @@
             margin: 0 -16px -90px;
           }
           .tab-wrap {
-            min-height: calc(100vh - 270px);
+            min-height: calc(100vh - 256px);
+          }
+        }
+
+        @media(min-width: 921px) {
+          .thumb-menu {
+            position: static;
           }
         }
       </style>
@@ -186,10 +214,13 @@
 
           <div class="char-detail-edit">
             <div class="char-detail">
-              <span class="class">[[classLevel]]</span>
-              <span class="race-background">[[race]] - [[background]]</span>
+              <span class="char-detail__class">[[classLevel]]</span>
+              <span class="char-detail__race-background">[[race]], [[background]]</span>
             </div>
-            <button class="mdc-icon-button material-icons" id="editBtn" on-click="toggleEditMode">edit</button>
+
+            <div class="thumb-menu">
+              <button class="thumb-menu__btn mdc-icon-button mdc-button--raised material-icons" id="editBtn" on-click="toggleEditMode">edit</button>
+            </div>
           </div>
         </div>
 

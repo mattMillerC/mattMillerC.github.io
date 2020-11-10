@@ -1,6 +1,7 @@
 import { readRouteView, readRouteSelection } from "./routing";
 import { loadModel } from "./data";
 import { resolveHash } from './renderTable.js';
+import { entryTextSearch } from "../js/utils";
 import Parser from "./Parser";
 
 import droll from "../lib/droll";
@@ -1185,6 +1186,9 @@ async function getCharacterAC(character = selectedCharacter) {
   const dexMod = await getAttributeModifier('dex', character);
   const equipedArmor = items.find(item => item.isEquiped && item.armor);
   const equipedShield = items.find(item => item.type === 'S' && item.isEquiped);
+  const anyACItems = items.filter(item => {
+    return ((item.canEquip && item.isEquiped) || !item.canEquip) && ((item.reqAttune && item.isAttuned) || !item.reqAttune) && entryTextSearch('bonus to AC', item.entries);
+  });
 
   if (equipedArmor) {
     const type = equipedArmor.type;
@@ -1193,7 +1197,7 @@ async function getCharacterAC(character = selectedCharacter) {
     } else if (type === "MA") {
       ac = parseInt(equipedArmor.ac) + Math.min(dexMod, 2);
     } else if (type === "HA") {
-      ac = equipedArmor.ac;
+      ac = parseInt(equipedArmor.ac);
     }
 
     if (equipedArmor.genericBonus) {
@@ -1203,21 +1207,57 @@ async function getCharacterAC(character = selectedCharacter) {
     ac = 10 + dexMod;
   }
 
+  let shieldAc = 0;
   if (equipedShield) {
-    let shieldAc = parseInt(equipedShield.ac);
+    if (equipedShield.ac) {
+      shieldAc += parseInt(equipedShield.ac);
+    }
 
     if (Number.isNaN(shieldAc)) {
-      shieldAc = 2;
+      shieldAc += 2;
     }
 
     if (equipedShield.inherits && equipedShield.inherits.genericBonus) {
       shieldAc += parseInt(equipedShield.inherits.genericBonus)
     }
+  }
 
+  for (const acItem of anyACItems) {
+    const acEntry = entryTextSearch('bonus to AC', acItem.entries);
+    const acSpots = acEntry.split('bonus to AC');
+    for (let i = 0; i < acSpots.length - 1; i++) {
+      const acSpot = acSpots[i].trim();
+      const acThing = acSpot.substring(acSpot.lastIndexOf(' '));
+      const acParsed = parseInt(acThing, 10);
+
+      if (!Number.isNaN(acParsed)) {
+        shieldAc += acParsed;
+      }
+    }
+  }
+
+  if (shieldAc) {
     return `${ac} + ${shieldAc}`;
   }
-  
+
   return ac;
+}
+
+async function getCharacterInitiative(character = selectedCharacter) {
+  if (character) {
+    const dexMod = await getAttributeModifier('dex', character);
+    return dexMod > 0 ? `+${dexMod}` : dexMod;
+  }
+  return '';
+}
+
+async function getCharacterSpeed(character = selectedCharacter) {
+  let race = await getRaceReference(character);
+
+  if (race && race.speed) {
+    return race.speed;
+  }
+  return '';
 }
 
 export {
@@ -1291,5 +1331,7 @@ export {
   canAttuneItem,
   getWeaponItems,
   getArmorItems,
-  getCharacterAC
+  getCharacterAC,
+  getCharacterSpeed,
+  getCharacterInitiative
 };

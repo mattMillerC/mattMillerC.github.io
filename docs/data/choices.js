@@ -128,6 +128,15 @@ export const classOptionsMap = {
       }
     }
   },
+  paladin: {
+    class: {
+      2: {
+        name: "Fighting Style",
+        type: "fs:p",
+        count: 1
+      },
+    }
+  },
   sorcerer: {
     class: {
       3: {

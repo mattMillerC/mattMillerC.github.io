@@ -109,6 +109,12 @@ class DndButton extends PolymerElement {
           flex-shrink: 0;
           flex-grow: 0;
         }
+        :host(.btn-field__btn) dnd-svg {
+          padding-left: 0;
+        }
+        :host(.btn-field__btn) i {
+          margin-left: 0;
+        }
         :host(.icon-only) dnd-svg {
           margin-left: -24px;
           padding-left: 0;

@@ -223,13 +223,32 @@ class DndCharacterBuilderView extends PolymerElement {
         .char-detail {
           font-size: 16px;
           line-height: 1.5;
+          display: flex;
+          flex-direction: column;
         }
-        #editBtn {
-          background: var(--mdc-theme-surface);
-          color: var(--mdc-theme-on-surface);
+        .char-detail__class {
+          font-size: 17px;
+        }
+        .char-detail__race-background {
+          font-size: 13px;
+          font-style: italic;
+        }
+
+        .thumb-menu {
+          position: fixed;
+          bottom: 24px;
+          right: 24px;
+          z-index: 2;
+          display: flex;
+          flex-direction: column-reverse;
+        }
+        .thumb-menu__btn {
           border-radius: 50%;
-          border: 1px solid var(--mdc-theme-text-divider-on-background);
         }
+        #editBtn.edit-mode {
+          background: var(--mdc-theme-secondary) !important;
+        }
+
         .tab-wrap {
           background-color: var(--mdc-theme-surface);
           border: 1px solid var(--mdc-theme-text-divider-on-background);
@@ -242,6 +261,9 @@ class DndCharacterBuilderView extends PolymerElement {
           max-width: calc(100% - 50px);
         }
         @media(max-width: 420px) {
+          .thumb-menu {
+            bottom: 90px;
+          }
           #tabs.fixed {
             position: fixed;
             top: 56px;
@@ -267,7 +289,13 @@ class DndCharacterBuilderView extends PolymerElement {
             margin: 0 -16px -90px;
           }
           .tab-wrap {
-            min-height: calc(100vh - 270px);
+            min-height: calc(100vh - 256px);
+          }
+        }
+
+        @media(min-width: 921px) {
+          .thumb-menu {
+            position: static;
           }
         }
       </style>
@@ -283,10 +311,13 @@ class DndCharacterBuilderView extends PolymerElement {
 
           <div class="char-detail-edit">
             <div class="char-detail">
-              <span class="class">[[classLevel]]</span>
-              <span class="race-background">[[race]] - [[background]]</span>
+              <span class="char-detail__class">[[classLevel]]</span>
+              <span class="char-detail__race-background">[[race]], [[background]]</span>
             </div>
-            <button class="mdc-icon-button material-icons" id="editBtn" on-click="toggleEditMode">edit</button>
+
+            <div class="thumb-menu">
+              <button class="thumb-menu__btn mdc-icon-button mdc-button--raised material-icons" id="editBtn" on-click="toggleEditMode">edit</button>
+            </div>
           </div>
         </div>
 

@@ -159,7 +159,6 @@ registerStyles('vaadin-integer-field', css`
 
 
     :host([theme="hp"]) {
-      width: calc(100% - 16px);
       padding: 0;
       margin: -16px 8px 8px;
     }

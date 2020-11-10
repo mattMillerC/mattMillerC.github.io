@@ -18,7 +18,9 @@ import {
   resetHitDice,
   addTempHp,
   useHitDice,
-  getCharacterAC
+  getCharacterAC,
+  getCharacterInitiative,
+  getCharacterSpeed
 } from "../../../util/charBuilder";
 import { getEditModeChannel, isEditMode } from "../../../util/editMode";
 import { util_capitalizeAll, absInt } from "../../../js/utils";
@@ -105,10 +107,6 @@ class DndCharacterBuilderAttributes extends PolymerElement {
         type: Number,
         value: 0
       },
-      currentHP: {
-        type: Number,
-        observer: 'currentHPChange'
-      },
       isEditMode: {
         type: Boolean,
         value: false
@@ -126,7 +124,18 @@ class DndCharacterBuilderAttributes extends PolymerElement {
     }
   }
 
-  currentHPChange(currentHP) {
+  hpChangeHandler(e) {
+    this.$.hpField.focusElement.blur();
+  }
+
+  hpBlurHandler(e) {
+    const parsedVal = parseInt(this.$.hpField.value);
+    
+    if (Number.isNaN(parsedVal)) {
+      this.$.hpField.value = getCurrentHP;
+    } else {
+      setCurrentHp(parsedVal);
+    }
   }
 
   connectedCallback() {
@@ -207,6 +216,10 @@ class DndCharacterBuilderAttributes extends PolymerElement {
       this.hitDice = await getHitDice();
 
       this.ac = await getCharacterAC();
+
+      this.initiative = await getCharacterInitiative();
+
+      this.speed = await getCharacterSpeed();
 
       this.dispatchEvent(new CustomEvent("loadingChange", { bubbles: true, composed: true }));
     }
@@ -290,24 +303,12 @@ class DndCharacterBuilderAttributes extends PolymerElement {
 
   _submitButtonField(e) {
     if (e.key === 'Enter') {
-      const element = e.target.closest('.btn-field');
-      const isTemp = element.classList.contains('btn-field--temp');
-      const intField = element.querySelector('vaadin-integer-field');
-      const changeVal = parseInt(intField.value);
-  
-      if (changeVal) {
-        element.classList.toggle('btn-field--open');
-        if (isTemp) {
-          addTempHp(parseInt(this.tempHP) + changeVal);
-          intField.value = '';
-    
-        } else {
-          const modifier = element.classList.contains('btn-field--heal') ? 1 : -1;
-          setCurrentHp(parseInt(this.currentHP) + (modifier * changeVal));
-          intField.value = '';
-        }
-      }
+      this._toggleButtonField(e);
     }
+  }
+
+  _blurButtonField(e) {
+    this._toggleButtonField(e);
   }
 
   _useHitDice(e) {
@@ -381,8 +382,8 @@ class DndCharacterBuilderAttributes extends PolymerElement {
           width: calc(33% - 8px);
           max-width: 120px;
         }
-        .health-wrap > div:not(:last-child) {
-          margin-bottom: 9px;
+        .health-wrap > * {
+          margin-bottom: 16px;
         }
 
 
@@ -478,11 +479,19 @@ class DndCharacterBuilderAttributes extends PolymerElement {
           color: var(--lumo-body-text-color);
           -webkit-text-fill-color: var(--lumo-body-text-color);
         }
-
+        .stat-box__side {
+          padding: 8px 0;
+        }
 
         /* Stat Box HP  */
         .stat-box--hp {
-          width: 100%;
+          width: calc(66% - 2px) !important;
+          max-width: 236px !important;
+          flex-direction: row;
+          min-width: 160px;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          height: fit-content;
         }
         .stat-box__total {
           font-size: 14px;
@@ -496,6 +505,36 @@ class DndCharacterBuilderAttributes extends PolymerElement {
         .stat-box--hp .stat-box__footer {
           width: 100%;
         }
+        .stat-box__side {
+            flex-wrap: wrap;
+            justify-content: space-between;
+            width: 100%;
+            margin: 8px;
+        }
+        .stat-box--hp .btn-field {
+          margin-top: 12px;
+          width: auto;
+        }
+
+        .stat-box--hp .btn-field:not(:last-child) {
+          margin-bottom: 0px
+        }
+        @media(min-width: 381px) {
+          .stat-box__side {
+            max-width: 80px;
+            margin: 0 8px 0 0;
+          }
+          .stat-box--hp .btn-field {
+            margin-top: 0;
+            width: 100%;
+          }
+          .stat-box--hp .btn-field:not(:last-child) {
+            margin-bottom: 12px
+          }
+        }
+        
+
+
 
 
         /* Button Field */
@@ -518,8 +557,11 @@ class DndCharacterBuilderAttributes extends PolymerElement {
         .btn-field__input {
           display: none;
         }
+        .btn-field .btn-field__btn-label {
+          display: none;
+        }
         .btn-field--open .btn-field__btn {
-          width: calc(100% - 60px);
+          width: calc(100% - 50px);
         }
         .btn-field--open .btn-field__btn-label {
           width: 0;
@@ -527,7 +569,7 @@ class DndCharacterBuilderAttributes extends PolymerElement {
         }
         .btn-field--open .btn-field__input {
           display: block;
-          width: 60px;
+          width: 50px;
           margin-top: -40px;
         }
         .btn-field--heal.btn-field--open .btn-field__btn-label {
@@ -538,7 +580,16 @@ class DndCharacterBuilderAttributes extends PolymerElement {
         }
         .btn-field__btn-label--temp,
         .btn-field__btn-label--damage {
-          font-size: 9px;
+          font-size: 12px;
+        }
+        .btn-field--heal dnd-button {
+          --mdc-theme-primary: #83f675;
+        }
+        .btn-field--dmg dnd-button {
+          --mdc-theme-primary: #f83c42;
+        }
+        .btn-field--temp dnd-button {
+          --mdc-theme-primary: #2069c9;
         }
 
 
@@ -584,22 +635,25 @@ class DndCharacterBuilderAttributes extends PolymerElement {
           width: 30px;
         }
 
-        .ac {
+        .basic-box {
           display: flex;
           flex-direction: column;
           align-items: center;
           padding: 4px 0;
           background: var(--lumo-contrast-10pct);
           border-radius: 4px;
-          margin-bottom: 8px;
         }
-        .ac__label {
+        .basic-box--short {
+          height: fit-content;
+        }
+        .basic-box__label {
           color: var(--mdc-theme-primary);
           font-size: 14px;
         }
-        .ac__value {
-          font-size: 22px;
+        .basic-box__value {
+          font-size: 18px;
         }
+        
 
         /* Rest Buttons */
         .rest-btn {
@@ -611,43 +665,33 @@ class DndCharacterBuilderAttributes extends PolymerElement {
         <div class="wrap">
           <div class="health-wrap">
             <!-- Hit Points -->
-            <div>
-              <div class="stat-box stat-box--hp">
-                <div class="stat-box__footer">
-                  <vaadin-integer-field theme="hp" value={{currentHP}} min="0" max="[[maxHP]]" has-controls label="Hit Points">
-                    <span class="stat-box__adj--hp" slot="suffix">/ [[maxHP]] [[_tempHpStr(tempHP)]]</span>
-                  </vaadin-integer-field>
+            <div class="stat-box stat-box--hp">
+              <vaadin-integer-field id="hpField" theme="hp" value={{currentHP}} on-change="hpBlurHandler" on-blur="hpChangeHandler" min="0" max="[[maxHP]]" has-controls label="Hit Points">
+                <span class="stat-box__adj--hp" slot="suffix">/ [[maxHP]] [[_tempHpStr(tempHP)]]</span>
+              </vaadin-integer-field>
+              <div class="stat-box__side">
+                <!--  Healing / Damage -->
+                <div class="btn-field btn-field--heal">
+                    <dnd-button icon="favorite" background="none" class="btn-field__btn" on-click="_toggleButtonField"></dnd-button>
+                    <vaadin-integer-field class="btn-field__input" min="0" on-keydown="_submitButtonField" on-blur="_blurButtonField">
+                      <span slot="prefix">+</span>
+                    </vaadin-integer-field>
+                </div>
+                <div class="btn-field btn-field--dmg">
+                    <dnd-button svg="swords" background="none" class="btn-field__btn" on-click="_toggleButtonField"></dnd-button>
+                    <vaadin-integer-field class="btn-field__input" min="0" on-keydown="_submitButtonField" on-blur="_blurButtonField">
+                      <span slot="prefix">-</span>
+                    </vaadin-integer-field>
+                </div>
+                <div class="btn-field btn-field--temp">
+                    <dnd-button svg="paladin" background="none" class="btn-field__btn" on-click="_toggleButtonField"></dnd-button>
+                    <vaadin-integer-field class="btn-field__input" min="0" on-keydown="_submitButtonField" on-blur="_blurButtonField">
+                      <span slot="prefix">+</span>
+                    </vaadin-integer-field>
                 </div>
               </div>
             </div>
 
-            <!--  Healing / Damage -->
-            <div class="health-wrap__buttons">
-              <div class="btn-field btn-field--heal">
-                  <dnd-button icon="favorite" background="none" class="btn-field__btn" on-click="_toggleButtonField">
-                    <span class="btn-field__btn-label" slot="label">Heal</span>
-                  </dnd-button>
-                  <vaadin-integer-field class="btn-field__input" min="0" on-keydown="_submitButtonField">
-                    <span slot="prefix">+</span>
-                  </vaadin-integer-field>
-              </div>
-              <div class="btn-field">
-                  <dnd-button svg="swords" background="none" class="btn-field__btn" on-click="_toggleButtonField">
-                    <span class="btn-field__btn-label btn-field__btn-label--damage" slot="label">Damage</span>
-                  </dnd-button>
-                  <vaadin-integer-field class="btn-field__input" min="0" on-keydown="_submitButtonField">
-                    <span slot="prefix">-</span>
-                  </vaadin-integer-field>
-              </div>
-              <div class="btn-field btn-field--temp">
-                  <dnd-button svg="paladin" background="none" class="btn-field__btn" on-click="_toggleButtonField">
-                    <span class="btn-field__btn-label btn-field__btn-label--temp" slot="label">Temp HP</span>
-                  </dnd-button>
-                  <vaadin-integer-field class="btn-field__input" min="0" on-keydown="_submitButtonField">
-                    <span slot="prefix">+</span>
-                  </vaadin-integer-field>
-              </div>
-            </div>
 
             <!--  Hit Dice -->
             <div class="hit-dice">
@@ -665,9 +709,19 @@ class DndCharacterBuilderAttributes extends PolymerElement {
               <dnd-button class="hit-dice__reset" label="Reset" on-click="_resetHitDice"></dnd-button>
             </div>
 
-            <div class="ac">
-              <div class="ac__value">[[ac]]</div>
-              <div class="ac__label">AC</div>
+            <div class="basic-box basic-box--short ac">
+              <div class="basic-box__value">[[ac]]</div>
+              <div class="basic-box__label">AC</div>
+            </div>
+
+            <div class="basic-box basic-box--short initiative">
+              <div class="basic-box__value">[[initiative]]</div>
+              <div class="basic-box__label">Initiative</div>
+            </div>
+
+            <div class="basic-box basic-box--short speed">
+              <div class="basic-box__value">[[speed]]</div>
+              <div class="basic-box__label">Speed</div>
             </div>
 
             <!--  Short Rest -->

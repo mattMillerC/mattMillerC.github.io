@@ -4,7 +4,6 @@ import "./styles/my-styles.js";
 import "./dnd-spinner.js";
 import {initCollapseToggles} from '../js/utils.js';
 import { clearRouteSelection } from '../util/routing.js';
-import { addFeature } from '../util/charBuilder.js';
 
 class DndSelectedItem extends PolymerElement {
   static get properties() {
@@ -87,7 +86,46 @@ class DndSelectedItem extends PolymerElement {
 
   static get template() {
     return html`
-      <style include="material-styles my-styles"></style>
+      <style include="material-styles my-styles">
+        :host {
+          display: block;
+        }
+
+        .main {
+          max-width: 100vw;
+        }
+        .main.item-opened .class-container {
+          display: none;
+        }
+        .main:not(.item-opened) .class-page--class-container {
+          display: none;
+        }
+        .main.item-opened #listcontainer {
+          display: none;
+        }
+        .main.item-opened .close-item {
+          display: block;
+        }
+        .main.item-opened .rules-wrapper {
+          display: none;
+        }
+        .main:not(.item-opened) #rulescontent {
+          display: none;
+        }
+        .main:not(.item-opened) .selection-wrapper {
+          display: none;
+        }
+        .close-item {
+          position: absolute;
+          height: 64px;
+          width: 64px;
+          font-size: 44px;
+          display: none;
+          right: 0;
+          top: -4px;
+          z-index: 12;
+        }
+      </style>
 
       <div class$="[[_mainClass(selectedItem)]]">
         <button class="mdc-icon-button close-item material-icons" on-click="clearSelection">close</button>

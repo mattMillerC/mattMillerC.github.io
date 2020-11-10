@@ -956,6 +956,20 @@ function entrySearch(searchStr, entries) {
 	}
 }
 
+function entryTextSearch(searchStr, entries) {
+	if (Array.isArray(entries)) {
+		for (const entry of entries) {
+			if (entry.indexOf && entry.indexOf(searchStr) > -1) {
+				return entry;
+			} else if (entry.type === "list") {
+				return entrySearch(searchStr, entry.items);
+			} else if (entry.entries) {
+				return entrySearch(searchStr, entry.entries);
+			}
+		}
+	}
+}
+
 export {
   throttle,
   debounce,
@@ -1030,5 +1044,6 @@ export {
 	getEntryName,
 	absInt,
 	entrySearch,
-	getProfBonus
+	getProfBonus,
+	entryTextSearch
 };

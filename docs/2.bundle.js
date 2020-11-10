@@ -38,8 +38,47 @@
           </div>
         </div>
       </div>
-    `}}customElements.define("dnd-list",o);var c=s(1);s(18);class d extends n.a{static get properties(){return{modelId:{type:String,observer:"_modelChange"},selectedItem:{type:Object},loading:{type:Boolean,value:!1,observer:"_loadingChange"},_modelsRenderSelection:{type:Function},characterOption:{type:Boolean,value:!1}}}static get observers(){return["__renderSelection(_modelsRenderSelection, selectedItem)"]}_loadingChange(){this.dispatchEvent(new CustomEvent("loading-render",{bubbles:!0,composed:!0,detail:{loading:this.loading}}))}__renderSelection(){this._modelsRenderSelection&&this.selectedItem&&(this._modelsRenderSelection(this.selectedItem,this.shadowRoot),Object(c.initCollapseToggles)(this.shadowRoot))}_modelChange(){this.modelId&&(this.loading=!0,this.set("_modelsRenderSelection",void 0),s(130)(`./${this.modelId}.js`).then(e=>{"function"==typeof e.renderSelection?(this._modelsRenderSelection=e.renderSelection,this.loading=!1):console.error("Model module is missing the renderSelection export.")}).catch(e=>{console.error("Model module failed to load.",e)}))}_exists(e){return!!e}_mainClass(){return this.selectedItem?"main item-opened":"main"}clearSelection(){Object(l.a)(!0)}static get template(){return n.b`
-      <style include="material-styles my-styles"></style>
+    `}}customElements.define("dnd-list",o);var c=s(1);class d extends n.a{static get properties(){return{modelId:{type:String,observer:"_modelChange"},selectedItem:{type:Object},loading:{type:Boolean,value:!1,observer:"_loadingChange"},_modelsRenderSelection:{type:Function},characterOption:{type:Boolean,value:!1}}}static get observers(){return["__renderSelection(_modelsRenderSelection, selectedItem)"]}_loadingChange(){this.dispatchEvent(new CustomEvent("loading-render",{bubbles:!0,composed:!0,detail:{loading:this.loading}}))}__renderSelection(){this._modelsRenderSelection&&this.selectedItem&&(this._modelsRenderSelection(this.selectedItem,this.shadowRoot),Object(c.initCollapseToggles)(this.shadowRoot))}_modelChange(){this.modelId&&(this.loading=!0,this.set("_modelsRenderSelection",void 0),s(130)(`./${this.modelId}.js`).then(e=>{"function"==typeof e.renderSelection?(this._modelsRenderSelection=e.renderSelection,this.loading=!1):console.error("Model module is missing the renderSelection export.")}).catch(e=>{console.error("Model module failed to load.",e)}))}_exists(e){return!!e}_mainClass(){return this.selectedItem?"main item-opened":"main"}clearSelection(){Object(l.a)(!0)}static get template(){return n.b`
+      <style include="material-styles my-styles">
+        :host {
+          display: block;
+        }
+
+        .main {
+          max-width: 100vw;
+        }
+        .main.item-opened .class-container {
+          display: none;
+        }
+        .main:not(.item-opened) .class-page--class-container {
+          display: none;
+        }
+        .main.item-opened #listcontainer {
+          display: none;
+        }
+        .main.item-opened .close-item {
+          display: block;
+        }
+        .main.item-opened .rules-wrapper {
+          display: none;
+        }
+        .main:not(.item-opened) #rulescontent {
+          display: none;
+        }
+        .main:not(.item-opened) .selection-wrapper {
+          display: none;
+        }
+        .close-item {
+          position: absolute;
+          height: 64px;
+          width: 64px;
+          font-size: 44px;
+          display: none;
+          right: 0;
+          top: -4px;
+          z-index: 12;
+        }
+      </style>
 
       <div class$="[[_mainClass(selectedItem)]]">
         <button class="mdc-icon-button close-item material-icons" on-click="clearSelection">close</button>
